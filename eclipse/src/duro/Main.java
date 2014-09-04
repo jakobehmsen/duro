@@ -9,6 +9,6 @@ public class Main {
 		String path = args[0];
 		duro.runtime.Process process = duro.runtime.Process.read(path);
 		duro.runtime.Runtime runtime = new Runtime();
-		runtime.run(process);
+		runtime.resume(process);
 	}
 }
