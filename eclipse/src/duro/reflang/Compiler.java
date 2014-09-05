@@ -1,9 +1,60 @@
 package duro.reflang;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+
+import duro.reflang.antlr4.DuroBaseListener;
+import duro.reflang.antlr4.DuroLexer;
+import duro.reflang.antlr4.DuroParser;
+import duro.reflang.antlr4.DuroParser.IntegerContext;
+import duro.reflang.antlr4.DuroParser.AssignmentContext;
+import duro.reflang.antlr4.DuroParser.PauseContext;
+import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.runtime.CustomProcess;
+import duro.runtime.Instruction;
 
 public class Compiler {
-	public static Process compile(InputStream sourceCode) {
-		return null;
+	public static duro.runtime.Process compile(InputStream sourceCode) throws IOException {
+		CharStream charStream = new ANTLRInputStream(sourceCode);
+		DuroLexer lexer = new DuroLexer(charStream);
+		TokenStream tokenStream = new CommonTokenStream(lexer);
+		DuroParser parser = new DuroParser(tokenStream);
+		
+		ProgramContext programCtx = parser.program();
+
+		final Hashtable<String, Integer> idToIndexMap = new Hashtable<String, Integer>();
+		final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		
+		programCtx.enterRule(new DuroBaseListener() {
+			@Override
+			public void enterInteger(IntegerContext ctx) {
+				int value = Integer.parseInt(ctx.INT().getText());
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+			}
+			
+			@Override
+			public void exitAssignment(AssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				Integer index = idToIndexMap.get(id);
+				if(index == null)
+					idToIndexMap.put(id, idToIndexMap.size());
+				
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
+			}
+			
+			@Override
+			public void enterPause(PauseContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
+			}
+		});
+		
+		return new CustomProcess(idToIndexMap.size(), instructions.toArray(new Instruction[instructions.size()]));
 	}
 }
