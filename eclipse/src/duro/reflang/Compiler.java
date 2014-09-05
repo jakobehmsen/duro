@@ -47,8 +47,10 @@ public class Compiler {
 			public void exitAssignment(AssignmentContext ctx) {
 				String id = ctx.ID().getText();
 				Integer index = idToIndexMap.get(id);
-				if(index == null)
-					idToIndexMap.put(id, idToIndexMap.size());
+				if(index == null) {
+					index = idToIndexMap.size();
+					idToIndexMap.put(id, index);
+				}
 				
 				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
 			}
