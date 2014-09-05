@@ -28,7 +28,7 @@ public class Main {
 			break;
 		} case "gen": {
 			String sourceCodePath = args[1];
-			String journalPath = args[1];
+			String journalPath = args[2];
 			FileInputStream inputStream;
 			try {
 				inputStream = new FileInputStream(sourceCodePath);
