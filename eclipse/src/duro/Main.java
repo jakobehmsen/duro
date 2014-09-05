@@ -3,7 +3,9 @@ package duro;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import duro.runtime.Instruction;
 import duro.runtime.Runtime;
+import duro.transcriber.Journal;
 
 public class Main {
 	public static void main(String[] args) {
@@ -14,19 +16,25 @@ public class Main {
 		switch(command.toLowerCase()) {
 		case "run": {
 			String path = args[1];
-			duro.runtime.Process process = duro.runtime.Process.read(path);
-			duro.runtime.Runtime runtime = new Runtime();
-			runtime.resume(process);
+			Journal<duro.runtime.Process, Instruction> journal;
+			try {
+				journal = Journal.read(path);
+//				duro.runtime.Process process = duro.runtime.Process.read(path);
+				duro.runtime.Runtime runtime = new Runtime();
+				runtime.resume(journal.getRoot());
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
 			break;
 		} case "gen": {
-			String path = args[1];
+			String sourceCodePath = args[1];
+			String journalPath = args[1];
 			FileInputStream inputStream;
 			try {
-				inputStream = new FileInputStream(path);
+				inputStream = new FileInputStream(sourceCodePath);
 				duro.runtime.Process process = duro.reflang.Compiler.compile(inputStream);
-				
+				Journal.write(process, journalPath);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			break;

@@ -42,43 +42,62 @@ public class Journal<T extends Player<C>, C> {
 	private T root;
 	private ExecutorService journalLogger;
 
-	public Journal(Func0<T> rootFunc) throws IOException, ClassNotFoundException {
-		boolean journalExisted = true;
-		
-		Path journalDirectoryPath = Paths.get(journalDirectory);
-		if(!java.nio.file.Files.exists(journalDirectoryPath)) {
-			java.nio.file.Files.createDirectory(journalDirectoryPath);
-			journalExisted = false;
-		}
-		
-		Path journalFilePath = Paths.get(journalDirectory + "/" + journalFile);
-		if(!java.nio.file.Files.exists(journalFilePath)) {
-			java.nio.file.Files.createFile(journalFilePath);
-			journalExisted = false;
-		}
-		
-		if(!journalExisted) {
-			root = rootFunc.call();
-		} else {
-			ArrayList<Entry<T, C>> transactions = readJournal(journalDirectory + "/" + journalFile);
-			replay(transactions);
-		}
-		
+	public Journal(T root) throws IOException, ClassNotFoundException {
+		this.root = root;
 		journalLogger = Executors.newSingleThreadExecutor();
 	}
+	
+	public T getRoot() {
+		return root;
+	}
+	
+	private static class JournalInfo<T extends Player<C>, C> {
+		public final T root;
+		public final ArrayList<Entry<T, C>> transactions;
+		
+		public JournalInfo(T root, ArrayList<Entry<T, C>> transactions) {
+			this.root = root;
+			this.transactions = transactions;
+		}
+	}
+	
+	public static <T extends Player<C>, C> Journal<T, C> read(String journalPath) throws ClassNotFoundException, IOException {
+		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
+		
+		Journal<T, C> journal = new Journal<T, C>(journalInfo.root);
+		journal.replay(journalInfo.transactions);
+		
+		return journal;
+	}
+	
+	public static <T extends Player<C>, C> void write(T root, String journalPath) throws IOException {
+		FileOutputStream fileOutput = new FileOutputStream(journalDirectory + "/" + journalFile, true);
+		BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
+		ObjectOutputStream objectOutput = new ObjectOutputStream(bufferedOutput);
+		
+		objectOutput.writeObject(root);
+		
+		objectOutput.close();
+	}
 
-	private static <T extends Player<C>, C> ArrayList<Entry<T, C>> readJournal(String journalPath) throws ClassNotFoundException, IOException {
+	@SuppressWarnings("unchecked")
+	private static <T extends Player<C>, C> JournalInfo<T, C> readJournal(String journalPath) throws ClassNotFoundException, IOException {
+		T root;
 		ArrayList<Entry<T, C>> transactions = new ArrayList<Entry<T, C>>();
 		
 		FileInputStream fileOutput = new FileInputStream(journalPath);
 		BufferedInputStream bufferedOutput = new BufferedInputStream(fileOutput);
 		
 		try {
+			@SuppressWarnings("resource")
+			ObjectInputStream rootObjectInput = new ObjectInputStream(bufferedOutput);
+			root = (T)rootObjectInput.readObject();
+			
 			while(bufferedOutput.available() != 0) {
 				// Should be read in chunks
-				ObjectInputStream objectOutput = new ObjectInputStream(bufferedOutput);
+				ObjectInputStream objectInput = new ObjectInputStream(bufferedOutput);
 				@SuppressWarnings("unchecked")
-				Entry<T, C> transaction = (Entry<T, C>)objectOutput.readObject();
+				Entry<T, C> transaction = (Entry<T, C>)objectInput.readObject();
 					
 				transactions.add(transaction);
 			}
@@ -86,7 +105,7 @@ public class Journal<T extends Player<C>, C> {
 			bufferedOutput.close();
 		}
 		
-		return transactions;
+		return new JournalInfo<T, C>(root, transactions);
 	}
 	
 	private void replay(ArrayList<Entry<T, C>> transactions) {
