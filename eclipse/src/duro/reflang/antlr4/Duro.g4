@@ -1,7 +1,7 @@
 grammar Duro;
 
-program: expressions;
-expressions: ((expression | statement) SEMICOLON)*;
+program: programElements;
+programElements: ((expression | statement) SEMICOLON)*;
 expression: assignment | literal;
 assignment: KW_VAR ID EQUALS expression;
 literal: integer;
