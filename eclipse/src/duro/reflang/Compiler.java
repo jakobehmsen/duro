@@ -61,6 +61,9 @@ public class Compiler {
 			}
 		}, programCtx);
 		
+		// Add finish instruction to the end
+		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
+		
 		return new CustomProcess(idToIndexMap.size(), instructions.toArray(new Instruction[instructions.size()]));
 	}
 }

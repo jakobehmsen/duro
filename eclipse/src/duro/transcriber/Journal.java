@@ -35,14 +35,16 @@ public class Journal<T extends Player<C>, C> {
 		}
 	}
 	
-	private static final String journalDirectory = "";
+//	private static final String journalDirectory = "";
 	private static final String journalFileName = "log";
 	private static final String journalFile = journalFileName + ".jnl";
 	
+	private String journalPath;
 	private T root;
 	private ExecutorService journalLogger;
 
-	public Journal(T root) throws IOException, ClassNotFoundException {
+	public Journal(String journalPath, T root) throws IOException, ClassNotFoundException {
+		this.journalPath = journalPath;
 		this.root = root;
 		journalLogger = Executors.newSingleThreadExecutor();
 	}
@@ -64,7 +66,7 @@ public class Journal<T extends Player<C>, C> {
 	public static <T extends Player<C>, C> Journal<T, C> read(String journalPath) throws ClassNotFoundException, IOException {
 		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
 		
-		Journal<T, C> journal = new Journal<T, C>(journalInfo.root);
+		Journal<T, C> journal = new Journal<T, C>(journalPath, journalInfo.root);
 		journal.replay(journalInfo.transactions);
 		
 		return journal;
@@ -73,6 +75,9 @@ public class Journal<T extends Player<C>, C> {
 	public static <T extends Player<C>, C> void write(T root, String journalPath) throws IOException {
 		if(!java.nio.file.Files.exists(Paths.get(journalPath)))
 			java.nio.file.Files.createDirectory(Paths.get(journalPath));
+		else {
+			java.nio.file.Files.deleteIfExists(Paths.get(journalPath + "/" + journalFile));
+		}
 		
 		FileOutputStream fileOutput = new FileOutputStream(journalPath + "/" + journalFile, true);
 		BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
@@ -123,7 +128,7 @@ public class Journal<T extends Player<C>, C> {
 			@Override
 			public void run() {
 				try {
-					FileOutputStream fileOutput = new FileOutputStream(journalDirectory + "/" + journalFile, true);
+					FileOutputStream fileOutput = new FileOutputStream(journalPath + "/" + journalFile, true);
 					BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
 					ObjectOutputStream objectOutput = new ObjectOutputStream(bufferedOutput);
 					
@@ -137,5 +142,9 @@ public class Journal<T extends Player<C>, C> {
 				}
 			}
 		});
+	}
+
+	public void close() {
+		journalLogger.shutdown();
 	}
 }

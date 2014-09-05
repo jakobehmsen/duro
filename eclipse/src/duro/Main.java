@@ -19,8 +19,9 @@ public class Main {
 			Journal<duro.runtime.Process, Instruction> journal;
 			try {
 				journal = Journal.read(path);
-				duro.runtime.Runtime runtime = new Runtime();
+				duro.runtime.Runtime runtime = new Runtime(journal);
 				runtime.resume(journal.getRoot());
+				journal.close();
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
