@@ -1,6 +1,8 @@
 package duro.runtime;
 
-public class Instruction {
+import java.io.Serializable;
+
+public class Instruction implements Serializable {
 	public static final int OPCODE_STORE = 0;
 	public static final int OPCODE_LOAD_INT = 1;
 	public static final int OPCODE_PAUSE = 2;
