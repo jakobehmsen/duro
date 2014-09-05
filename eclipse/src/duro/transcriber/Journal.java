@@ -35,7 +35,7 @@ public class Journal<T extends Player<C>, C> {
 		}
 	}
 	
-	private static final String journalDirectory = "jnl";
+	private static final String journalDirectory = "";
 	private static final String journalFileName = "log";
 	private static final String journalFile = journalFileName + ".jnl";
 	
@@ -71,7 +71,10 @@ public class Journal<T extends Player<C>, C> {
 	}
 	
 	public static <T extends Player<C>, C> void write(T root, String journalPath) throws IOException {
-		FileOutputStream fileOutput = new FileOutputStream(journalDirectory + "/" + journalFile, true);
+		if(!java.nio.file.Files.exists(Paths.get(journalPath)))
+			java.nio.file.Files.createDirectory(Paths.get(journalPath));
+		
+		FileOutputStream fileOutput = new FileOutputStream(journalPath + "/" + journalFile, true);
 		BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
 		ObjectOutputStream objectOutput = new ObjectOutputStream(bufferedOutput);
 		
