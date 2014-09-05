@@ -9,14 +9,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import duro.delegate.Func0;
 
 public class Journal<T extends Player<C>, C> {
 	private static class Entry<T extends Player<C>, C> implements Serializable {
@@ -104,7 +101,6 @@ public class Journal<T extends Player<C>, C> {
 			while(bufferedOutput.available() != 0) {
 				// Should be read in chunks
 				ObjectInputStream objectInput = new ObjectInputStream(bufferedOutput);
-				@SuppressWarnings("unchecked")
 				Entry<T, C> transaction = (Entry<T, C>)objectInput.readObject();
 					
 				transactions.add(transaction);

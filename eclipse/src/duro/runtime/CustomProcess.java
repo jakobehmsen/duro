@@ -1,11 +1,15 @@
 package duro.runtime;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 public class CustomProcess extends Process {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static class Frame implements Serializable {
 		/**
 		 * 
@@ -23,7 +27,7 @@ public class CustomProcess extends Process {
 	}
 	
 	private Frame currentFrame;
-	private Stack<Frame> frameStack = new Stack<Frame>();
+//	private Stack<Frame> frameStack = new Stack<Frame>();
 
 	public CustomProcess(int variableCount, Instruction[] instructions) {
 		currentFrame = new Frame(variableCount, instructions);
