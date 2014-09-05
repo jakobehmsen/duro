@@ -8,7 +8,9 @@ import java.util.Hashtable;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
@@ -32,7 +34,9 @@ public class Compiler {
 		final Hashtable<String, Integer> idToIndexMap = new Hashtable<String, Integer>();
 		final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		
-		programCtx.enterRule(new DuroBaseListener() {
+		ParseTreeWalker walker = new ParseTreeWalker();
+		
+		walker.walk(new DuroBaseListener() {
 			@Override
 			public void enterInteger(IntegerContext ctx) {
 				int value = Integer.parseInt(ctx.INT().getText());
@@ -53,7 +57,7 @@ public class Compiler {
 			public void enterPause(PauseContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
 			}
-		});
+		}, programCtx);
 		
 		return new CustomProcess(idToIndexMap.size(), instructions.toArray(new Instruction[instructions.size()]));
 	}
