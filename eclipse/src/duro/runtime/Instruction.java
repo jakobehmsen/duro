@@ -15,19 +15,32 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_DUP = 2;
 	public static final int OPCODE_STORE = 3;
 	public static final int OPCODE_POP = 4;
-	public static final int OPCODE_LOAD_LOC = 5;
-	public static final int OPCODE_LOAD_INT = 6;
+	public static final int OPCODE_CALL = 5;
+	public static final int OPCODE_RET = 6;
+	public static final int OPCODE_LOAD_THIS = 7;
+	public static final int OPCODE_LOAD_NULL = 8;
+	public static final int OPCODE_LOAD_LOC = 9;
+	public static final int OPCODE_LOAD_ARG = 10;
+	public static final int OPCODE_LOAD_INT = 11;
+	
+	public static final int OPCODE_SPECIAL_LOG = 65;
 
 	public final int opcode;
 	public final Object operand1;
+	public final Object operand2;
 	
 	public Instruction(int opcode) {
 		this(opcode, null);
 	}
 	
 	public Instruction(int opcode, Object operand1) {
+		this(opcode, operand1, null);
+	}
+	
+	public Instruction(int opcode, Object operand1, Object operand2) {
 		this.opcode = opcode;
 		this.operand1 = operand1;
+		this.operand2 = operand2;
 	}
 	
 	private static Hashtable<Integer, String> opcodeToNameMape;
