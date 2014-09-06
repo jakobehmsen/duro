@@ -43,19 +43,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterProgram(@NotNull DuroParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -154,6 +141,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

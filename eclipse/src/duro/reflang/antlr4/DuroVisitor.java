@@ -26,13 +26,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveOperands}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -87,6 +80,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.

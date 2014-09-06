@@ -31,17 +31,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#primitiveOperands}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#primitiveOperands}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 */
@@ -128,6 +117,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveOperand}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveOperand}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionParameters}.

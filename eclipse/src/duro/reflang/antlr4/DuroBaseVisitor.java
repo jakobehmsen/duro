@@ -34,14 +34,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
 	@Override public T visitProgram(@NotNull DuroParser.ProgramContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -99,6 +91,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

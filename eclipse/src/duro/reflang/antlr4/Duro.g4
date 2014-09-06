@@ -22,9 +22,9 @@ variableDeclaration: KW_VAR ID;
 functionDefinition: KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
-primitiveBody: HASH OPEN_BRA primitiveCall CLOSE_BRA;
-primitiveCall: ID primitiveOperands;
-primitiveOperands: (COLON literal)*;
+primitiveBody: HASH OPEN_BRA primitiveCall* CLOSE_BRA;
+primitiveCall: ID primitiveOperand*;
+primitiveOperand: (COLON literal);
 returnStatement: KW_RETURN expression?;
 
 BIN_OP: '+'|'-'|'*'|'/'; //[+-*/];
