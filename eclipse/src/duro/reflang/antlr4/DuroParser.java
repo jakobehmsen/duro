@@ -25,11 +25,11 @@ public class DuroParser extends Parser {
 		RULE_program = 0, RULE_programElements = 1, RULE_topExpression = 2, RULE_expression = 3, 
 		RULE_variableAssignment = 4, RULE_literal = 5, RULE_integer = 6, RULE_statement = 7, 
 		RULE_pause = 8, RULE_variableStatement = 9, RULE_variableDeclarationAndAssignment = 10, 
-		RULE_variableDeclation = 11;
+		RULE_variableDeclaration = 11;
 	public static final String[] ruleNames = {
 		"program", "programElements", "topExpression", "expression", "variableAssignment", 
 		"literal", "integer", "statement", "pause", "variableStatement", "variableDeclarationAndAssignment", 
-		"variableDeclation"
+		"variableDeclaration"
 	};
 
 	@Override
@@ -511,8 +511,8 @@ public class DuroParser extends Parser {
 	}
 
 	public static class VariableStatementContext extends ParserRuleContext {
-		public VariableDeclationContext variableDeclation() {
-			return getRuleContext(VariableDeclationContext.class,0);
+		public VariableDeclarationContext variableDeclaration() {
+			return getRuleContext(VariableDeclarationContext.class,0);
 		}
 		public VariableDeclarationAndAssignmentContext variableDeclarationAndAssignment() {
 			return getRuleContext(VariableDeclarationAndAssignmentContext.class,0);
@@ -552,7 +552,7 @@ public class DuroParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(58); variableDeclation();
+				setState(58); variableDeclaration();
 				}
 				break;
 			}
@@ -617,31 +617,31 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class VariableDeclationContext extends ParserRuleContext {
+	public static class VariableDeclarationContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
 		public TerminalNode KW_VAR() { return getToken(DuroParser.KW_VAR, 0); }
-		public VariableDeclationContext(ParserRuleContext parent, int invokingState) {
+		public VariableDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_variableDeclation; }
+		@Override public int getRuleIndex() { return RULE_variableDeclaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableDeclation(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableDeclation(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableDeclation(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final VariableDeclationContext variableDeclation() throws RecognitionException {
-		VariableDeclationContext _localctx = new VariableDeclationContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_variableDeclation);
+	public final VariableDeclarationContext variableDeclaration() throws RecognitionException {
+		VariableDeclarationContext _localctx = new VariableDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_variableDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

@@ -9,9 +9,9 @@ literal: integer;
 integer: INT;
 statement: pause | variableStatement;
 pause: KW_PAUSE;
-variableStatement: variableDeclarationAndAssignment | variableDeclation;
+variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
-variableDeclation: KW_VAR ID;
+variableDeclaration: KW_VAR ID;
 
 EQUALS: '=';
 INT: DIGIT+;

@@ -20,17 +20,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#variableDeclation}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#variableDeclation}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#expression}.
 	 * @param ctx the parse tree
 	 */
@@ -139,4 +128,15 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
 }
