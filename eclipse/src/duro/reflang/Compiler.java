@@ -19,6 +19,7 @@ import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationAndAssignmentContext;
@@ -56,6 +57,16 @@ public class Compiler {
 				int ordinal = idToOrdinalMap.get(id);
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+			}
+			
+			@Override
+			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
+				String id = ctx.messageExchange().ID().getText();
+				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+				int argumentCount = ctx.messageExchange().expression().size();
+
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.add(new Instruction(Instruction.OPCODE_CALL, symbolCode, argumentCount));
 			}
 			
 			@Override
