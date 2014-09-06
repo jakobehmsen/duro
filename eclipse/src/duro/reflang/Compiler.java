@@ -15,9 +15,12 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
-import duro.reflang.antlr4.DuroParser.AssignmentContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.TopExpressionContext;
+import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
+import duro.reflang.antlr4.DuroParser.VariableDeclarationAndAssignmentContext;
+import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
@@ -43,7 +46,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitAssignment(AssignmentContext ctx) {
+			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
 				String id = ctx.ID().getText();
 				Integer index = idToIndexMap.get(id);
 				if(index == null) {
@@ -55,8 +58,36 @@ public class Compiler {
 			}
 			
 			@Override
+			public void exitVariableAssignment(VariableAssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				Integer index = idToIndexMap.get(id);
+				if(index == null) {
+					index = idToIndexMap.size();
+					idToIndexMap.put(id, index);
+				}
+
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
+			}
+			
+			@Override
+			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
+				String id = ctx.ID().getText();
+				Integer index = idToIndexMap.get(id);
+				if(index == null) {
+					index = idToIndexMap.size();
+					idToIndexMap.put(id, index);
+				}
+			}
+			
+			@Override
 			public void enterPause(PauseContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
+			}
+			
+			@Override
+			public void exitTopExpression(TopExpressionContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 		}, programCtx);
 		
