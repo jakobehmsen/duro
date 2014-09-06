@@ -17,11 +17,13 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_POP = 4;
 	public static final int OPCODE_CALL = 5;
 	public static final int OPCODE_RET = 6;
-	public static final int OPCODE_LOAD_THIS = 7;
-	public static final int OPCODE_LOAD_NULL = 8;
-	public static final int OPCODE_LOAD_LOC = 9;
-	public static final int OPCODE_LOAD_ARG = 10;
-	public static final int OPCODE_LOAD_INT = 11;
+	public static final int OPCODE_DEF = 7;
+	public static final int OPCODE_LOAD_THIS = 8;
+	public static final int OPCODE_LOAD_NULL = 9;
+	public static final int OPCODE_LOAD_LOC = 10;
+	public static final int OPCODE_LOAD_ARG = 11;
+	public static final int OPCODE_LOAD_INT = 12;
+	public static final int OPCODE_LOAD_FUNC = 13; // TODO To add
 	
 	public static final int OPCODE_SP_LOG = 65;
 	public static final int OPCODE_SP_ADD = 66;

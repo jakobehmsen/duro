@@ -127,7 +127,8 @@ public class Compiler {
 //		}, programCtx);
 		
 		
-		BodyInfo bodyInfo = getBodyInfo(programCtx);
+		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx);
 		
 //		// Add finish instruction to the end
 //		bodyInfo.instructions.add(new Instruction(Instruction.OPCODE_FINISH));
@@ -137,6 +138,7 @@ public class Compiler {
 	
 	private static class ConditionalTreeWalker extends ParseTreeWalker {
 		private boolean suspendWalk;
+		private RuleNode ruleSuspendedAt;
 		
 		@Override
 		protected void enterRule(ParseTreeListener listener, RuleNode r) {
@@ -146,20 +148,21 @@ public class Compiler {
 		
 		@Override
 		protected void exitRule(ParseTreeListener listener, RuleNode r) {
+			if(ruleSuspendedAt == r)
+				suspendWalk = false;
+			
 			if(!suspendWalk)
 				super.exitRule(listener, r);
 		}
 		
-		public void suspendWalk() {
+		public void suspendWalkWithin(RuleNode r) {
 			suspendWalk = true;
-		}
-		
-		public void resumeWalk() {
-			suspendWalk = false;
+			ruleSuspendedAt = r;
 		}
 	}
 	
-	private static DuroListener createBodyListener(final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToOrdinalMap, final ArrayList<Instruction> instructions) {
+	private static DuroListener createBodyListener(
+			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, final ArrayList<Instruction> instructions) {
 		return new DuroBaseListener() {
 			@Override
 			public void exitProgram(ProgramContext ctx) {
@@ -197,7 +200,7 @@ public class Compiler {
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String id = ctx.ID().getText();
-				int ordinal = idToOrdinalMap.get(id);
+				int ordinal = idToVariableOrdinalMap.get(id);
 
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
@@ -206,8 +209,15 @@ public class Compiler {
 			@Override
 			public void enterLookup(LookupContext ctx) {
 				String id = ctx.ID().getText();
-				int ordinal = idToOrdinalMap.get(id);
 				
+				Integer parameterOrdinal = idToParameterOrdinalMap.get(id);
+				if(parameterOrdinal != null) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+					
+					return;
+				}
+				
+				int ordinal = idToVariableOrdinalMap.get(id);
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
 			}
 			
@@ -254,20 +264,26 @@ public class Compiler {
 			
 			@Override
 			public void enterFunctionDefinition(FunctionDefinitionContext ctx) {
-				walker.suspendWalk();
+				walker.suspendWalkWithin(ctx);
 			}
 			
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				int parameterCount = ctx.functionParameters().getChildCount();
-				BodyInfo functionBodyInfo = getBodyInfo(ctx.functionBody());
+				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+				for(int i = 0; i < parameterCount; i++) {
+					String parameterId = ctx.functionParameters().getChild(i).getText();
+					idToParameterOrdinalMap.put(parameterId, i);
+				}
+				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
+				String id = ctx.ID().getText();
+				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNCTION, callFrameInfo));
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_DEFINE));
-				
-				walker.resumeWalk();
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+				instructions.add(new Instruction(Instruction.OPCODE_DEF, symbolCode));
 			}
 			
 			@Override
@@ -290,11 +306,11 @@ public class Compiler {
 			
 			private int declareVariable(TerminalNode idNode) {
 				String id = idNode.getText();
-				Integer ordinal = idToOrdinalMap.get(id);
+				Integer ordinal = idToVariableOrdinalMap.get(id);
 				
 				if(ordinal == null) {
-					ordinal = idToOrdinalMap.size();
-					idToOrdinalMap.put(id, ordinal);
+					ordinal = idToVariableOrdinalMap.size();
+					idToVariableOrdinalMap.put(id, ordinal);
 				}
 				
 				return ordinal;
@@ -302,14 +318,14 @@ public class Compiler {
 		};
 	}
 	
-	private static BodyInfo getBodyInfo(ParseTree tree) {
+	private static BodyInfo getBodyInfo(Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree) {
 		Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
-		walker.walk(createBodyListener(walker, idToOrdinalMap, instructions), tree);
+		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions), tree);
 		
-		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
+//		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return new BodyInfo(idToOrdinalMap, instructions);
 	}
