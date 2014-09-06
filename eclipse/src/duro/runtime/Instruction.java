@@ -10,10 +10,12 @@ public class Instruction implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final int OPCODE_STORE = 0;
-	public static final int OPCODE_LOAD_INT = 1;
-	public static final int OPCODE_PAUSE = 2;
-	public static final int OPCODE_FINISH = 3;
+	public static final int OPCODE_PAUSE = 0;
+	public static final int OPCODE_FINISH = 1;
+	public static final int OPCODE_DUP = 2;
+	public static final int OPCODE_STORE = 3;
+	public static final int OPCODE_POP = 4;
+	public static final int OPCODE_LOAD_INT = 5;
 
 	public final int opcode;
 	public final Object operand1;
