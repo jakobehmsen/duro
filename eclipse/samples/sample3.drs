@@ -1,0 +1,8 @@
+/*
+var x = 10;
+pause;
+console.log(x);
+*/
+
+var x = 15;
+var y = x;
