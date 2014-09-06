@@ -51,7 +51,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitLookup(LookupContext ctx) {
+			public void enterLookup(LookupContext ctx) {
 				String id = ctx.ID().getText();
 				int ordinal = idToOrdinalMap.get(id);
 				
@@ -77,7 +77,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
+			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
 				declareVariable(ctx.ID());
 			}
 			
