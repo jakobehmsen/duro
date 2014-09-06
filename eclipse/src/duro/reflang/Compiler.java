@@ -25,6 +25,8 @@ import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
@@ -295,6 +297,30 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitPrimitiveBody(PrimitiveBodyContext ctx) {
+				for(PrimitiveCallContext primitiveCallCtx: ctx.primitiveCall()) {
+					String opcodeId = primitiveCallCtx.ID().getText();
+					Object operand1 = null;
+					Object operand2 = null;
+					if(primitiveCallCtx.primitiveOperand().size() > 0) {
+						operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
+
+						if(primitiveCallCtx.primitiveOperand().size() > 1) {
+							operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
+						}
+					}
+					
+					int opcode = Instruction.getOpcodeFromId(opcodeId);
+					instructions.add(new Instruction(opcode, operand1, operand2));
+				}
+			}
+			
+			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
@@ -328,6 +354,27 @@ public class Compiler {
 //		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return new BodyInfo(idToOrdinalMap, instructions);
+	}
+	
+	private static class LiteralDuroListener extends DuroBaseListener {
+		private Object literal;
+		
+		public Object getLiteral() {
+			return literal;
+		}
+		
+		@Override
+		public void enterInteger(IntegerContext ctx) {
+			literal = Integer.parseInt(ctx.INT().getText());
+		}
+	}
+	
+	private static Object getLiteral(ParseTree tree) {
+		ParseTreeWalker walker = new ParseTreeWalker();
+		LiteralDuroListener listener = new LiteralDuroListener();
+		walker.walk(listener, tree);
+		
+		return listener.getLiteral();
 	}
 	
 	private static class BodyInfo {

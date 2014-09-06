@@ -49,24 +49,38 @@ public class Instruction implements Serializable {
 		this.operand2 = operand2;
 	}
 	
-	private static Hashtable<Integer, String> opcodeToNameMape;
+	private static Hashtable<Integer, String> opcodeToIdMap;
+	private static Hashtable<String, Integer> idToOpcodeMap;
 	
-	private String getNameFromOpcode(int opcode) {
-		if(opcodeToNameMape == null) {
-			opcodeToNameMape = new Hashtable<Integer, String>();
+	private static String getNameFromOpcode(int opcode) {
+		ensureMapCreated();
+		
+		return opcodeToIdMap.get(opcode);
+	}
+
+	private static void ensureMapCreated() {
+		if(opcodeToIdMap == null) {
+			opcodeToIdMap = new Hashtable<Integer, String>();
+			idToOpcodeMap = new Hashtable<String, Integer>();
+			
 			try {
 				for (Field field : Instruction.class.getDeclaredFields()) {
 				    if (java.lang.reflect.Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("OPCODE_")) {
 				    	int fieldOpcode = (int)field.get(null);
-				    	opcodeToNameMape.put(fieldOpcode, field.getName().substring("OPCODE_".length()));
+				    	opcodeToIdMap.put(fieldOpcode, field.getName().substring("OPCODE_".length()));
+				    	idToOpcodeMap.put(field.getName().substring("OPCODE_".length()).toLowerCase(), fieldOpcode);
 				    }
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static int getOpcodeFromId(String opcodeId) {
+		ensureMapCreated();
 		
-		return opcodeToNameMape.get(opcode);
+		return idToOpcodeMap.get(opcodeId);
 	}
 	
 	@Override
