@@ -55,9 +55,9 @@ public class CustomProcess extends Process {
 				
 				break;
 			} case Instruction.OPCODE_STORE: {
-				int index = (int)instruction.operand1;
+				int ordinal = (int)instruction.operand1;
 				Object value = currentFrame.stack.pop();
-				currentFrame.variables[index] = value;
+				currentFrame.variables[ordinal] = value;
 				currentFrame.instructionPointer++;
 				
 				break;
@@ -110,9 +110,9 @@ public class CustomProcess extends Process {
 						
 						break;
 					} case Instruction.OPCODE_STORE: {
-						int index = (int)instruction.operand1;
+						int ordinal = (int)instruction.operand1;
 						Object value = currentFrame.stack.pop();
-						currentFrame.variables[index] = value;
+						currentFrame.variables[ordinal] = value;
 						currentFrame.instructionPointer++;
 						
 						break;

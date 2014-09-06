@@ -34,7 +34,7 @@ public class Compiler {
 		
 		ProgramContext programCtx = parser.program();
 
-		final Hashtable<String, Integer> idToIndexMap = new Hashtable<String, Integer>();
+		final Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
 		final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		
 		ParseTreeWalker walker = new ParseTreeWalker();
@@ -48,18 +48,18 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				int index = declareVariable(ctx.ID());
+				int ordinal = declareVariable(ctx.ID());
 				
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
 			}
 			
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String id = ctx.ID().getText();
-				int index = idToIndexMap.get(id);
+				int ordinal = idToOrdinalMap.get(id);
 
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
 			}
 			
 			@Override
@@ -79,20 +79,20 @@ public class Compiler {
 			
 			private int declareVariable(TerminalNode idNode) {
 				String id = idNode.getText();
-				Integer index = idToIndexMap.get(id);
+				Integer ordinal = idToOrdinalMap.get(id);
 				
-				if(index == null) {
-					index = idToIndexMap.size();
-					idToIndexMap.put(id, index);
+				if(ordinal == null) {
+					ordinal = idToOrdinalMap.size();
+					idToOrdinalMap.put(id, ordinal);
 				}
 				
-				return index;
+				return ordinal;
 			}
 		}, programCtx);
 		
 		// Add finish instruction to the end
 		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
-		return new CustomProcess(idToIndexMap.size(), instructions.toArray(new Instruction[instructions.size()]));
+		return new CustomProcess(idToOrdinalMap.size(), instructions.toArray(new Instruction[instructions.size()]));
 	}
 }
