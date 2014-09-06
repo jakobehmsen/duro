@@ -141,6 +141,28 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#thisMessageExchange}.
+	 * @param ctx the parse tree
+	 */
+	void enterThisMessageExchange(@NotNull DuroParser.ThisMessageExchangeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#thisMessageExchange}.
+	 * @param ctx the parse tree
+	 */
+	void exitThisMessageExchange(@NotNull DuroParser.ThisMessageExchangeContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageExchange}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageExchange}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#statement}.
 	 * @param ctx the parse tree
 	 */
