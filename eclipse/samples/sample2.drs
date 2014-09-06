@@ -1,0 +1,12 @@
+var x;
+x = 10;
+pause;
+var y = 20;
+y = 20;
+
+// Ignore this.
+
+/*
+Ignore all
+of this too.
+*/
