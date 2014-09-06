@@ -16,6 +16,7 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
+import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
@@ -60,6 +61,14 @@ public class Compiler {
 
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+			}
+			
+			@Override
+			public void exitLookup(LookupContext ctx) {
+				String id = ctx.ID().getText();
+				int ordinal = idToOrdinalMap.get(id);
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
 			}
 			
 			@Override
