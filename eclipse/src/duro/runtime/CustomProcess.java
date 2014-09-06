@@ -105,6 +105,17 @@ public class CustomProcess extends Process {
 				currentFrame.instructionPointer++;
 				
 				break;
+			} case Instruction.OPCODE_DEF: {
+				int symbolCode = (int)instruction.operand1;
+				CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+				
+				Process receiver = (Process)currentFrame.stack.pop();
+				
+				receiver.define(symbolCode, callFrameInfo);
+				
+				currentFrame.instructionPointer++;
+				
+				break;
 			} case Instruction.OPCODE_LOAD_THIS: {
 				currentFrame.stack.push(this);
 				currentFrame.instructionPointer++;
@@ -130,6 +141,11 @@ public class CustomProcess extends Process {
 				
 				break;
 			} case Instruction.OPCODE_LOAD_INT: {
+				currentFrame.stack.push(instruction.operand1);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_LOAD_FUNC: {
 				currentFrame.stack.push(instruction.operand1);
 				currentFrame.instructionPointer++;
 				
@@ -245,6 +261,17 @@ public class CustomProcess extends Process {
 						currentFrame.instructionPointer++;
 						
 						break;
+					} case Instruction.OPCODE_DEF: {
+						int symbolCode = (int)instruction.operand1;
+						CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+						
+						Process receiver = (Process)currentFrame.stack.pop();
+						
+						receiver.define(symbolCode, callFrameInfo);
+						
+						currentFrame.instructionPointer++;
+						
+						break;
 					} case Instruction.OPCODE_LOAD_THIS: {
 						currentFrame.stack.push(this);
 						currentFrame.instructionPointer++;
@@ -270,6 +297,11 @@ public class CustomProcess extends Process {
 						
 						break;
 					} case Instruction.OPCODE_LOAD_INT: {
+						currentFrame.stack.push(instruction.operand1);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_LOAD_FUNC: {
 						currentFrame.stack.push(instruction.operand1);
 						currentFrame.instructionPointer++;
 						
@@ -328,5 +360,10 @@ public class CustomProcess extends Process {
 	@Override
 	public CallFrameInfo getInstructions(int symbolCode) {
 		return (CallFrameInfo)fields.get(symbolCode);
+	}
+	
+	@Override
+	public void define(int symbolCode, Object value) {
+		fields.put(symbolCode, value);
 	}
 }
