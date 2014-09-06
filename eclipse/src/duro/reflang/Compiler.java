@@ -42,19 +42,6 @@ public class Compiler {
 		
 		walker.walk(new DuroBaseListener() {
 			@Override
-			public void enterInteger(IntegerContext ctx) {
-				int value = Integer.parseInt(ctx.INT().getText());
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
-			}
-			
-			@Override
-			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				int ordinal = declareVariable(ctx.ID());
-				
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
-			}
-			
-			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String id = ctx.ID().getText();
 				int ordinal = idToOrdinalMap.get(id);
@@ -72,13 +59,26 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
-				declareVariable(ctx.ID());
+			public void enterInteger(IntegerContext ctx) {
+				int value = Integer.parseInt(ctx.INT().getText());
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
 			}
 			
 			@Override
 			public void enterPause(PauseContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
+			}
+			
+			@Override
+			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
+				int ordinal = declareVariable(ctx.ID());
+				
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+			}
+			
+			@Override
+			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
+				declareVariable(ctx.ID());
 			}
 			
 			@Override
