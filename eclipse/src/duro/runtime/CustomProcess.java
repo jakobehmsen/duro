@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Stack;
 
+import debugging.Debug;
+
 public class CustomProcess extends Process {
 	/**
 	 * 
@@ -35,10 +37,11 @@ public class CustomProcess extends Process {
 
 	@Override
 	public void replay(List<Instruction> commands) {
-		System.out.println("replay");
+		Debug.println(Debug.LEVEL_HIGH, "replay");
+
 		for(Instruction instruction: commands) {
-			System.out.println("stack: " + currentFrame.stack);
-			System.out.println("replay: " + instruction);
+			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+			Debug.println(Debug.LEVEL_HIGH, "replay: " + instruction);
 			
 			switch(instruction.opcode) {
 			case Instruction.OPCODE_PAUSE: {
@@ -76,13 +79,14 @@ public class CustomProcess extends Process {
 		}
 		
 		if(currentFrame != null)
-			System.out.println("stack: " + currentFrame.stack);
-		System.out.println("/replay");
+			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+		
+		Debug.println(Debug.LEVEL_HIGH, "/replay");
 	}
 
 	@Override
 	public void resume(List<Instruction> playedInstructions) {
-		System.out.println("play");
+		Debug.println(Debug.LEVEL_HIGH, "play");
 		
 		if(currentFrame != null) {
 			boolean stopRequested = false;
@@ -92,8 +96,8 @@ public class CustomProcess extends Process {
 				while(true) {
 					Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
 					playedInstructions.add(instruction);
-					System.out.println("stack: " + currentFrame.stack);
-					System.out.println("play: " + instruction);
+					Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+					Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
 					
 					switch(instruction.opcode) {
 					case Instruction.OPCODE_PAUSE: {
@@ -133,7 +137,8 @@ public class CustomProcess extends Process {
 		}
 		
 		if(currentFrame != null)
-			System.out.println("stack: " + currentFrame.stack);
-		System.out.println("/play");
+			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+
+		Debug.println(Debug.LEVEL_HIGH, "/play");
 	}
 }
