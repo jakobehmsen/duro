@@ -1,8 +1,16 @@
+
 var x;
 x = 10;
 pause;
 var y = 20;
 y = 20;
+
+
+/*
+var x;
+
+var y = x = 5;
+*/
 
 // Ignore this.
 
