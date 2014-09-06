@@ -9,6 +9,28 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface DuroListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableDeclation}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableDeclation}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#expression}.
 	 * @param ctx the parse tree
 	 */
@@ -20,15 +42,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#assignment}.
+	 * Enter a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignment(@NotNull DuroParser.AssignmentContext ctx);
+	void enterVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#assignment}.
+	 * Exit a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignment(@NotNull DuroParser.AssignmentContext ctx);
+	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#statement}.
@@ -40,6 +62,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatement(@NotNull DuroParser.StatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
@@ -62,6 +95,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#topExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#topExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#programElements}.

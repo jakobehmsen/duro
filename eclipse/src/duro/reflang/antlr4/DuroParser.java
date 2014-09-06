@@ -22,11 +22,14 @@ public class DuroParser extends Parser {
 		"MULTI_LINE_COMMENT"
 	};
 	public static final int
-		RULE_program = 0, RULE_programElements = 1, RULE_expression = 2, RULE_assignment = 3, 
-		RULE_literal = 4, RULE_integer = 5, RULE_statement = 6, RULE_pause = 7;
+		RULE_program = 0, RULE_programElements = 1, RULE_topExpression = 2, RULE_expression = 3, 
+		RULE_variableAssignment = 4, RULE_literal = 5, RULE_integer = 6, RULE_statement = 7, 
+		RULE_pause = 8, RULE_variableStatement = 9, RULE_variableDeclarationAndAssignment = 10, 
+		RULE_variableDeclation = 11;
 	public static final String[] ruleNames = {
-		"program", "programElements", "expression", "assignment", "literal", "integer", 
-		"statement", "pause"
+		"program", "programElements", "topExpression", "expression", "variableAssignment", 
+		"literal", "integer", "statement", "pause", "variableStatement", "variableDeclarationAndAssignment", 
+		"variableDeclation"
 	};
 
 	@Override
@@ -74,7 +77,7 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(16); programElements();
+			setState(24); programElements();
 			}
 		}
 		catch (RecognitionException re) {
@@ -90,20 +93,20 @@ public class DuroParser extends Parser {
 
 	public static class ProgramElementsContext extends ParserRuleContext {
 		public List<TerminalNode> SEMICOLON() { return getTokens(DuroParser.SEMICOLON); }
+		public List<TopExpressionContext> topExpression() {
+			return getRuleContexts(TopExpressionContext.class);
+		}
 		public TerminalNode SEMICOLON(int i) {
 			return getToken(DuroParser.SEMICOLON, i);
 		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
+		public TopExpressionContext topExpression(int i) {
+			return getRuleContext(TopExpressionContext.class,i);
 		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
 		public List<StatementContext> statement() {
 			return getRuleContexts(StatementContext.class);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
 		}
 		public ProgramElementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -131,32 +134,33 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(26);
+			setState(34);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << KW_VAR) | (1L << KW_PAUSE))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << ID))) != 0)) {
 				{
 				{
-				setState(20);
+				setState(28);
 				switch (_input.LA(1)) {
 				case INT:
-				case KW_VAR:
+				case ID:
 					{
-					setState(18); expression();
+					setState(26); topExpression();
 					}
 					break;
+				case KW_VAR:
 				case KW_PAUSE:
 					{
-					setState(19); statement();
+					setState(27); statement();
 					}
 					break;
 				default:
 					throw new NoViableAltException(this);
 				}
-				setState(22); match(SEMICOLON);
+				setState(30); match(SEMICOLON);
 				}
 				}
-				setState(28);
+				setState(36);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -173,9 +177,52 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
+	public static class TopExpressionContext extends ParserRuleContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TopExpressionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_topExpression; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterTopExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitTopExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitTopExpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final TopExpressionContext topExpression() throws RecognitionException {
+		TopExpressionContext _localctx = new TopExpressionContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_topExpression);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(37); expression();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static class ExpressionContext extends ParserRuleContext {
-		public AssignmentContext assignment() {
-			return getRuleContext(AssignmentContext.class,0);
+		public VariableAssignmentContext variableAssignment() {
+			return getRuleContext(VariableAssignmentContext.class,0);
 		}
 		public LiteralContext literal() {
 			return getRuleContext(LiteralContext.class,0);
@@ -201,20 +248,20 @@ public class DuroParser extends Parser {
 
 	public final ExpressionContext expression() throws RecognitionException {
 		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_expression);
+		enterRule(_localctx, 6, RULE_expression);
 		try {
-			setState(31);
+			setState(41);
 			switch (_input.LA(1)) {
-			case KW_VAR:
+			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(29); assignment();
+				setState(39); variableAssignment();
 				}
 				break;
 			case INT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(30); literal();
+				setState(40); literal();
 				}
 				break;
 			default:
@@ -232,42 +279,40 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class AssignmentContext extends ParserRuleContext {
+	public static class VariableAssignmentContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
 		public TerminalNode EQUALS() { return getToken(DuroParser.EQUALS, 0); }
-		public TerminalNode KW_VAR() { return getToken(DuroParser.KW_VAR, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public AssignmentContext(ParserRuleContext parent, int invokingState) {
+		public VariableAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assignment; }
+		@Override public int getRuleIndex() { return RULE_variableAssignment; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterAssignment(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableAssignment(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitAssignment(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableAssignment(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitAssignment(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableAssignment(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final AssignmentContext assignment() throws RecognitionException {
-		AssignmentContext _localctx = new AssignmentContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_assignment);
+	public final VariableAssignmentContext variableAssignment() throws RecognitionException {
+		VariableAssignmentContext _localctx = new VariableAssignmentContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_variableAssignment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(33); match(KW_VAR);
-			setState(34); match(ID);
-			setState(35); match(EQUALS);
-			setState(36); expression();
+			setState(43); match(ID);
+			setState(44); match(EQUALS);
+			setState(45); expression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -306,11 +351,11 @@ public class DuroParser extends Parser {
 
 	public final LiteralContext literal() throws RecognitionException {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_literal);
+		enterRule(_localctx, 10, RULE_literal);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38); integer();
+			setState(47); integer();
 			}
 		}
 		catch (RecognitionException re) {
@@ -347,11 +392,11 @@ public class DuroParser extends Parser {
 
 	public final IntegerContext integer() throws RecognitionException {
 		IntegerContext _localctx = new IntegerContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_integer);
+		enterRule(_localctx, 12, RULE_integer);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(40); match(INT);
+			setState(49); match(INT);
 			}
 		}
 		catch (RecognitionException re) {
@@ -366,6 +411,9 @@ public class DuroParser extends Parser {
 	}
 
 	public static class StatementContext extends ParserRuleContext {
+		public VariableStatementContext variableStatement() {
+			return getRuleContext(VariableStatementContext.class,0);
+		}
 		public PauseContext pause() {
 			return getRuleContext(PauseContext.class,0);
 		}
@@ -390,11 +438,24 @@ public class DuroParser extends Parser {
 
 	public final StatementContext statement() throws RecognitionException {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_statement);
+		enterRule(_localctx, 14, RULE_statement);
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(42); pause();
+			setState(53);
+			switch (_input.LA(1)) {
+			case KW_PAUSE:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(51); pause();
+				}
+				break;
+			case KW_VAR:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(52); variableStatement();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -431,11 +492,161 @@ public class DuroParser extends Parser {
 
 	public final PauseContext pause() throws RecognitionException {
 		PauseContext _localctx = new PauseContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_pause);
+		enterRule(_localctx, 16, RULE_pause);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(44); match(KW_PAUSE);
+			setState(55); match(KW_PAUSE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class VariableStatementContext extends ParserRuleContext {
+		public VariableDeclationContext variableDeclation() {
+			return getRuleContext(VariableDeclationContext.class,0);
+		}
+		public VariableDeclarationAndAssignmentContext variableDeclarationAndAssignment() {
+			return getRuleContext(VariableDeclarationAndAssignmentContext.class,0);
+		}
+		public VariableStatementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_variableStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableStatement(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final VariableStatementContext variableStatement() throws RecognitionException {
+		VariableStatementContext _localctx = new VariableStatementContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_variableStatement);
+		try {
+			setState(59);
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(57); variableDeclarationAndAssignment();
+				}
+				break;
+
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(58); variableDeclation();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class VariableDeclarationAndAssignmentContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
+		public TerminalNode EQUALS() { return getToken(DuroParser.EQUALS, 0); }
+		public TerminalNode KW_VAR() { return getToken(DuroParser.KW_VAR, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public VariableDeclarationAndAssignmentContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_variableDeclarationAndAssignment; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableDeclarationAndAssignment(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableDeclarationAndAssignment(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableDeclarationAndAssignment(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final VariableDeclarationAndAssignmentContext variableDeclarationAndAssignment() throws RecognitionException {
+		VariableDeclarationAndAssignmentContext _localctx = new VariableDeclarationAndAssignmentContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_variableDeclarationAndAssignment);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(61); match(KW_VAR);
+			setState(62); match(ID);
+			setState(63); match(EQUALS);
+			setState(64); expression();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class VariableDeclationContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
+		public TerminalNode KW_VAR() { return getToken(DuroParser.KW_VAR, 0); }
+		public VariableDeclationContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_variableDeclation; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterVariableDeclation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitVariableDeclation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitVariableDeclation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final VariableDeclationContext variableDeclation() throws RecognitionException {
+		VariableDeclationContext _localctx = new VariableDeclationContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_variableDeclation);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(66); match(KW_VAR);
+			setState(67); match(ID);
 			}
 		}
 		catch (RecognitionException re) {
@@ -450,18 +661,23 @@ public class DuroParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\13\61\4\2\t\2\4\3"+
-		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\3\3\3\5"+
-		"\3\27\n\3\3\3\3\3\7\3\33\n\3\f\3\16\3\36\13\3\3\4\3\4\5\4\"\n\4\3\5\3"+
-		"\5\3\5\3\5\3\5\3\6\3\6\3\7\3\7\3\b\3\b\3\t\3\t\3\t\2\n\2\4\6\b\n\f\16"+
-		"\20\2\2+\2\22\3\2\2\2\4\34\3\2\2\2\6!\3\2\2\2\b#\3\2\2\2\n(\3\2\2\2\f"+
-		"*\3\2\2\2\16,\3\2\2\2\20.\3\2\2\2\22\23\5\4\3\2\23\3\3\2\2\2\24\27\5\6"+
-		"\4\2\25\27\5\16\b\2\26\24\3\2\2\2\26\25\3\2\2\2\27\30\3\2\2\2\30\31\7"+
-		"\5\2\2\31\33\3\2\2\2\32\26\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\34\35\3"+
-		"\2\2\2\35\5\3\2\2\2\36\34\3\2\2\2\37\"\5\b\5\2 \"\5\n\6\2!\37\3\2\2\2"+
-		"! \3\2\2\2\"\7\3\2\2\2#$\7\6\2\2$%\7\b\2\2%&\7\3\2\2&\'\5\6\4\2\'\t\3"+
-		"\2\2\2()\5\f\7\2)\13\3\2\2\2*+\7\4\2\2+\r\3\2\2\2,-\5\20\t\2-\17\3\2\2"+
-		"\2./\7\7\2\2/\21\3\2\2\2\5\26\34!";
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\13H\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
+		"\f\t\f\4\r\t\r\3\2\3\2\3\3\3\3\5\3\37\n\3\3\3\3\3\7\3#\n\3\f\3\16\3&\13"+
+		"\3\3\4\3\4\3\5\3\5\5\5,\n\5\3\6\3\6\3\6\3\6\3\7\3\7\3\b\3\b\3\t\3\t\5"+
+		"\t8\n\t\3\n\3\n\3\13\3\13\5\13>\n\13\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3\r\3"+
+		"\r\2\16\2\4\6\b\n\f\16\20\22\24\26\30\2\2@\2\32\3\2\2\2\4$\3\2\2\2\6\'"+
+		"\3\2\2\2\b+\3\2\2\2\n-\3\2\2\2\f\61\3\2\2\2\16\63\3\2\2\2\20\67\3\2\2"+
+		"\2\229\3\2\2\2\24=\3\2\2\2\26?\3\2\2\2\30D\3\2\2\2\32\33\5\4\3\2\33\3"+
+		"\3\2\2\2\34\37\5\6\4\2\35\37\5\20\t\2\36\34\3\2\2\2\36\35\3\2\2\2\37 "+
+		"\3\2\2\2 !\7\5\2\2!#\3\2\2\2\"\36\3\2\2\2#&\3\2\2\2$\"\3\2\2\2$%\3\2\2"+
+		"\2%\5\3\2\2\2&$\3\2\2\2\'(\5\b\5\2(\7\3\2\2\2),\5\n\6\2*,\5\f\7\2+)\3"+
+		"\2\2\2+*\3\2\2\2,\t\3\2\2\2-.\7\b\2\2./\7\3\2\2/\60\5\b\5\2\60\13\3\2"+
+		"\2\2\61\62\5\16\b\2\62\r\3\2\2\2\63\64\7\4\2\2\64\17\3\2\2\2\658\5\22"+
+		"\n\2\668\5\24\13\2\67\65\3\2\2\2\67\66\3\2\2\28\21\3\2\2\29:\7\7\2\2:"+
+		"\23\3\2\2\2;>\5\26\f\2<>\5\30\r\2=;\3\2\2\2=<\3\2\2\2>\25\3\2\2\2?@\7"+
+		"\6\2\2@A\7\b\2\2AB\7\3\2\2BC\5\b\5\2C\27\3\2\2\2DE\7\6\2\2EF\7\b\2\2F"+
+		"\31\3\2\2\2\7\36$+\67=";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

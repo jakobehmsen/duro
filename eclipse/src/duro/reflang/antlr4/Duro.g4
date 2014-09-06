@@ -1,13 +1,17 @@
 grammar Duro;
 
 program: programElements;
-programElements: ((expression | statement) SEMICOLON)*;
-expression: assignment | literal;
-assignment: KW_VAR ID EQUALS expression;
+programElements: ((topExpression | statement) SEMICOLON)*;
+topExpression: expression;
+expression: variableAssignment | literal;
+variableAssignment: ID EQUALS expression;
 literal: integer;
 integer: INT;
-statement: pause;
+statement: pause | variableStatement;
 pause: KW_PAUSE;
+variableStatement: variableDeclarationAndAssignment | variableDeclation;
+variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
+variableDeclation: KW_VAR ID;
 
 EQUALS: '=';
 INT: DIGIT+;

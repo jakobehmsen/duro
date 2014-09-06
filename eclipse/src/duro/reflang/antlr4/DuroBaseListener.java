@@ -17,6 +17,32 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterExpression(@NotNull DuroParser.ExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -30,13 +56,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterAssignment(@NotNull DuroParser.AssignmentContext ctx) { }
+	@Override public void enterVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitAssignment(@NotNull DuroParser.AssignmentContext ctx) { }
+	@Override public void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -50,6 +76,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitStatement(@NotNull DuroParser.StatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -76,6 +115,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitInteger(@NotNull DuroParser.IntegerContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterTopExpression(@NotNull DuroParser.TopExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

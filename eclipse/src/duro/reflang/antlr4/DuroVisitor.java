@@ -12,6 +12,20 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableDeclation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclation(@NotNull DuroParser.VariableDeclationContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -19,11 +33,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#assignment}.
+	 * Visit a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignment(@NotNull DuroParser.AssignmentContext ctx);
+	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#statement}.
@@ -31,6 +45,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStatement(@NotNull DuroParser.StatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
@@ -45,6 +66,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInteger(@NotNull DuroParser.IntegerContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#topExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#programElements}.
