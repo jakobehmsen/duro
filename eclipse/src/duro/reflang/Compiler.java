@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
@@ -47,12 +48,7 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				String id = ctx.ID().getText();
-				Integer index = idToIndexMap.get(id);
-				if(index == null) {
-					index = idToIndexMap.size();
-					idToIndexMap.put(id, index);
-				}
+				int index = declareVariable(ctx.ID());
 				
 				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
 			}
@@ -60,11 +56,7 @@ public class Compiler {
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String id = ctx.ID().getText();
-				Integer index = idToIndexMap.get(id);
-				if(index == null) {
-					index = idToIndexMap.size();
-					idToIndexMap.put(id, index);
-				}
+				int index = idToIndexMap.get(id);
 
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_STORE, index));
@@ -72,12 +64,7 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
-				String id = ctx.ID().getText();
-				Integer index = idToIndexMap.get(id);
-				if(index == null) {
-					index = idToIndexMap.size();
-					idToIndexMap.put(id, index);
-				}
+				declareVariable(ctx.ID());
 			}
 			
 			@Override
@@ -88,6 +75,18 @@ public class Compiler {
 			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
+			}
+			
+			private int declareVariable(TerminalNode idNode) {
+				String id = idNode.getText();
+				Integer index = idToIndexMap.get(id);
+				
+				if(index == null) {
+					index = idToIndexMap.size();
+					idToIndexMap.put(id, index);
+				}
+				
+				return index;
 			}
 		}, programCtx);
 		
