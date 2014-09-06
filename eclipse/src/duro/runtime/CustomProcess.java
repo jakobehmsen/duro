@@ -1,10 +1,12 @@
 package duro.runtime;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
 import debugging.Debug;
+import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process {
 	/**
@@ -17,22 +19,32 @@ public class CustomProcess extends Process {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		public Object[] arguments;
 		public Object[] variables;
 		public final Instruction[] instructions;
 		public int instructionPointer;
 		public Stack<Object> stack = new Stack<Object>();
 		
-		public Frame(int variableCount, Instruction[] instructions) {
+		public Frame(Object[] arguments, int variableCount, Instruction[] instructions) {
+			this.arguments = arguments;
 			variables = new Object[variableCount];
 			this.instructions = instructions;
 		}
 	}
 	
 	private Frame currentFrame;
-//	private Stack<Frame> frameStack = new Stack<Frame>();
+	private Stack<Frame> frameStack = new Stack<Frame>();
 
 	public CustomProcess(int variableCount, Instruction[] instructions) {
-		currentFrame = new Frame(variableCount, instructions);
+		currentFrame = new Frame(new Object[0], variableCount, instructions);
+		
+		// HACK
+		fields.put(SymbolTable.getSymbolCodeFromId("log"), new CallFrameInfo(1, 0, new Instruction[] {
+			new Instruction(Instruction.OPCODE_LOAD_ARG, 0),
+			new Instruction(Instruction.OPCODE_SPECIAL_LOG),
+			new Instruction(Instruction.OPCODE_LOAD_NULL),
+			new Instruction(Instruction.OPCODE_RET)
+		}));
 	}
 
 	@Override
@@ -69,6 +81,39 @@ public class CustomProcess extends Process {
 				currentFrame.instructionPointer++;
 				
 				break;
+			} case Instruction.OPCODE_CALL: {
+				int symbolCode = (int)instruction.operand1;
+				int argumentCount = (int)instruction.operand2;
+				
+				Process receiver = (Process)currentFrame.stack.pop();
+				Object[] arguments = new Object[argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				
+				CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
+
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				
+				break;
+			} case Instruction.OPCODE_RET: {
+				Object result = currentFrame.stack.peek();
+				currentFrame = frameStack.pop();
+				currentFrame.stack.push(result);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_LOAD_THIS: {
+				currentFrame.stack.push(this);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_LOAD_NULL: {
+				currentFrame.stack.push(null);
+				currentFrame.instructionPointer++;
+				
+				break;
 			} case Instruction.OPCODE_LOAD_LOC: {
 				int ordinal = (int)instruction.operand1;
 				Object value = currentFrame.variables[ordinal];
@@ -76,8 +121,24 @@ public class CustomProcess extends Process {
 				currentFrame.instructionPointer++;
 				
 				break;
+			} case Instruction.OPCODE_LOAD_ARG: {
+				int ordinal = (int)instruction.operand1;
+				Object value = currentFrame.arguments[ordinal];
+				currentFrame.stack.push(value);
+				currentFrame.instructionPointer++;
+				
+				break;
 			} case Instruction.OPCODE_LOAD_INT: {
 				currentFrame.stack.push(instruction.operand1);
+				currentFrame.instructionPointer++;
+				
+				break;
+			}
+			
+			// Special opcodes
+			case Instruction.OPCODE_SPECIAL_LOG: {
+				Object value = currentFrame.stack.pop();
+				System.out.println(value);
 				currentFrame.instructionPointer++;
 				
 				break;
@@ -132,6 +193,39 @@ public class CustomProcess extends Process {
 						currentFrame.instructionPointer++;
 						
 						break;
+					} case Instruction.OPCODE_CALL: {
+						int symbolCode = (int)instruction.operand1;
+						int argumentCount = (int)instruction.operand2;
+						
+						Process receiver = (Process)currentFrame.stack.pop();
+						Object[] arguments = new Object[argumentCount];
+						
+						for(int i = argumentCount - 1; i >= 0; i--)
+							arguments[i] = currentFrame.stack.pop();
+						
+						CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
+
+						frameStack.push(currentFrame);
+						currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+						
+						break;
+					} case Instruction.OPCODE_RET: {
+						Object result = currentFrame.stack.peek();
+						currentFrame = frameStack.pop();
+						currentFrame.stack.push(result);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_LOAD_THIS: {
+						currentFrame.stack.push(this);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_LOAD_NULL: {
+						currentFrame.stack.push(null);
+						currentFrame.instructionPointer++;
+						
+						break;
 					} case Instruction.OPCODE_LOAD_LOC: {
 						int ordinal = (int)instruction.operand1;
 						Object value = currentFrame.variables[ordinal];
@@ -139,8 +233,24 @@ public class CustomProcess extends Process {
 						currentFrame.instructionPointer++;
 						
 						break;
+					} case Instruction.OPCODE_LOAD_ARG: {
+						int ordinal = (int)instruction.operand1;
+						Object value = currentFrame.arguments[ordinal];
+						currentFrame.stack.push(value);
+						currentFrame.instructionPointer++;
+						
+						break;
 					} case Instruction.OPCODE_LOAD_INT: {
 						currentFrame.stack.push(instruction.operand1);
+						currentFrame.instructionPointer++;
+						
+						break;
+					}
+					
+					// Special opcodes
+					case Instruction.OPCODE_SPECIAL_LOG: {
+						Object value = currentFrame.stack.pop();
+						System.out.println(value);
 						currentFrame.instructionPointer++;
 						
 						break;
@@ -154,5 +264,12 @@ public class CustomProcess extends Process {
 			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
 
 		Debug.println(Debug.LEVEL_HIGH, "/play");
+	}
+	
+	private Hashtable<Integer, Object> fields = new Hashtable<Integer, Object>();
+	
+	@Override
+	public CallFrameInfo getInstructions(int symbolCode) {
+		return (CallFrameInfo)fields.get(symbolCode);
 	}
 }
