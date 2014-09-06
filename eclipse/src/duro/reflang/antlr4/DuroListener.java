@@ -9,28 +9,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface DuroListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#lookup}.
-	 * @param ctx the parse tree
-	 */
-	void enterLookup(@NotNull DuroParser.LookupContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#lookup}.
-	 * @param ctx the parse tree
-	 */
-	void exitLookup(@NotNull DuroParser.LookupContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpression(@NotNull DuroParser.ExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 */
@@ -42,15 +20,26 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
+	void enterBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
+	void exitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveOperands}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveOperands}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveOperands(@NotNull DuroParser.PrimitiveOperandsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
@@ -75,6 +64,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#returnStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#returnStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#topExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -84,6 +84,94 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void enterLiteral(@NotNull DuroParser.LiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#literal}.
+	 * @param ctx the parse tree
+	 */
+	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatement(@NotNull DuroParser.StatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatement(@NotNull DuroParser.StatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#functionParameters}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#functionParameters}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#lookup}.
+	 * @param ctx the parse tree
+	 */
+	void enterLookup(@NotNull DuroParser.LookupContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#lookup}.
+	 * @param ctx the parse tree
+	 */
+	void exitLookup(@NotNull DuroParser.LookupContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpression(@NotNull DuroParser.ExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#functionDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#functionDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#programElements}.
@@ -108,17 +196,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitPause(@NotNull DuroParser.PauseContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void enterLiteral(@NotNull DuroParser.LiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#literal}.
-	 * @param ctx the parse tree
-	 */
-	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -130,15 +207,26 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#variableStatement}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+	void enterBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+	void exitBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveCall}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveCall}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#thisMessageExchange}.
@@ -163,13 +251,35 @@ public interface DuroListener extends ParseTreeListener {
 	void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#statement}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionCandidate}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement(@NotNull DuroParser.StatementContext ctx);
+	void enterBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#statement}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionCandidate}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement(@NotNull DuroParser.StatementContext ctx);
+	void exitBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#functionBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#functionBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
 }
