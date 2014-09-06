@@ -14,4 +14,6 @@ public abstract class Process implements Serializable, Player<Instruction> {
 	public abstract void replay(List<Instruction> commands);
 
 	public abstract void resume(List<Instruction> playedInstructions);
+
+	public abstract CallFrameInfo getInstructions(int symbolCode);
 }
