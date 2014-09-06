@@ -12,11 +12,11 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * Visit a parse tree produced by {@link DuroParser#lookup}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+	T visitLookup(@NotNull DuroParser.LookupContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#expression}.
@@ -31,13 +31,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement(@NotNull DuroParser.StatementContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
@@ -94,4 +87,18 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatement(@NotNull DuroParser.StatementContext ctx);
 }

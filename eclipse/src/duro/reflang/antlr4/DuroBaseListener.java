@@ -17,13 +17,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+	@Override public void enterLookup(@NotNull DuroParser.LookupContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+	@Override public void exitLookup(@NotNull DuroParser.LookupContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -50,19 +50,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterStatement(@NotNull DuroParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitStatement(@NotNull DuroParser.StatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -167,6 +154,32 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterStatement(@NotNull DuroParser.StatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitStatement(@NotNull DuroParser.StatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
