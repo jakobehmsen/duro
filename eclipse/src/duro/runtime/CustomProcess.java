@@ -41,7 +41,7 @@ public class CustomProcess extends Process {
 		// HACK
 		fields.put(SymbolTable.getSymbolCodeFromId("log"), new CallFrameInfo(1, 0, new Instruction[] {
 			new Instruction(Instruction.OPCODE_LOAD_ARG, 0),
-			new Instruction(Instruction.OPCODE_SPECIAL_LOG),
+			new Instruction(Instruction.OPCODE_SP_LOG),
 			new Instruction(Instruction.OPCODE_LOAD_NULL),
 			new Instruction(Instruction.OPCODE_RET)
 		}));
@@ -85,11 +85,12 @@ public class CustomProcess extends Process {
 				int symbolCode = (int)instruction.operand1;
 				int argumentCount = (int)instruction.operand2;
 				
-				Process receiver = (Process)currentFrame.stack.pop();
 				Object[] arguments = new Object[argumentCount];
 				
 				for(int i = argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
+				
+				Process receiver = (Process)currentFrame.stack.pop();
 				
 				CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
 
@@ -136,9 +137,37 @@ public class CustomProcess extends Process {
 			}
 			
 			// Special opcodes
-			case Instruction.OPCODE_SPECIAL_LOG: {
+			case Instruction.OPCODE_SP_LOG: {
 				Object value = currentFrame.stack.pop();
 				System.out.println(value);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_SP_ADD: {
+				int rhs = (int)currentFrame.stack.pop();
+				int lhs = (int)currentFrame.stack.pop();
+				currentFrame.stack.push(lhs + rhs);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_SP_SUB: {
+				int rhs = (int)currentFrame.stack.pop();
+				int lhs = (int)currentFrame.stack.pop();
+				currentFrame.stack.push(lhs - rhs);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_SP_MULT: {
+				int rhs = (int)currentFrame.stack.pop();
+				int lhs = (int)currentFrame.stack.pop();
+				currentFrame.stack.push(lhs * rhs);
+				currentFrame.instructionPointer++;
+				
+				break;
+			} case Instruction.OPCODE_SP_DIV: {
+				int rhs = (int)currentFrame.stack.pop();
+				int lhs = (int)currentFrame.stack.pop();
+				currentFrame.stack.push(lhs / rhs);
 				currentFrame.instructionPointer++;
 				
 				break;
@@ -196,12 +225,12 @@ public class CustomProcess extends Process {
 					} case Instruction.OPCODE_CALL: {
 						int symbolCode = (int)instruction.operand1;
 						int argumentCount = (int)instruction.operand2;
-						
-						Process receiver = (Process)currentFrame.stack.pop();
 						Object[] arguments = new Object[argumentCount];
 						
 						for(int i = argumentCount - 1; i >= 0; i--)
 							arguments[i] = currentFrame.stack.pop();
+						
+						Process receiver = (Process)currentFrame.stack.pop();
 						
 						CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
 
@@ -248,9 +277,37 @@ public class CustomProcess extends Process {
 					}
 					
 					// Special opcodes
-					case Instruction.OPCODE_SPECIAL_LOG: {
+					case Instruction.OPCODE_SP_LOG: {
 						Object value = currentFrame.stack.pop();
 						System.out.println(value);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_SP_ADD: {
+						int rhs = (int)currentFrame.stack.pop();
+						int lhs = (int)currentFrame.stack.pop();
+						currentFrame.stack.push(lhs + rhs);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_SP_SUB: {
+						int rhs = (int)currentFrame.stack.pop();
+						int lhs = (int)currentFrame.stack.pop();
+						currentFrame.stack.push(lhs - rhs);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_SP_MULT: {
+						int rhs = (int)currentFrame.stack.pop();
+						int lhs = (int)currentFrame.stack.pop();
+						currentFrame.stack.push(lhs * rhs);
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_SP_DIV: {
+						int rhs = (int)currentFrame.stack.pop();
+						int lhs = (int)currentFrame.stack.pop();
+						currentFrame.stack.push(lhs / rhs);
 						currentFrame.instructionPointer++;
 						
 						break;

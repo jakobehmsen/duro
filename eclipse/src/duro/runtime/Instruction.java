@@ -23,7 +23,11 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_ARG = 10;
 	public static final int OPCODE_LOAD_INT = 11;
 	
-	public static final int OPCODE_SPECIAL_LOG = 65;
+	public static final int OPCODE_SP_LOG = 65;
+	public static final int OPCODE_SP_ADD = 66;
+	public static final int OPCODE_SP_SUB = 67;
+	public static final int OPCODE_SP_MULT = 68;
+	public static final int OPCODE_SP_DIV = 69;
 
 	public final int opcode;
 	public final Object operand1;
