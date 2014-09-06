@@ -69,6 +69,13 @@ public class CustomProcess extends Process {
 				currentFrame.instructionPointer++;
 				
 				break;
+			} case Instruction.OPCODE_LOAD_LOC: {
+				int ordinal = (int)instruction.operand1;
+				Object value = currentFrame.variables[ordinal];
+				currentFrame.stack.push(value);
+				currentFrame.instructionPointer++;
+				
+				break;
 			} case Instruction.OPCODE_LOAD_INT: {
 				currentFrame.stack.push(instruction.operand1);
 				currentFrame.instructionPointer++;
@@ -122,6 +129,13 @@ public class CustomProcess extends Process {
 						break;
 					} case Instruction.OPCODE_POP: {
 						currentFrame.stack.pop();
+						currentFrame.instructionPointer++;
+						
+						break;
+					} case Instruction.OPCODE_LOAD_LOC: {
+						int ordinal = (int)instruction.operand1;
+						Object value = currentFrame.variables[ordinal];
+						currentFrame.stack.push(value);
 						currentFrame.instructionPointer++;
 						
 						break;
