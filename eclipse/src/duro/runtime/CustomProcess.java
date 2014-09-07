@@ -46,140 +46,7 @@ public class CustomProcess extends Process {
 			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
 			Debug.println(Debug.LEVEL_HIGH, "replay: " + instruction);
 			
-			switch(instruction.opcode) {
-			case Instruction.OPCODE_PAUSE: {
-				currentFrame.instructionPointer++;
-
-				break;
-			} case Instruction.OPCODE_FINISH: {
-				currentFrame = null;
-
-				break;
-			} case Instruction.OPCODE_DUP: {
-				currentFrame.stack.push(currentFrame.stack.peek());
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_STORE: {
-				int ordinal = (int)instruction.operand1;
-				Object value = currentFrame.stack.pop();
-				currentFrame.variables[ordinal] = value;
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_POP: {
-				currentFrame.stack.pop();
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_CALL: {
-				int symbolCode = (int)instruction.operand1;
-				int argumentCount = (int)instruction.operand2;
-				
-				Object[] arguments = new Object[argumentCount];
-				
-				for(int i = argumentCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
-				
-				Process receiver = (Process)currentFrame.stack.pop();
-				
-				CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
-
-				frameStack.push(currentFrame);
-				currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-				
-				break;
-			} case Instruction.OPCODE_RET: {
-				Object result = currentFrame.stack.peek();
-				currentFrame = frameStack.pop();
-				currentFrame.stack.push(result);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_DEF: {
-				int symbolCode = (int)instruction.operand1;
-				CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-				
-				Process receiver = (Process)currentFrame.stack.pop();
-				
-				receiver.define(symbolCode, callFrameInfo);
-				
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_THIS: {
-				currentFrame.stack.push(this);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_NULL: {
-				currentFrame.stack.push(null);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_LOC: {
-				int ordinal = (int)instruction.operand1;
-				Object value = currentFrame.variables[ordinal];
-				currentFrame.stack.push(value);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_ARG: {
-				int ordinal = (int)instruction.operand1;
-				Object value = currentFrame.arguments[ordinal];
-				currentFrame.stack.push(value);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_INT: {
-				currentFrame.stack.push(instruction.operand1);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_LOAD_FUNC: {
-				currentFrame.stack.push(instruction.operand1);
-				currentFrame.instructionPointer++;
-				
-				break;
-			}
-			
-			// Special opcodes
-			case Instruction.OPCODE_SP_LOG: {
-				Object value = currentFrame.stack.pop();
-				System.out.println(value);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_SP_ADD: {
-				int rhs = (int)currentFrame.stack.pop();
-				int lhs = (int)currentFrame.stack.pop();
-				currentFrame.stack.push(lhs + rhs);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_SP_SUB: {
-				int rhs = (int)currentFrame.stack.pop();
-				int lhs = (int)currentFrame.stack.pop();
-				currentFrame.stack.push(lhs - rhs);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_SP_MULT: {
-				int rhs = (int)currentFrame.stack.pop();
-				int lhs = (int)currentFrame.stack.pop();
-				currentFrame.stack.push(lhs * rhs);
-				currentFrame.instructionPointer++;
-				
-				break;
-			} case Instruction.OPCODE_SP_DIV: {
-				int rhs = (int)currentFrame.stack.pop();
-				int lhs = (int)currentFrame.stack.pop();
-				currentFrame.stack.push(lhs / rhs);
-				currentFrame.instructionPointer++;
-				
-				break;
-			}
-			}
+			next(instruction);
 		}
 		
 		if(currentFrame != null)
@@ -187,156 +54,170 @@ public class CustomProcess extends Process {
 		
 		Debug.println(Debug.LEVEL_HIGH, "/replay");
 	}
+	
+	private boolean stopRequested;
+	
+	private void next(Instruction instruction) {
+		switch(instruction.opcode) {
+		case Instruction.OPCODE_PAUSE: {
+			stopRequested = true;
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_INC_IP: {
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_FINISH: {
+			stopRequested = true;
+			currentFrame = null;
+			
+			break;
+		} case Instruction.OPCODE_DUP: {
+			currentFrame.stack.push(currentFrame.stack.peek());
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_STORE: {
+			int ordinal = (int)instruction.operand1;
+			Object value = currentFrame.stack.pop();
+			currentFrame.variables[ordinal] = value;
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_POP: {
+			currentFrame.stack.pop();
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_CALL: {
+			int symbolCode = (int)instruction.operand1;
+			int argumentCount = (int)instruction.operand2;
+			Object[] arguments = new Object[argumentCount];
+			
+			for(int i = argumentCount - 1; i >= 0; i--)
+				arguments[i] = currentFrame.stack.pop();
+			
+			Process receiver = (Process)currentFrame.stack.pop();
+			
+			CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
+
+			frameStack.push(currentFrame);
+			currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			
+			break;
+		} case Instruction.OPCODE_RET: {
+			Object result = currentFrame.stack.peek();
+			currentFrame = frameStack.pop();
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_DEF: {
+			int symbolCode = (int)instruction.operand1;
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			
+			Process receiver = (Process)currentFrame.stack.pop();
+			
+			receiver.define(symbolCode, callFrameInfo);
+			
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_THIS: {
+			currentFrame.stack.push(this);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_NULL: {
+			currentFrame.stack.push(null);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_LOC: {
+			int ordinal = (int)instruction.operand1;
+			Object value = currentFrame.variables[ordinal];
+			currentFrame.stack.push(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_ARG: {
+			int ordinal = (int)instruction.operand1;
+			Object value = currentFrame.arguments[ordinal];
+			currentFrame.stack.push(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_INT: {
+			currentFrame.stack.push(instruction.operand1);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_FUNC: {
+			currentFrame.stack.push(instruction.operand1);
+			currentFrame.instructionPointer++;
+			
+			break;
+		}
+		
+		// Special opcodes
+		case Instruction.OPCODE_SP_LOG: {
+			Object value = currentFrame.stack.pop();
+			System.out.println(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_ADD: {
+			int rhs = (int)currentFrame.stack.pop();
+			int lhs = (int)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs + rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_SUB: {
+			int rhs = (int)currentFrame.stack.pop();
+			int lhs = (int)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs - rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_MULT: {
+			int rhs = (int)currentFrame.stack.pop();
+			int lhs = (int)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs * rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_DIV: {
+			int rhs = (int)currentFrame.stack.pop();
+			int lhs = (int)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs / rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		}
+		}
+	}
 
 	@Override
 	public void resume(List<Instruction> playedInstructions) {
 		Debug.println(Debug.LEVEL_HIGH, "play");
 		
 		if(currentFrame != null) {
-			boolean stopRequested = false;
-			
-			checkStopeRequest:
-			if(!stopRequested) {
-				while(true) {
-					Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
+			while(!stopRequested) {
+				Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
+				switch(instruction.opcode) {
+				case Instruction.OPCODE_PAUSE:
+					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
+					break;
+				default:
 					playedInstructions.add(instruction);
-					Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
-					Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
-					
-					switch(instruction.opcode) {
-					case Instruction.OPCODE_PAUSE: {
-						stopRequested = true;
-						currentFrame.instructionPointer++;
-						break checkStopeRequest;
-					} case Instruction.OPCODE_FINISH: {
-						stopRequested = true;
-						currentFrame = null;
-						break checkStopeRequest;
-					} case Instruction.OPCODE_DUP: {
-						currentFrame.stack.push(currentFrame.stack.peek());
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_STORE: {
-						int ordinal = (int)instruction.operand1;
-						Object value = currentFrame.stack.pop();
-						currentFrame.variables[ordinal] = value;
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_POP: {
-						currentFrame.stack.pop();
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_CALL: {
-						int symbolCode = (int)instruction.operand1;
-						int argumentCount = (int)instruction.operand2;
-						Object[] arguments = new Object[argumentCount];
-						
-						for(int i = argumentCount - 1; i >= 0; i--)
-							arguments[i] = currentFrame.stack.pop();
-						
-						Process receiver = (Process)currentFrame.stack.pop();
-						
-						CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
-
-						frameStack.push(currentFrame);
-						currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-						
-						break;
-					} case Instruction.OPCODE_RET: {
-						Object result = currentFrame.stack.peek();
-						currentFrame = frameStack.pop();
-						currentFrame.stack.push(result);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_DEF: {
-						int symbolCode = (int)instruction.operand1;
-						CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-						
-						Process receiver = (Process)currentFrame.stack.pop();
-						
-						receiver.define(symbolCode, callFrameInfo);
-						
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_THIS: {
-						currentFrame.stack.push(this);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_NULL: {
-						currentFrame.stack.push(null);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_LOC: {
-						int ordinal = (int)instruction.operand1;
-						Object value = currentFrame.variables[ordinal];
-						currentFrame.stack.push(value);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_ARG: {
-						int ordinal = (int)instruction.operand1;
-						Object value = currentFrame.arguments[ordinal];
-						currentFrame.stack.push(value);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_INT: {
-						currentFrame.stack.push(instruction.operand1);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_LOAD_FUNC: {
-						currentFrame.stack.push(instruction.operand1);
-						currentFrame.instructionPointer++;
-						
-						break;
-					}
-					
-					// Special opcodes
-					case Instruction.OPCODE_SP_LOG: {
-						Object value = currentFrame.stack.pop();
-						System.out.println(value);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_SP_ADD: {
-						int rhs = (int)currentFrame.stack.pop();
-						int lhs = (int)currentFrame.stack.pop();
-						currentFrame.stack.push(lhs + rhs);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_SP_SUB: {
-						int rhs = (int)currentFrame.stack.pop();
-						int lhs = (int)currentFrame.stack.pop();
-						currentFrame.stack.push(lhs - rhs);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_SP_MULT: {
-						int rhs = (int)currentFrame.stack.pop();
-						int lhs = (int)currentFrame.stack.pop();
-						currentFrame.stack.push(lhs * rhs);
-						currentFrame.instructionPointer++;
-						
-						break;
-					} case Instruction.OPCODE_SP_DIV: {
-						int rhs = (int)currentFrame.stack.pop();
-						int lhs = (int)currentFrame.stack.pop();
-						currentFrame.stack.push(lhs / rhs);
-						currentFrame.instructionPointer++;
-						
-						break;
-					}
-					}
+					break;
 				}
+				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+				
+				next(instruction);
 			}
 		}
 		
