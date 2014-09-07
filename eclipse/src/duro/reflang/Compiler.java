@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -21,8 +22,11 @@ import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
+import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
+import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
+import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
@@ -192,6 +196,11 @@ public class Compiler {
 			}
 			
 			@Override
+			public void exitReturnStatement(ReturnStatementContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_RET));
+			}
+			
+			@Override
 			public void enterFunctionDefinition(FunctionDefinitionContext ctx) {
 				walker.suspendWalkWithin(ctx);
 			}
@@ -247,14 +256,45 @@ public class Compiler {
 				}
 			}
 			
+			private Stack<Integer> conditionalJumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> jumpIndexStack = new Stack<Integer>();
+			
 			@Override
-			public void exitTopExpression(TopExpressionContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
+			public void exitIfStatementCondition(IfStatementConditionContext ctx) {
+				// After condition is generated, then a conditional jump should be generated
+				// Leave a spot allocated here and write to it later
+				int conditionalJumpIndex = instructions.size();
+				conditionalJumpIndexStack.push(conditionalJumpIndex);
+				instructions.add(null);
 			}
 			
 			@Override
-			public void exitReturnStatement(ReturnStatementContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_RET));
+			public void exitIfStatementOnTrue(IfStatementOnTrueContext ctx) {
+				// After statement on true is generated, then a jump should be generated
+				// Leave a spot allocated here and write to it later
+				int jumpIndex = instructions.size();
+				jumpIndexStack.push(jumpIndex);
+				instructions.add(null);
+
+				int conditionalJumpIndex = conditionalJumpIndexStack.pop();
+				// Now, the spot allocated for a conditional jump can be populated
+				int elseStartIndex = instructions.size();
+				int jump = elseStartIndex - conditionalJumpIndex;
+				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, jump));
+			}
+			
+			@Override
+			public void exitElseStatement(ElseStatementContext ctx) {
+				int jumpIndex = jumpIndexStack.pop();
+				// Now, the spot allocated for a jump can be populated
+				int elseEndIndex = instructions.size();
+				int jump = elseEndIndex - jumpIndex;
+				instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, jump));
+			}
+			
+			@Override
+			public void exitTopExpression(TopExpressionContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
 			private int declareVariable(TerminalNode idNode) {
