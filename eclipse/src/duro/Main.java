@@ -34,7 +34,9 @@ public class Main {
 				inputStream = new FileInputStream(sourceCodePath);
 				duro.runtime.Process process = duro.reflang.Compiler.compile(inputStream);
 				Journal.write(process, journalPath);
+				System.out.println("Compiled '" + sourceCodePath + "' into '" + journalPath + "'.");
 			} catch (IOException e) {
+				System.out.println("Compilation failed.");
 				e.printStackTrace();
 			}
 			break;
