@@ -44,6 +44,9 @@ import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationAndAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
+import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
+import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
+import duro.reflang.antlr4.DuroParser.WhileStatementContext;
 import duro.runtime.CallFrameInfo;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
@@ -289,15 +292,15 @@ public class Compiler {
 				}
 			}
 			
-			private Stack<Integer> conditionalJumpIndexStack = new Stack<Integer>();
-			private Stack<Integer> jumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> ifJumpIndexStack = new Stack<Integer>();
 			
 			@Override
 			public void exitIfStatementCondition(IfStatementConditionContext ctx) {
 				// After condition is generated, then a conditional jump should be generated
 				// Leave a spot allocated here and write to it later
 				int conditionalJumpIndex = instructions.size();
-				conditionalJumpIndexStack.push(conditionalJumpIndex);
+				ifConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
 			}
 			
@@ -306,23 +309,55 @@ public class Compiler {
 				// After statement on true is generated, then a jump should be generated
 				// Leave a spot allocated here and write to it later
 				int jumpIndex = instructions.size();
-				jumpIndexStack.push(jumpIndex);
+				ifJumpIndexStack.push(jumpIndex);
 				instructions.add(null);
 
-				int conditionalJumpIndex = conditionalJumpIndexStack.pop();
+				int conditionalJumpIndex = ifConditionalJumpIndexStack.pop();
 				// Now, the spot allocated for a conditional jump can be populated
-				int elseStartIndex = instructions.size();
-				int jump = elseStartIndex - conditionalJumpIndex;
+				int ifEndIndex = instructions.size();
+				int jump = ifEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, jump));
 			}
 			
 			@Override
 			public void exitElseStatement(ElseStatementContext ctx) {
-				int jumpIndex = jumpIndexStack.pop();
+				int jumpIndex = ifJumpIndexStack.pop();
 				// Now, the spot allocated for a jump can be populated
 				int elseEndIndex = instructions.size();
 				int jump = elseEndIndex - jumpIndex;
 				instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, jump));
+			}
+			
+			private Stack<Integer> whileConditionalJumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> whileJumpIndexStack = new Stack<Integer>();
+			
+			@Override
+			public void enterWhileStatement(WhileStatementContext ctx) {
+				int jumpIndex = instructions.size();
+				whileJumpIndexStack.push(jumpIndex);
+			}
+			
+			@Override
+			public void exitWhileStatementCondition(WhileStatementConditionContext ctx) {
+				int conditionalJumpIndex = instructions.size();
+				whileConditionalJumpIndexStack.push(conditionalJumpIndex);
+				instructions.add(null);
+			}
+			
+			@Override
+			public void exitWhileStatementBody(WhileStatementBodyContext ctx) {
+				int jumpIndex = whileJumpIndexStack.pop();
+				int whileBodyEndIndex = instructions.size();
+				int jump = jumpIndex - whileBodyEndIndex;
+				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+			}
+			
+			@Override
+			public void exitWhileStatement(WhileStatementContext ctx) {
+				int whileEndIndex = instructions.size();
+				int conditionalJumpIndex = whileConditionalJumpIndexStack.pop();
+				int conditionalJump = whileEndIndex - conditionalJumpIndex;
+				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 			}
 			
 			@Override
