@@ -35,6 +35,7 @@ import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
+import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
@@ -187,6 +188,19 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE, value));
 				else
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE, value));
+			}
+			
+			@Override
+			public void enterString(StringContext ctx) {
+				String rawString = ctx.getText();
+				// Should the string enter properly prepared?
+				// - i.e., no need for filtering the string.
+				String string = rawString.substring(1, rawString.length() - 1)
+					.replace("\\n", "\n")
+					.replace("\\r", "\r")
+					.replace("\\t", "\t");
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 			}
 			
 			@Override
