@@ -163,6 +163,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#operationChain}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperationChain(@NotNull DuroParser.OperationChainContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#operationChain}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperationChain(@NotNull DuroParser.OperationChainContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionParameters}.
 	 * @param ctx the parse tree
 	 */
@@ -218,6 +229,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#propertySet}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropertySet(@NotNull DuroParser.PropertySetContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#propertySet}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropertySet(@NotNull DuroParser.PropertySetContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
 	 * @param ctx the parse tree
 	 */
@@ -249,6 +271,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#propertyGet}.
+	 * @param ctx the parse tree
+	 */
+	void enterPropertyGet(@NotNull DuroParser.PropertyGetContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#propertyGet}.
+	 * @param ctx the parse tree
+	 */
+	void exitPropertyGet(@NotNull DuroParser.PropertyGetContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpression2Application}.
@@ -348,6 +381,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#self}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelf(@NotNull DuroParser.SelfContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#self}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelf(@NotNull DuroParser.SelfContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#undelimitedStatement}.

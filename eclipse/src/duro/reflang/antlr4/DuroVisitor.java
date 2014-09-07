@@ -110,6 +110,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#operationChain}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperationChain(@NotNull DuroParser.OperationChainContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -145,6 +152,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#propertySet}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPropertySet(@NotNull DuroParser.PropertySetContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -164,6 +178,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#propertyGet}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPropertyGet(@NotNull DuroParser.PropertyGetContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpression2Application}.
@@ -227,6 +248,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#self}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSelf(@NotNull DuroParser.SelfContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#undelimitedStatement}.

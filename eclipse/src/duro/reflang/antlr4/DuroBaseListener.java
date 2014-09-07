@@ -199,6 +199,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterOperationChain(@NotNull DuroParser.OperationChainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitOperationChain(@NotNull DuroParser.OperationChainContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -264,6 +277,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterPropertySet(@NotNull DuroParser.PropertySetContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitPropertySet(@NotNull DuroParser.PropertySetContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -297,6 +323,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterPropertyGet(@NotNull DuroParser.PropertyGetContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitPropertyGet(@NotNull DuroParser.PropertyGetContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -414,6 +453,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterSelf(@NotNull DuroParser.SelfContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSelf(@NotNull DuroParser.SelfContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
