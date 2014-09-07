@@ -158,6 +158,16 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_LOAD_TRUE: {
+			currentFrame.stack.push(true);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_FALSE: {
+			currentFrame.stack.push(false);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
