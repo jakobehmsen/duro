@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
-import debugging.Debug;
+import duro.debugging.Debug;
 import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process {

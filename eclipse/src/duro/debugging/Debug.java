@@ -1,4 +1,4 @@
-package debugging;
+package duro.debugging;
 
 public class Debug {
 	public static final int LEVEL_LOW = 0;
