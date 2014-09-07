@@ -134,6 +134,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterLiteral(@NotNull DuroParser.LiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -245,6 +258,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitLookup(@NotNull DuroParser.LookupContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -388,6 +414,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterWhileStatement(@NotNull DuroParser.WhileStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

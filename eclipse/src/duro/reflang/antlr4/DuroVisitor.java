@@ -75,6 +75,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#whileStatementBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -136,6 +143,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLookup(@NotNull DuroParser.LookupContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#whileStatementCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#expression}.
@@ -213,6 +227,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#whileStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#primitiveCall}.

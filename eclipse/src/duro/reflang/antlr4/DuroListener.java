@@ -108,6 +108,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#whileStatementBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#whileStatementBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 */
@@ -205,6 +216,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLookup(@NotNull DuroParser.LookupContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#whileStatementCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#whileStatementCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#expression}.
@@ -326,6 +348,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#whileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhileStatement(@NotNull DuroParser.WhileStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#whileStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#primitiveCall}.
