@@ -18,4 +18,6 @@ public abstract class Process implements Serializable, Player<Instruction> {
 	public abstract CallFrameInfo getInstructions(int symbolCode);
 
 	public abstract void define(int symbolCode, Object value);
+
+	public abstract Object lookup(int symbolCode);
 }
