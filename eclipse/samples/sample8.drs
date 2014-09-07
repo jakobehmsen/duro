@@ -1,0 +1,15 @@
+/*
+A couple of usages of while statements.
+*/
+
+function log(x) {
+	#{
+		load_arg :0
+		sp_log
+	}
+}
+
+while(true) {
+	log("hello");
+	pause;
+}
