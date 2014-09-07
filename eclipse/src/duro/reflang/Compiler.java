@@ -46,94 +46,9 @@ public class Compiler {
 		DuroParser parser = new DuroParser(tokenStream);
 		
 		ProgramContext programCtx = parser.program();
-
-//		final Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
-//		final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-//		
-//		final ConditionalTreeWalker walker = new ConditionalTreeWalker();
-//		
-//		walker.walk(new DuroBaseListener() {
-//			@Override
-//			public void exitVariableAssignment(VariableAssignmentContext ctx) {
-//				String id = ctx.ID().getText();
-//				int ordinal = idToOrdinalMap.get(id);
-//
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
-//			}
-//			
-//			@Override
-//			public void enterLookup(LookupContext ctx) {
-//				String id = ctx.ID().getText();
-//				int ordinal = idToOrdinalMap.get(id);
-//				
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
-//			}
-//			
-//			@Override
-//			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
-//				String id = ctx.messageExchange().ID().getText();
-//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
-//				int argumentCount = ctx.messageExchange().expression().size();
-//
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-//				instructions.add(new Instruction(Instruction.OPCODE_CALL, symbolCode, argumentCount));
-//			}
-//			
-//			@Override
-//			public void enterInteger(IntegerContext ctx) {
-//				int value = Integer.parseInt(ctx.INT().getText());
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
-//			}
-//			
-//			@Override
-//			public void enterPause(PauseContext ctx) {
-//				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
-//			}
-//			
-//			@Override
-//			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-//				int ordinal = declareVariable(ctx.ID());
-//				
-//				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
-//			}
-//			
-//			@Override
-//			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
-//				declareVariable(ctx.ID());
-//			}
-//			
-//			@Override
-//			public void enterFunction(FunctionContext ctx) {
-//				insideFunction = true;
-//				// TODO Auto-generated method stub
-//				super.enterFunction(ctx);
-//			}
-//			
-//			@Override
-//			public void exitTopExpression(TopExpressionContext ctx) {
-//				instructions.add(new Instruction(Instruction.OPCODE_POP));
-//			}
-//			
-//			private int declareVariable(TerminalNode idNode) {
-//				String id = idNode.getText();
-//				Integer ordinal = idToOrdinalMap.get(id);
-//				
-//				if(ordinal == null) {
-//					ordinal = idToOrdinalMap.size();
-//					idToOrdinalMap.put(id, ordinal);
-//				}
-//				
-//				return ordinal;
-//			}
-//		}, programCtx);
-		
 		
 		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx);
-		
-//		// Add finish instruction to the end
-//		bodyInfo.instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return new CustomProcess(bodyInfo.idToOrdinalMap.size(), bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
@@ -174,6 +89,7 @@ public class Compiler {
 			
 			@Override
 			public void exitBinaryExpression(BinaryExpressionContext ctx) {
+				// Should this be translated into a message exchange?
 //				appendMessageExchange(ctx.BIN_OP(), 1);
 
 				int binaryOpCode;
@@ -350,8 +266,6 @@ public class Compiler {
 		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
 		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions), tree);
-		
-//		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return new BodyInfo(idToOrdinalMap, instructions);
 	}
