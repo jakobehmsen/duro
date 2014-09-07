@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
+import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process {
 	/**
@@ -91,7 +92,9 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_CALL: {
-			int symbolCode = (int)instruction.operand1;
+			String id = (String)instruction.operand1;
+			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+//			int symbolCode = (int)instruction.operand1;
 			int argumentCount = (int)instruction.operand2;
 			Object[] arguments = new Object[argumentCount];
 			
@@ -114,7 +117,8 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_DEF: {
-			int symbolCode = (int)instruction.operand1;
+			String id = (String)instruction.operand1;
+			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 			
 			Process receiver = (Process)currentFrame.stack.pop();
@@ -136,6 +140,25 @@ public class CustomProcess extends Process {
 		} case Instruction.OPCODE_JUMP: {
 			int jump = (int)instruction.operand1;
 			currentFrame.instructionPointer += jump;
+			
+			break;
+		} case Instruction.OPCODE_SET: {
+			Object value = currentFrame.stack.pop();
+			Object index = currentFrame.stack.pop(); // Assumed to be string only
+			Process receiver = (Process)currentFrame.stack.pop();
+			int symbolCode = SymbolTable.getSymbolCodeFromId((String)index);
+			receiver.define(symbolCode, value);
+			currentFrame.stack.push(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_GET: {
+			Object index = currentFrame.stack.pop(); // Assumed to be string only
+			Process receiver = (Process)currentFrame.stack.pop();
+			int symbolCode = SymbolTable.getSymbolCodeFromId((String)index);
+			Object value = receiver.lookup(symbolCode);
+			currentFrame.stack.push(value);
+			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -257,15 +280,20 @@ public class CustomProcess extends Process {
 		Debug.println(Debug.LEVEL_HIGH, "/play");
 	}
 	
-	private Hashtable<Integer, Object> fields = new Hashtable<Integer, Object>();
+	private Hashtable<Integer, Object> properties = new Hashtable<Integer, Object>();
 	
 	@Override
 	public CallFrameInfo getInstructions(int symbolCode) {
-		return (CallFrameInfo)fields.get(symbolCode);
+		return (CallFrameInfo)properties.get(symbolCode);
 	}
 	
 	@Override
 	public void define(int symbolCode, Object value) {
-		fields.put(symbolCode, value);
+		properties.put(symbolCode, value);
+	}
+
+	@Override
+	public Object lookup(int symbolCode) {
+		return properties.get(symbolCode);
 	}
 }
