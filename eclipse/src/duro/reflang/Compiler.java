@@ -34,7 +34,10 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.PropertyGetContext;
+import duro.reflang.antlr4.DuroParser.PropertySetContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
+import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
@@ -169,9 +172,9 @@ public class Compiler {
 			
 			private void appendMessageExchange(TerminalNode node, int argumentCount) {
 				String id = node.getText();
-				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 				
-				instructions.add(new Instruction(Instruction.OPCODE_CALL, symbolCode, argumentCount));
+				instructions.add(new Instruction(Instruction.OPCODE_CALL, id, argumentCount));
 			}
 			
 			@Override
@@ -201,6 +204,11 @@ public class Compiler {
 					.replace("\\t", "\t");
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
+			}
+			
+			@Override
+			public void enterSelf(SelfContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			}
 			
 			@Override
@@ -240,13 +248,13 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
 				String id = ctx.ID().getText();
-				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
-				instructions.add(new Instruction(Instruction.OPCODE_DEF, symbolCode));
+				instructions.add(new Instruction(Instruction.OPCODE_DEF, id));
 			}
 			
 			@Override
@@ -315,6 +323,16 @@ public class Compiler {
 				int elseEndIndex = instructions.size();
 				int jump = elseEndIndex - jumpIndex;
 				instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, jump));
+			}
+			
+			@Override
+			public void exitPropertySet(PropertySetContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
+			}
+			
+			@Override
+			public void exitPropertyGet(PropertyGetContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_GET));
 			}
 			
 			@Override
