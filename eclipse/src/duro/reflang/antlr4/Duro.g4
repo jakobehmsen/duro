@@ -1,7 +1,8 @@
 grammar Duro;
 
 program: programElements;
-programElements: (((topExpression | delimitedStatement) SEMICOLON | undelimitedStatement))*;
+programElements: programElement*;
+programElement: (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
 topExpression: expression;
 expression: binaryExpressionCandidate;
 binaryExpressionCandidate: binaryExpression | binaryExpressionOperand;
@@ -31,9 +32,9 @@ ifStatement:
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;
 ifStatementCondition: expression;
-ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA;
+ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA | programElement;
 elseStatement: (KW_ELSE ifStatementOnFalse)?;
-ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | ifStatement;
+ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | programElement;
 
 BIN_OP: '+'|'-'|'*'|'/';
 HASH: '#';

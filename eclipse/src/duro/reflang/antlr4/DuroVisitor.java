@@ -75,6 +75,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableStatement(@NotNull DuroParser.VariableStatementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#programElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgramElement(@NotNull DuroParser.ProgramElementContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

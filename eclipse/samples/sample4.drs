@@ -55,6 +55,7 @@ if(t1) {
 }
 */
 
+/*
 var t1 = false;
 var t2 = true;
 
@@ -63,3 +64,15 @@ if(t1) {
 } else if(t2) {
 	log(2);
 }
+*/
+
+if(false)
+	if(false)
+		log(1);
+	else
+		log(2);
+else
+	if(false)
+		log(3);
+	else
+		log(4);
