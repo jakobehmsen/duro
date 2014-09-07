@@ -9,8 +9,6 @@ import duro.transcriber.Journal;
 
 public class Main {
 	public static void main(String[] args) {
-		// Given a path (args[0]), continue the process at that path.
-		
 		String command = args[0];
 		
 		switch(command.toLowerCase()) {
