@@ -20,6 +20,7 @@ import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionContext;
+import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
@@ -161,6 +162,16 @@ public class Compiler {
 			public void enterInteger(IntegerContext ctx) {
 				int value = Integer.parseInt(ctx.INT().getText());
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+			}
+			
+			@Override
+			public void enterBool(BoolContext ctx) {
+				boolean value = Boolean.parseBoolean(ctx.getText());
+				
+				if(value)
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE, value));
+				else
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE, value));
 			}
 			
 			@Override
