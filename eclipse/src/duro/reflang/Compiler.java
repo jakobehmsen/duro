@@ -20,7 +20,8 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
-import duro.reflang.antlr4.DuroParser.BinaryExpressionContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpression1ApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpression2ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
@@ -93,19 +94,29 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitBinaryExpression(BinaryExpressionContext ctx) {
-				// Should this be translated into a message exchange?
-//				appendMessageExchange(ctx.BIN_OP(), 1);
-
+			public void exitBinaryExpression1Application(BinaryExpression1ApplicationContext ctx) {
 				int binaryOpCode;
 				
-				switch(ctx.BIN_OP().getText()) {
+				switch(ctx.BIN_OP1().getText()) {
 				case "+":
 					binaryOpCode = Instruction.OPCODE_SP_ADD;
 					break;
 				case "-":
 					binaryOpCode = Instruction.OPCODE_SP_SUB;
 					break;
+				default:
+					binaryOpCode = -1;
+					break;
+				}
+				
+				instructions.add(new Instruction(binaryOpCode));
+			}
+			
+			@Override
+			public void exitBinaryExpression2Application(BinaryExpression2ApplicationContext ctx) {
+				int binaryOpCode;
+				
+				switch(ctx.BIN_OP2().getText()) {
 				case "*":
 					binaryOpCode = Instruction.OPCODE_SP_MULT;
 					break;

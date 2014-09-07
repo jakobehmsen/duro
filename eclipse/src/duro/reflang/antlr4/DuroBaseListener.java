@@ -30,6 +30,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBinaryExpression1(@NotNull DuroParser.BinaryExpression1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryExpression1(@NotNull DuroParser.BinaryExpression1Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterBool(@NotNull DuroParser.BoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -43,13 +56,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx) { }
+	@Override public void enterBinaryExpression2(@NotNull DuroParser.BinaryExpression2Context ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx) { }
+	@Override public void exitBinaryExpression2(@NotNull DuroParser.BinaryExpression2Context ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -277,6 +290,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBinaryExpression2Application(@NotNull DuroParser.BinaryExpression2ApplicationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryExpression2Application(@NotNull DuroParser.BinaryExpression2ApplicationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterProgramElements(@NotNull DuroParser.ProgramElementsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,19 +342,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -336,6 +349,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBinaryExpression1Application(@NotNull DuroParser.BinaryExpression1ApplicationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryExpression1Application(@NotNull DuroParser.BinaryExpression1ApplicationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -375,19 +401,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -440,6 +453,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBinaryExpression2Operand(@NotNull DuroParser.BinaryExpression2OperandContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryExpression2Operand(@NotNull DuroParser.BinaryExpression2OperandContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

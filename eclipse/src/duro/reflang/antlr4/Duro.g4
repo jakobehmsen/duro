@@ -4,10 +4,15 @@ program: programElements;
 programElements: programElement*;
 programElement: (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
 topExpression: expression;
-expression: binaryExpressionCandidate;
-binaryExpressionCandidate: binaryExpression | binaryExpressionOperand;
-binaryExpression: lhs=binaryExpressionOperand BIN_OP rhs=expression;
-binaryExpressionOperand: variableAssignment | lookup | thisMessageExchange | literal;
+expression: binaryExpression1;
+
+binaryExpression1: binaryExpression2 binaryExpression1Application*;
+binaryExpression1Application: BIN_OP1 binaryExpression2;
+
+binaryExpression2: binaryExpression2Operand binaryExpression2Application*;
+binaryExpression2Application: BIN_OP2 binaryExpression2Operand;
+binaryExpression2Operand: variableAssignment | lookup | thisMessageExchange | literal;
+
 variableAssignment: ID EQUALS expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
@@ -36,7 +41,8 @@ ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA | programElement;
 elseStatement: (KW_ELSE ifStatementOnFalse)?;
 ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | programElement;
 
-BIN_OP: '+'|'-'|'*'|'/';
+BIN_OP1: '+'|'-';
+BIN_OP2: '*'|'/';
 HASH: '#';
 OPEN_BRA: '{';
 CLOSE_BRA: '}';

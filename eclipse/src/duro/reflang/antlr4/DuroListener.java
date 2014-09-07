@@ -20,6 +20,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression1}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpression1(@NotNull DuroParser.BinaryExpression1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression1}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpression1(@NotNull DuroParser.BinaryExpression1Context ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#bool}.
 	 * @param ctx the parse tree
 	 */
@@ -31,15 +42,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBool(@NotNull DuroParser.BoolContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression2}.
 	 * @param ctx the parse tree
 	 */
-	void enterBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
+	void enterBinaryExpression2(@NotNull DuroParser.BinaryExpression2Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression2}.
 	 * @param ctx the parse tree
 	 */
-	void exitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx);
+	void exitBinaryExpression2(@NotNull DuroParser.BinaryExpression2Context ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
@@ -229,6 +240,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression2Application}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpression2Application(@NotNull DuroParser.BinaryExpression2ApplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression2Application}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpression2Application(@NotNull DuroParser.BinaryExpression2ApplicationContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#programElements}.
 	 * @param ctx the parse tree
 	 */
@@ -262,17 +284,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#primitiveCall}.
 	 * @param ctx the parse tree
 	 */
@@ -282,6 +293,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression1Application}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpression1Application(@NotNull DuroParser.BinaryExpression1ApplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression1Application}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpression1Application(@NotNull DuroParser.BinaryExpression1ApplicationContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#elseStatement}.
@@ -315,17 +337,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionCandidate}.
-	 * @param ctx the parse tree
-	 */
-	void enterBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionCandidate}.
-	 * @param ctx the parse tree
-	 */
-	void exitBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#undelimitedStatement}.
@@ -370,4 +381,15 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpression2Operand}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpression2Operand(@NotNull DuroParser.BinaryExpression2OperandContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpression2Operand}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpression2Operand(@NotNull DuroParser.BinaryExpression2OperandContext ctx);
 }

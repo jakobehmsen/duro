@@ -26,6 +26,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitBinaryExpression1(@NotNull DuroParser.BinaryExpression1Context ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitBool(@NotNull DuroParser.BoolContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -34,7 +42,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBinaryExpression2(@NotNull DuroParser.BinaryExpression2Context ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -178,6 +186,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitBinaryExpression2Application(@NotNull DuroParser.BinaryExpression2ApplicationContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitProgramElements(@NotNull DuroParser.ProgramElementsContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -202,7 +218,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitBinaryExpression(@NotNull DuroParser.BinaryExpressionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -210,7 +226,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBinaryExpression1Application(@NotNull DuroParser.BinaryExpression1ApplicationContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -235,14 +251,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -275,4 +283,12 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitBinaryExpression2Operand(@NotNull DuroParser.BinaryExpression2OperandContext ctx) { return visitChildren(ctx); }
 }
