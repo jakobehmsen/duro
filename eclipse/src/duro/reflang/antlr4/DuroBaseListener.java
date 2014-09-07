@@ -30,6 +30,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBool(@NotNull DuroParser.BoolContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBool(@NotNull DuroParser.BoolContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterBinaryExpressionOperand(@NotNull DuroParser.BinaryExpressionOperandContext ctx) { }
 	/**
 	 * {@inheritDoc}

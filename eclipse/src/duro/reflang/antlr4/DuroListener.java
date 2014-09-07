@@ -20,6 +20,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#bool}.
+	 * @param ctx the parse tree
+	 */
+	void enterBool(@NotNull DuroParser.BoolContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#bool}.
+	 * @param ctx the parse tree
+	 */
+	void exitBool(@NotNull DuroParser.BoolContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
 	 * @param ctx the parse tree
 	 */

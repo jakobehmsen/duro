@@ -19,6 +19,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#bool}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBool(@NotNull DuroParser.BoolContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionOperand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
