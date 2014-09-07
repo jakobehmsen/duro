@@ -182,6 +182,12 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_LOAD_STRING: {
+			String string = (String)instruction.operand1;
+			currentFrame.stack.push(string);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
