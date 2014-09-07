@@ -147,6 +147,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -154,6 +167,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -206,6 +232,32 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterIfStatement(@NotNull DuroParser.IfStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIfStatement(@NotNull DuroParser.IfStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -271,6 +323,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterElseStatement(@NotNull DuroParser.ElseStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitElseStatement(@NotNull DuroParser.ElseStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

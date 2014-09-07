@@ -124,6 +124,20 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_IF_FALSE: {
+			boolean value = (boolean)currentFrame.stack.pop();
+			if(!value) {
+				int jump = (int)instruction.operand1;
+				currentFrame.instructionPointer += jump;
+			} else
+				currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_JUMP: {
+			int jump = (int)instruction.operand1;
+			currentFrame.instructionPointer += jump;
+			
+			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
 			currentFrame.stack.push(this);
 			currentFrame.instructionPointer++;

@@ -20,13 +20,20 @@ variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
-undelimitedStatement: functionDefinition | primitiveBody;
+undelimitedStatement: functionDefinition | primitiveBody | ifStatement;
 functionDefinition: KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
 primitiveBody: HASH OPEN_BRA primitiveCall* CLOSE_BRA;
 primitiveCall: ID primitiveOperand*;
 primitiveOperand: (COLON literal);
+ifStatement: 
+    KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
+    elseStatement;
+ifStatementCondition: expression;
+ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA;
+elseStatement: (KW_ELSE ifStatementOnFalse)?;
+ifStatementOnFalse: OPEN_BRA programElements CLOSE_BRA;
 
 BIN_OP: '+'|'-'|'*'|'/';
 HASH: '#';
@@ -45,6 +52,8 @@ KW_FUNCTION: 'function';
 KW_RETURN: 'return';
 KW_TRUE: 'true';
 KW_FALSE: 'false';
+KW_IF: 'if';
+KW_ELSE: 'else';
 fragment DIGIT: ('0'..'9');
 fragment LETTER: ([a-z]|[A-Z]);
 ID : LETTER (LETTER | DIGIT | '_')*;

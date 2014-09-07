@@ -82,11 +82,25 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnTrue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#lookup}.
@@ -115,6 +129,20 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatement(@NotNull DuroParser.IfStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#programElements}.
@@ -150,6 +178,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#elseStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseStatement(@NotNull DuroParser.ElseStatementContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#thisMessageExchange}.
