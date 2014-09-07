@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
-import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process {
 	/**
@@ -37,14 +36,6 @@ public class CustomProcess extends Process {
 
 	public CustomProcess(int variableCount, Instruction[] instructions) {
 		currentFrame = new Frame(new Object[0], variableCount, instructions);
-		
-		// HACK
-		fields.put(SymbolTable.getSymbolCodeFromId("log"), new CallFrameInfo(1, 0, new Instruction[] {
-			new Instruction(Instruction.OPCODE_LOAD_ARG, 0),
-			new Instruction(Instruction.OPCODE_SP_LOG),
-			new Instruction(Instruction.OPCODE_LOAD_NULL),
-			new Instruction(Instruction.OPCODE_RET)
-		}));
 	}
 
 	@Override
