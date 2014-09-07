@@ -19,14 +19,16 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_CALL = 6;
 	public static final int OPCODE_RET = 7;
 	public static final int OPCODE_DEF = 8;
-	public static final int OPCODE_LOAD_THIS = 9;
-	public static final int OPCODE_LOAD_NULL = 10;
-	public static final int OPCODE_LOAD_LOC = 11;
-	public static final int OPCODE_LOAD_ARG = 12;
-	public static final int OPCODE_LOAD_INT = 13;
-	public static final int OPCODE_LOAD_FUNC = 14;
-	public static final int OPCODE_LOAD_TRUE = 15;
-	public static final int OPCODE_LOAD_FALSE = 16;
+	public static final int OPCODE_IF_FALSE = 9;
+	public static final int OPCODE_JUMP = 10;
+	public static final int OPCODE_LOAD_THIS = 11;
+	public static final int OPCODE_LOAD_NULL = 12;
+	public static final int OPCODE_LOAD_LOC = 13;
+	public static final int OPCODE_LOAD_ARG = 14;
+	public static final int OPCODE_LOAD_INT = 15;
+	public static final int OPCODE_LOAD_FUNC = 16;
+	public static final int OPCODE_LOAD_TRUE = 17;
+	public static final int OPCODE_LOAD_FALSE = 18;
 	
 	public static final int OPCODE_SP_LOG = 65;
 	public static final int OPCODE_SP_ADD = 66;
