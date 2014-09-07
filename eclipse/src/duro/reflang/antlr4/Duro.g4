@@ -33,7 +33,7 @@ ifStatement:
 ifStatementCondition: expression;
 ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA;
 elseStatement: (KW_ELSE ifStatementOnFalse)?;
-ifStatementOnFalse: OPEN_BRA programElements CLOSE_BRA;
+ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | ifStatement;
 
 BIN_OP: '+'|'-'|'*'|'/';
 HASH: '#';

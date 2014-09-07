@@ -34,6 +34,7 @@ if(t) {
 }
 */
 
+/*
 var t1 = true;
 //var t1 = false;
 
@@ -51,4 +52,14 @@ if(t1) {
 	}
 } else {
 	log(0);
+}
+*/
+
+var t1 = false;
+var t2 = true;
+
+if(t1) {
+	log(1);
+} else if(t2) {
+	log(2);
 }
