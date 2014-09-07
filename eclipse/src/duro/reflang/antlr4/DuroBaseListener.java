@@ -95,32 +95,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterStatement1(@NotNull DuroParser.Statement1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitStatement1(@NotNull DuroParser.Statement1Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterStatement2(@NotNull DuroParser.Statement2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitStatement2(@NotNull DuroParser.Statement2Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterLiteral(@NotNull DuroParser.LiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -329,6 +303,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -349,6 +336,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

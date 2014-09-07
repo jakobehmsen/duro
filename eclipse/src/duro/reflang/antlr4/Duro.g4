@@ -1,7 +1,7 @@
 grammar Duro;
 
 program: programElements;
-programElements: (((topExpression | statement1) SEMICOLON | statement2))*;
+programElements: (((topExpression | delimitedStatement) SEMICOLON | undelimitedStatement))*;
 topExpression: expression;
 expression: binaryExpressionCandidate;
 binaryExpressionCandidate: binaryExpression | binaryExpressionOperand;
@@ -13,8 +13,8 @@ thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR expression (COMMA expression)* CLOSE_PAR;
 literal: integer;
 integer: INT;
-statement1: returnStatement | pause | variableStatement | returnStatement;
-statement2: functionDefinition | primitiveBody;
+delimitedStatement: returnStatement | pause | variableStatement | returnStatement;
+undelimitedStatement: functionDefinition | primitiveBody;
 pause: KW_PAUSE;
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
@@ -27,7 +27,7 @@ primitiveCall: ID primitiveOperand*;
 primitiveOperand: (COLON literal);
 returnStatement: KW_RETURN expression?;
 
-BIN_OP: '+'|'-'|'*'|'/'; //[+-*/];
+BIN_OP: '+'|'-'|'*'|'/';
 HASH: '#';
 OPEN_BRA: '{';
 CLOSE_BRA: '}';

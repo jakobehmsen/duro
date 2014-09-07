@@ -27,16 +27,17 @@ public class DuroParser extends Parser {
 		RULE_program = 0, RULE_programElements = 1, RULE_topExpression = 2, RULE_expression = 3, 
 		RULE_binaryExpressionCandidate = 4, RULE_binaryExpression = 5, RULE_binaryExpressionOperand = 6, 
 		RULE_variableAssignment = 7, RULE_lookup = 8, RULE_thisMessageExchange = 9, 
-		RULE_messageExchange = 10, RULE_literal = 11, RULE_integer = 12, RULE_statement1 = 13, 
-		RULE_statement2 = 14, RULE_pause = 15, RULE_variableStatement = 16, RULE_variableDeclarationAndAssignment = 17, 
-		RULE_variableDeclaration = 18, RULE_functionDefinition = 19, RULE_functionParameters = 20, 
-		RULE_functionBody = 21, RULE_primitiveBody = 22, RULE_primitiveCall = 23, 
-		RULE_primitiveOperand = 24, RULE_returnStatement = 25;
+		RULE_messageExchange = 10, RULE_literal = 11, RULE_integer = 12, RULE_delimitedStatement = 13, 
+		RULE_undelimitedStatement = 14, RULE_pause = 15, RULE_variableStatement = 16, 
+		RULE_variableDeclarationAndAssignment = 17, RULE_variableDeclaration = 18, 
+		RULE_functionDefinition = 19, RULE_functionParameters = 20, RULE_functionBody = 21, 
+		RULE_primitiveBody = 22, RULE_primitiveCall = 23, RULE_primitiveOperand = 24, 
+		RULE_returnStatement = 25;
 	public static final String[] ruleNames = {
 		"program", "programElements", "topExpression", "expression", "binaryExpressionCandidate", 
 		"binaryExpression", "binaryExpressionOperand", "variableAssignment", "lookup", 
-		"thisMessageExchange", "messageExchange", "literal", "integer", "statement1", 
-		"statement2", "pause", "variableStatement", "variableDeclarationAndAssignment", 
+		"thisMessageExchange", "messageExchange", "literal", "integer", "delimitedStatement", 
+		"undelimitedStatement", "pause", "variableStatement", "variableDeclarationAndAssignment", 
 		"variableDeclaration", "functionDefinition", "functionParameters", "functionBody", 
 		"primitiveBody", "primitiveCall", "primitiveOperand", "returnStatement"
 	};
@@ -102,26 +103,26 @@ public class DuroParser extends Parser {
 
 	public static class ProgramElementsContext extends ParserRuleContext {
 		public List<TerminalNode> SEMICOLON() { return getTokens(DuroParser.SEMICOLON); }
-		public Statement2Context statement2(int i) {
-			return getRuleContext(Statement2Context.class,i);
+		public UndelimitedStatementContext undelimitedStatement(int i) {
+			return getRuleContext(UndelimitedStatementContext.class,i);
 		}
 		public List<TopExpressionContext> topExpression() {
 			return getRuleContexts(TopExpressionContext.class);
 		}
-		public Statement1Context statement1(int i) {
-			return getRuleContext(Statement1Context.class,i);
+		public DelimitedStatementContext delimitedStatement(int i) {
+			return getRuleContext(DelimitedStatementContext.class,i);
 		}
 		public TerminalNode SEMICOLON(int i) {
 			return getToken(DuroParser.SEMICOLON, i);
 		}
+		public List<UndelimitedStatementContext> undelimitedStatement() {
+			return getRuleContexts(UndelimitedStatementContext.class);
+		}
 		public TopExpressionContext topExpression(int i) {
 			return getRuleContext(TopExpressionContext.class,i);
 		}
-		public List<Statement1Context> statement1() {
-			return getRuleContexts(Statement1Context.class);
-		}
-		public List<Statement2Context> statement2() {
-			return getRuleContexts(Statement2Context.class);
+		public List<DelimitedStatementContext> delimitedStatement() {
+			return getRuleContexts(DelimitedStatementContext.class);
 		}
 		public ProgramElementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -175,7 +176,7 @@ public class DuroParser extends Parser {
 					case KW_PAUSE:
 					case KW_RETURN:
 						{
-						setState(55); statement1();
+						setState(55); delimitedStatement();
 						}
 						break;
 					default:
@@ -187,7 +188,7 @@ public class DuroParser extends Parser {
 				case HASH:
 				case KW_FUNCTION:
 					{
-					setState(60); statement2();
+					setState(60); undelimitedStatement();
 					}
 					break;
 				default:
@@ -771,7 +772,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Statement1Context extends ParserRuleContext {
+	public static class DelimitedStatementContext extends ParserRuleContext {
 		public VariableStatementContext variableStatement() {
 			return getRuleContext(VariableStatementContext.class,0);
 		}
@@ -781,28 +782,28 @@ public class DuroParser extends Parser {
 		public ReturnStatementContext returnStatement() {
 			return getRuleContext(ReturnStatementContext.class,0);
 		}
-		public Statement1Context(ParserRuleContext parent, int invokingState) {
+		public DelimitedStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_statement1; }
+		@Override public int getRuleIndex() { return RULE_delimitedStatement; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterStatement1(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterDelimitedStatement(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitStatement1(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitDelimitedStatement(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitStatement1(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitDelimitedStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Statement1Context statement1() throws RecognitionException {
-		Statement1Context _localctx = new Statement1Context(_ctx, getState());
-		enterRule(_localctx, 26, RULE_statement1);
+	public final DelimitedStatementContext delimitedStatement() throws RecognitionException {
+		DelimitedStatementContext _localctx = new DelimitedStatementContext(_ctx, getState());
+		enterRule(_localctx, 26, RULE_delimitedStatement);
 		try {
 			setState(114);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
@@ -846,35 +847,35 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Statement2Context extends ParserRuleContext {
+	public static class UndelimitedStatementContext extends ParserRuleContext {
 		public PrimitiveBodyContext primitiveBody() {
 			return getRuleContext(PrimitiveBodyContext.class,0);
 		}
 		public FunctionDefinitionContext functionDefinition() {
 			return getRuleContext(FunctionDefinitionContext.class,0);
 		}
-		public Statement2Context(ParserRuleContext parent, int invokingState) {
+		public UndelimitedStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_statement2; }
+		@Override public int getRuleIndex() { return RULE_undelimitedStatement; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterStatement2(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterUndelimitedStatement(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitStatement2(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitUndelimitedStatement(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitStatement2(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitUndelimitedStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final Statement2Context statement2() throws RecognitionException {
-		Statement2Context _localctx = new Statement2Context(_ctx, getState());
-		enterRule(_localctx, 28, RULE_statement2);
+	public final UndelimitedStatementContext undelimitedStatement() throws RecognitionException {
+		UndelimitedStatementContext _localctx = new UndelimitedStatementContext(_ctx, getState());
+		enterRule(_localctx, 28, RULE_undelimitedStatement);
 		try {
 			setState(118);
 			switch (_input.LA(1)) {

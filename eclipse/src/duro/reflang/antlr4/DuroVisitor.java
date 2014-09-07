@@ -54,20 +54,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#statement1}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement1(@NotNull DuroParser.Statement1Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#statement2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement2(@NotNull DuroParser.Statement2Context ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -180,6 +166,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionCandidate(@NotNull DuroParser.BinaryExpressionCandidateContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#undelimitedStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#primitiveBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -192,4 +185,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#delimitedStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
 }
