@@ -1,6 +1,8 @@
 package duro.runtime;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
@@ -295,12 +297,20 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_NEXT_KEY: {
+		} case Instruction.OPCODE_SP_NEXT_LINE: {
 			try {
-				int nextKey = System.in.read();
-				currentFrame.stack.push(nextKey);
+//				DataInputStream in = new DataInputStream(System.in);
+//				int nextKey = in.readByte();
+				
+//				int nextKey = System.console().reader().read();
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				
+				String line = br.readLine();
+				
+				currentFrame.stack.push(line);
 				// Store the value for the replay instruction
-				lastReadKey = nextKey;
+				lastReadLine = line;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -318,7 +328,7 @@ public class CustomProcess extends Process {
 		}
 	}
 	
-	private int lastReadKey;
+	private String lastReadLine;
 
 	@Override
 	public void resume(List<Instruction> playedInstructions) {
@@ -337,11 +347,11 @@ public class CustomProcess extends Process {
 				case Instruction.OPCODE_PAUSE:
 					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
 					break;
-				case Instruction.OPCODE_SP_NEXT_KEY:
+				case Instruction.OPCODE_SP_NEXT_LINE:
 					// The replay instruction simply pushes the read key consistently
-					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, lastReadKey));
+					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine));
 					 // Remember reprint the entered key during replay
-					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, Character.toString((char)lastReadKey)));
+					playedInstructions.add(new Instruction(Instruction.OPCODE_DUP));
 					playedInstructions.add(new Instruction(Instruction.OPCODE_SP_LOG));
 					break;
 				default:
