@@ -22,6 +22,8 @@ import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
@@ -177,6 +179,52 @@ public class Compiler {
 					// If false, skip the rest
 					instructions.set(andConditionalJumpIndex, new Instruction(Instruction.OPCODE_DUP));
 					instructions.set(andConditionalJumpIndex + 1, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				}
+			}
+			
+			
+
+			
+			Stack<ArrayList<Integer>> equalsConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
+			
+			@Override
+			public void enterBinaryExpressionEquality(BinaryExpressionEqualityContext ctx) {
+				equalsConditionalJumpIndexesStack.add(new ArrayList<Integer>());
+			}
+			
+			@Override
+			public void exitBinaryExpressionEqualityApplication(BinaryExpressionEqualityApplicationContext ctx) {
+				ArrayList<Integer> equalsConditionalJumpIndexes = equalsConditionalJumpIndexesStack.peek();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_EQUALS));
+				int conditionalJumpIndex = instructions.size();
+				instructions.add(null);
+				equalsConditionalJumpIndexes.add(conditionalJumpIndex);
+			}
+			
+			@Override
+			public void exitBinaryExpressionEquality(BinaryExpressionEqualityContext ctx) {
+				ArrayList<Integer> equalsConditionalJumpIndexes = equalsConditionalJumpIndexesStack.pop();
+				
+				if(equalsConditionalJumpIndexes.size() > 0) {
+					// If there were any applications
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+					instructions.add(new Instruction(Instruction.OPCODE_JUMP, 2));
+	
+					int equalsEndIndex = instructions.size();
+					
+					for(int equalsConditionalJumpIndex: equalsConditionalJumpIndexes) {
+						int conditionalJump = equalsEndIndex - equalsConditionalJumpIndex;
+						// If false, skip the rest
+						instructions.set(equalsConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					}
+					
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+					
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
 				}
 			}
 			
