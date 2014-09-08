@@ -10,6 +10,10 @@
 				max-width: 1024px;    
 			}
 			
+			.general {
+				border-width: 3px;
+			}
+			
 			.title {
 				font-size: 25px;
 			}
@@ -31,17 +35,17 @@
 	</head>
 	<body>
 		<div style="margin: 15px;" class="title"> 
-			<div style="font-weight: 900; text-align:center; padding: 6px; background-color: #003366; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px;">
+			<div style="font-weight: 900; text-align:center; padding: 6px; background-color: #003366; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px;" class="general">
 				Duro's project page
 			</div>
 		</div>
 		
-		<div style="margin: 15px;" class="content"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #902219; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;">
+		<div style="margin: 15px;" class="content general"> 
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #902219; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
 				Motivation
 			</div>
 			
-			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;">
+			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
 					For most runtimes, processes are transient meaning, when they are restarted, they are conceptually dependent on external persistent computing elements to recap their whereabouts at their last exit. What if this wasn't the default case for processes? What if, instead, processes, after they have been stopped, simply always continue from where they left of?
 				</div>
@@ -51,12 +55,12 @@
 			</div>
 		</div>
 		
-		<div style="margin: 15px;" class="content"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #EFB91F; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;">
+		<div style="margin: 15px;" class="content general"> 
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #EFB91F; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
 				Evolution
 			</div>
 			
-			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;">
+			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
 					Many applications, compiled from source code, have very little relation to its source code after compilation; e.g., there is limited semantical changes tracked when new compilations are made. These applications feel static.
 				</div>
@@ -66,12 +70,12 @@
 			</div>
 		</div>
 		
-		<div style="margin: 15px;" class="content"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #579950; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;">
+		<div style="margin: 15px;" class="content general"> 
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #579950; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
 				Crystalization
 			</div>
 			
-			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;">
+			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
 					The current goal is to implement an ECMAScript-like frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span> are compiled.
 				</div>
