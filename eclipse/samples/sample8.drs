@@ -9,7 +9,18 @@ function log(x) {
 	}
 }
 
+/*
 while(true) {
 	log("hello");
 	pause;
 }
+*/
+
+var b = true;
+while(b) {
+	log("hello");
+	pause;
+	b = false;
+}
+
+log("finished - bye bye!!!");
