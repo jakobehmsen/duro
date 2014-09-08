@@ -1,5 +1,6 @@
 package duro.runtime;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
@@ -258,12 +259,6 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_LOG: {
-			Object value = currentFrame.stack.pop();
-			System.out.println(value);
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_SP_ADD: {
 			int rhs = (int)currentFrame.stack.pop();
 			int lhs = (int)currentFrame.stack.pop();
@@ -292,9 +287,38 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} 
+		
+		case Instruction.OPCODE_SP_LOG: {
+			Object value = currentFrame.stack.pop();
+			System.out.println(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEXT_KEY: {
+			try {
+				int nextKey = System.in.read();
+				currentFrame.stack.push(nextKey);
+				// Store the value for the replay instruction
+				lastReadKey = nextKey;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_ITOC: {
+			int i = (int)currentFrame.stack.pop();
+			String str = Character.toString((char)i);
+			currentFrame.stack.push(str);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		}
 	}
+	
+	private int lastReadKey;
 
 	@Override
 	public void resume(List<Instruction> playedInstructions) {
@@ -303,18 +327,27 @@ public class CustomProcess extends Process {
 		if(currentFrame != null) {
 			while(!stopRequested) {
 				Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
+				
+				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+				
+				next(instruction);
+				
 				switch(instruction.opcode) {
 				case Instruction.OPCODE_PAUSE:
 					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
+					break;
+				case Instruction.OPCODE_SP_NEXT_KEY:
+					// The replay instruction simply pushes the read key consistently
+					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, lastReadKey));
+					 // Remember reprint the entered key during replay
+					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, Character.toString((char)lastReadKey)));
+					playedInstructions.add(new Instruction(Instruction.OPCODE_SP_LOG));
 					break;
 				default:
 					playedInstructions.add(instruction);
 					break;
 				}
-				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
-				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
-				
-				next(instruction);
 			}
 		}
 		
