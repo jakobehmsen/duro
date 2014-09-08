@@ -1,0 +1,89 @@
+/*
+A console application that can get and set properties and pause the application.
+*/
+
+function log(x) {
+	#{
+		load_arg :0
+		sp_log
+	}
+}
+
+function readKey() {
+	#{
+		sp_next_key
+		ret
+	}
+}
+
+function intToString(i) {
+	#{
+		load_arg :0
+		sp_itoc
+		ret
+	}
+}
+
+log("Please press a key (followed by enter): ");
+var key = readKey();
+log("You pressed the following key:");
+log(intToString(key));
+
+log("Yawm :O Time for a break now :) ZZZZzzzz....");
+pause;
+
+log("Welcome back");
+log("Please press a key, again: ");
+key = readKey();
+log("You pressed the following key, this time:");
+log(intToString(key));
+
+log("I die now... bye bye... and we'll never meet again :´(");
+
+/*
+
+function readLine() {
+	var line = "";
+	
+	while(true) {
+		var key = readKey();
+		
+		// If ENTER was read
+		if(key == 13)
+			break; // Missing break statement
+			
+		line = line + intToString(key); // Missing str + str
+	}
+}
+
+var txt = readline();
+*/
+
+/*
+while(true) {
+	log("What do you want to do?");
+	var command = readline();
+	
+	if(command == "set") {
+		log("Enter property name: ");
+		var name = readline();
+		log("Enter property value: ");
+		var value = readline();
+		
+		this[name] = value;
+		
+		log("Property " + name + " was set to " + value + ".");
+	} else if(command == "get") {
+		log("Enter property name: ");
+		var name = readline();
+		
+		var value = this[name];
+		log(value);
+	} else if(command == "pause") {
+		log("Bye bye then.");
+		pause;
+	} else {
+		log("Valid commands are 'set', 'get' or 'pause'.");
+	}
+}
+*/
