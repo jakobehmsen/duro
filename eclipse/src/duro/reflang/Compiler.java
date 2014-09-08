@@ -119,8 +119,8 @@ public class Compiler {
 			public void enterBinaryExpressionLogicalOrApplication(BinaryExpressionLogicalOrApplicationContext ctx) {
 				ArrayList<Integer> orConditionalJumpIndexes = orConditionalJumpIndexesStack.peek();
 				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				int conditionalJumpIndex = instructions.size();
-				instructions.add(null);
 				instructions.add(null);
 				orConditionalJumpIndexes.add(conditionalJumpIndex);
 			}
@@ -137,10 +137,9 @@ public class Compiler {
 				ArrayList<Integer> orConditionalJumpIndexes = orConditionalJumpIndexesStack.pop();
 				
 				for(int orConditionalJumpIndex: orConditionalJumpIndexes) {
-					int conditionalJump = orEndIndex - (orConditionalJumpIndex + 1);
+					int conditionalJump = orEndIndex - orConditionalJumpIndex;
 					// If true, skip the rest
-					instructions.set(orConditionalJumpIndex, new Instruction(Instruction.OPCODE_DUP));
-					instructions.set(orConditionalJumpIndex + 1, new Instruction(Instruction.OPCODE_IF_TRUE, conditionalJump));
+					instructions.set(orConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_TRUE, conditionalJump));
 				}
 			}
 			
@@ -157,8 +156,8 @@ public class Compiler {
 			public void enterBinaryExpressionLogicalAndApplication(BinaryExpressionLogicalAndApplicationContext ctx) {
 				ArrayList<Integer> andConditionalJumpIndexes = andConditionalJumpIndexesStack.peek();
 				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				int conditionalJumpIndex = instructions.size();
-				instructions.add(null);
 				instructions.add(null);
 				andConditionalJumpIndexes.add(conditionalJumpIndex);
 			}
@@ -175,10 +174,9 @@ public class Compiler {
 				ArrayList<Integer> andConditionalJumpIndexes = andConditionalJumpIndexesStack.pop();
 				
 				for(int andConditionalJumpIndex: andConditionalJumpIndexes) {
-					int conditionalJump = andEndIndex - (andConditionalJumpIndex + 1);
+					int conditionalJump = andEndIndex - andConditionalJumpIndex;
 					// If false, skip the rest
-					instructions.set(andConditionalJumpIndex, new Instruction(Instruction.OPCODE_DUP));
-					instructions.set(andConditionalJumpIndex + 1, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					instructions.set(andConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 				}
 			}
 			
