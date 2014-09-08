@@ -26,8 +26,7 @@ function intToString(i) {
 
 log("Please enter your name: ");
 var name = readLine();
-log("Hello there");
-log(name);
+log("Hello there " + name); // Missing str + str
 
 log("Yawm :O Time for a break now :) ZZZZzzzz....");
 pause;
@@ -36,29 +35,9 @@ log("Welcome back");
 log(name);
 log("Please enter your age: ");
 var age = readLine();
-log("So, you are");
-log(age);
+log("So, you are" + age + " years old."); // Missing str + str
 
 log("I die now... bye bye... and we'll never meet again :´(");
-
-/*
-
-function readLine() {
-	var line = "";
-	
-	while(true) {
-		var key = readKey();
-		
-		// If ENTER was read
-		if(key == 13)
-			break; // Missing break statement
-			
-		line = line + intToString(key); // Missing str + str
-	}
-}
-
-var txt = readline();
-*/
 
 /*
 while(true) {
