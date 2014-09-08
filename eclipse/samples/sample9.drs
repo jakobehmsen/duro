@@ -16,7 +16,7 @@ function b1() {
 
 function b2() {
 	log("b2");
-	return true;
+	return false;
 }
 
 function b3() {
