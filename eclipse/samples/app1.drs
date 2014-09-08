@@ -9,9 +9,9 @@ function log(x) {
 	}
 }
 
-function readKey() {
+function readLine() {
 	#{
-		sp_next_key
+		sp_next_line
 		ret
 	}
 }
@@ -24,19 +24,20 @@ function intToString(i) {
 	}
 }
 
-log("Please press a key (followed by enter): ");
-var key = readKey();
-log("You pressed the following key:");
-log(intToString(key));
+log("Please enter your name: ");
+var name = readLine();
+log("Hello there");
+log(name);
 
 log("Yawm :O Time for a break now :) ZZZZzzzz....");
 pause;
 
 log("Welcome back");
-log("Please press a key, again: ");
-key = readKey();
-log("You pressed the following key, this time:");
-log(intToString(key));
+log(name);
+log("Please enter your age: ");
+var age = readLine();
+log("So, you are");
+log(age);
 
 log("I die now... bye bye... and we'll never meet again :´(");
 
