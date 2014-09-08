@@ -77,7 +77,7 @@
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					The current goal is to implement an ECMAScript-like frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span> are compiled.
+					The current goal is to implement an ECMAScript-like frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span>.
 				</div>
 				<div>
 					A genesis process contains the origins of the possible evolutions and is represented by an empty extensible journal of instructions associated to an initial sequence of instructions. After a genesis process has been resumed, its journal is no longer empty and the process is no longer a genesis process. Each time a process is resumed, it is evaluated until either a pause- or finish instruction is met. When a pause instruction is met, the process stops and will resume at exactly that point upon resumption. When a finish instruction is met, the process simply finishes and can no longer be resumed.
