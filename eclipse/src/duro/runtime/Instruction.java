@@ -39,11 +39,14 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
 	public static final int OPCODE_SP_EQUALS = 67;
-	public static final int OPCODE_SP_LOG = 68;
-	public static final int OPCODE_SP_ADD = 69;
-	public static final int OPCODE_SP_SUB = 70;
-	public static final int OPCODE_SP_MULT = 71;
-	public static final int OPCODE_SP_DIV = 72;
+	public static final int OPCODE_SP_ADD = 68;
+	public static final int OPCODE_SP_SUB = 69;
+	public static final int OPCODE_SP_MULT = 70;
+	public static final int OPCODE_SP_DIV = 71;
+
+	public static final int OPCODE_SP_LOG = 127;
+	public static final int OPCODE_SP_NEXT_KEY = 128;
+	public static final int OPCODE_SP_ITOC = 129;
 
 
 	public final int opcode;
