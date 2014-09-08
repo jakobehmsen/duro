@@ -19,25 +19,28 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_CALL = 6;
 	public static final int OPCODE_RET = 7;
 	public static final int OPCODE_DEF = 8;
-	public static final int OPCODE_IF_FALSE = 9;
-	public static final int OPCODE_JUMP = 10;
-	public static final int OPCODE_SET = 11;
-	public static final int OPCODE_GET = 12;
-	public static final int OPCODE_LOAD_THIS = 13;
-	public static final int OPCODE_LOAD_NULL = 14;
-	public static final int OPCODE_LOAD_LOC = 15;
-	public static final int OPCODE_LOAD_ARG = 16;
-	public static final int OPCODE_LOAD_INT = 17;
-	public static final int OPCODE_LOAD_FUNC = 18;
-	public static final int OPCODE_LOAD_TRUE = 19;
-	public static final int OPCODE_LOAD_FALSE = 20;
-	public static final int OPCODE_LOAD_STRING = 21;
-	
-	public static final int OPCODE_SP_LOG = 65;
-	public static final int OPCODE_SP_ADD = 66;
-	public static final int OPCODE_SP_SUB = 67;
-	public static final int OPCODE_SP_MULT = 68;
-	public static final int OPCODE_SP_DIV = 69;
+	public static final int OPCODE_IF_TRUE = 9;
+	public static final int OPCODE_IF_FALSE = 10;
+	public static final int OPCODE_JUMP = 11;
+	public static final int OPCODE_SET = 12;
+	public static final int OPCODE_GET = 13;
+	public static final int OPCODE_LOAD_THIS = 14;
+	public static final int OPCODE_LOAD_NULL = 15;
+	public static final int OPCODE_LOAD_LOC = 16;
+	public static final int OPCODE_LOAD_ARG = 17;
+	public static final int OPCODE_LOAD_INT = 18;
+	public static final int OPCODE_LOAD_FUNC = 19;
+	public static final int OPCODE_LOAD_TRUE = 20;
+	public static final int OPCODE_LOAD_FALSE = 21;
+	public static final int OPCODE_LOAD_STRING = 22;
+
+	public static final int OPCODE_SP_OR = 65;
+	public static final int OPCODE_SP_AND = 66;
+	public static final int OPCODE_SP_LOG = 67;
+	public static final int OPCODE_SP_ADD = 68;
+	public static final int OPCODE_SP_SUB = 69;
+	public static final int OPCODE_SP_MULT = 70;
+	public static final int OPCODE_SP_DIV = 71;
 
 
 	public final int opcode;
