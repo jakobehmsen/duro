@@ -2,18 +2,35 @@ grammar Duro;
 
 program: programElements;
 programElements: programElement*;
-programElement: (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
+programElement: 
+    (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
 topExpression: expression;
-expression: binaryExpression1 operationChain*;
-binaryExpression1: binaryExpression2 binaryExpression1Application*;
-binaryExpression1Application: BIN_OP1 binaryExpression2;
-binaryExpression2: binaryExpression2Operand binaryExpression2Application*;
-binaryExpression2Application: BIN_OP2 binaryExpression2Operand;
-binaryExpression2Operand: variableAssignment | lookup | thisMessageExchange | literal | self;
+expression: binaryExpressionLogicalOr operationChain*;
+
+binaryExpressionLogicalOr: 
+    binaryExpressionLogicalAnd binaryExpressionLogicalOrApplication*;
+binaryExpressionLogicalOrApplication: DOUBLE_PIPE binaryExpressionLogicalAnd;
+
+binaryExpressionLogicalAnd: 
+    binaryExpressionArithmetic1 binaryExpressionLogicalAndApplication*;
+binaryExpressionLogicalAndApplication: DOUBLE_AMP binaryExpressionArithmetic1;
+
+binaryExpressionArithmetic1: 
+    binaryExpressionArithmetic2 binaryExpressionArithmetic1Application*;
+binaryExpressionArithmetic1Application: BIN_OP1 binaryExpressionArithmetic2;
+
+binaryExpressionArithmetic2: 
+    binaryExpressionArithmetic2Operand binaryExpressionArithmetic2Application*;
+binaryExpressionArithmetic2Application: 
+    BIN_OP2 binaryExpressionArithmetic2Operand;
+
+binaryExpressionArithmetic2Operand: 
+    variableAssignment | lookup | thisMessageExchange | literal | self;
+
 variableAssignment: ID EQUALS expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
-messageExchange: ID OPEN_PAR expression (COMMA expression)* CLOSE_PAR;
+messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
 literal: integer | bool | string;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
@@ -25,8 +42,11 @@ variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
-undelimitedStatement: functionDefinition | primitiveBody | ifStatement | whileStatement;
-functionDefinition: KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR OPEN_BRA functionBody CLOSE_BRA;
+undelimitedStatement: 
+    functionDefinition | primitiveBody | ifStatement | whileStatement;
+functionDefinition: 
+    KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR 
+    OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
 primitiveBody: HASH OPEN_BRA primitiveCall* CLOSE_BRA;
@@ -39,7 +59,8 @@ ifStatementCondition: expression;
 ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA | programElement;
 elseStatement: (KW_ELSE ifStatementOnFalse)?;
 ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | programElement;
-whileStatement: KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
+whileStatement: 
+    KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
 whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 operationChain: propertySet | propertyGet;
@@ -93,6 +114,8 @@ fragment LINE_TERMINATOR_SEQUENCE: '\r\n' | LINE_TERMINATOR;
 fragment HEX_DIGIT: [0-9a-fA-F];
 LINE_TERMINATOR: [\r\n\u2028\u2029] -> channel(HIDDEN);
 
+DOUBLE_AMP: '&&';
+DOUBLE_PIPE: '||';
 BIN_OP1: '+'|'-';
 BIN_OP2: '*'|'/';
 HASH: '#';
