@@ -4,20 +4,39 @@
 		<title>Duro's project page</title>
 		<style type="text/css">
 			body {  
+				font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 				margin-left: auto;
 				margin-right: auto;
 				max-width: 1024px;    
 			}
+			
+			.title {
+				font-size: 25px;
+			}
+			
+			.content {
+				font-size: 18px;
+			}
+			
+			@media only screen and (max-device-width: 480px){
+				.title {
+					font-size: 35px;
+				}
+				
+				.content {
+					font-size: 22px;
+				}
+			}
 		</style>
 	</head>
 	<body>
-		<div style="margin: 15px; font-size: 35px;"> 
+		<div style="margin: 15px;" class="title"> 
 			<div style="font-weight: 900; text-align:center; padding: 6px; background-color: #003366; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px;">
 				Duro's project page
 			</div>
 		</div>
 		
-		<div style="margin: 15px; font-size: 22px;"> 
+		<div style="margin: 15px;" class="content"> 
 			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #902219; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px;">
 				Motivation
 			</div>
@@ -32,7 +51,7 @@
 			</div>
 		</div>
 		
-		<div style="margin: 15px; font-size: 22px;"> 
+		<div style="margin: 15px;" class="content"> 
 			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #EFB91F; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px;">
 				Evolution
 			</div>
@@ -47,14 +66,14 @@
 			</div>
 		</div>
 		
-		<div style="margin: 15px; font-size: 22px;"> 
+		<div style="margin: 15px;" class="content"> 
 			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #579950; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px;">
 				Crystalization
 			</div>
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;">
 				<div>
-					The current goal is to implement an ECMAScript-like frontend from which <span style="font-style:oblique;">genesis processes</span> are compiled. The compiled genesis processes are then to be evaluated on a runtime.
+					The current goal is to implement an ECMAScript-like frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span> are compiled.
 				</div>
 				<div>
 					A genesis process contains the origins of the possible evolutions and is represented by an empty extensible journal of instructions associated to an initial sequence of instructions. Each time a genesis process is resumed, it is evaluated until either a pause- or finish instruction is met. When a pause instruction is met, the process stops and will resume at exactly that point upon resumption. When a finish instruction is met, the process simply finishes and can no longer be resumed.
