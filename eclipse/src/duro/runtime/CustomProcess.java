@@ -91,6 +91,20 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SWAP: {
+			Object tmp = currentFrame.stack.get(currentFrame.stack.size() - 1);
+			currentFrame.stack.set(currentFrame.stack.size() - 1, currentFrame.stack.get(currentFrame.stack.size() - 2));
+			currentFrame.stack.set(currentFrame.stack.size() - 2, tmp);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SWAP1: {
+			Object tmp = currentFrame.stack.get(currentFrame.stack.size() - 2);
+			currentFrame.stack.set(currentFrame.stack.size() - 2, currentFrame.stack.get(currentFrame.stack.size() - 3));
+			currentFrame.stack.set(currentFrame.stack.size() - 3, tmp);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_CALL: {
 			String id = (String)instruction.operand1;
 			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
@@ -234,6 +248,13 @@ public class CustomProcess extends Process {
 			boolean rhs = (boolean)currentFrame.stack.pop();
 			boolean lhs = (boolean)currentFrame.stack.pop();
 			currentFrame.stack.push(lhs && rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_EQUALS: {
+			Object rhs = (Object)currentFrame.stack.pop();
+			Object lhs = (Object)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs.equals(rhs));
 			currentFrame.instructionPointer++;
 			
 			break;
