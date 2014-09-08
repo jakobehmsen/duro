@@ -20,8 +20,11 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
-import duro.reflang.antlr4.DuroParser.BinaryExpression1ApplicationContext;
-import duro.reflang.antlr4.DuroParser.BinaryExpression2ApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
@@ -100,8 +103,48 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
 			
+			Stack<ArrayList<Integer>> orConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
+			
 			@Override
-			public void exitBinaryExpression1Application(BinaryExpression1ApplicationContext ctx) {
+			public void enterBinaryExpressionLogicalOr(BinaryExpressionLogicalOrContext ctx) {
+				orConditionalJumpIndexesStack.push(new ArrayList<Integer>());
+			}
+			
+			@Override
+			public void enterBinaryExpressionLogicalOrApplication(BinaryExpressionLogicalOrApplicationContext ctx) {
+				ArrayList<Integer> orConditionalJumpIndexes = orConditionalJumpIndexesStack.peek();
+				
+				int conditionalJumpIndex = instructions.size();
+				instructions.add(null);
+				instructions.add(null);
+				orConditionalJumpIndexes.add(conditionalJumpIndex);
+			}
+			
+			@Override
+			public void exitBinaryExpressionLogicalOrApplication(BinaryExpressionLogicalOrApplicationContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SP_OR));
+			}
+			
+			@Override
+			public void exitBinaryExpressionLogicalOr(BinaryExpressionLogicalOrContext ctx) {
+				int orEndIndex = instructions.size();
+				
+				ArrayList<Integer> orConditionalJumpIndexes = orConditionalJumpIndexesStack.pop();
+				
+				for(int orConditionalJumpIndex: orConditionalJumpIndexes) {
+					int conditionalJump = orEndIndex - (orConditionalJumpIndex + 1);
+					instructions.set(orConditionalJumpIndex, new Instruction(Instruction.OPCODE_DUP));
+					instructions.set(orConditionalJumpIndex + 1, new Instruction(Instruction.OPCODE_IF_TRUE, conditionalJump));
+				}
+			}
+			
+			@Override
+			public void exitBinaryExpressionLogicalAndApplication(BinaryExpressionLogicalAndApplicationContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SP_AND));
+			}
+			
+			@Override
+			public void exitBinaryExpressionArithmetic1Application(BinaryExpressionArithmetic1ApplicationContext ctx) {
 				int binaryOpCode;
 				
 				switch(ctx.BIN_OP1().getText()) {
@@ -120,7 +163,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitBinaryExpression2Application(BinaryExpression2ApplicationContext ctx) {
+			public void exitBinaryExpressionArithmetic2Application(BinaryExpressionArithmetic2ApplicationContext ctx) {
 				int binaryOpCode;
 				
 				switch(ctx.BIN_OP2().getText()) {
