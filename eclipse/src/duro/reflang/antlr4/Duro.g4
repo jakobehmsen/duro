@@ -12,8 +12,14 @@ binaryExpressionLogicalOr:
 binaryExpressionLogicalOrApplication: DOUBLE_PIPE binaryExpressionLogicalAnd;
 
 binaryExpressionLogicalAnd: 
-    binaryExpressionArithmetic1 binaryExpressionLogicalAndApplication*;
-binaryExpressionLogicalAndApplication: DOUBLE_AMP binaryExpressionArithmetic1;
+    binaryExpressionEquality binaryExpressionLogicalAndApplication*;
+binaryExpressionLogicalAndApplication: 
+    DOUBLE_AMP binaryExpressionEquality;
+
+binaryExpressionEquality:
+    binaryExpressionArithmetic1 binaryExpressionEqualityApplication*;
+binaryExpressionEqualityApplication: 
+    DOUBLE_EQUALS binaryExpressionArithmetic1;
 
 binaryExpressionArithmetic1: 
     binaryExpressionArithmetic2 binaryExpressionArithmetic1Application*;
@@ -126,6 +132,7 @@ CLOSE_BRA: '}';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
 EQUALS: '=';
+DOUBLE_EQUALS: '==';
 INT: DIGIT+;
 SEMICOLON: ';';
 COMMA: ',';
