@@ -45,7 +45,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_DIV = 71;
 
 	public static final int OPCODE_SP_LOG = 127;
-	public static final int OPCODE_SP_NEXT_KEY = 128;
+	public static final int OPCODE_SP_NEXT_LINE = 128;
 	public static final int OPCODE_SP_ITOC = 129;
 
 
