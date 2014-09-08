@@ -128,6 +128,15 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_IF_TRUE: {
+			boolean value = (boolean)currentFrame.stack.pop();
+			if(value) {
+				int jump = (int)instruction.operand1;
+				currentFrame.instructionPointer += jump;
+			} else
+				currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_IF_FALSE: {
 			boolean value = (boolean)currentFrame.stack.pop();
 			if(!value) {
@@ -214,7 +223,21 @@ public class CustomProcess extends Process {
 		}
 		
 		// Special opcodes
-		case Instruction.OPCODE_SP_LOG: {
+		case Instruction.OPCODE_SP_OR: {
+			boolean rhs = (boolean)currentFrame.stack.pop();
+			boolean lhs = (boolean)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs || rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_AND: {
+			boolean rhs = (boolean)currentFrame.stack.pop();
+			boolean lhs = (boolean)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs && rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_LOG: {
 			Object value = currentFrame.stack.pop();
 			System.out.println(value);
 			currentFrame.instructionPointer++;
