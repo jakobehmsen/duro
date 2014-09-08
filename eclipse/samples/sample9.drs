@@ -16,8 +16,24 @@ function b1() {
 
 function b2() {
 	log("b2");
-	return false;
+	return true;
 }
 
+function b3() {
+	log("b3");
+	return true;
+}
+
+/*
 if(b1() || b2())
+	log(1);
+*/
+
+/*
+if(b1() && b2())
+	log(1);
+*/
+
+
+if(b1() && b2() || b3())
 	log(1);
