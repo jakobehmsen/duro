@@ -60,6 +60,7 @@ while(true) {
 	} else if(command == "pause") {
 		writeln("Bye bye then.");
 		pause;
+		writeln("Welcome back.");
 	} else if(command == "list") {
 		for(name in properties)
 		    writeln(name + " = " + properties[name] + " ");
