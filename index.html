@@ -41,37 +41,49 @@
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #7B0048; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+				Overview
+			</div>
+			
+			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
+				<div>
+					Duro is an attempt to make a runtime for persistent processes.
+				</div>
+			</div>
+		</div>
+		
+		<div style="margin: 15px;" class="content general"> 
 			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #902219; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
 				Motivation
 			</div>
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					For most runtimes, processes are transient meaning, when they are restarted, they are conceptually dependent on external persistent computing elements to recap their whereabouts at their last exit. What if this wasn't the default case for processes? What if, instead, processes, after they have been stopped, simply always continue from where they left of?
+					For most runtimes, processes are transient which means, when they are restarted, they are conceptually dependent on external persistent computing elements to recap their whereabouts at their last exit. 
 				</div>
 				<div>
-					These are some of the driving points of Duro. Overall, Duro is an attempt to make a runtime for persistent processes.
+					What if this wasn't the default case for processes? What if, instead, processes, after they have been stopped, simply always continue from where they left of?
 				</div>
 			</div>
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
 			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #EFB91F; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
-				Evolution
+				Possibilities
 			</div>
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					Many applications, compiled from source code, have very little relation to its source code after compilation; e.g., there is limited semantical changes tracked when new compilations are made. These applications feel static.
+					Many applications have essentiel parts that must persist across process incarnations. The most common contemporary solution is to use external components, such as files (flatfile, XML, CSV, ...) or databases (MySQL, SQL Server, SQLite, ...). Integrating with these external components can be challenging and very time consuming depending on the degree of impedance mismatch. Further, this may implicate issue with down-scaling, i.e. starting out simple is difficult.
 				</div>
 				<div>
-					Applications for Duro should feel like they were built to evolve. The creation of many software applications share much with weather prediction anyway, so why not have this in mind for the supporting tool?
+					It is likely that a significant part of these applications could use persistent processes for persisting these essential parts. If so, then probably no (or very little) effort is required to support the persistence of these parts.
 				</div>
 			</div>
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #579950; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #7AB317; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
 				Crystalization
 			</div>
 			
