@@ -29,6 +29,8 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
+import duro.reflang.antlr4.DuroParser.DictProcessContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForStatementContext;
@@ -340,6 +342,24 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterDictProcess(DictProcessContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+			}
+			
+			@Override
+			public void enterDictProcessEntry(DictProcessEntryContext ctx) {
+				String id = ctx.ID().getText();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+			}
+			
+			@Override
+			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+			}
+			
+			@Override
 			public void enterSelf(SelfContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			}
@@ -386,8 +406,9 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
-				instructions.add(new Instruction(Instruction.OPCODE_DEF, id));
+				instructions.add(new Instruction(Instruction.OPCODE_DEF));
 			}
 			
 			@Override
