@@ -5,7 +5,7 @@ programElements: programElement*;
 programElement: 
     (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
 topExpression: expression;
-expression: binaryExpressionLogicalOr operationChain*;
+expression: variableAssignment | binaryExpressionLogicalOr;
 
 binaryExpressionLogicalOr: 
     binaryExpressionLogicalAnd binaryExpressionLogicalOrApplication*;
@@ -31,7 +31,7 @@ binaryExpressionArithmetic2Application:
     BIN_OP2 binaryExpressionArithmetic2Operand;
 
 binaryExpressionArithmetic2Operand: 
-    variableAssignment | lookup | thisMessageExchange | literal | self;
+    (lookup | thisMessageExchange | literal | self) operationChain*;
 
 variableAssignment: ID EQUALS expression;
 lookup: ID;
@@ -49,7 +49,8 @@ variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
 undelimitedStatement: 
-    functionDefinition | primitiveBody | ifStatement | whileStatement;
+    functionDefinition | primitiveBody | ifStatement | 
+    whileStatement | forStatement;
 functionDefinition: 
     KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
@@ -69,6 +70,8 @@ whileStatement:
     KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
 whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+forStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forStatementBody;
+forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 operationChain: propertySet | propertyGet;
 propertySet: OPEN_SQ expression CLOSE_SQ EQUALS expression;
 propertyGet: OPEN_SQ expression CLOSE_SQ;
@@ -147,6 +150,8 @@ KW_IF: 'if';
 KW_ELSE: 'else';
 KW_THIS: 'this';
 KW_WHILE: 'while';
+KW_FOR: 'for';
+KW_IN: 'in';
 fragment DIGIT: ('0'..'9');
 fragment LETTER: ([a-z]|[A-Z]);
 ID : LETTER (LETTER | DIGIT | '_')*;

@@ -238,6 +238,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterElseStatement(@NotNull DuroParser.ElseStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -544,6 +557,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
