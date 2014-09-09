@@ -262,9 +262,15 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_SP_ADD: {
-			int rhs = (int)currentFrame.stack.pop();
-			int lhs = (int)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs + rhs);
+			Object rhs = currentFrame.stack.pop();
+			Object lhs = currentFrame.stack.pop();
+			
+			if(rhs instanceof Integer && rhs instanceof Integer)
+				currentFrame.stack.push((int)lhs + (int)rhs);
+			
+			if(rhs instanceof String && rhs instanceof String)
+				currentFrame.stack.push((String)lhs + (String)rhs);
+			
 			currentFrame.instructionPointer++;
 			
 			break;
