@@ -16,14 +16,6 @@ function readLine() {
 	}
 }
 
-function intToString(i) {
-	#{
-		load_arg :0
-		sp_itoc
-		ret
-	}
-}
-
 log("Please enter your name: ");
 var name = readLine();
 log("Hello there " + name);
