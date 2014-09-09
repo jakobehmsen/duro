@@ -136,13 +136,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_DEF: {
-			String id = (String)instruction.operand1;
+			Object value = currentFrame.stack.pop();
+			String id = (String)currentFrame.stack.pop();
 			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 			
 			Process receiver = (Process)currentFrame.stack.pop();
 			
-			receiver.define(symbolCode, callFrameInfo);
+			receiver.define(symbolCode, value);
 			
 			currentFrame.instructionPointer++;
 			
@@ -343,6 +343,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			@SuppressWarnings("unchecked")
 			Iterator<Object> iterator = (Iterator<Object>)currentFrame.stack.pop();
 			currentFrame.stack.push(iterator.next());
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEW_DICT: {
+			DictionaryProcess newDict = new DictionaryProcess();
+			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
 			
 			break;
