@@ -299,9 +299,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} 
 		
-		case Instruction.OPCODE_SP_LOG: {
+		case Instruction.OPCODE_SP_WRITE: {
 			Object value = currentFrame.stack.pop();
-			System.out.println(value);
+			System.out.print(value);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -380,7 +380,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine));
 					 // Remember reprint the entered key during replay
 					playedInstructions.add(new Instruction(Instruction.OPCODE_DUP));
-					playedInstructions.add(new Instruction(Instruction.OPCODE_SP_LOG));
+					playedInstructions.add(new Instruction(Instruction.OPCODE_SP_WRITE));
 					break;
 				default:
 					playedInstructions.add(instruction);
