@@ -383,6 +383,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitProgramElement(@NotNull DuroParser.ProgramElementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntry}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntry(@NotNull DuroParser.DictProcessEntryContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntry}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntry(@NotNull DuroParser.DictProcessEntryContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionEqualityApplication}.
 	 * @param ctx the parse tree
 	 */
@@ -458,6 +469,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcess}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcess(@NotNull DuroParser.DictProcessContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcess}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionDefinition}.

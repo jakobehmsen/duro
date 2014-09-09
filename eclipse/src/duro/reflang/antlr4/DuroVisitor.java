@@ -250,6 +250,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitProgramElement(@NotNull DuroParser.ProgramElementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntry(@NotNull DuroParser.DictProcessEntryContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionEqualityApplication}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -297,6 +304,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
