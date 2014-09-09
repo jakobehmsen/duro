@@ -4,14 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
 import duro.reflang.SymbolTable;
 
-public class CustomProcess extends Process {
+public class CustomProcess extends Process implements Iterable<Object> {
 	/**
 	 * 
 	 */
@@ -265,11 +267,11 @@ public class CustomProcess extends Process {
 			Object rhs = currentFrame.stack.pop();
 			Object lhs = currentFrame.stack.pop();
 			
-			if(rhs instanceof Integer && rhs instanceof Integer)
+			if(lhs instanceof Integer && rhs instanceof Integer)
 				currentFrame.stack.push((int)lhs + (int)rhs);
 			
-			if(rhs instanceof String && rhs instanceof String)
-				currentFrame.stack.push((String)lhs + (String)rhs);
+			if(lhs instanceof String)
+				currentFrame.stack.push((String)lhs + rhs.toString());
 			
 			currentFrame.instructionPointer++;
 			
@@ -320,6 +322,27 @@ public class CustomProcess extends Process {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_TO_IT: {
+			@SuppressWarnings("unchecked")
+			Iterable<Object> iterable = (Iterable<Object>)currentFrame.stack.pop();
+			currentFrame.stack.push(iterable.iterator());
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_HAS_NEXT: {
+			@SuppressWarnings("unchecked")
+			Iterator<Object> iterator = (Iterator<Object>)currentFrame.stack.pop();
+			currentFrame.stack.push(iterator.hasNext());
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEXT: {
+			@SuppressWarnings("unchecked")
+			Iterator<Object> iterator = (Iterator<Object>)currentFrame.stack.pop();
+			currentFrame.stack.push(iterator.next());
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -381,5 +404,15 @@ public class CustomProcess extends Process {
 	@Override
 	public Object lookup(int symbolCode) {
 		return properties.get(symbolCode);
+	}
+
+	@Override
+	public Iterator<Object> iterator() {
+		ArrayList<Object> names = new ArrayList<Object>();
+		
+		for(Object symbolCode: properties.keySet())
+			names.add(SymbolTable.getIdFromSymbolCode((int)symbolCode));
+		
+		return names.iterator();
 	}
 }
