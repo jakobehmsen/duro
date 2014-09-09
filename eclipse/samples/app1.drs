@@ -9,13 +9,16 @@ function log(x) {
 	}
 }
 
+/*
 function readLine() {
 	#{
 		sp_next_line
 		ret
 	}
 }
+*/
 
+/*
 log("Please enter your name: ");
 var name = readLine();
 log("Hello there " + name);
@@ -29,32 +32,45 @@ var age = readLine();
 log("So, you are " + age + " years old.");
 
 log("I die now... bye bye... and we'll never meet again :´(");
+*/
+
+
+
+this["x"] = 12;
+this["y4"] = "asdf";
+
+for(name in this) // Missing
+	//log(name);
+    log(name + " = " + this[name] + " ");
 
 /*
 while(true) {
 	log("What do you want to do?");
-	var command = readline();
+	var command = readLine();
 	
 	if(command == "set") {
 		log("Enter property name: ");
-		var name = readline();
+		var name = readLine();
 		log("Enter property value: ");
-		var value = readline();
+		var value = readLine();
 		
 		this[name] = value;
 		
 		log("Property " + name + " was set to " + value + ".");
 	} else if(command == "get") {
 		log("Enter property name: ");
-		var name = readline();
+		var name = readLine();
 		
 		var value = this[name];
 		log(value);
 	} else if(command == "pause") {
 		log("Bye bye then.");
 		pause;
+	} else if(command == "list") {
+		for(name in this) // Missing
+		    log(name + " = " + this[name] + " ");
 	} else {
-		log("Valid commands are 'set', 'get' or 'pause'.");
+		log("Valid commands are 'set', 'get', 'list' or 'pause'.");
 	}
 }
 */
