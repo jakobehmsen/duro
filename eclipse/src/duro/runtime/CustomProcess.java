@@ -323,13 +323,6 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_ITOC: {
-			int i = (int)currentFrame.stack.pop();
-			String str = Character.toString((char)i);
-			currentFrame.stack.push(str);
-			currentFrame.instructionPointer++;
-			
-			break;
 		}
 		}
 	}
