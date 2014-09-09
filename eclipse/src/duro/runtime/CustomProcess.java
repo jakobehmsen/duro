@@ -375,12 +375,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				case Instruction.OPCODE_PAUSE:
 					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
 					break;
+				case Instruction.OPCODE_SP_WRITE:
+					// Don't manipulate peripherals on replay
+					break;
 				case Instruction.OPCODE_SP_NEXT_LINE:
 					// The replay instruction simply pushes the read key consistently
 					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine));
-					 // Remember reprint the entered key during replay
-					playedInstructions.add(new Instruction(Instruction.OPCODE_DUP));
-					playedInstructions.add(new Instruction(Instruction.OPCODE_SP_WRITE));
+					// Don't manipulate peripherals on replay
 					break;
 				default:
 					playedInstructions.add(instruction);
