@@ -333,10 +333,7 @@ public class Compiler {
 				String rawString = ctx.getText();
 				// Should the string enter properly prepared?
 				// - i.e., no need for filtering the string.
-				String string = rawString.substring(1, rawString.length() - 1)
-					.replace("\\n", "\n")
-					.replace("\\r", "\r")
-					.replace("\\t", "\t");
+				String string = extractStringLiteral(rawString);
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 			}
@@ -576,6 +573,13 @@ public class Compiler {
 		};
 	}
 	
+	private static String extractStringLiteral(String rawString) {
+		return rawString.substring(1, rawString.length() - 1)
+			.replace("\\n", "\n")
+			.replace("\\r", "\r")
+			.replace("\\t", "\t");
+	}
+	
 	private static BodyInfo getBodyInfo(Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree) {
 		Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
@@ -596,6 +600,11 @@ public class Compiler {
 		@Override
 		public void enterInteger(IntegerContext ctx) {
 			literal = Integer.parseInt(ctx.INT().getText());
+		}
+		
+		@Override
+		public void enterString(StringContext ctx) {
+			literal = extractStringLiteral(ctx.STRING_LITERAL().getText());
 		}
 	}
 	
