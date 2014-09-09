@@ -26,16 +26,15 @@ function intToString(i) {
 
 log("Please enter your name: ");
 var name = readLine();
-log("Hello there " + name); // Missing str + str
+log("Hello there " + name);
 
 log("Yawm :O Time for a break now :) ZZZZzzzz....");
 pause;
 
-log("Welcome back");
-log(name);
+log("Welcome back " + name);
 log("Please enter your age: ");
 var age = readLine();
-log("So, you are" + age + " years old."); // Missing str + str
+log("So, you are " + age + " years old.");
 
 log("I die now... bye bye... and we'll never meet again :´(");
 
