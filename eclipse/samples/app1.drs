@@ -2,14 +2,16 @@
 A console application that can get and set properties and pause the application.
 */
 
-function log(x) {
+function writeln(x) {
 	#{
 		load_arg :0
-		sp_log
+		load_string :"\n"
+		sp_add
+		sp_write
 	}
 }
 
-function readLine() {
+function readln() {
 	#{
 		sp_next_line
 		ret
@@ -17,19 +19,19 @@ function readLine() {
 }
 
 /*
-log("Please enter your name: ");
-var name = readLine();
-log("Hello there " + name);
+writeln("Please enter your name: ");
+var name = readln();
+writeln("Hello there " + name);
 
-log("Yawm :O Time for a break now :) ZZZZzzzz....");
+writeln("Yawm :O Time for a break now :) ZZZZzzzz....");
 pause;
 
-log("Welcome back " + name);
-log("Please enter your age: ");
-var age = readLine();
-log("So, you are " + age + " years old.");
+writeln("Welcome back " + name);
+writeln("Please enter your age: ");
+var age = readln();
+writeln("So, you are " + age + " years old.");
 
-log("I die now... bye bye... and we'll never meet again :´(");
+writeln("I die now... bye bye... and we'll never meet again :´(");
 */
 
 
@@ -37,31 +39,31 @@ log("I die now... bye bye... and we'll never meet again :´(");
 var properties = {};
 
 while(true) {
-	log("What do you want to do?");
-	var command = readLine();
+	writeln("What do you want to do?");
+	var command = readln();
 	
 	if(command == "set") {
-		log("Enter property name: ");
-		var name = readLine();
-		log("Enter property value: ");
-		var value = readLine();
+		writeln("Enter property name: ");
+		var name = readln();
+		writeln("Enter property value: ");
+		var value = readln();
 		
 		properties[name] = value;
 		
-		log("Property " + name + " was set to " + value + ".");
+		writeln("Property " + name + " was set to " + value + ".");
 	} else if(command == "get") {
-		log("Enter property name: ");
-		var name = readLine();
+		writeln("Enter property name: ");
+		var name = readln();
 		
 		var value = properties[name];
-		log(value);
+		writeln(value);
 	} else if(command == "pause") {
-		log("Bye bye then.");
+		writeln("Bye bye then.");
 		pause;
 	} else if(command == "list") {
 		for(name in properties)
-		    log(name + " = " + properties[name] + " ");
+		    writeln(name + " = " + properties[name] + " ");
 	} else {
-		log("Valid commands are 'set', 'get', 'list' or 'pause'.");
+		writeln("Valid commands are 'set', 'get', 'list' or 'pause'.");
 	}
 }
