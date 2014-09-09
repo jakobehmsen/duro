@@ -30,6 +30,8 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContex
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
+import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
+import duro.reflang.antlr4.DuroParser.ForStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
@@ -486,6 +488,42 @@ public class Compiler {
 				int conditionalJumpIndex = whileConditionalJumpIndexStack.pop();
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+			}
+
+			
+			
+			private Stack<Integer> forConditionalJumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> forJumpIndexStack = new Stack<Integer>();
+			
+			@Override
+			public void enterForStatementBody(ForStatementBodyContext ctx) {
+				ForStatementContext forStatementCtx = (ForStatementContext)ctx.getParent();
+				int ordinal = declareVariable(forStatementCtx.ID());
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
+				int jumpIndex = instructions.size();
+				forJumpIndexStack.push(jumpIndex);
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_HAS_NEXT));
+				int conditionalJumpIndex = instructions.size();
+				forConditionalJumpIndexStack.push(conditionalJumpIndex);
+				instructions.add(null);
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+			}
+			
+			@Override
+			public void exitForStatementBody(ForStatementBodyContext ctx) {
+				int jumpIndex = forJumpIndexStack.pop();
+				int jump = jumpIndex - instructions.size();
+				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+				
+				int conditionalJumpIndex = forConditionalJumpIndexStack.pop();
+				int conditionalJump = instructions.size() - conditionalJumpIndex;
+				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				
+				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
 			}
 			
 			@Override
