@@ -26,6 +26,8 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationCont
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionGreaterLessApplicationContext;
+import duro.reflang.antlr4.DuroParser.BinaryExpressionGreaterLessContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
@@ -229,6 +231,66 @@ public class Compiler {
 						int conditionalJump = equalsEndIndex - equalsConditionalJumpIndex;
 						// If false, skip the rest
 						instructions.set(equalsConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					}
+					
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+					
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
+				}
+			}
+			
+			
+
+			Stack<ArrayList<Integer>> greaterLessConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
+			
+			@Override
+			public void enterBinaryExpressionGreaterLess(BinaryExpressionGreaterLessContext ctx) {
+				greaterLessConditionalJumpIndexesStack.add(new ArrayList<Integer>());
+			}
+			
+			@Override
+			public void exitBinaryExpressionGreaterLessApplication(BinaryExpressionGreaterLessApplicationContext ctx) {
+				ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.peek();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.GREATER_THAN:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER));
+					break;
+				case DuroLexer.GREATER_THAN_OR_EQUALS:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER_EQUALS));
+					break;
+				case DuroLexer.LESS_THAN:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS));
+					break;
+				case DuroLexer.LESS_THAN_OR_EQUALS:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS_EQUALS));
+					break;
+				}
+
+				int conditionalJumpIndex = instructions.size();
+				instructions.add(null);
+				greaterLessConditionalJumpIndexes.add(conditionalJumpIndex);
+			}
+			
+			@Override
+			public void exitBinaryExpressionGreaterLess(BinaryExpressionGreaterLessContext ctx) {
+				ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.pop();
+				
+				if(greaterLessConditionalJumpIndexes.size() > 0) {
+					// If there were any applications
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+					instructions.add(new Instruction(Instruction.OPCODE_JUMP, 2));
+	
+					int equalsEndIndex = instructions.size();
+					
+					for(int greaterLessConditionalJumpIndex: greaterLessConditionalJumpIndexes) {
+						int conditionalJump = equalsEndIndex - greaterLessConditionalJumpIndex;
+						// If false, skip the rest
+						instructions.set(greaterLessConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 					}
 					
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
