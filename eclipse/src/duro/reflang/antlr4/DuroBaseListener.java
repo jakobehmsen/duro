@@ -108,6 +108,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterOperationChain(@NotNull DuroParser.OperationChainContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -531,6 +544,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterArray(@NotNull DuroParser.ArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitArray(@NotNull DuroParser.ArrayContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

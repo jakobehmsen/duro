@@ -38,7 +38,7 @@ variableAssignment: ID EQUALS expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
-literal: integer | bool | string | dictProcess | functionLiteral;
+literal: integer | bool | string | dictProcess | functionLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
@@ -47,6 +47,8 @@ dictProcessEntry: ID COLON expression;
 functionLiteral: 
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
+array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
+arrayOperand: expression;
 self: KW_THIS;
 operationChain: memberAccess | computedMemberAccess | explicitMessageExchange;
 memberAccess: DOT ID;

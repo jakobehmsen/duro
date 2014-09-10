@@ -61,6 +61,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#arrayOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#operationChain}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -290,6 +297,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#array}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray(@NotNull DuroParser.ArrayContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnTrue}.
