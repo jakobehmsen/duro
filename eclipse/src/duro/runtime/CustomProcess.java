@@ -12,6 +12,7 @@ import java.util.Stack;
 
 import duro.debugging.Debug;
 import duro.reflang.SymbolTable;
+import duro.transcriber.Journal;
 
 public class CustomProcess extends Process implements Iterable<Object> {
 	/**
@@ -24,13 +25,15 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		public final Process self;
 		public Object[] arguments;
 		public Object[] variables;
 		public final Instruction[] instructions;
 		public int instructionPointer;
 		public Stack<Object> stack = new Stack<Object>();
 		
-		public Frame(Object[] arguments, int variableCount, Instruction[] instructions) {
+		public Frame(Process self, Object[] arguments, int variableCount, Instruction[] instructions) {
+			this.self = self;
 			this.arguments = arguments;
 			variables = new Object[variableCount];
 			this.instructions = instructions;
@@ -41,7 +44,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	private Stack<Frame> frameStack = new Stack<Frame>();
 
 	public CustomProcess(int variableCount, Instruction[] instructions) {
-		currentFrame = new Frame(new Object[0], variableCount, instructions);
+		currentFrame = new Frame(this, new Object[0], variableCount, instructions);
 	}
 
 	@Override
@@ -125,11 +128,18 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
 
 			frameStack.push(currentFrame);
-			currentFrame = new Frame(arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			currentFrame = new Frame(this, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			
 			break;
 		} case Instruction.OPCODE_RET: {
 			Object result = currentFrame.stack.peek();
+			currentFrame = frameStack.pop();
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_RET_THIS: {
+			Object result = currentFrame.self;
 			currentFrame = frameStack.pop();
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
@@ -190,7 +200,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
-			currentFrame.stack.push(this);
+			currentFrame.stack.push(currentFrame.self);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -350,6 +360,24 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			DictionaryProcess newDict = new DictionaryProcess();
 			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_LOAD: {
+			String path = (String)currentFrame.stack.pop();
+			try {
+				// What to do here during replay?
+				// or rather, what to replace this instruction with for replay?
+				path = "commons/gens/" + path;
+				Journal<duro.runtime.Process, Instruction> journal = Journal.read(path);
+				CustomProcess customProcess = (CustomProcess)journal.getRoot();
+				
+				// Assumed to end with finish instruction. Replace finish with pop_frame.
+				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
+				this.frameStack.push(currentFrame);
+				currentFrame = customProcess.currentFrame;
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
 			
 			break;
 		}
