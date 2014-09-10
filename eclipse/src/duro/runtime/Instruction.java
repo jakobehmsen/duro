@@ -20,21 +20,22 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SWAP1 = 7;
 	public static final int OPCODE_CALL = 8;
 	public static final int OPCODE_RET = 9;
-	public static final int OPCODE_DEF = 10;
-	public static final int OPCODE_IF_TRUE = 11;
-	public static final int OPCODE_IF_FALSE = 12;
-	public static final int OPCODE_JUMP = 13;
-	public static final int OPCODE_SET = 14;
-	public static final int OPCODE_GET = 15;
-	public static final int OPCODE_LOAD_THIS = 16;
-	public static final int OPCODE_LOAD_NULL = 17;
-	public static final int OPCODE_LOAD_LOC = 18;
-	public static final int OPCODE_LOAD_ARG = 19;
-	public static final int OPCODE_LOAD_INT = 20;
-	public static final int OPCODE_LOAD_FUNC = 21;
-	public static final int OPCODE_LOAD_TRUE = 22;
-	public static final int OPCODE_LOAD_FALSE = 23;
-	public static final int OPCODE_LOAD_STRING = 24;
+	public static final int OPCODE_RET_THIS = 10;
+	public static final int OPCODE_DEF = 11;
+	public static final int OPCODE_IF_TRUE = 12;
+	public static final int OPCODE_IF_FALSE = 13;
+	public static final int OPCODE_JUMP = 14;
+	public static final int OPCODE_SET = 15;
+	public static final int OPCODE_GET = 16;
+	public static final int OPCODE_LOAD_THIS = 17;
+	public static final int OPCODE_LOAD_NULL = 18;
+	public static final int OPCODE_LOAD_LOC = 19;
+	public static final int OPCODE_LOAD_ARG = 20;
+	public static final int OPCODE_LOAD_INT = 21;
+	public static final int OPCODE_LOAD_FUNC = 22;
+	public static final int OPCODE_LOAD_TRUE = 23;
+	public static final int OPCODE_LOAD_FALSE = 24;
+	public static final int OPCODE_LOAD_STRING = 25;
 
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
@@ -50,7 +51,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_HAS_NEXT = 130;
 	public static final int OPCODE_SP_NEXT = 131;
 	public static final int OPCODE_SP_NEW_DICT = 132;
-
+	public static final int OPCODE_SP_LOAD = 133;
 
 	public final int opcode;
 	public final Object operand1;
