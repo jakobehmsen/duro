@@ -1,0 +1,19 @@
+/*
+Standard library
+*/
+
+function writeln(x) {
+	#{
+		load_arg :0
+		load_string :"\n"
+		sp_add
+		sp_write
+	}
+}
+
+function readln() {
+	#{
+		sp_next_line
+		ret
+	}
+}
