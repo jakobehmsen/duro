@@ -4,8 +4,52 @@ Simple property catalog application.
 A console application that can set, get and list properties and pause the application.
 */
 
-//var std = load "std";
+function load(path) {
+	# {
+		load_arg :0
+		sp_load
+		ret
+	}
+}
 
+var std = load("std");
+
+/*
+var std = {
+	writeln: function(x) {
+		#{
+			load_arg :0
+			load_string :"\n"
+			sp_add
+			sp_write
+		}
+	},
+	readln: function() {
+		#{
+			sp_next_line
+			ret
+		}
+	}
+};
+
+std.writeln = function(x) {
+	#{
+		load_arg :0
+		load_string :"\n"
+		sp_add
+		sp_write
+	}
+};
+
+std.readln = function() {
+	#{
+		sp_next_line
+		ret
+	}
+};
+*/
+
+/*
 this.writeln = function(x) {
 	#{
 		load_arg :0
@@ -21,36 +65,37 @@ this.readln = function() {
 		ret
 	}
 };
+*/
 
 var properties = {};
 
 while(true) {
-	writeln("What do you want to do?");
-	var command = readln();
+	std.writeln("What do you want to do?");
+	var command = std.readln();
 	
 	if(command == "set") {
-		writeln("Enter property name: ");
-		var name = readln();
-		writeln("Enter property value: ");
-		var value = readln();
+		std.writeln("Enter property name: ");
+		var name = std.readln();
+		std.writeln("Enter property value: ");
+		var value = std.readln();
 		
 		properties[name] = value;
 		
-		writeln("Property " + name + " was set to " + value + ".");
+		std.writeln("Property " + name + " was set to " + value + ".");
 	} else if(command == "get") {
-		writeln("Enter property name: ");
-		var name = readln();
+		std.writeln("Enter property name: ");
+		var name = std.readln();
 		
 		var value = properties[name];
-		writeln(value);
+		std.writeln(value);
 	} else if(command == "pause") {
-		writeln("Bye bye then.");
+		std.writeln("Bye bye then.");
 		pause;
-		writeln("Welcome back.");
+		std.writeln("Welcome back.");
 	} else if(command == "list") {
 		for(name in properties)
-		    writeln(name + " = " + properties[name] + " ");
+		    std.writeln(name + " = " + properties[name] + " ");
 	} else {
-		writeln("Valid commands are 'set', 'get', 'list' or 'pause'.");
+		std.writeln("Valid commands are 'set', 'get', 'list' or 'pause'.");
 	}
 }
