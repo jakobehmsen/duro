@@ -1,11 +1,8 @@
 package duro.runtime;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import duro.reflang.SymbolTable;
 
 public class DictionaryProcess extends Process implements Iterable<Object> {
 	/**
@@ -23,30 +20,25 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 		// Does is make sense to have this method here?
 	}
 	
-	private Hashtable<Integer, Object> properties = new Hashtable<Integer, Object>();
+	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
 	
 	@Override
-	public CallFrameInfo getInstructions(int symbolCode) {
-		return (CallFrameInfo)properties.get(symbolCode);
+	public CallFrameInfo getInstructions(Object key) {
+		return (CallFrameInfo)properties.get(key);
 	}
 	
 	@Override
-	public void define(int symbolCode, Object value) {
-		properties.put(symbolCode, value);
+	public void define(Object key, Object value) {
+		properties.put(key, value);
 	}
 
 	@Override
-	public Object lookup(int symbolCode) {
-		return properties.get(symbolCode);
+	public Object lookup(Object key) {
+		return properties.get(key);
 	}
 
 	@Override
 	public Iterator<Object> iterator() {
-		ArrayList<Object> names = new ArrayList<Object>();
-		
-		for(Object symbolCode: properties.keySet())
-			names.add(SymbolTable.getIdFromSymbolCode((int)symbolCode));
-		
-		return names.iterator();
+		return properties.keySet().iterator();
 	}
 }
