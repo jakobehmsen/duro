@@ -267,7 +267,56 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_NOT: {
+		} case Instruction.OPCODE_SP_GREATER: {
+			@SuppressWarnings("rawtypes")
+			Comparable rhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("rawtypes")
+			Comparable lhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("unchecked")
+			boolean result = lhs.compareTo(rhs) > 0;
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_GREATER_EQUALS: {
+			@SuppressWarnings("rawtypes")
+			Comparable rhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("rawtypes")
+			Comparable lhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("unchecked")
+			int comparison = lhs.compareTo(rhs);
+			boolean result = comparison >= 0;
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_LESS: {
+			@SuppressWarnings("rawtypes")
+			Comparable rhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("rawtypes")
+			Comparable lhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("unchecked")
+			boolean result = lhs.compareTo(rhs) < 0;
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_LESS_EQUALS: {
+			@SuppressWarnings("rawtypes")
+			Comparable rhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("rawtypes")
+			Comparable lhs = (Comparable)currentFrame.stack.pop();
+			@SuppressWarnings("unchecked")
+			int comparison = lhs.compareTo(rhs);
+			boolean result = comparison <= 0;
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} 
+		
+		
+		case Instruction.OPCODE_SP_NOT: {
 			boolean b = (boolean)currentFrame.stack.pop();
 			currentFrame.stack.push(!b);
 			currentFrame.instructionPointer++;
