@@ -29,6 +29,8 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
+import duro.reflang.antlr4.DuroParser.ComputedMemberAccessContext;
+import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
@@ -36,16 +38,17 @@ import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
+import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
+import duro.reflang.antlr4.DuroParser.MemberAccessContext;
+import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
-import duro.reflang.antlr4.DuroParser.PropertyGetContext;
-import duro.reflang.antlr4.DuroParser.PropertySetContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -362,6 +365,27 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
+				int parameterCount = ctx.functionParameters().getChildCount();
+				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+				for(int i = 0; i < parameterCount; i++) {
+					String parameterId = ctx.functionParameters().getChild(i).getText();
+					idToParameterOrdinalMap.put(parameterId, i);
+				}
+				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
+//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+
+				CallFrameInfo callFrameInfo = new CallFrameInfo(
+					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+			}
+			
+			@Override
 			public void enterPause(PauseContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
 			}
@@ -410,7 +434,7 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionBody(FunctionBodyContext ctx) {
-				if(instructions.get(instructions.size() - 1).opcode != Instruction.OPCODE_RET) {
+				if(instructions.size() > 0 && instructions.get(instructions.size() - 1).opcode != Instruction.OPCODE_RET) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				}
@@ -545,12 +569,34 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitPropertySet(PropertySetContext ctx) {
+			public void enterMemberAssignment(MemberAssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+			}
+			
+			@Override
+			public void exitMemberAssignment(MemberAssignmentContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
 			@Override
-			public void exitPropertyGet(PropertyGetContext ctx) {
+			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
+			}
+			
+			@Override
+			public void enterMemberAccess(MemberAccessContext ctx) {
+				String id = ctx.ID().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+			}
+			
+			@Override
+			public void exitMemberAccess(MemberAccessContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_GET));
+			}
+			
+			@Override
+			public void exitComputedMemberAccess(ComputedMemberAccessContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_GET));
 			}
 			
