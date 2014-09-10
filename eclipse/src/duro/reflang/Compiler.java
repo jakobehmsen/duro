@@ -34,6 +34,7 @@ import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
+import duro.reflang.antlr4.DuroParser.ExplicitMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
@@ -569,22 +570,6 @@ public class Compiler {
 			}
 			
 			@Override
-			public void enterMemberAssignment(MemberAssignmentContext ctx) {
-				String id = ctx.ID().getText();
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-			}
-			
-			@Override
-			public void exitMemberAssignment(MemberAssignmentContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
-			}
-			
-			@Override
-			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
-			}
-			
-			@Override
 			public void enterMemberAccess(MemberAccessContext ctx) {
 				String id = ctx.ID().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
@@ -598,6 +583,28 @@ public class Compiler {
 			@Override
 			public void exitComputedMemberAccess(ComputedMemberAccessContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_GET));
+			}
+			
+			@Override
+			public void exitExplicitMessageExchange(ExplicitMessageExchangeContext ctx) {
+				int argumentCount = ctx.messageExchange().expression().size();
+				appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
+			}
+			
+			@Override
+			public void enterMemberAssignment(MemberAssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+			}
+			
+			@Override
+			public void exitMemberAssignment(MemberAssignmentContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
+			}
+			
+			@Override
+			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
 			@Override
