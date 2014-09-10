@@ -147,13 +147,26 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPropertySet(@NotNull DuroParser.PropertySetContext ctx) { }
+	@Override public void enterMemberAccess(@NotNull DuroParser.MemberAccessContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitPropertySet(@NotNull DuroParser.PropertySetContext ctx) { }
+	@Override public void exitMemberAccess(@NotNull DuroParser.MemberAccessContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -180,19 +193,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPropertyGet(@NotNull DuroParser.PropertyGetContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPropertyGet(@NotNull DuroParser.PropertyGetContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -284,6 +284,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitThisMessageExchange(@NotNull DuroParser.ThisMessageExchangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -407,6 +420,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterComputedMemberAssignment(@NotNull DuroParser.ComputedMemberAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitComputedMemberAssignment(@NotNull DuroParser.ComputedMemberAssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -505,6 +531,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterOperationEnd(@NotNull DuroParser.OperationEndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitOperationEnd(@NotNull DuroParser.OperationEndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -700,6 +739,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterComputedMemberAccess(@NotNull DuroParser.ComputedMemberAccessContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitComputedMemberAccess(@NotNull DuroParser.ComputedMemberAccessContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

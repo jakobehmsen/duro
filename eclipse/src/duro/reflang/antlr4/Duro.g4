@@ -31,19 +31,30 @@ binaryExpressionArithmetic2Application:
     BIN_OP2 binaryExpressionArithmetic2Operand;
 
 binaryExpressionArithmetic2Operand: 
-    (lookup | thisMessageExchange | literal | self) operationChain*;
+    (lookup | thisMessageExchange | literal | self) 
+    operationChain* operationEnd?;
 
 variableAssignment: ID EQUALS expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
-literal: integer | bool | string | dictProcess;
+literal: integer | bool | string | dictProcess | functionLiteral;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
 dictProcess: OPEN_BRA (dictProcessEntry (COMMA dictProcessEntry)*)? CLOSE_BRA;
 dictProcessEntry: ID COLON expression;
+functionLiteral: 
+    KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
+    OPEN_BRA functionBody CLOSE_BRA;
 self: KW_THIS;
+operationChain: memberAccess | computedMemberAccess;
+memberAccess: DOT ID;
+computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
+operationEnd: memberAssignment | computedMemberAssignment;
+memberAssignment: DOT ID EQUALS expression;
+computedMemberAssignment: OPEN_SQ expression CLOSE_SQ EQUALS expression;
+
 delimitedStatement: pause | variableStatement | returnStatement;
 pause: KW_PAUSE;
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
@@ -74,9 +85,6 @@ whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 forStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forStatementBody;
 forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
-operationChain: propertySet | propertyGet;
-propertySet: OPEN_SQ expression CLOSE_SQ EQUALS expression;
-propertyGet: OPEN_SQ expression CLOSE_SQ;
 
 // STRING_LITERAL deprived and adjusted from:
 // https://github.com/antlr/grammars-v4/blob/master/ecmascript/ECMAScript.g4
@@ -142,6 +150,7 @@ INT: DIGIT+;
 SEMICOLON: ';';
 COMMA: ',';
 COLON: ':';
+DOT: '.';
 KW_VAR: 'var';
 KW_PAUSE: 'pause';
 KW_FUNCTION: 'function';
