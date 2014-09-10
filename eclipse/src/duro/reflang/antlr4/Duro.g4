@@ -48,9 +48,11 @@ functionLiteral:
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 self: KW_THIS;
-operationChain: memberAccess | computedMemberAccess;
+operationChain: memberAccess | computedMemberAccess | explicitMessageExchange;
 memberAccess: DOT ID;
 computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
+explicitMessageExchange: DOT messageExchange;
+
 operationEnd: memberAssignment | computedMemberAssignment;
 memberAssignment: DOT ID EQUALS expression;
 computedMemberAssignment: OPEN_SQ expression CLOSE_SQ EQUALS expression;

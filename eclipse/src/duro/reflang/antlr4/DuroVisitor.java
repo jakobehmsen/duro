@@ -89,6 +89,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMemberAccess(@NotNull DuroParser.MemberAccessContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#explicitMessageExchange}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#memberAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

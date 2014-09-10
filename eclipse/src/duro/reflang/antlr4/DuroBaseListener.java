@@ -160,6 +160,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
