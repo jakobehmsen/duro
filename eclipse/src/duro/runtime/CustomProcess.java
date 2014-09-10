@@ -4,14 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
-import duro.reflang.SymbolTable;
 import duro.transcriber.Journal;
 
 public class CustomProcess extends Process implements Iterable<Object> {
@@ -114,8 +112,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_CALL: {
-			String id = (String)instruction.operand1;
-			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+			String key = (String)instruction.operand1;
 //			int symbolCode = (int)instruction.operand1;
 			int argumentCount = (int)instruction.operand2;
 			Object[] arguments = new Object[argumentCount];
@@ -125,7 +122,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			Process receiver = (Process)currentFrame.stack.pop();
 			
-			CallFrameInfo callFrameInfo = receiver.getInstructions(symbolCode);
+			CallFrameInfo callFrameInfo = receiver.getInstructions(key);
 
 			frameStack.push(currentFrame);
 			currentFrame = new Frame(this, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
@@ -147,12 +144,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_DEF: {
 			Object value = currentFrame.stack.pop();
-			String id = (String)currentFrame.stack.pop();
-			int symbolCode = SymbolTable.getSymbolCodeFromId(id);
+			Object key = currentFrame.stack.pop();
 			
 			Process receiver = (Process)currentFrame.stack.pop();
 			
-			receiver.define(symbolCode, value);
+			receiver.define(key, value);
 			
 			currentFrame.instructionPointer++;
 			
@@ -182,19 +178,17 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SET: {
 			Object value = currentFrame.stack.pop();
-			Object index = currentFrame.stack.pop(); // Assumed to be string only
+			Object key = currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			int symbolCode = SymbolTable.getSymbolCodeFromId((String)index);
-			receiver.define(symbolCode, value);
+			receiver.define(key, value);
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_GET: {
-			Object index = currentFrame.stack.pop(); // Assumed to be string only
+			Object key = currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			int symbolCode = SymbolTable.getSymbolCodeFromId((String)index);
-			Object value = receiver.lookup(symbolCode);
+			Object value = receiver.lookup(key);
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
@@ -280,8 +274,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			if(lhs instanceof Integer && rhs instanceof Integer)
 				currentFrame.stack.push((int)lhs + (int)rhs);
 			
-			if(lhs instanceof String)
-				currentFrame.stack.push((String)lhs + rhs.toString());
+			if(lhs instanceof String || rhs instanceof String)
+				currentFrame.stack.push(lhs.toString() + rhs.toString());
 			
 			currentFrame.instructionPointer++;
 			
@@ -362,6 +356,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SP_NEW_ARRAY: {
+			int length = (int)currentFrame.stack.pop();
+			ArrayProcess newArray = new ArrayProcess(new Object[length]);
+			currentFrame.stack.push(newArray);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_SP_LOAD: {
 			String path = (String)currentFrame.stack.pop();
 			try {
@@ -424,30 +425,25 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		Debug.println(Debug.LEVEL_HIGH, "/play");
 	}
 	
-	private Hashtable<Integer, Object> properties = new Hashtable<Integer, Object>();
+	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
 	
 	@Override
-	public CallFrameInfo getInstructions(int symbolCode) {
-		return (CallFrameInfo)properties.get(symbolCode);
+	public CallFrameInfo getInstructions(Object key) {
+		return (CallFrameInfo)properties.get(key);
 	}
 	
 	@Override
-	public void define(int symbolCode, Object value) {
-		properties.put(symbolCode, value);
+	public void define(Object key, Object value) {
+		properties.put(key, value);
 	}
 
 	@Override
-	public Object lookup(int symbolCode) {
-		return properties.get(symbolCode);
+	public Object lookup(Object key) {
+		return properties.get(key);
 	}
 
 	@Override
 	public Iterator<Object> iterator() {
-		ArrayList<Object> names = new ArrayList<Object>();
-		
-		for(Object symbolCode: properties.keySet())
-			names.add(SymbolTable.getIdFromSymbolCode((int)symbolCode));
-		
-		return names.iterator();
+		return properties.keySet().iterator();
 	}
 }
