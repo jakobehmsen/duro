@@ -9,6 +9,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface DuroListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionGreaterLessApplication}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpressionGreaterLessApplication(@NotNull DuroParser.BinaryExpressionGreaterLessApplicationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLessApplication}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpressionGreaterLessApplication(@NotNull DuroParser.BinaryExpressionGreaterLessApplicationContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionLogicalOr}.
 	 * @param ctx the parse tree
 	 */
@@ -403,6 +414,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionGreaterLess}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLess}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableStatement}.

@@ -7,6 +7,13 @@ programElement:
 topExpression: expression;
 expression: variableAssignment | binaryExpressionLogicalOr;
 
+/*
+binaryExpression: 
+    expression op=(GREATER_THAN | GREATER_THAN_OR_EQUALS | LESS_THAN | LESS_THAN_OR_EQUALS) expression
+    | expression EQUALS expression
+    ;
+*/
+
 binaryExpressionLogicalOr: 
     binaryExpressionLogicalAnd binaryExpressionLogicalOrApplication*;
 binaryExpressionLogicalOrApplication: DOUBLE_PIPE binaryExpressionLogicalAnd;
@@ -17,9 +24,15 @@ binaryExpressionLogicalAndApplication:
     DOUBLE_AMP binaryExpressionEquality;
 
 binaryExpressionEquality:
-    binaryExpressionArithmetic1 binaryExpressionEqualityApplication*;
-binaryExpressionEqualityApplication: 
-    op=(EQUALS | NOT_EQUALS) binaryExpressionArithmetic1;
+    binaryExpressionGreaterLess binaryExpressionEqualityApplication*;
+binaryExpressionEqualityApplication:  
+    op=(EQUALS | NOT_EQUALS) binaryExpressionGreaterLess;
+
+binaryExpressionGreaterLess:
+    binaryExpressionArithmetic1 binaryExpressionGreaterLessApplication*;
+binaryExpressionGreaterLessApplication: 
+    op=(GREATER_THAN | GREATER_THAN_OR_EQUALS | LESS_THAN | LESS_THAN_OR_EQUALS) 
+    binaryExpressionArithmetic1;
 
 binaryExpressionArithmetic1: 
     binaryExpressionArithmetic2 binaryExpressionArithmetic1Application*;
@@ -50,10 +63,10 @@ functionLiteral:
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
-operationChain: memberAccess | computedMemberAccess | explicitMessageExchange;
+operationChain: explicitMessageExchange | memberAccess | computedMemberAccess;
+explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT ID;
 computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
-explicitMessageExchange: DOT messageExchange;
 
 operationEnd: memberAssignment | computedMemberAssignment;
 memberAssignment: DOT ID ASSIGN expression;
@@ -150,8 +163,8 @@ OPEN_PAR: '(';
 CLOSE_PAR: ')';
 ASSIGN: '=';
 EQUALS: '==';
-
 NOT_EQUALS: '!=';
+
 LESS_THAN: '<';
 LESS_THAN_OR_EQUALS: '<=';
 GREATER_THAN: '>';

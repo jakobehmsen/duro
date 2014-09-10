@@ -12,6 +12,13 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLessApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionGreaterLessApplication(@NotNull DuroParser.BinaryExpressionGreaterLessApplicationContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalOr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -262,6 +269,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableStatement}.
