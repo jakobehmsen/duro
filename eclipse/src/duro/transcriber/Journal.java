@@ -46,10 +46,6 @@ public class Journal<T extends Player<C>, C> {
 		journalLogger = Executors.newSingleThreadExecutor();
 	}
 	
-	public T getRoot() {
-		return root;
-	}
-	
 	private static class JournalInfo<T extends Player<C>, C> {
 		public final T root;
 		public final ArrayList<Entry<T, C>> transactions;
@@ -119,7 +115,11 @@ public class Journal<T extends Player<C>, C> {
 		}
 	}
 	
-	public void log(/*Here should be the identifier, */ final List<C> commands) {
+	public T getRoot() {
+		return root;
+	}
+	
+	public void log(/*Here should be the identifier/reference?, */ final List<C> commands) {
 		journalLogger.execute(new Runnable() {
 			@Override
 			public void run() {
