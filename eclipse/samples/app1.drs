@@ -4,21 +4,23 @@ Simple property catalog application.
 A console application that can set, get and list properties and pause the application.
 */
 
-function writeln(x) {
+//var std = load "std";
+
+this.writeln = function(x) {
 	#{
 		load_arg :0
 		load_string :"\n"
 		sp_add
 		sp_write
 	}
-}
+};
 
-function readln() {
+this.readln = function() {
 	#{
 		sp_next_line
 		ret
 	}
-}
+};
 
 var properties = {};
 
