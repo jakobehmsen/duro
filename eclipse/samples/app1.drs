@@ -1,5 +1,7 @@
 /*
-A console application that can get and set properties and pause the application.
+Simple property catalog application.
+
+A console application that can set, get and list properties and pause the application.
 */
 
 function writeln(x) {
@@ -17,24 +19,6 @@ function readln() {
 		ret
 	}
 }
-
-/*
-writeln("Please enter your name: ");
-var name = readln();
-writeln("Hello there " + name);
-
-writeln("Yawm :O Time for a break now :) ZZZZzzzz....");
-pause;
-
-writeln("Welcome back " + name);
-writeln("Please enter your age: ");
-var age = readln();
-writeln("So, you are " + age + " years old.");
-
-writeln("I die now... bye bye... and we'll never meet again :´(");
-*/
-
-
 
 var properties = {};
 
