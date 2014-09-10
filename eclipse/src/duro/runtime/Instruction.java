@@ -51,7 +51,8 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_HAS_NEXT = 130;
 	public static final int OPCODE_SP_NEXT = 131;
 	public static final int OPCODE_SP_NEW_DICT = 132;
-	public static final int OPCODE_SP_LOAD = 133;
+	public static final int OPCODE_SP_NEW_ARRAY = 133;
+	public static final int OPCODE_SP_LOAD = 134;
 
 	public final int opcode;
 	public final Object operand1;
