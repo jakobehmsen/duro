@@ -19,7 +19,7 @@ binaryExpressionLogicalAndApplication:
 binaryExpressionEquality:
     binaryExpressionArithmetic1 binaryExpressionEqualityApplication*;
 binaryExpressionEqualityApplication: 
-    DOUBLE_EQUALS binaryExpressionArithmetic1;
+    op=(EQUALS | NOT_EQUALS) binaryExpressionArithmetic1;
 
 binaryExpressionArithmetic1: 
     binaryExpressionArithmetic2 binaryExpressionArithmetic1Application*;
@@ -31,10 +31,10 @@ binaryExpressionArithmetic2Application:
     BIN_OP2 binaryExpressionArithmetic2Operand;
 
 binaryExpressionArithmetic2Operand: 
-    (lookup | thisMessageExchange | literal | self) 
+    (lookup | thisMessageExchange | literal | self)
     operationChain* operationEnd?;
 
-variableAssignment: ID EQUALS expression;
+variableAssignment: ID ASSIGN expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
@@ -56,13 +56,13 @@ computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
 explicitMessageExchange: DOT messageExchange;
 
 operationEnd: memberAssignment | computedMemberAssignment;
-memberAssignment: DOT ID EQUALS expression;
-computedMemberAssignment: OPEN_SQ expression CLOSE_SQ EQUALS expression;
+memberAssignment: DOT ID ASSIGN expression;
+computedMemberAssignment: OPEN_SQ expression CLOSE_SQ ASSIGN expression;
 
 delimitedStatement: pause | variableStatement | returnStatement;
 pause: KW_PAUSE;
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
-variableDeclarationAndAssignment: KW_VAR ID EQUALS expression;
+variableDeclarationAndAssignment: KW_VAR ID ASSIGN expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
 undelimitedStatement: 
@@ -148,8 +148,15 @@ OPEN_BRA: '{';
 CLOSE_BRA: '}';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
-EQUALS: '=';
-DOUBLE_EQUALS: '==';
+ASSIGN: '=';
+EQUALS: '==';
+
+NOT_EQUALS: '!=';
+LESS_THAN: '<';
+LESS_THAN_OR_EQUALS: '<=';
+GREATER_THAN: '>';
+GREATER_THAN_OR_EQUALS: '>=';
+
 INT: DIGIT+;
 SEMICOLON: ';';
 COMMA: ',';
