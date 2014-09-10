@@ -20,6 +20,8 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
+import duro.reflang.antlr4.DuroParser.ArrayContext;
+import duro.reflang.antlr4.DuroParser.ArrayOperandContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityApplicationContext;
@@ -361,16 +363,6 @@ public class Compiler {
 			}
 			
 			@Override
-			public void enterSelf(SelfContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			}
-			
-			@Override
-			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
-				walker.suspendWalkWithin(ctx);
-			}
-			
-			@Override
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().getChildCount();
 				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
@@ -384,6 +376,47 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+			}
+			
+			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
+			
+			@Override
+			public void enterArray(ArrayContext ctx) {
+				int length = ctx.arrayOperand().size();
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, length));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
+				
+				arrayOperandNumberStack.push(0);
+			}
+			
+			@Override
+			public void enterArrayOperand(ArrayOperandContext ctx) {
+				int arrayOperandNumber = arrayOperandNumberStack.peek();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, arrayOperandNumber));
+				
+				arrayOperandNumberStack.set(arrayOperandNumberStack.size() - 1, arrayOperandNumber + 1);
+			}
+			
+			@Override
+			public void exitArrayOperand(ArrayOperandContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+			}
+			
+			@Override
+			public void exitArray(ArrayContext ctx) {
+				arrayOperandNumberStack.pop();
+			}
+			
+			@Override
+			public void enterSelf(SelfContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			}
+			
+			@Override
+			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
+				walker.suspendWalkWithin(ctx);
 			}
 			
 			@Override
