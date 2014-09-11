@@ -424,7 +424,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			int length = (int)currentFrame.stack.pop();
-			ArrayProcess newArray = new ArrayProcess(new Object[length]);
+			ArrayProcess newArray = new ArrayProcess(length);
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			

@@ -12,8 +12,8 @@ public class ArrayProcess extends Process implements Iterable<Object> {
 	private static final long serialVersionUID = 1L;
 	private Object[] items;
 
-	public ArrayProcess(Object[] items) {
-		this.items = items;
+	public ArrayProcess(int length) {
+		this.items = new Object[length];
 	}
 
 	@Override
