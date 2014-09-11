@@ -41,4 +41,9 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	public Iterator<Object> iterator() {
 		return properties.keySet().iterator();
 	}
+	
+	@Override
+	public String toString() {
+		return properties.toString();
+	}
 }
