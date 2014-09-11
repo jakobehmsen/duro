@@ -425,12 +425,62 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterVariableAssignment(VariableAssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				int ordinal = idToVariableOrdinalMap.get(id);
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN: {
+					break;
+				} default: {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+					// oldValue
+					break;
+				}
+				}
+			}
+			
+			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String id = ctx.ID().getText();
 				int ordinal = idToVariableOrdinalMap.get(id);
-
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN: {
+					// newValue
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					// newValue
+					break;
+				} default: {
+					// oldValue, newValuePart
+					appendAssignment(ctx.op);
+					// newValue
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					// newValue
+					break;
+				}
+				}
+			}
+			
+			private void appendAssignment(Token op) {
+				switch(op.getType()) {
+				case DuroLexer.ASSIGN_ADD:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+					break;
+				case DuroLexer.ASSIGN_SUB:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+					break;
+				case DuroLexer.ASSIGN_MULT:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_MULT));
+					break;
+				case DuroLexer.ASSIGN_DIV:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_DIV));
+					break;
+				}
 			}
 			
 			@Override
