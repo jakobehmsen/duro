@@ -187,13 +187,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionArithmetic1Application(@NotNull DuroParser.BinaryExpressionArithmetic1ApplicationContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#forStatementBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationMemberAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -446,18 +439,18 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#forStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForStatement(@NotNull DuroParser.ForStatementContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#ifStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIfStatement(@NotNull DuroParser.IfStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forInStatementBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclaration}.
@@ -493,6 +486,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSelf(@NotNull DuroParser.SelfContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forInStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForInStatement(@NotNull DuroParser.ForInStatementContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecOperand}.

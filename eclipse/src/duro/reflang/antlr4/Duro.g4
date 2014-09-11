@@ -104,7 +104,7 @@ variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
-    whileStatement | forStatement;
+    whileStatement | forInStatement;
 functionDefinition: 
     KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
@@ -124,8 +124,8 @@ whileStatement:
     KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
 whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
-forStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forStatementBody;
-forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+forInStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forInStatementBody;
+forInStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 // STRING_LITERAL deprived and adjusted from:
 // https://github.com/antlr/grammars-v4/blob/master/ecmascript/ECMAScript.g4

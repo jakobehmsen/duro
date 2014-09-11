@@ -342,19 +342,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterUnaryExpressionPostIncDecApplicationMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -823,19 +810,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterIfStatement(@NotNull DuroParser.IfStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -843,6 +817,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIfStatement(@NotNull DuroParser.IfStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -908,6 +895,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSelf(@NotNull DuroParser.SelfContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterForInStatement(@NotNull DuroParser.ForInStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForInStatement(@NotNull DuroParser.ForInStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

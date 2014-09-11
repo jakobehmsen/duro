@@ -41,8 +41,8 @@ import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.ExplicitMessageExchangeContext;
-import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
-import duro.reflang.antlr4.DuroParser.ForStatementContext;
+import duro.reflang.antlr4.DuroParser.ForInStatementBodyContext;
+import duro.reflang.antlr4.DuroParser.ForInStatementContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
@@ -721,8 +721,8 @@ public class Compiler {
 			private Stack<Integer> forJumpIndexStack = new Stack<Integer>();
 			
 			@Override
-			public void enterForStatementBody(ForStatementBodyContext ctx) {
-				ForStatementContext forStatementCtx = (ForStatementContext)ctx.getParent();
+			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
+				ForInStatementContext forStatementCtx = (ForInStatementContext)ctx.getParent();
 				int ordinal = declareVariable(forStatementCtx.ID());
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
@@ -739,7 +739,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitForStatementBody(ForStatementBodyContext ctx) {
+			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
 				int jumpIndex = forJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));

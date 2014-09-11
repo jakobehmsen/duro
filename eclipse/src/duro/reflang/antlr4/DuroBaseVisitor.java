@@ -218,14 +218,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
 	@Override public T visitUnaryExpressionPostIncDecApplicationMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -514,7 +506,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitForStatement(@NotNull DuroParser.ForStatementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitIfStatement(@NotNull DuroParser.IfStatementContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -522,7 +514,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitIfStatement(@NotNull DuroParser.IfStatementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -563,6 +555,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitSelf(@NotNull DuroParser.SelfContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitForInStatement(@NotNull DuroParser.ForInStatementContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}

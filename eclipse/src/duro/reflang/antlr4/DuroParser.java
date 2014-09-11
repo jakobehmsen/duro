@@ -57,8 +57,8 @@ public class DuroParser extends Parser {
 		RULE_primitiveBody = 59, RULE_primitiveCall = 60, RULE_primitiveOperand = 61, 
 		RULE_ifStatement = 62, RULE_ifStatementCondition = 63, RULE_ifStatementOnTrue = 64, 
 		RULE_elseStatement = 65, RULE_ifStatementOnFalse = 66, RULE_whileStatement = 67, 
-		RULE_whileStatementCondition = 68, RULE_whileStatementBody = 69, RULE_forStatement = 70, 
-		RULE_forStatementBody = 71;
+		RULE_whileStatementCondition = 68, RULE_whileStatementBody = 69, RULE_forInStatement = 70, 
+		RULE_forInStatementBody = 71;
 	public static final String[] ruleNames = {
 		"program", "programElements", "programElement", "topExpression", "expression", 
 		"binaryExpressionLogicalOr", "binaryExpressionLogicalOrApplication", "binaryExpressionLogicalAnd", 
@@ -80,7 +80,7 @@ public class DuroParser extends Parser {
 		"functionBody", "primitiveBody", "primitiveCall", "primitiveOperand", 
 		"ifStatement", "ifStatementCondition", "ifStatementOnTrue", "elseStatement", 
 		"ifStatementOnFalse", "whileStatement", "whileStatementCondition", "whileStatementBody", 
-		"forStatement", "forStatementBody"
+		"forInStatement", "forInStatementBody"
 	};
 
 	@Override
@@ -3182,11 +3182,11 @@ public class DuroParser extends Parser {
 		public WhileStatementContext whileStatement() {
 			return getRuleContext(WhileStatementContext.class,0);
 		}
-		public ForStatementContext forStatement() {
-			return getRuleContext(ForStatementContext.class,0);
-		}
 		public FunctionDefinitionContext functionDefinition() {
 			return getRuleContext(FunctionDefinitionContext.class,0);
+		}
+		public ForInStatementContext forInStatement() {
+			return getRuleContext(ForInStatementContext.class,0);
 		}
 		public UndelimitedStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -3240,7 +3240,7 @@ public class DuroParser extends Parser {
 			case KW_FOR:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(416); forStatement();
+				setState(416); forInStatement();
 				}
 				break;
 			default:
@@ -4039,41 +4039,41 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ForStatementContext extends ParserRuleContext {
-		public ForStatementBodyContext forStatementBody() {
-			return getRuleContext(ForStatementBodyContext.class,0);
-		}
+	public static class ForInStatementContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
 		public TerminalNode KW_FOR() { return getToken(DuroParser.KW_FOR, 0); }
 		public TerminalNode KW_IN() { return getToken(DuroParser.KW_IN, 0); }
+		public ForInStatementBodyContext forInStatementBody() {
+			return getRuleContext(ForInStatementBodyContext.class,0);
+		}
 		public TerminalNode OPEN_PAR() { return getToken(DuroParser.OPEN_PAR, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode KW_VAR() { return getToken(DuroParser.KW_VAR, 0); }
 		public TerminalNode CLOSE_PAR() { return getToken(DuroParser.CLOSE_PAR, 0); }
-		public ForStatementContext(ParserRuleContext parent, int invokingState) {
+		public ForInStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_forStatement; }
+		@Override public int getRuleIndex() { return RULE_forInStatement; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterForStatement(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterForInStatement(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitForStatement(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitForInStatement(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitForStatement(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitForInStatement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ForStatementContext forStatement() throws RecognitionException {
-		ForStatementContext _localctx = new ForStatementContext(_ctx, getState());
-		enterRule(_localctx, 140, RULE_forStatement);
+	public final ForInStatementContext forInStatement() throws RecognitionException {
+		ForInStatementContext _localctx = new ForInStatementContext(_ctx, getState());
+		enterRule(_localctx, 140, RULE_forInStatement);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -4092,7 +4092,7 @@ public class DuroParser extends Parser {
 			setState(508); match(KW_IN);
 			setState(509); expression();
 			setState(510); match(CLOSE_PAR);
-			setState(511); forStatementBody();
+			setState(511); forInStatementBody();
 			}
 		}
 		catch (RecognitionException re) {
@@ -4106,7 +4106,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ForStatementBodyContext extends ParserRuleContext {
+	public static class ForInStatementBodyContext extends ParserRuleContext {
 		public ProgramElementContext programElement() {
 			return getRuleContext(ProgramElementContext.class,0);
 		}
@@ -4115,28 +4115,28 @@ public class DuroParser extends Parser {
 		}
 		public TerminalNode CLOSE_BRA() { return getToken(DuroParser.CLOSE_BRA, 0); }
 		public TerminalNode OPEN_BRA() { return getToken(DuroParser.OPEN_BRA, 0); }
-		public ForStatementBodyContext(ParserRuleContext parent, int invokingState) {
+		public ForInStatementBodyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_forStatementBody; }
+		@Override public int getRuleIndex() { return RULE_forInStatementBody; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterForStatementBody(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterForInStatementBody(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitForStatementBody(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitForInStatementBody(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitForStatementBody(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitForInStatementBody(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ForStatementBodyContext forStatementBody() throws RecognitionException {
-		ForStatementBodyContext _localctx = new ForStatementBodyContext(_ctx, getState());
-		enterRule(_localctx, 142, RULE_forStatementBody);
+	public final ForInStatementBodyContext forInStatementBody() throws RecognitionException {
+		ForInStatementBodyContext _localctx = new ForInStatementBodyContext(_ctx, getState());
+		enterRule(_localctx, 142, RULE_forInStatementBody);
 		try {
 			setState(518);
 			switch ( getInterpreter().adaptivePredict(_input,38,_ctx) ) {
