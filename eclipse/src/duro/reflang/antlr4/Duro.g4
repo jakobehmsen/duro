@@ -44,10 +44,25 @@ binaryExpressionArithmetic2Application:
     BIN_OP2 unaryExpressionNot;
 
 unaryExpressionNot: 
-    unaryExpressionNotApplication | unaryExpressionNotOperand;
-unaryExpressionNotApplication: NOT unaryExpressionNotOperand;
+    unaryExpressionNotApplication | unaryExpressionPostIncDec;
+unaryExpressionNotApplication: NOT unaryExpressionPostIncDec;
 
-unaryExpressionNotOperand: 
+unaryExpressionPostIncDec: 
+    unaryExpressionPostIncDecApplication | unaryExpressionPostIncDecOperand;
+unaryExpressionPostIncDecApplication: 
+    (
+        unaryExpressionPostIncDecApplicationVariable 
+        | unaryExpressionPostIncDecApplicationMemberAccess
+        | unaryExpressionPostIncDecApplicationComputedMemberAccess
+    ) 
+    op=(DOUBLE_PLUS | DOUBLE_MINUS);
+unaryExpressionPostIncDecApplicationVariable: ID;
+unaryExpressionPostIncDecApplicationMemberAccess:
+    DOT ID;
+unaryExpressionPostIncDecApplicationComputedMemberAccess:
+    DOT OPEN_SQ expression CLOSE_SQ;
+
+unaryExpressionPostIncDecOperand: 
     (grouping | lookup | thisMessageExchange | literal | self)
     operationChain* operationEnd?;
 
@@ -157,6 +172,8 @@ LINE_TERMINATOR: [\r\n\u2028\u2029] -> channel(HIDDEN);
 
 DOUBLE_AMP: '&&';
 DOUBLE_PIPE: '||';
+DOUBLE_PLUS: '++';
+DOUBLE_MINUS: '--';
 BIN_OP1: '+'|'-';
 BIN_OP2: '*'|'/';
 HASH: '#';

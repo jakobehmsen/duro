@@ -68,6 +68,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDec(@NotNull DuroParser.UnaryExpressionPostIncDecContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#whileStatementBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -87,6 +94,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOperationChain(@NotNull DuroParser.OperationChainContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationVariable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplicationVariable(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationVariableContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
@@ -171,6 +185,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationMemberAccess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplicationMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#elseStatement}.
@@ -264,6 +285,20 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationComputedMemberAccess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplicationComputedMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#computedMemberAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -355,13 +390,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitOperationEnd(@NotNull DuroParser.OperationEndContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryExpressionNotOperand(@NotNull DuroParser.UnaryExpressionNotOperandContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalAnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -451,6 +479,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSelf(@NotNull DuroParser.SelfContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionBody}.
