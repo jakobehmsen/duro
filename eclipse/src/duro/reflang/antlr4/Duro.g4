@@ -58,9 +58,9 @@ unaryExpressionPostIncDecApplication:
     op=(DOUBLE_PLUS | DOUBLE_MINUS);
 unaryExpressionPostIncDecApplicationVariable: ID;
 unaryExpressionPostIncDecApplicationMemberAccess:
-    DOT ID;
+    unaryExpressionPostIncDecOperand DOT ID;
 unaryExpressionPostIncDecApplicationComputedMemberAccess:
-    DOT OPEN_SQ expression CLOSE_SQ;
+    unaryExpressionPostIncDecOperand OPEN_SQ expression CLOSE_SQ;
 
 unaryExpressionPostIncDecOperand: 
     (grouping | lookup | thisMessageExchange | literal | self)
