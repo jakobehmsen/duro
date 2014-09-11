@@ -14,6 +14,7 @@ public class ArrayProcess extends Process implements Iterable<Object> {
 
 	public ArrayProcess(int length) {
 		this.items = new Object[length];
+		Arrays.fill(items, new NullProcess());
 	}
 
 	@Override
