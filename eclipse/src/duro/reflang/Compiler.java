@@ -59,6 +59,7 @@ import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
+import duro.reflang.antlr4.DuroParser.UnaryExpressionNotApplicationContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationAndAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
@@ -338,6 +339,11 @@ public class Compiler {
 				}
 				
 				instructions.add(new Instruction(binaryOpCode));
+			}
+			
+			@Override
+			public void exitUnaryExpressionNotApplication(UnaryExpressionNotApplicationContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NOT));
 			}
 			
 			@Override
