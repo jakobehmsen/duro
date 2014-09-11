@@ -137,7 +137,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = receiver.getInstructions(key);
 
 			frameStack.push(currentFrame);
-			currentFrame = new Frame(this, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			currentFrame = new Frame(receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			
 			break;
 		} case Instruction.OPCODE_RET: {
