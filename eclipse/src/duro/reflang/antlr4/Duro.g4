@@ -3,7 +3,8 @@ grammar Duro;
 program: programElements;
 programElements: programElement*;
 programElement: 
-    (topExpression | delimitedStatement) SEMICOLON | undelimitedStatement;
+    delimitedProgramElement SEMICOLON | undelimitedStatement;
+delimitedProgramElement: topExpression | delimitedStatement;
 topExpression: expression;
 expression: variableAssignment | binaryExpressionLogicalOr;
 
@@ -104,7 +105,7 @@ variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN expression?;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
-    whileStatement | forInStatement;
+    whileStatement | forStatement | forInStatement;
 functionDefinition: 
     KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
@@ -124,6 +125,18 @@ whileStatement:
     KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
 whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+forStatement: 
+    KW_FOR OPEN_PAR 
+        initialization = delimitedProgramElement? SEMICOLON
+        condition = expression? SEMICOLON
+        update = delimitedProgramElement?
+    CLOSE_PAR 
+    OPEN_BRA
+        forStatementBody
+    CLOSE_BRA
+    ;
+forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+
 forInStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forInStatementBody;
 forInStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 

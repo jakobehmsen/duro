@@ -284,6 +284,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryExpressionArithmetic1Application(@NotNull DuroParser.BinaryExpressionArithmetic1ApplicationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#forStatementBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forStatementBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatementBody(@NotNull DuroParser.ForStatementBodyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationMemberAccess}.
 	 * @param ctx the parse tree
 	 */
@@ -458,6 +469,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExpressionPostIncDecApplicationComputedMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#delimitedProgramElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#delimitedProgramElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
@@ -678,6 +700,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatement(@NotNull DuroParser.ForStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatement(@NotNull DuroParser.ForStatementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#ifStatement}.
