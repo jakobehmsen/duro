@@ -210,7 +210,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_LOAD_NULL: {
-			currentFrame.stack.push(null);
+			currentFrame.stack.push(new NullProcess());
 			currentFrame.instructionPointer++;
 			
 			break;
