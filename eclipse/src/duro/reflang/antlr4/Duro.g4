@@ -72,7 +72,10 @@ unaryExpressionPostIncDecOperand:
 
 grouping: OPEN_PAR expression CLOSE_PAR;
 // TODO: Multiple assignments should be possible
-variableAssignment: ID ASSIGN expression;
+variableAssignment: 
+    ID 
+    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
+    expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
@@ -208,9 +211,13 @@ OPEN_BRA: '{';
 CLOSE_BRA: '}';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
-ASSIGN: '=';
+ASSIGN_ADD: '+=';
+ASSIGN_SUB: '-=';
+ASSIGN_MULT: '*=';
+ASSIGN_DIV: '/=';
 EQUALS: '==';
 NOT_EQUALS: '!=';
+ASSIGN: '=';
 NOT: '!';
 
 LESS_THAN: '<';
