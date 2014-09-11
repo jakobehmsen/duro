@@ -1,6 +1,7 @@
 package duro.runtime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,5 +56,10 @@ public class ArrayProcess extends Process implements Iterable<Object> {
 			keys.add(i);
 		
 		return keys.iterator();
+	}
+	
+	@Override
+	public String toString() {
+		return Arrays.toString(items);
 	}
 }
