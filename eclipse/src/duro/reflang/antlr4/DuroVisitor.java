@@ -40,6 +40,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#forStatementInitialization}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotApplication}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -474,6 +481,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#forStatementCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -493,6 +507,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forStatementUpdate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#messageExchange}.

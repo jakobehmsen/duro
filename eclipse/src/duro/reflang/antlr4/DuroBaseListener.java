@@ -69,6 +69,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -875,6 +888,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -908,6 +934,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

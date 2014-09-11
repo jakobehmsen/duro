@@ -71,6 +71,7 @@ unaryExpressionPostIncDecOperand:
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR expression CLOSE_PAR;
+// TODO: Multiple assignments should be possible
 variableAssignment: ID ASSIGN expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
@@ -93,12 +94,16 @@ explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT ID;
 computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
 
+// TODO: Multiple assignments and declarations should be possible and should be
+// possible to mix and match
 operationEnd: memberAssignment | computedMemberAssignment;
 memberAssignment: DOT ID ASSIGN expression;
 computedMemberAssignment: OPEN_SQ expression CLOSE_SQ ASSIGN expression;
 
 delimitedStatement: pause | variableStatement | returnStatement;
 pause: KW_PAUSE;
+// TODO: Multiple assignments and declarations should be possible and should be
+// possible to mix and match
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID ASSIGN expression;
 variableDeclaration: KW_VAR ID;
@@ -127,14 +132,17 @@ whileStatementCondition: expression;
 whileStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 forStatement: 
     KW_FOR OPEN_PAR 
-        initialization = delimitedProgramElement? SEMICOLON
-        condition = expression? SEMICOLON
-        update = delimitedProgramElement?
+        forStatementInitialization SEMICOLON
+        forStatementCondition SEMICOLON
+        forStatementUpdate
     CLOSE_PAR 
     OPEN_BRA
         forStatementBody
     CLOSE_BRA
     ;
+forStatementInitialization: delimitedProgramElement?;
+forStatementCondition: expression?;
+forStatementUpdate: delimitedProgramElement?;
 forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 forInStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forInStatementBody;

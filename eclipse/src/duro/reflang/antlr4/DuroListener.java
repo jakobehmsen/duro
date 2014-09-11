@@ -53,6 +53,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#forStatementInitialization}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forStatementInitialization}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionNotApplication}.
 	 * @param ctx the parse tree
 	 */
@@ -735,6 +746,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitForInStatementBody(@NotNull DuroParser.ForInStatementBodyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#forStatementCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forStatementCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -766,6 +788,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#forStatementUpdate}.
+	 * @param ctx the parse tree
+	 */
+	void enterForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forStatementUpdate}.
+	 * @param ctx the parse tree
+	 */
+	void exitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#messageExchange}.
