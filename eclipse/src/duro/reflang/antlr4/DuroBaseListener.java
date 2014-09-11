@@ -147,6 +147,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterNil(@NotNull DuroParser.NilContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitNil(@NotNull DuroParser.NilContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx) { }
 	/**
 	 * {@inheritDoc}

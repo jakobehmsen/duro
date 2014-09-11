@@ -66,7 +66,7 @@ unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver:
     unaryExpressionPostIncDecOperand;
 
 unaryExpressionPostIncDecOperand: 
-    (grouping | lookup | thisMessageExchange | literal | self)
+    (grouping | lookup | thisMessageExchange | literal | self | nil)
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR expression CLOSE_PAR;
@@ -86,6 +86,7 @@ functionLiteral:
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
+nil: KW_NULL;
 operationChain: explicitMessageExchange | memberAccess | computedMemberAccess;
 explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT ID;
@@ -210,6 +211,7 @@ KW_FALSE: 'false';
 KW_IF: 'if';
 KW_ELSE: 'else';
 KW_THIS: 'this';
+KW_NULL: 'null';
 KW_WHILE: 'while';
 KW_FOR: 'for';
 KW_IN: 'in';

@@ -82,6 +82,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#nil}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNil(@NotNull DuroParser.NilContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#arrayOperand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
