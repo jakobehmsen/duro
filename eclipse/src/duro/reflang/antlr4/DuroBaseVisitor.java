@@ -258,6 +258,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { return visitChildren(ctx); }
 
 	/**

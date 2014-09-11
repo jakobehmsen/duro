@@ -222,6 +222,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#undelimitedStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

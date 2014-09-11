@@ -60,7 +60,10 @@ unaryExpressionPostIncDecApplicationVariable: ID;
 unaryExpressionPostIncDecApplicationMemberAccess:
     unaryExpressionPostIncDecOperand DOT ID;
 unaryExpressionPostIncDecApplicationComputedMemberAccess:
-    unaryExpressionPostIncDecOperand OPEN_SQ expression CLOSE_SQ;
+    unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver 
+    OPEN_SQ expression CLOSE_SQ;
+unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver:
+    unaryExpressionPostIncDecOperand;
 
 unaryExpressionPostIncDecOperand: 
     (grouping | lookup | thisMessageExchange | literal | self)

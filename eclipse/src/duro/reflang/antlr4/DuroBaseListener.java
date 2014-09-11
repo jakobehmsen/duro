@@ -407,6 +407,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

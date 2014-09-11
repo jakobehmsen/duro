@@ -339,6 +339,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#undelimitedStatement}.
 	 * @param ctx the parse tree
 	 */
