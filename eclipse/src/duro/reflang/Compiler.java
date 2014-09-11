@@ -43,6 +43,10 @@ import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.ExplicitMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.ForInStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForInStatementContext;
+import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
+import duro.reflang.antlr4.DuroParser.ForStatementConditionContext;
+import duro.reflang.antlr4.DuroParser.ForStatementContext;
+import duro.reflang.antlr4.DuroParser.ForStatementUpdateContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
@@ -714,24 +718,63 @@ public class Compiler {
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 			}
+			
+			
 
-			
-			
 			private Stack<Integer> forConditionalJumpIndexStack = new Stack<Integer>();
 			private Stack<Integer> forJumpIndexStack = new Stack<Integer>();
 			
 			@Override
+			public void enterForStatementCondition(ForStatementConditionContext ctx) {
+				forJumpIndexStack.push(instructions.size());
+			}
+			
+			@Override
+			public void enterForStatementUpdate(ForStatementUpdateContext ctx) {
+				// Postpone generation of update till after body
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void enterForStatementBody(ForStatementBodyContext ctx) {
+				int conditionalJumpIndex = instructions.size();
+				forConditionalJumpIndexStack.push(conditionalJumpIndex);
+				instructions.add(null);
+			}
+			
+			@Override
+			public void exitForStatement(ForStatementContext ctx) {
+				ConditionalTreeWalker walker = new ConditionalTreeWalker();
+				// Why isn't the walked here?????
+				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
+				walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), updateElement);
+				
+				int indexAtCondition = forJumpIndexStack.pop();
+				int conditionJump = indexAtCondition - instructions.size();
+				instructions.add(new Instruction(Instruction.OPCODE_JUMP, conditionJump));
+				
+				int conditionalJumpIndex = forConditionalJumpIndexStack.pop();
+				int conditionalJump = instructions.size() - conditionalJumpIndex;
+				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+			}
+			
+			
+			
+			private Stack<Integer> forInConditionalJumpIndexStack = new Stack<Integer>();
+			private Stack<Integer> forInJumpIndexStack = new Stack<Integer>();
+			
+			@Override
 			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
-				ForInStatementContext forStatementCtx = (ForInStatementContext)ctx.getParent();
-				int ordinal = declareVariable(forStatementCtx.ID());
+				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+				int ordinal = declareVariable(forInStatementCtx.ID());
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
 				int jumpIndex = instructions.size();
-				forJumpIndexStack.push(jumpIndex);
+				forInJumpIndexStack.push(jumpIndex);
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_HAS_NEXT));
 				int conditionalJumpIndex = instructions.size();
-				forConditionalJumpIndexStack.push(conditionalJumpIndex);
+				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
@@ -740,16 +783,18 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
-				int jumpIndex = forJumpIndexStack.pop();
+				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
 				
-				int conditionalJumpIndex = forConditionalJumpIndexStack.pop();
+				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 				
 				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
 			}
+			
+			
 			
 			@Override
 			public void enterMemberAccess(MemberAccessContext ctx) {
