@@ -52,6 +52,7 @@ import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
+import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
@@ -555,6 +556,11 @@ public class Compiler {
 			@Override
 			public void enterSelf(SelfContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			}
+			
+			@Override
+			public void enterNil(NilContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			@Override
