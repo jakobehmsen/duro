@@ -39,14 +39,19 @@ binaryExpressionArithmetic1:
 binaryExpressionArithmetic1Application: BIN_OP1 binaryExpressionArithmetic2;
 
 binaryExpressionArithmetic2: 
-    binaryExpressionArithmetic2Operand binaryExpressionArithmetic2Application*;
+    unaryExpressionNot binaryExpressionArithmetic2Application*;
 binaryExpressionArithmetic2Application: 
-    BIN_OP2 binaryExpressionArithmetic2Operand;
+    BIN_OP2 unaryExpressionNot;
 
-binaryExpressionArithmetic2Operand: 
-    (lookup | thisMessageExchange | literal | self)
+unaryExpressionNot: 
+    unaryExpressionNotApplication | unaryExpressionNotOperand;
+unaryExpressionNotApplication: NOT unaryExpressionNotOperand;
+
+unaryExpressionNotOperand: 
+    (grouping | lookup | thisMessageExchange | literal | self)
     operationChain* operationEnd?;
 
+grouping: OPEN_PAR expression CLOSE_PAR;
 variableAssignment: ID ASSIGN expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
@@ -164,6 +169,7 @@ CLOSE_PAR: ')';
 ASSIGN: '=';
 EQUALS: '==';
 NOT_EQUALS: '!=';
+NOT: '!';
 
 LESS_THAN: '<';
 LESS_THAN_OR_EQUALS: '<=';

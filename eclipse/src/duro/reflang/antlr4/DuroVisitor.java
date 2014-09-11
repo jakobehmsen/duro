@@ -40,6 +40,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -129,6 +136,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#grouping}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGrouping(@NotNull DuroParser.GroupingContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#programElements}.
@@ -264,6 +278,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNot}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionNot(@NotNull DuroParser.UnaryExpressionNotContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -334,6 +355,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitOperationEnd(@NotNull DuroParser.OperationEndContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionNotOperand(@NotNull DuroParser.UnaryExpressionNotOperandContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalAnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -402,13 +430,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2Operand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionArithmetic2Operand(@NotNull DuroParser.BinaryExpressionArithmetic2OperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#primitiveCall}.
