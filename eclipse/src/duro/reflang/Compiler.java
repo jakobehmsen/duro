@@ -369,8 +369,7 @@ public class Compiler {
 					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 					instructions.add(new Instruction(Instruction.OPCODE_GET));
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
 					appendIncDec(ctx.op);
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
