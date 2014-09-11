@@ -9,6 +9,8 @@ import java.util.Stack;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -60,6 +62,8 @@ import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionNotApplicationContext;
+import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationContext;
+import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationVariableContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationAndAssignmentContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
@@ -344,6 +348,37 @@ public class Compiler {
 			@Override
 			public void exitUnaryExpressionNotApplication(UnaryExpressionNotApplicationContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NOT));
+			}
+			
+			@Override
+			public void exitUnaryExpressionPostIncDecApplication(UnaryExpressionPostIncDecApplicationContext ctx) {
+				ParserRuleContext targetCtx = (ParserRuleContext)ctx.getChild(0);
+				switch(targetCtx.getRuleIndex()) {
+				case DuroParser.RULE_unaryExpressionPostIncDecApplicationVariable:
+					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
+					int ordinal = idToVariableOrdinalMap.get(id);
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+					appendIncDec(ctx.op);
+					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					break;
+				case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess:
+					break;
+				case DuroParser.RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess:
+					break;
+				}
+			}
+			
+			private void appendIncDec(Token opToken) {
+				switch(opToken.getType()) {
+				case DuroLexer.DOUBLE_PLUS:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+					break;
+				case DuroLexer.DOUBLE_MINUS:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+					break;
+				}
 			}
 			
 			@Override
