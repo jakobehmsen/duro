@@ -100,8 +100,14 @@ computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
 operationEnd: memberAssignment | computedMemberAssignment;
-memberAssignment: DOT ID ASSIGN expression;
-computedMemberAssignment: OPEN_SQ expression CLOSE_SQ ASSIGN expression;
+memberAssignment: 
+    DOT ID 
+    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN) 
+    expression;
+computedMemberAssignment: 
+    OPEN_SQ expression CLOSE_SQ 
+    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
+    expression;
 
 delimitedStatement: pause | variableStatement | returnStatement;
 pause: KW_PAUSE;

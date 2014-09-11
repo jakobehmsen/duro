@@ -2819,12 +2819,17 @@ public class DuroParser extends Parser {
 	}
 
 	public static class MemberAssignmentContext extends ParserRuleContext {
+		public Token op;
 		public TerminalNode DOT() { return getToken(DuroParser.DOT, 0); }
 		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
+		public TerminalNode ASSIGN_MULT() { return getToken(DuroParser.ASSIGN_MULT, 0); }
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
+		public TerminalNode ASSIGN_DIV() { return getToken(DuroParser.ASSIGN_DIV, 0); }
+		public TerminalNode ASSIGN_ADD() { return getToken(DuroParser.ASSIGN_ADD, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode ASSIGN_SUB() { return getToken(DuroParser.ASSIGN_SUB, 0); }
 		public MemberAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2847,12 +2852,19 @@ public class DuroParser extends Parser {
 	public final MemberAssignmentContext memberAssignment() throws RecognitionException {
 		MemberAssignmentContext _localctx = new MemberAssignmentContext(_ctx, getState());
 		enterRule(_localctx, 96, RULE_memberAssignment);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(391); match(DOT);
 			setState(392); match(ID);
-			setState(393); match(ASSIGN);
+			setState(393);
+			((MemberAssignmentContext)_localctx).op = _input.LT(1);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ASSIGN_ADD) | (1L << ASSIGN_SUB) | (1L << ASSIGN_MULT) | (1L << ASSIGN_DIV) | (1L << ASSIGN))) != 0)) ) {
+				((MemberAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+			}
+			consume();
 			setState(394); expression();
 			}
 		}
@@ -2868,8 +2880,12 @@ public class DuroParser extends Parser {
 	}
 
 	public static class ComputedMemberAssignmentContext extends ParserRuleContext {
+		public Token op;
+		public TerminalNode ASSIGN_MULT() { return getToken(DuroParser.ASSIGN_MULT, 0); }
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
 		public TerminalNode OPEN_SQ() { return getToken(DuroParser.OPEN_SQ, 0); }
+		public TerminalNode ASSIGN_DIV() { return getToken(DuroParser.ASSIGN_DIV, 0); }
+		public TerminalNode ASSIGN_ADD() { return getToken(DuroParser.ASSIGN_ADD, 0); }
 		public TerminalNode CLOSE_SQ() { return getToken(DuroParser.CLOSE_SQ, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
@@ -2877,6 +2893,7 @@ public class DuroParser extends Parser {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
+		public TerminalNode ASSIGN_SUB() { return getToken(DuroParser.ASSIGN_SUB, 0); }
 		public ComputedMemberAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2899,13 +2916,20 @@ public class DuroParser extends Parser {
 	public final ComputedMemberAssignmentContext computedMemberAssignment() throws RecognitionException {
 		ComputedMemberAssignmentContext _localctx = new ComputedMemberAssignmentContext(_ctx, getState());
 		enterRule(_localctx, 98, RULE_computedMemberAssignment);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(396); match(OPEN_SQ);
 			setState(397); expression();
 			setState(398); match(CLOSE_SQ);
-			setState(399); match(ASSIGN);
+			setState(399);
+			((ComputedMemberAssignmentContext)_localctx).op = _input.LT(1);
+			_la = _input.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ASSIGN_ADD) | (1L << ASSIGN_SUB) | (1L << ASSIGN_MULT) | (1L << ASSIGN_DIV) | (1L << ASSIGN))) != 0)) ) {
+				((ComputedMemberAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+			}
+			consume();
 			setState(400); expression();
 			}
 		}
@@ -4659,9 +4683,9 @@ public class DuroParser extends Parser {
 		"\2\2\u017f\u0180\7\60\2\2\u0180]\3\2\2\2\u0181\u0182\7\f\2\2\u0182\u0183"+
 		"\5\f\7\2\u0183\u0184\7\r\2\2\u0184_\3\2\2\2\u0185\u0188\5b\62\2\u0186"+
 		"\u0188\5d\63\2\u0187\u0185\3\2\2\2\u0187\u0186\3\2\2\2\u0188a\3\2\2\2"+
-		"\u0189\u018a\7\"\2\2\u018a\u018b\7\60\2\2\u018b\u018c\7\30\2\2\u018c\u018d"+
+		"\u0189\u018a\7\"\2\2\u018a\u018b\7\60\2\2\u018b\u018c\t\5\2\2\u018c\u018d"+
 		"\5\f\7\2\u018dc\3\2\2\2\u018e\u018f\7\f\2\2\u018f\u0190\5\f\7\2\u0190"+
-		"\u0191\7\r\2\2\u0191\u0192\7\30\2\2\u0192\u0193\5\f\7\2\u0193e\3\2\2\2"+
+		"\u0191\7\r\2\2\u0191\u0192\t\5\2\2\u0192\u0193\5\f\7\2\u0193e\3\2\2\2"+
 		"\u0194\u0198\5h\65\2\u0195\u0198\5j\66\2\u0196\u0198\5p9\2\u0197\u0194"+
 		"\3\2\2\2\u0197\u0195\3\2\2\2\u0197\u0196\3\2\2\2\u0198g\3\2\2\2\u0199"+
 		"\u019a\7$\2\2\u019ai\3\2\2\2\u019b\u019e\5l\67\2\u019c\u019e\5n8\2\u019d"+
