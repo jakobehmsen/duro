@@ -62,6 +62,7 @@ import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionNotApplicationContext;
+import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationVariableContext;
@@ -352,6 +353,11 @@ public class Compiler {
 			}
 			
 			@Override
+			public void exitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+			}
+			
+			@Override
 			public void exitUnaryExpressionPostIncDecApplication(UnaryExpressionPostIncDecApplicationContext ctx) {
 				ParserRuleContext targetCtx = (ParserRuleContext)ctx.getChild(0);
 				switch(targetCtx.getRuleIndex()) {
@@ -366,17 +372,38 @@ public class Compiler {
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+					// receiver, receiver
 					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					// receiver, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// value, receiver, value
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+					// value, receiver, value, 1
 					appendIncDec(ctx.op);
+					// value, receiver, value'
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					// value, receiver, value', id
 					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					// value, receiver, id, value'
 					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// value
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess:
+					// receiver, receiver, id
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// receiver, id, receiver, id
+					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					// receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+					// value, receiver, id, value,
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+					// value, receiver, id, value, 1
+					appendIncDec(ctx.op);
+					// value, receiver, id, value'
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
 					break;
 				}
 			}
