@@ -85,6 +85,18 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_DUP1: {
+			int index = currentFrame.stack.size() - 2;
+			currentFrame.stack.add(index, currentFrame.stack.peek());
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_DUP2: {
+			int index = currentFrame.stack.size() - 3;
+			currentFrame.stack.add(index, currentFrame.stack.peek());
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_STORE: {
 			int ordinal = (int)instruction.operand1;
 			Object value = currentFrame.stack.pop();
@@ -181,7 +193,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			Object key = currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
 			receiver.define(key, value);
-			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
 			break;
