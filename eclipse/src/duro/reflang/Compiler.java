@@ -749,13 +749,17 @@ public class Compiler {
 			
 			@Override
 			public void exitMemberAssignment(MemberAssignmentContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				// receiver, id, value
+				instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+				// value, receiver, id, value
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
 			@Override
 			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				// receiver, id, value
+				instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+				// value, receiver, id, value
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
