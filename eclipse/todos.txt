@@ -1,0 +1,51 @@
+{x > 50;} // Any non declared variables that are references are parameters
+
+****Add new shorthand function literal (and single parameter calls)****
+
+function(x, y) {return x < y;}
+<=>
+{x < y} // Parameter sequence is indicated by usage sequence
+
+list.sort({x > y;})
+list.sort({x > y})
+list.sort: {x > y;} // Single parameter call
+list.sort: {x > y} // Single parameter call
+
+list.where({x > 50;})
+list.where({x > 50})
+list.where: {x > 50;} // Single parameter call
+list.where: {x > 50} // Single parameter call
+
+{|x y| y <= x} // Parameter sequence indicated explicitly
+
+Implications:
+There is certain overlap with the object literal syntax, that implicates ambiguity as to the following form:
+{}
+Here, it cannot be derived whether an empty block or an empty object is to be created. This could possibly be solved by having the following form for empty functions:
+{;}
+or something similar.
+
+Alternatively, the object literal syntax should change to using brackets as illustrated below. 
+Since, brackets in functions indicates behavior and square brackets in arrays indicate structure, object literals seem to fit better with using square brackets, since it is basically a structure: a dictionary.
+
+Object literal:
+"[" (":" | keyValuePair*) "]"
+Array literal:
+"[" (expression (", " expression)*)? "]"
+
+Object literal with four members:
+[
+   toCompare: {|x y| x < y},
+   toCompare2: {x < y}
+   toCompare3: function() {x < y}
+   toCompare4: function(x, y) {x < y}
+]
+
+Object literal with no members:
+[:]
+
+Array literal with four items:
+[1, 2, 3, 5]
+
+Array literal with no items:
+[]
