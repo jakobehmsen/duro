@@ -133,9 +133,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_CALL: {
+		} case Instruction.OPCODE_SEND: {
 			String key = (String)instruction.operand1;
-//			int symbolCode = (int)instruction.operand1;
 			int argumentCount = (int)instruction.operand2;
 			Object[] arguments = new Object[argumentCount];
 			
@@ -148,6 +147,19 @@ public class CustomProcess extends Process implements Iterable<Object> {
 
 			frameStack.push(currentFrame);
 			currentFrame = new Frame(receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			
+			break;
+		} case Instruction.OPCODE_CALL: {
+			int argumentCount = (int)instruction.operand1;
+			Object[] arguments = new Object[argumentCount];
+			
+			for(int i = argumentCount - 1; i >= 0; i--)
+				arguments[i] = currentFrame.stack.pop();
+			
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+
+			frameStack.push(currentFrame);
+			currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			
 			break;
 		} case Instruction.OPCODE_RET: {
