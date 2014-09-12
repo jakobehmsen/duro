@@ -652,9 +652,12 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				int ordinal = declareVariable(ctx.ID());
-				
-				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+				//for(int i = ctx.ID().size() - 1; i >= 0; i--) {
+				for(int i = 0; i < ctx.ID().size(); i++) {
+					TerminalNode id = ctx.ID(i);
+					int ordinal = declareVariable(id);
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+				}
 			}
 			
 			@Override
@@ -664,7 +667,8 @@ public class Compiler {
 			
 			@Override
 			public void exitReturnStatement(ReturnStatementContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_RET));
+				int returnCount = ctx.expression().size();
+				instructions.add(new Instruction(Instruction.OPCODE_RET, returnCount));
 			}
 			
 			@Override
@@ -694,9 +698,9 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionBody(FunctionBodyContext ctx) {
-				if(instructions.size() > 0 && instructions.get(instructions.size() - 1).opcode != Instruction.OPCODE_RET) {
+				if(instructions.size() > 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET));
+					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
 			}
 			
