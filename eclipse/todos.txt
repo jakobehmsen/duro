@@ -1,10 +1,10 @@
-{x > 50;} // Any non declared variables that are references are parameters
-
 ****Add new shorthand function literal (and single parameter calls)****
 
-function(x, y) {return x < y;}
-<=>
+{x > 50;} // Any non declared variables that are references are parameters
+
 {x < y} // Parameter sequence is indicated by usage sequence
+<=>
+function(x, y) {return x < y;}
 
 list.sort({x > y;})
 list.sort({x > y})
@@ -49,3 +49,12 @@ Array literal with four items:
 
 Array literal with no items:
 []
+
+****Optional assignment****
+
+x ?= y;
+<=>
+if(x == null)
+	x = y;
+
+x is set to y if x is null.
