@@ -1,0 +1,32 @@
+/*
+Collections library
+*/
+
+function newList() {
+	var initialCapacity = 12;
+	
+	return {
+		items: newArray(initialCapacity),
+		capacity: initialCapacity,
+		size: 0,
+		add: function(item) {
+			this.items[this.size] = item;
+			this.size++;
+		},
+		toString: function() {
+			var str = "[";
+			
+			if(this.size > 0) {
+				str += this.items[0];
+				
+				for(var i = 1; i < this.size; i++) {
+					str += ", " + this.items[i];
+				}
+			}
+			
+			str += "]";
+			
+			return str;
+		}
+	};
+}
