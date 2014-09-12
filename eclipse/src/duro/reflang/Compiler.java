@@ -455,7 +455,7 @@ public class Compiler {
 					break;
 				} default: {
 					// oldValue, newValuePart
-					appendAssignment(ctx.op);
+					appendAssignmentReducer(ctx.op);
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
@@ -466,7 +466,7 @@ public class Compiler {
 				}
 			}
 			
-			private void appendAssignment(Token op) {
+			private void appendAssignmentReducer(Token op) {
 				switch(op.getType()) {
 				case DuroLexer.ASSIGN_ADD:
 					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
@@ -870,17 +870,54 @@ public class Compiler {
 			
 			@Override
 			public void enterMemberAssignment(MemberAssignmentContext ctx) {
+				// receiver
 				String id = ctx.ID().getText();
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN:
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					// receiver, id
+					break;
+				default:
+					// For computed value +=, -=, ...
+					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+					// receiver, receiver
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					// receiver, receiver, id
+					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					// receiver, oldValue
+					break;
+				}
 			}
 			
 			@Override
 			public void exitMemberAssignment(MemberAssignmentContext ctx) {
-				// receiver, id, value
-				instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-				// value, receiver, id, value
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN:
+					// receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+					// value, receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					break;
+				default:
+					String id = ctx.ID().getText();
+					
+					// receiver, oldValue, newValuePart
+					appendAssignmentReducer(ctx.op);
+					// receiver, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// newValue, receiver, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					// newValue, receiver, newValue, id
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					// newValue, receiver, id, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// newValue
+					break;
+				}
 			}
+			
+			
 			
 			@Override
 			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
