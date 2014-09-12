@@ -784,6 +784,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterComputedMemberAssignmentKey(@NotNull DuroParser.ComputedMemberAssignmentKeyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitComputedMemberAssignmentKey(@NotNull DuroParser.ComputedMemberAssignmentKeyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterOperationEnd(@NotNull DuroParser.OperationEndContext ctx) { }
 	/**
 	 * {@inheritDoc}

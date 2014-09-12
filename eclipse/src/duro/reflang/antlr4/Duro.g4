@@ -106,9 +106,10 @@ memberAssignment:
     memberAssignmentValue;
 memberAssignmentValue: expression;
 computedMemberAssignment: 
-    OPEN_SQ expression CLOSE_SQ 
+    OPEN_SQ computedMemberAssignmentKey CLOSE_SQ 
     op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
-    computedMemberAssignment;
+    computedMemberAssignmentValue;
+computedMemberAssignmentKey: expression;
 computedMemberAssignmentValue: expression;
 
 delimitedStatement: pause | variableStatement | returnStatement;

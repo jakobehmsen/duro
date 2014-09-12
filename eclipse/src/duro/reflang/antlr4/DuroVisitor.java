@@ -425,6 +425,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#computedMemberAssignmentKey}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComputedMemberAssignmentKey(@NotNull DuroParser.ComputedMemberAssignmentKeyContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#operationEnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

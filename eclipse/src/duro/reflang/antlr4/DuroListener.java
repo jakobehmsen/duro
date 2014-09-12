@@ -658,6 +658,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#computedMemberAssignmentKey}.
+	 * @param ctx the parse tree
+	 */
+	void enterComputedMemberAssignmentKey(@NotNull DuroParser.ComputedMemberAssignmentKeyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#computedMemberAssignmentKey}.
+	 * @param ctx the parse tree
+	 */
+	void exitComputedMemberAssignmentKey(@NotNull DuroParser.ComputedMemberAssignmentKeyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#operationEnd}.
 	 * @param ctx the parse tree
 	 */
