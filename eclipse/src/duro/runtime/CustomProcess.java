@@ -97,7 +97,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_STORE: {
+		} case Instruction.OPCODE_STORE_LOCAL: {
 			int ordinal = (int)instruction.operand1;
 			Object value = currentFrame.stack.pop();
 			currentFrame.variables[ordinal] = value;
@@ -163,9 +163,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_RET: {
-			Object result = currentFrame.stack.peek();
-			currentFrame = frameStack.pop();
-			currentFrame.stack.push(result);
+			int returnCount = (int)instruction.operand1;
+			Frame outerFrame = frameStack.pop();
+//			Object result = currentFrame.stack.peek();
+			for(int i = 0; i < returnCount; i++)
+				outerFrame.stack.push(currentFrame.stack.pop());
+			currentFrame = outerFrame;
+//			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
