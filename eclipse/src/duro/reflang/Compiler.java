@@ -501,20 +501,35 @@ public class Compiler {
 			
 			@Override
 			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				String id = ctx.messageExchange().ID().getText();
+				if(idToParameterOrdinalMap.containsKey(id)) {
+					// Call argument
+				} else {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				}
 			}
 			
 			@Override
 			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
 				int argumentCount = ctx.messageExchange().expression().size();
-				appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
+				
+				String id = ctx.messageExchange().ID().getText();
+				if(idToParameterOrdinalMap.containsKey(id)) {
+					// Call argument
+					int ordinal = idToParameterOrdinalMap.get(id);
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
+				} else {
+					appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
+				}
 			}
 			
 			private void appendMessageExchange(TerminalNode node, int argumentCount) {
 				String id = node.getText();
 //				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 				
-				instructions.add(new Instruction(Instruction.OPCODE_CALL, id, argumentCount));
+				// Currently: just resolve function and then call it.
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, argumentCount));
 			}
 			
 			@Override
