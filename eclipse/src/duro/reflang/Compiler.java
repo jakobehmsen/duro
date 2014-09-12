@@ -35,6 +35,7 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalAndContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
+import duro.reflang.antlr4.DuroParser.BreakStatementContext;
 import duro.reflang.antlr4.DuroParser.ComputedMemberAccessContext;
 import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentKeyContext;
@@ -687,6 +688,15 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_RET, returnCount));
 			}
 			
+			private Stack<ArrayList<Integer>> breakIndexesStack = new Stack<ArrayList<Integer>>();
+			
+			@Override
+			public void enterBreakStatement(BreakStatementContext ctx) {
+				ArrayList<Integer> breakIndexes = breakIndexesStack.peek();
+				breakIndexes.add(instructions.size());
+				instructions.add(null);
+			}
+			
 			@Override
 			public void enterFunctionDefinition(FunctionDefinitionContext ctx) {
 				walker.suspendWalkWithin(ctx);
@@ -785,6 +795,8 @@ public class Compiler {
 			
 			@Override
 			public void enterWhileStatement(WhileStatementContext ctx) {
+				breakIndexesStack.push(new ArrayList<Integer>());
+				
 				int jumpIndex = instructions.size();
 				whileJumpIndexStack.push(jumpIndex);
 			}
@@ -810,6 +822,10 @@ public class Compiler {
 				int conditionalJumpIndex = whileConditionalJumpIndexStack.pop();
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				
+				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
+				for(int breakIndex: breakIndexes)
+					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
 			}
 			
 			
