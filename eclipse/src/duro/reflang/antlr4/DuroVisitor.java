@@ -481,6 +481,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#breakStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakStatement(@NotNull DuroParser.BreakStatementContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#forStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

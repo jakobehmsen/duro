@@ -888,6 +888,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBreakStatement(@NotNull DuroParser.BreakStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBreakStatement(@NotNull DuroParser.BreakStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -112,7 +112,8 @@ computedMemberAssignment:
 computedMemberAssignmentKey: expression;
 computedMemberAssignmentValue: expression;
 
-delimitedStatement: pause | variableStatement | returnStatement;
+delimitedStatement: 
+    pause | variableStatement | returnStatement | breakStatement;
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
@@ -120,6 +121,7 @@ variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN (expression (COMMA expression)*)?;
+breakStatement: KW_BREAK;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
     whileStatement | forStatement | forInStatement;
@@ -243,6 +245,7 @@ KW_VAR: 'var';
 KW_PAUSE: 'pause';
 KW_FUNCTION: 'function';
 KW_RETURN: 'return';
+KW_BREAK: 'break';
 KW_TRUE: 'true';
 KW_FALSE: 'false';
 KW_IF: 'if';
