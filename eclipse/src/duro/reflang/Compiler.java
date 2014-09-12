@@ -504,6 +504,12 @@ public class Compiler {
 				String id = ctx.messageExchange().ID().getText();
 				if(idToParameterOrdinalMap.containsKey(id)) {
 					// Call argument
+					int ordinal = idToParameterOrdinalMap.get(id);
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
+				} else if(idToVariableOrdinalMap.containsKey(id)) {
+					// Call variable
+					int ordinal = idToVariableOrdinalMap.get(id);
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
 				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				}
@@ -516,8 +522,9 @@ public class Compiler {
 				String id = ctx.messageExchange().ID().getText();
 				if(idToParameterOrdinalMap.containsKey(id)) {
 					// Call argument
-					int ordinal = idToParameterOrdinalMap.get(id);
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
+				} else if(idToVariableOrdinalMap.containsKey(id)) {
+					// Call variable
 					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
 				} else {
 					appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
