@@ -690,6 +690,16 @@ public class Compiler {
 			
 			private Stack<ArrayList<Integer>> breakIndexesStack = new Stack<ArrayList<Integer>>();
 			
+			private void startBreakable() {
+				breakIndexesStack.push(new ArrayList<Integer>());
+			}
+			
+			private void endBreakable() {
+				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
+				for(int breakIndex: breakIndexes)
+					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
+			}
+			
 			@Override
 			public void enterBreakStatement(BreakStatementContext ctx) {
 				ArrayList<Integer> breakIndexes = breakIndexesStack.peek();
@@ -795,8 +805,7 @@ public class Compiler {
 			
 			@Override
 			public void enterWhileStatement(WhileStatementContext ctx) {
-				// TODO: This could probably be replaced by a startLoop method
-				breakIndexesStack.push(new ArrayList<Integer>());
+				startBreakable();
 				
 				int jumpIndex = instructions.size();
 				whileJumpIndexStack.push(jumpIndex);
@@ -824,10 +833,7 @@ public class Compiler {
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 
-				// TODO: This could probably be replaced by an endLoop method
-				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
-				for(int breakIndex: breakIndexes)
-					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
+				endBreakable();
 			}
 			
 			
@@ -837,8 +843,7 @@ public class Compiler {
 			
 			@Override
 			public void enterForStatement(ForStatementContext ctx) {
-				// TODO: This could probably be replaced by an startLoop method
-				breakIndexesStack.push(new ArrayList<Integer>());
+				startBreakable();
 			}
 			
 			@Override
@@ -874,10 +879,7 @@ public class Compiler {
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 
-				// TODO: This could probably be replaced by an endLoop method
-				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
-				for(int breakIndex: breakIndexes)
-					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
+				endBreakable();
 			}
 			
 			
@@ -887,8 +889,7 @@ public class Compiler {
 			
 			@Override
 			public void enterForInStatement(ForInStatementContext ctx) {
-				// TODO: This could probably be replaced by a startLoop method
-				breakIndexesStack.push(new ArrayList<Integer>());
+				startBreakable();
 			}
 			
 			@Override
@@ -921,10 +922,7 @@ public class Compiler {
 				
 				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
 				
-				// TODO: This could probably be replaced by an endLoop method
-				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
-				for(int breakIndex: breakIndexes)
-					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
+				endBreakable();
 			}
 			
 			
