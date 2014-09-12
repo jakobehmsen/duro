@@ -97,6 +97,16 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_DUP_ANY: {
+			int sourceOffset = (int)instruction.operand1;
+			int insertionOffset = (int)instruction.operand2;
+			int top = currentFrame.stack.size() - 1;
+			
+			Object sourceValue = currentFrame.stack.get(top - sourceOffset);
+			currentFrame.stack.add(top - insertionOffset, sourceValue);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_STORE_LOCAL: {
 			int ordinal = (int)instruction.operand1;
 			Object value = currentFrame.stack.pop();
