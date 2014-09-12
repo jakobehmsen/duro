@@ -73,7 +73,7 @@ unaryExpressionPostIncDecOperand:
 grouping: OPEN_PAR expression CLOSE_PAR;
 // TODO: Multiple assignments should be possible
 variableAssignment: 
-    ID 
+    ID (COMMA ID)*
     op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
     expression;
 lookup: ID;
