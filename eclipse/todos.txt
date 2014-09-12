@@ -1,6 +1,6 @@
 ****Add new shorthand function literal (and single parameter calls)****
 
-{x > 50;} // Any non declared variables that are references are parameters
+{x > 50;} // Any non declared variables (or parameters locally or in creation scope) that are used, are considered parameters.
 
 {x < y} // Parameter sequence is indicated by usage sequence
 <=>
@@ -58,3 +58,7 @@ if(x == null)
 	x = y;
 
 x is set to y if x is null.
+
+****Functions as closure***
+
+Let functions be closures. I.e. upon their creation, they are bound to their "creation context" implicating arguments, variables, and the like are implicitly bound locally outwards.
