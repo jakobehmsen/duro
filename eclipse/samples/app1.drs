@@ -4,6 +4,7 @@ Simple property catalog application.
 A console application that can set, get and list properties and pause the application.
 */
 
+
 function load(path) {
 	# {
 		load_arg :0
@@ -13,59 +14,6 @@ function load(path) {
 }
 
 var std = load("std");
-
-/*
-var std = {
-	writeln: function(x) {
-		#{
-			load_arg :0
-			load_string :"\n"
-			sp_add
-			sp_write
-		}
-	},
-	readln: function() {
-		#{
-			sp_next_line
-			ret
-		}
-	}
-};
-
-std.writeln = function(x) {
-	#{
-		load_arg :0
-		load_string :"\n"
-		sp_add
-		sp_write
-	}
-};
-
-std.readln = function() {
-	#{
-		sp_next_line
-		ret
-	}
-};
-*/
-
-/*
-this.writeln = function(x) {
-	#{
-		load_arg :0
-		load_string :"\n"
-		sp_add
-		sp_write
-	}
-};
-
-this.readln = function() {
-	#{
-		sp_next_line
-		ret
-	}
-};
-*/
 
 var properties = {};
 
