@@ -834,6 +834,11 @@ public class Compiler {
 			private Stack<Integer> forJumpIndexStack = new Stack<Integer>();
 			
 			@Override
+			public void enterForStatement(ForStatementContext ctx) {
+				breakIndexesStack.push(new ArrayList<Integer>());
+			}
+			
+			@Override
 			public void enterForStatementCondition(ForStatementConditionContext ctx) {
 				forJumpIndexStack.push(instructions.size());
 			}
@@ -865,6 +870,10 @@ public class Compiler {
 				int conditionalJumpIndex = forConditionalJumpIndexStack.pop();
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				
+				ArrayList<Integer> breakIndexes = breakIndexesStack.pop();
+				for(int breakIndex: breakIndexes)
+					instructions.set(breakIndex, new Instruction(Instruction.OPCODE_JUMP, instructions.size() - breakIndex));
 			}
 			
 			
