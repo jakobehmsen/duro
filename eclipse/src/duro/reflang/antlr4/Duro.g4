@@ -150,9 +150,7 @@ forStatement:
         forStatementCondition SEMICOLON
         forStatementUpdate
     CLOSE_PAR 
-    OPEN_BRA
-        forStatementBody
-    CLOSE_BRA
+    forStatementBody
     ;
 forStatementInitialization: delimitedProgramElement?;
 forStatementCondition: expression?;

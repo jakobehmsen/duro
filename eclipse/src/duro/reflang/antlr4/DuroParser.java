@@ -4401,8 +4401,6 @@ public class DuroParser extends Parser {
 		}
 		public TerminalNode OPEN_PAR() { return getToken(DuroParser.OPEN_PAR, 0); }
 		public TerminalNode CLOSE_PAR() { return getToken(DuroParser.CLOSE_PAR, 0); }
-		public TerminalNode CLOSE_BRA() { return getToken(DuroParser.CLOSE_BRA, 0); }
-		public TerminalNode OPEN_BRA() { return getToken(DuroParser.OPEN_BRA, 0); }
 		public ForStatementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -4436,9 +4434,7 @@ public class DuroParser extends Parser {
 			setState(559); match(SEMICOLON);
 			setState(560); forStatementUpdate();
 			setState(561); match(CLOSE_PAR);
-			setState(562); match(OPEN_BRA);
-			setState(563); forStatementBody();
-			setState(564); match(CLOSE_BRA);
+			setState(562); forStatementBody();
 			}
 		}
 		catch (RecognitionException re) {
@@ -4482,11 +4478,11 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(567);
+			setState(565);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << NOT) | (1L << INT) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
-				setState(566); delimitedProgramElement();
+				setState(564); delimitedProgramElement();
 				}
 			}
 
@@ -4533,11 +4529,11 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(570);
+			setState(568);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << NOT) | (1L << INT) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
-				setState(569); expression();
+				setState(567); expression();
 				}
 			}
 
@@ -4584,11 +4580,11 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(573);
+			setState(571);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << NOT) | (1L << INT) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
-				setState(572); delimitedProgramElement();
+				setState(570); delimitedProgramElement();
 				}
 			}
 
@@ -4637,21 +4633,21 @@ public class DuroParser extends Parser {
 		ForStatementBodyContext _localctx = new ForStatementBodyContext(_ctx, getState());
 		enterRule(_localctx, 158, RULE_forStatementBody);
 		try {
-			setState(580);
+			setState(578);
 			switch ( getInterpreter().adaptivePredict(_input,43,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(575); match(OPEN_BRA);
-				setState(576); programElements();
-				setState(577); match(CLOSE_BRA);
+				setState(573); match(OPEN_BRA);
+				setState(574); programElements();
+				setState(575); match(CLOSE_BRA);
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(579); programElement();
+				setState(577); programElement();
 				}
 				break;
 			}
@@ -4706,21 +4702,21 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(582); match(KW_FOR);
-			setState(583); match(OPEN_PAR);
-			setState(585);
+			setState(580); match(KW_FOR);
+			setState(581); match(OPEN_PAR);
+			setState(583);
 			_la = _input.LA(1);
 			if (_la==KW_VAR) {
 				{
-				setState(584); match(KW_VAR);
+				setState(582); match(KW_VAR);
 				}
 			}
 
-			setState(587); match(ID);
-			setState(588); match(KW_IN);
-			setState(589); expression();
-			setState(590); match(CLOSE_PAR);
-			setState(591); forInStatementBody();
+			setState(585); match(ID);
+			setState(586); match(KW_IN);
+			setState(587); expression();
+			setState(588); match(CLOSE_PAR);
+			setState(589); forInStatementBody();
 			}
 		}
 		catch (RecognitionException re) {
@@ -4766,21 +4762,21 @@ public class DuroParser extends Parser {
 		ForInStatementBodyContext _localctx = new ForInStatementBodyContext(_ctx, getState());
 		enterRule(_localctx, 162, RULE_forInStatementBody);
 		try {
-			setState(598);
+			setState(596);
 			switch ( getInterpreter().adaptivePredict(_input,45,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(593); match(OPEN_BRA);
-				setState(594); programElements();
-				setState(595); match(CLOSE_BRA);
+				setState(591); match(OPEN_BRA);
+				setState(592); programElements();
+				setState(593); match(CLOSE_BRA);
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(597); programElement();
+				setState(595); programElement();
 				}
 				break;
 			}
@@ -4797,7 +4793,7 @@ public class DuroParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\64\u025b\4\2\t\2"+
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\64\u0259\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -4834,12 +4830,12 @@ public class DuroParser extends Parser {
 		"C\fC\16C\u01fe\13C\3D\3D\3D\3E\3E\3E\3E\3E\3E\3E\3F\3F\3G\3G\3G\3G\3G"+
 		"\5G\u0211\nG\3H\3H\5H\u0215\nH\3I\3I\3I\3I\3I\5I\u021c\nI\3J\3J\3J\3J"+
 		"\3J\3J\3K\3K\3L\3L\3L\3L\3L\5L\u022b\nL\3M\3M\3M\3M\3M\3M\3M\3M\3M\3M"+
-		"\3M\3M\3N\5N\u023a\nN\3O\5O\u023d\nO\3P\5P\u0240\nP\3Q\3Q\3Q\3Q\3Q\5Q"+
-		"\u0247\nQ\3R\3R\3R\5R\u024c\nR\3R\3R\3R\3R\3R\3R\3S\3S\3S\3S\3S\5S\u0259"+
-		"\nS\3S\2T\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\66"+
-		"8:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086\u0088\u008a"+
+		"\3N\5N\u0238\nN\3O\5O\u023b\nO\3P\5P\u023e\nP\3Q\3Q\3Q\3Q\3Q\5Q\u0245"+
+		"\nQ\3R\3R\3R\5R\u024a\nR\3R\3R\3R\3R\3R\3R\3S\3S\3S\3S\3S\5S\u0257\nS"+
+		"\3S\2T\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<"+
+		">@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086\u0088\u008a"+
 		"\u008c\u008e\u0090\u0092\u0094\u0096\u0098\u009a\u009c\u009e\u00a0\u00a2"+
-		"\u00a4\2\7\3\2\26\27\3\2\32\35\3\2\7\b\4\2\22\25\30\30\3\2()\u0246\2\u00a6"+
+		"\u00a4\2\7\3\2\26\27\3\2\32\35\3\2\7\b\4\2\22\25\30\30\3\2()\u0244\2\u00a6"+
 		"\3\2\2\2\4\u00ab\3\2\2\2\6\u00b2\3\2\2\2\b\u00b6\3\2\2\2\n\u00b8\3\2\2"+
 		"\2\f\u00bc\3\2\2\2\16\u00be\3\2\2\2\20\u00c5\3\2\2\2\22\u00c8\3\2\2\2"+
 		"\24\u00cf\3\2\2\2\26\u00d2\3\2\2\2\30\u00d9\3\2\2\2\32\u00dc\3\2\2\2\34"+
@@ -4857,9 +4853,9 @@ public class DuroParser extends Parser {
 		"\3\2\2\2\u0082\u01ee\3\2\2\2\u0084\u01f8\3\2\2\2\u0086\u01ff\3\2\2\2\u0088"+
 		"\u0202\3\2\2\2\u008a\u0209\3\2\2\2\u008c\u0210\3\2\2\2\u008e\u0214\3\2"+
 		"\2\2\u0090\u021b\3\2\2\2\u0092\u021d\3\2\2\2\u0094\u0223\3\2\2\2\u0096"+
-		"\u022a\3\2\2\2\u0098\u022c\3\2\2\2\u009a\u0239\3\2\2\2\u009c\u023c\3\2"+
-		"\2\2\u009e\u023f\3\2\2\2\u00a0\u0246\3\2\2\2\u00a2\u0248\3\2\2\2\u00a4"+
-		"\u0258\3\2\2\2\u00a6\u00a7\5\4\3\2\u00a7\3\3\2\2\2\u00a8\u00aa\5\6\4\2"+
+		"\u022a\3\2\2\2\u0098\u022c\3\2\2\2\u009a\u0237\3\2\2\2\u009c\u023a\3\2"+
+		"\2\2\u009e\u023d\3\2\2\2\u00a0\u0244\3\2\2\2\u00a2\u0246\3\2\2\2\u00a4"+
+		"\u0256\3\2\2\2\u00a6\u00a7\5\4\3\2\u00a7\3\3\2\2\2\u00a8\u00aa\5\6\4\2"+
 		"\u00a9\u00a8\3\2\2\2\u00aa\u00ad\3\2\2\2\u00ab\u00a9\3\2\2\2\u00ab\u00ac"+
 		"\3\2\2\2\u00ac\5\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ae\u00af\5\b\5\2\u00af"+
 		"\u00b0\7\37\2\2\u00b0\u00b3\3\2\2\2\u00b1\u00b3\5z>\2\u00b2\u00ae\3\2"+
@@ -4984,23 +4980,23 @@ public class DuroParser extends Parser {
 		"\5\6\4\2\u022a\u0225\3\2\2\2\u022a\u0229\3\2\2\2\u022b\u0097\3\2\2\2\u022c"+
 		"\u022d\7/\2\2\u022d\u022e\7\20\2\2\u022e\u022f\5\u009aN\2\u022f\u0230"+
 		"\7\37\2\2\u0230\u0231\5\u009cO\2\u0231\u0232\7\37\2\2\u0232\u0233\5\u009e"+
-		"P\2\u0233\u0234\7\21\2\2\u0234\u0235\7\16\2\2\u0235\u0236\5\u00a0Q\2\u0236"+
-		"\u0237\7\17\2\2\u0237\u0099\3\2\2\2\u0238\u023a\5\b\5\2\u0239\u0238\3"+
-		"\2\2\2\u0239\u023a\3\2\2\2\u023a\u009b\3\2\2\2\u023b\u023d\5\f\7\2\u023c"+
-		"\u023b\3\2\2\2\u023c\u023d\3\2\2\2\u023d\u009d\3\2\2\2\u023e\u0240\5\b"+
-		"\5\2\u023f\u023e\3\2\2\2\u023f\u0240\3\2\2\2\u0240\u009f\3\2\2\2\u0241"+
-		"\u0242\7\16\2\2\u0242\u0243\5\4\3\2\u0243\u0244\7\17\2\2\u0244\u0247\3"+
-		"\2\2\2\u0245\u0247\5\6\4\2\u0246\u0241\3\2\2\2\u0246\u0245\3\2\2\2\u0247"+
-		"\u00a1\3\2\2\2\u0248\u0249\7/\2\2\u0249\u024b\7\20\2\2\u024a\u024c\7#"+
-		"\2\2\u024b\u024a\3\2\2\2\u024b\u024c\3\2\2\2\u024c\u024d\3\2\2\2\u024d"+
-		"\u024e\7\61\2\2\u024e\u024f\7\60\2\2\u024f\u0250\5\f\7\2\u0250\u0251\7"+
-		"\21\2\2\u0251\u0252\5\u00a4S\2\u0252\u00a3\3\2\2\2\u0253\u0254\7\16\2"+
-		"\2\u0254\u0255\5\4\3\2\u0255\u0256\7\17\2\2\u0256\u0259\3\2\2\2\u0257"+
-		"\u0259\5\6\4\2\u0258\u0253\3\2\2\2\u0258\u0257\3\2\2\2\u0259\u00a5\3\2"+
-		"\2\2\60\u00ab\u00b2\u00b6\u00bc\u00c2\u00cc\u00d6\u00e0\u00ea\u00f4\u00fc"+
-		"\u0103\u0108\u011f\u0124\u0128\u0133\u0144\u0147\u0151\u015f\u0162\u0178"+
-		"\u017b\u0188\u0196\u01ad\u01b3\u01bb\u01ca\u01cd\u01d7\u01e7\u01ea\u01f3"+
-		"\u01fc\u0210\u0214\u021b\u022a\u0239\u023c\u023f\u0246\u024b\u0258";
+		"P\2\u0233\u0234\7\21\2\2\u0234\u0235\5\u00a0Q\2\u0235\u0099\3\2\2\2\u0236"+
+		"\u0238\5\b\5\2\u0237\u0236\3\2\2\2\u0237\u0238\3\2\2\2\u0238\u009b\3\2"+
+		"\2\2\u0239\u023b\5\f\7\2\u023a\u0239\3\2\2\2\u023a\u023b\3\2\2\2\u023b"+
+		"\u009d\3\2\2\2\u023c\u023e\5\b\5\2\u023d\u023c\3\2\2\2\u023d\u023e\3\2"+
+		"\2\2\u023e\u009f\3\2\2\2\u023f\u0240\7\16\2\2\u0240\u0241\5\4\3\2\u0241"+
+		"\u0242\7\17\2\2\u0242\u0245\3\2\2\2\u0243\u0245\5\6\4\2\u0244\u023f\3"+
+		"\2\2\2\u0244\u0243\3\2\2\2\u0245\u00a1\3\2\2\2\u0246\u0247\7/\2\2\u0247"+
+		"\u0249\7\20\2\2\u0248\u024a\7#\2\2\u0249\u0248\3\2\2\2\u0249\u024a\3\2"+
+		"\2\2\u024a\u024b\3\2\2\2\u024b\u024c\7\61\2\2\u024c\u024d\7\60\2\2\u024d"+
+		"\u024e\5\f\7\2\u024e\u024f\7\21\2\2\u024f\u0250\5\u00a4S\2\u0250\u00a3"+
+		"\3\2\2\2\u0251\u0252\7\16\2\2\u0252\u0253\5\4\3\2\u0253\u0254\7\17\2\2"+
+		"\u0254\u0257\3\2\2\2\u0255\u0257\5\6\4\2\u0256\u0251\3\2\2\2\u0256\u0255"+
+		"\3\2\2\2\u0257\u00a5\3\2\2\2\60\u00ab\u00b2\u00b6\u00bc\u00c2\u00cc\u00d6"+
+		"\u00e0\u00ea\u00f4\u00fc\u0103\u0108\u011f\u0124\u0128\u0133\u0144\u0147"+
+		"\u0151\u015f\u0162\u0178\u017b\u0188\u0196\u01ad\u01b3\u01bb\u01ca\u01cd"+
+		"\u01d7\u01e7\u01ea\u01f3\u01fc\u0210\u0214\u021b\u022a\u0237\u023a\u023d"+
+		"\u0244\u0249\u0256";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
