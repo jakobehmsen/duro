@@ -16,7 +16,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_DUP = 3;
 	public static final int OPCODE_DUP1 = 4;
 	public static final int OPCODE_DUP2 = 5;
-	public static final int OPCODE_STORE = 6;
+	public static final int OPCODE_STORE_LOCAL = 6;
 	public static final int OPCODE_POP = 7;
 	public static final int OPCODE_SWAP = 8;
 	public static final int OPCODE_SWAP1 = 9;

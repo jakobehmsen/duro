@@ -374,7 +374,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
 					appendIncDec(ctx.op);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
@@ -451,7 +451,7 @@ public class Compiler {
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
 					// newValue
 					break;
 				} default: {
@@ -460,7 +460,7 @@ public class Compiler {
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
 					// newValue
 					break;
 				}
@@ -654,7 +654,7 @@ public class Compiler {
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
 				int ordinal = declareVariable(ctx.ID());
 				
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
 			}
 			
 			@Override
@@ -851,7 +851,7 @@ public class Compiler {
 				instructions.add(null);
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
-				instructions.add(new Instruction(Instruction.OPCODE_STORE, ordinal));
+				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
 			}
 			
 			@Override
