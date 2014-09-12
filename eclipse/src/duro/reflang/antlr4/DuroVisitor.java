@@ -103,6 +103,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#memberAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#operationChain}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -325,6 +332,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#computedMemberAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComputedMemberAssignmentValue(@NotNull DuroParser.ComputedMemberAssignmentValueContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#computedMemberAssignment}.

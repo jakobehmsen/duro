@@ -152,6 +152,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#memberAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#memberAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#operationChain}.
 	 * @param ctx the parse tree
 	 */
@@ -502,6 +513,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#computedMemberAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterComputedMemberAssignmentValue(@NotNull DuroParser.ComputedMemberAssignmentValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#computedMemberAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitComputedMemberAssignmentValue(@NotNull DuroParser.ComputedMemberAssignmentValueContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#computedMemberAssignment}.

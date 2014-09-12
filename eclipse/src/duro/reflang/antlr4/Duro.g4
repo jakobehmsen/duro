@@ -103,11 +103,13 @@ operationEnd: memberAssignment | computedMemberAssignment;
 memberAssignment: 
     DOT ID 
     op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN) 
-    expression;
+    memberAssignmentValue;
+memberAssignmentValue: expression;
 computedMemberAssignment: 
     OPEN_SQ expression CLOSE_SQ 
     op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
-    expression;
+    computedMemberAssignment;
+computedMemberAssignmentValue: expression;
 
 delimitedStatement: pause | variableStatement | returnStatement;
 pause: KW_PAUSE;

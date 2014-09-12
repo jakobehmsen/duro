@@ -186,6 +186,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterOperationChain(@NotNull DuroParser.OperationChainContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -596,6 +609,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterComputedMemberAssignmentValue(@NotNull DuroParser.ComputedMemberAssignmentValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitComputedMemberAssignmentValue(@NotNull DuroParser.ComputedMemberAssignmentValueContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
