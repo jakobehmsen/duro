@@ -2,6 +2,22 @@
 Collections library
 */
 
+function arrayLength(array) {
+	#{
+		load_arg :0
+		sp_array_length
+		ret
+	}
+}
+
+function newArray(length) {
+	#{
+		load_arg :0
+		sp_new_array
+		ret
+	}
+}
+
 function newList() {
 	var initialCapacity = 12;
 	
