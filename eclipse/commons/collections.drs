@@ -43,6 +43,20 @@ function newList() {
 			str += "]";
 			
 			return str;
+		},
+		iterator: function() {
+			return {
+				list: this,
+				i: 0,
+				hasNext: function() {
+					return this.i < this.list.size;
+				},
+				next: function() {
+					var item = this.list.items[this.i];
+					this.i++;
+					return item;
+				}
+			};
 		}
 	};
 }
