@@ -123,4 +123,8 @@ public class Instruction implements Serializable {
 			operands.add(operand1);
 		return getNameFromOpcode(opcode) + operands;
 	}
+
+	public static boolean isReturn(int opcode) {
+		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS;
+	}
 }
