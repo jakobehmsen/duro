@@ -37,6 +37,7 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.ComputedMemberAccessContext;
 import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentContext;
+import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
@@ -920,12 +921,53 @@ public class Compiler {
 			
 			
 			@Override
-			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
-				// receiver, id, value
-				instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-				// value, receiver, id, value
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
+			public void enterComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+				// receiver
+
+				if(ctx.op.getType() != DuroLexer.ASSIGN) {
+					// For computed value +=, -=, ...
+					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+					// receiver, receiver
+					ParseTree keyExpression = ctx.computedMemberAssignmentKey().expression();
+					walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), keyExpression);
+					// receiver, receiver, id
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// receiver, id, receiver, id
+					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					// receiver, id, oldValue
+				}
 			}
+			
+			@Override
+			public void enterComputedMemberAssignmentKey(ComputedMemberAssignmentKeyContext ctx) {
+				ComputedMemberAssignmentContext computedMemberAssignmentCtx = (ComputedMemberAssignmentContext)ctx.getParent();
+						
+				if(computedMemberAssignmentCtx.op.getType() != DuroLexer.ASSIGN)
+					walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN:
+					// receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+					// value, receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					break;
+				default:
+					// receiver, id, oldValue, newValuePart
+					appendAssignmentReducer(ctx.op);
+					// receiver, id, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+					// newValue, receiver, id, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// newValue
+					break;
+				}
+			}
+			
+			
 			
 			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
