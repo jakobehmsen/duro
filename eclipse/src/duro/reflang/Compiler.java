@@ -427,14 +427,14 @@ public class Compiler {
 			
 			@Override
 			public void enterVariableAssignment(VariableAssignmentContext ctx) {
-				String id = ctx.ID().getText();
-				int ordinal = idToVariableOrdinalMap.get(id);
+				String firstId = ctx.ID(0).getText();
+				int firstOrdinal = idToVariableOrdinalMap.get(firstId);
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN: {
 					break;
 				} default: {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
 					// oldValue
 					break;
 				}
@@ -443,24 +443,40 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
-				String id = ctx.ID().getText();
-				int ordinal = idToVariableOrdinalMap.get(id);
+				String firstId = ctx.ID(0).getText();
+				int firstOrdinal = idToVariableOrdinalMap.get(firstId);
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN: {
+					instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					
+					for(int i = 0; i < ctx.ID().size(); i++) {
+						String id = ctx.ID(i).getText();
+						int ordinal = idToVariableOrdinalMap.get(id);
+						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+					}
+					
+					/*
+					
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, firstOrdinal));
 					// newValue
+					
+					*/
+					
 					break;
 				} default: {
+					// Multiple returns values are not supported here yet.
+					
 					// oldValue, newValuePart
 					appendAssignmentReducer(ctx.op);
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, firstOrdinal));
 					// newValue
 					break;
 				}
