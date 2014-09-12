@@ -123,6 +123,16 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SWAP_ANY: {
+			int top = currentFrame.stack.size() - 1;
+			int index1 = top - (int)instruction.operand1; // operand1: offsetFromTop0 for first index
+			int index2 = top - (int)instruction.operand2; // operand2: offsetFromTop0 for second index
+			Object tmp = currentFrame.stack.get(index1);
+			currentFrame.stack.set(index1, currentFrame.stack.get(index2));
+			currentFrame.stack.set(index2, tmp);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_CALL: {
 			String key = (String)instruction.operand1;
 //			int symbolCode = (int)instruction.operand1;
