@@ -117,9 +117,9 @@ pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
-variableDeclarationAndAssignment: KW_VAR ID ASSIGN expression;
+variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
-returnStatement: KW_RETURN expression?;
+returnStatement: KW_RETURN (expression (COMMA expression)*)?;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
     whileStatement | forStatement | forInStatement;
