@@ -45,6 +45,7 @@ import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.ExplicitMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.ForInStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForInStatementContext;
+import duro.reflang.antlr4.DuroParser.ForInStatementVarContext;
 import duro.reflang.antlr4.DuroParser.ForStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.ForStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.ForStatementContext;
@@ -377,7 +378,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
 					appendIncDec(ctx.op);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
@@ -457,7 +458,7 @@ public class Compiler {
 					for(int i = 0; i < ctx.ID().size(); i++) {
 						String id = ctx.ID(i).getText();
 						int ordinal = idToVariableOrdinalMap.get(id);
-						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					}
 					
 					/*
@@ -479,7 +480,7 @@ public class Compiler {
 					// newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, firstOrdinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 					// newValue
 					break;
 				}
@@ -675,7 +676,7 @@ public class Compiler {
 				for(int i = 0; i < ctx.ID().size(); i++) {
 					TerminalNode id = ctx.ID(i);
 					int ordinal = declareVariable(id);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 				}
 			}
 			
@@ -910,28 +911,66 @@ public class Compiler {
 			@Override
 			public void enterForInStatement(ForInStatementContext ctx) {
 				startBreakable();
+
+				for(ForInStatementVarContext varCtx: ctx.forInStatementVar())
+					declareVariable(varCtx.ID());
 			}
 			
 			@Override
 			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
-				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-				int ordinal = declareVariable(forInStatementCtx.ID());
+//				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+//				int ordinal = declareVariable(forInStatementCtx.ID());
+//				
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
+//				int jumpIndex = instructions.size();
+//				forInJumpIndexStack.push(jumpIndex);
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_HAS_NEXT));
+//				int conditionalJumpIndex = instructions.size();
+//				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
+//				instructions.add(null);
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
+//				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+
 				
-				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
+				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+
+				// iterable
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
+				// iterator
 				int jumpIndex = instructions.size();
 				forInJumpIndexStack.push(jumpIndex);
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_HAS_NEXT));
+				// iterator, iterator
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+				// iterator, nextValues..., hadNext
 				int conditionalJumpIndex = instructions.size();
 				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
-				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
+				// iterator, nextValues...
+				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
+					String id = varCtx.ID().getText();
+					int ordinal = idToVariableOrdinalMap.get(id);
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+				}
+				// iterator
 			}
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
+//				int jumpIndex = forInJumpIndexStack.pop();
+//				int jump = jumpIndex - instructions.size();
+//				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+//				
+//				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
+//				int conditionalJump = instructions.size() - conditionalJumpIndex;
+//				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+//				
+//				endBreakable();
+//				
+//				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
+				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
@@ -939,12 +978,18 @@ public class Compiler {
 				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+
+				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+				// iterator, nextValues...
 				
-				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
-				
-				endBreakable();
+				for(int i = 0; i < forInStatementCtx.forInStatementVar().size(); i++)
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
+			@Override
+			public void exitForInStatement(ForInStatementContext ctx) {
+			}
 			
 			
 			@Override
@@ -1125,7 +1170,7 @@ public class Compiler {
 			for(int i = 0; i < parameterCount; i++)
 				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
 			// A generator is a special object, which understands a single kind of message: next
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATOR, parameterCount));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 			
 			return new BodyInfo(idToOrdinalMap.size(), generatorInstructions);
