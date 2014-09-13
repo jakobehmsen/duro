@@ -79,6 +79,7 @@ import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementContext;
+import duro.reflang.antlr4.DuroParser.YieldStatementContext;
 import duro.runtime.CallFrameInfo;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
@@ -124,7 +125,8 @@ public class Compiler {
 	}
 	
 	private static DuroListener createBodyListener(
-			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, final ArrayList<Instruction> instructions) {
+			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, 
+			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
 		return new DuroBaseListener() {
 			@Override
 			public void exitProgram(ProgramContext ctx) {
@@ -713,6 +715,13 @@ public class Compiler {
 			}
 			
 			@Override
+			public void exitYieldStatement(YieldStatementContext ctx) {
+				yieldStatements.add(ctx);
+				int yieldCount = ctx.expression().size();
+				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount));
+			}
+			
+			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				int parameterCount = ctx.functionParameters().getChildCount();
 				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
@@ -869,7 +878,7 @@ public class Compiler {
 				ConditionalTreeWalker walker = new ConditionalTreeWalker();
 				// Why isn't the walked here?????
 				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
-				walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), updateElement);
+				walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), updateElement);
 				
 				int indexAtCondition = forJumpIndexStack.pop();
 				int conditionJump = indexAtCondition - instructions.size();
@@ -1009,7 +1018,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
 					ParseTree keyExpression = ctx.computedMemberAssignmentKey().expression();
-					walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), keyExpression);
+					walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), keyExpression);
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
@@ -1078,9 +1087,19 @@ public class Compiler {
 	private static BodyInfo getBodyInfo(Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree) {
 		Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
-		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions), tree);
+		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements), tree);
+		
+		if(yieldStatements.size() > 0) {
+			// Function returns iterables
+			
+			long distinctYieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().count();
+			if(distinctYieldCount > 1) {
+				throw new RuntimeException("Multiple distinct yield counts.");
+			}
+		}
 		
 		return new BodyInfo(idToOrdinalMap, instructions);
 	}
