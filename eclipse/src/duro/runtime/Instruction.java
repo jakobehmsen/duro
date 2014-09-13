@@ -17,7 +17,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_DUP1 = 4;
 	public static final int OPCODE_DUP2 = 5;
 	public static final int OPCODE_DUP_ANY = 6;
-	public static final int OPCODE_STORE_LOCAL = 7;
+	public static final int OPCODE_STORE_LOC = 7;
 	public static final int OPCODE_POP = 8;
 	public static final int OPCODE_SWAP = 9;
 	public static final int OPCODE_SWAP1 = 10;
@@ -44,6 +44,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_FALSE = 31;
 	public static final int OPCODE_LOAD_STRING = 32;
 	public static final int OPCODE_LOAD_FRAME = 33;
+	public static final int OPCODE_LOAD_ARRAY = 34;
 
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
@@ -68,6 +69,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_ARRAY_LENGTH = 134;
 	public static final int OPCODE_SP_LOAD = 135;
 	public static final int OPCODE_SP_NEW_GENERATOR = 136;
+	public static final int OPCODE_SP_NEW_GENERATABLE = 137;
 
 	public final int opcode;
 	public final Object operand1;
