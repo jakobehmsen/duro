@@ -96,7 +96,7 @@ public class Compiler {
 		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx);
 		
-		return new CustomProcess(bodyInfo.idToOrdinalMap.size(), bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
+		return new CustomProcess(bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
 	
 	private static class ConditionalTreeWalker extends ParseTreeWalker {
@@ -614,7 +614,7 @@ public class Compiler {
 //				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
+					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
 			}
 			
@@ -715,18 +715,23 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterYieldStatement(YieldStatementContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+			}
+			
+			@Override
 			public void exitYieldStatement(YieldStatementContext ctx) {
 				yieldStatements.add(ctx);
 				int yieldCount = ctx.expression().size();
-				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount));
+				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
 			}
 			
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
-				int parameterCount = ctx.functionParameters().getChildCount();
+				int parameterCount = ctx.functionParameters().ID().size();
 				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.functionParameters().getChild(i).getText();
+					String parameterId = ctx.functionParameters().ID(i).getText();
 					idToParameterOrdinalMap.put(parameterId, i);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
@@ -734,7 +739,7 @@ public class Compiler {
 //				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					parameterCount, functionBodyInfo.idToOrdinalMap.size(), functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
+					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
@@ -743,7 +748,13 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionBody(FunctionBodyContext ctx) {
-				if(instructions.size() > 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+				if(yieldStatements.size() > 0) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+					int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
+					for(int i = 0; i < yieldCount; i++)
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+				} else if(instructions.size() > 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
@@ -1093,15 +1104,33 @@ public class Compiler {
 		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements), tree);
 		
 		if(yieldStatements.size() > 0) {
+			// Generator
 			// Function returns iterables
 			
-			long distinctYieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().count();
+			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.expression().size()).distinct().count();
 			if(distinctYieldCount > 1) {
 				throw new RuntimeException("Multiple distinct yield counts.");
 			}
-		}
-		
-		return new BodyInfo(idToOrdinalMap, instructions);
+			
+//			int returnCount = distinctYieldCount + 1;
+			
+			ArrayList<Instruction> iteratorInstructions = instructions;
+			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
+			
+			int parameterCount = idToParameterOrdinalMap.size();
+			int variableCount = idToOrdinalMap.size();
+
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, new CallFrameInfo(parameterCount, variableCount, iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]))));
+			// Forward arguments
+			for(int i = 0; i < parameterCount; i++)
+				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
+			// A generator is a special object, which understands a single kind of message: next
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATOR, parameterCount));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+			
+			return new BodyInfo(idToOrdinalMap.size(), generatorInstructions);
+		} else
+			return new BodyInfo(idToOrdinalMap.size(), instructions);
 	}
 	
 	private static class LiteralDuroListener extends DuroBaseListener {
@@ -1131,11 +1160,11 @@ public class Compiler {
 	}
 	
 	private static class BodyInfo {
-		private final Hashtable<String, Integer> idToOrdinalMap;
+		private final int localCount;
 		private final ArrayList<Instruction> instructions;
 		
-		public BodyInfo(Hashtable<String, Integer> idToOrdinalMap, ArrayList<Instruction> instructions) {
-			this.idToOrdinalMap = idToOrdinalMap;
+		public BodyInfo(int ordinalCount, ArrayList<Instruction> instructions) {
+			this.localCount = ordinalCount;
 			this.instructions = instructions;
 		} 
 	}
