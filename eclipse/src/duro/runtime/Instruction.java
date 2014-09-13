@@ -24,23 +24,26 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SWAP_ANY = 11;
 	public static final int OPCODE_SEND = 12;
 	public static final int OPCODE_CALL = 13;
-	public static final int OPCODE_RET = 14;
-	public static final int OPCODE_RET_THIS = 15;
-	public static final int OPCODE_DEF = 16;
-	public static final int OPCODE_IF_TRUE = 17;
-	public static final int OPCODE_IF_FALSE = 18;
-	public static final int OPCODE_JUMP = 19;
-	public static final int OPCODE_SET = 20;
-	public static final int OPCODE_GET = 21;
-	public static final int OPCODE_LOAD_THIS = 22;
-	public static final int OPCODE_LOAD_NULL = 23;
-	public static final int OPCODE_LOAD_LOC = 24;
-	public static final int OPCODE_LOAD_ARG = 25;
-	public static final int OPCODE_LOAD_INT = 26;
-	public static final int OPCODE_LOAD_FUNC = 27;
-	public static final int OPCODE_LOAD_TRUE = 28;
-	public static final int OPCODE_LOAD_FALSE = 29;
-	public static final int OPCODE_LOAD_STRING = 30;
+	public static final int OPCODE_RESUME = 14;
+	public static final int OPCODE_RET = 15;
+	public static final int OPCODE_RET_THIS = 16;
+	public static final int OPCODE_RET_FORWARD = 17;
+	public static final int OPCODE_DEF = 18;
+	public static final int OPCODE_IF_TRUE = 19;
+	public static final int OPCODE_IF_FALSE = 20;
+	public static final int OPCODE_JUMP = 21;
+	public static final int OPCODE_SET = 22;
+	public static final int OPCODE_GET = 23;
+	public static final int OPCODE_LOAD_THIS = 24;
+	public static final int OPCODE_LOAD_NULL = 25;
+	public static final int OPCODE_LOAD_LOC = 26;
+	public static final int OPCODE_LOAD_ARG = 27;
+	public static final int OPCODE_LOAD_INT = 28;
+	public static final int OPCODE_LOAD_FUNC = 29;
+	public static final int OPCODE_LOAD_TRUE = 30;
+	public static final int OPCODE_LOAD_FALSE = 31;
+	public static final int OPCODE_LOAD_STRING = 32;
+	public static final int OPCODE_LOAD_FRAME = 33;
 
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
@@ -64,6 +67,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_NEW_ARRAY = 133;
 	public static final int OPCODE_SP_ARRAY_LENGTH = 134;
 	public static final int OPCODE_SP_LOAD = 135;
+	public static final int OPCODE_SP_NEW_GENERATOR = 136;
 
 	public final int opcode;
 	public final Object operand1;
@@ -126,6 +130,6 @@ public class Instruction implements Serializable {
 	}
 
 	public static boolean isReturn(int opcode) {
-		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS;
+		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS || opcode == OPCODE_RET_FORWARD;
 	}
 }
