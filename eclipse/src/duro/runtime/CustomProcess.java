@@ -107,7 +107,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_STORE_LOCAL: {
+		} case Instruction.OPCODE_STORE_LOC: {
 			int ordinal = (int)instruction.operand1;
 			Object value = currentFrame.stack.pop();
 			currentFrame.variables[ordinal] = value;
@@ -311,6 +311,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_LOAD_ARRAY: {
+			Object[] array = (Object[])instruction.operand1;
+			currentFrame.stack.push(array);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
@@ -511,6 +517,22 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_GENERATOR: {
+			/*int argumentCount = (int)instruction.operand1;
+			Object[] arguments = new Object[argumentCount];
+			
+			for(int i = argumentCount - 1; i >= 0; i--)
+				arguments[i] = currentFrame.stack.pop();*/
+			
+			Object[] arguments = (Object[])currentFrame.stack.pop();
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+
+			Frame generatorFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
+			currentFrame.stack.push(generator);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEW_GENERATABLE: {
 			int argumentCount = (int)instruction.operand1;
 			Object[] arguments = new Object[argumentCount];
 			
@@ -519,9 +541,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 
-			Frame generatorFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
-			currentFrame.stack.push(generator);
+			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, arguments);
+			currentFrame.stack.push(generatable);
 			currentFrame.instructionPointer++;
 			
 			break;
