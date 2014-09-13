@@ -159,7 +159,10 @@ forStatementCondition: expression?;
 forStatementUpdate: delimitedProgramElement?;
 forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
-forInStatement: KW_FOR OPEN_PAR KW_VAR? ID KW_IN expression CLOSE_PAR forInStatementBody;
+forInStatement: 
+    KW_FOR OPEN_PAR forInStatementVar (COMMA forInStatementVar)* 
+    KW_IN expression CLOSE_PAR forInStatementBody;
+forInStatementVar: KW_VAR? ID;
 forInStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 // STRING_LITERAL deprived and adjusted from:

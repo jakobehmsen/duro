@@ -145,6 +145,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#forInStatementVar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForInStatementVar(@NotNull DuroParser.ForInStatementVarContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#memberAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

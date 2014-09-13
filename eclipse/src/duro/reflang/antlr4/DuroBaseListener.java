@@ -264,6 +264,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterForInStatementVar(@NotNull DuroParser.ForInStatementVarContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitForInStatementVar(@NotNull DuroParser.ForInStatementVarContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMemberAccess(@NotNull DuroParser.MemberAccessContext ctx) { }
 	/**
 	 * {@inheritDoc}

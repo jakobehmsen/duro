@@ -218,6 +218,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#forInStatementVar}.
+	 * @param ctx the parse tree
+	 */
+	void enterForInStatementVar(@NotNull DuroParser.ForInStatementVarContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#forInStatementVar}.
+	 * @param ctx the parse tree
+	 */
+	void exitForInStatementVar(@NotNull DuroParser.ForInStatementVarContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#memberAccess}.
 	 * @param ctx the parse tree
 	 */
