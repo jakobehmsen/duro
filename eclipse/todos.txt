@@ -2,6 +2,15 @@
 
 {x > 50;} // Any non declared variables (or parameters locally or in creation scope) that are used, are considered parameters.
 
+A more pragmatic suggestion could include prefixing with colons - as follows:
+{:x > 50;}
+This may be better, since then the regular id form can be used for binding in a more implicit way. E.g.
+If there is a corresponding argument in the current context, bind to it.
+If there is a corresponding variable in the current context (declared before this usage), bind to it.
+If there is a corresponding argument in the lexical scope, bind to it.
+If there is a corresponding variable in the lexical scope, bind to it.
+Otherwise, assume it is a message send, or member resolution, to self.
+
 {x < y} // Parameter sequence is indicated by usage sequence
 <=>
 function(x, y) {return x < y;}
