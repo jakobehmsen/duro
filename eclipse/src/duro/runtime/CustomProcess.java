@@ -18,7 +18,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static class Frame implements Serializable {
+	public static class Frame implements Serializable {
 		/**
 		 * 
 		 */
@@ -172,6 +172,14 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			
 			break;
+		} case Instruction.OPCODE_RESUME: {
+			Frame frame = (Frame)currentFrame.stack.pop();
+
+			frameStack.push(currentFrame);
+			currentFrame = frame;
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_RET: {
 			int returnCount = (int)instruction.operand1;
 			Frame outerFrame = frameStack.pop();
@@ -187,6 +195,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			Object result = currentFrame.self;
 			currentFrame = frameStack.pop();
 			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_RET_FORWARD: {
+			Frame outerFrame = frameStack.pop();
+			outerFrame.stack.addAll(currentFrame.stack);
+			currentFrame = outerFrame;
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -287,6 +302,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_LOAD_STRING: {
 			String string = (String)instruction.operand1;
 			currentFrame.stack.push(string);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_FRAME: {
+			Frame frame = (Frame)instruction.operand1;
+			currentFrame.stack.push(frame);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -487,6 +508,21 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
+			
+			break;
+		} case Instruction.OPCODE_SP_NEW_GENERATOR: {
+			int argumentCount = (int)instruction.operand1;
+			Object[] arguments = new Object[argumentCount];
+			
+			for(int i = argumentCount - 1; i >= 0; i--)
+				arguments[i] = currentFrame.stack.pop();
+			
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+
+			Frame generatorFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
+			currentFrame.stack.push(generator);
+			currentFrame.instructionPointer++;
 			
 			break;
 		}
