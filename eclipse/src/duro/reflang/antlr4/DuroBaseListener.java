@@ -238,6 +238,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterYieldStatement(@NotNull DuroParser.YieldStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitYieldStatement(@NotNull DuroParser.YieldStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx) { }
 	/**
 	 * {@inheritDoc}

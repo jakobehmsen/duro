@@ -131,6 +131,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#yieldStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitYieldStatement(@NotNull DuroParser.YieldStatementContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

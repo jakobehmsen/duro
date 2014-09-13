@@ -196,6 +196,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#yieldStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterYieldStatement(@NotNull DuroParser.YieldStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#yieldStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitYieldStatement(@NotNull DuroParser.YieldStatementContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
 	 * @param ctx the parse tree
 	 */
