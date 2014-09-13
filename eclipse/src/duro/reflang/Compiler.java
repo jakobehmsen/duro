@@ -453,23 +453,12 @@ public class Compiler {
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN: {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					
 					for(int i = 0; i < ctx.ID().size(); i++) {
 						String id = ctx.ID(i).getText();
 						int ordinal = idToVariableOrdinalMap.get(id);
 						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					}
-					
-					/*
-					
-					// newValue
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, firstOrdinal));
-					// newValue
-					
-					*/
 					
 					break;
 				} default: {
@@ -553,7 +542,6 @@ public class Compiler {
 			
 			private void appendMessageExchange(TerminalNode node, int argumentCount) {
 				String id = node.getText();
-//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 				
 				// Currently: just resolve function and then call it.
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, argumentCount));
@@ -612,7 +600,6 @@ public class Compiler {
 					idToParameterOrdinalMap.put(parameterId, i);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
-//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -737,7 +724,6 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
 				String id = ctx.ID().getText();
-//				int symbolCode = SymbolTable.getSymbolCodeFromId(id);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -918,22 +904,6 @@ public class Compiler {
 			
 			@Override
 			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
-//				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-//				int ordinal = declareVariable(forInStatementCtx.ID());
-//				
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_TO_IT));
-//				int jumpIndex = instructions.size();
-//				forInJumpIndexStack.push(jumpIndex);
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_HAS_NEXT));
-//				int conditionalJumpIndex = instructions.size();
-//				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
-//				instructions.add(null);
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEXT));
-//				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOCAL, ordinal));
-
-				
 				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
 
 				// iterable
@@ -959,18 +929,6 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
-//				int jumpIndex = forInJumpIndexStack.pop();
-//				int jump = jumpIndex - instructions.size();
-//				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
-//				
-//				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
-//				int conditionalJump = instructions.size() - conditionalJumpIndex;
-//				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
-//				
-//				endBreakable();
-//				
-//				instructions.add(new Instruction(Instruction.OPCODE_POP)); // Pop the iterator
-				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
@@ -984,7 +942,9 @@ public class Compiler {
 				
 				for(int i = 0; i < forInStatementCtx.forInStatementVar().size(); i++)
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
+				// iterator
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				// 
 			}
 			
 			@Override
@@ -1149,15 +1109,12 @@ public class Compiler {
 		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements), tree);
 		
 		if(yieldStatements.size() > 0) {
-			// Generator
+			// Generatable/generator
 			// Function returns iterables
 			
 			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.expression().size()).distinct().count();
-			if(distinctYieldCount > 1) {
+			if(distinctYieldCount > 1)
 				throw new RuntimeException("Multiple distinct yield counts.");
-			}
-			
-//			int returnCount = distinctYieldCount + 1;
 			
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
