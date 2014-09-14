@@ -43,6 +43,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 
 	public CustomProcess(int variableCount, Instruction[] instructions) {
 		currentFrame = new Frame(this, new Object[0], variableCount, instructions);
+		
+		// Add Array prototype
+		properties.put("Array", new DictionaryProcess());
 	}
 
 	@Override
@@ -474,6 +477,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			int length = (int)currentFrame.stack.pop();
 			ArrayProcess newArray = new ArrayProcess(length);
+			newArray.defineProto("parent", properties.get("Array"));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
