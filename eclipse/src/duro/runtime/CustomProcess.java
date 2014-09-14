@@ -496,7 +496,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
 				this.frameStack.push(currentFrame);
-				currentFrame = customProcess.currentFrame;
+				currentFrame = new Frame(this, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
