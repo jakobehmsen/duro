@@ -349,6 +349,9 @@ public class Compiler {
 				case "/":
 					binaryOpCode = Instruction.OPCODE_SP_DIV;
 					break;
+				case "%":
+					binaryOpCode = Instruction.OPCODE_SP_REM;
+					break;
 				default:
 					binaryOpCode = -1;
 					break;
