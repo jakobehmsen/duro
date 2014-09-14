@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class ArrayProcess extends Process implements Iterable<Object> {
+public class ArrayProcess extends DictionaryProcess implements Iterable<Object> {
 	/**
 	 * 
 	 */
@@ -27,12 +27,6 @@ public class ArrayProcess extends Process implements Iterable<Object> {
 	public void resume(List<Instruction> playedInstructions) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public CallFrameInfo getInstructions(Object key) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
