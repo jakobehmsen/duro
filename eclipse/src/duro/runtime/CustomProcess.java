@@ -328,6 +328,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_LOAD_ANY: {
+			Process process = (Process)instruction.operand1;
+			currentFrame.stack.push(process);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
@@ -522,9 +528,10 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				arguments[i] = currentFrame.stack.pop();*/
 			
 			Object[] arguments = (Object[])currentFrame.stack.pop();
+			Process self = (Process)currentFrame.stack.pop();
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-
-			Frame generatorFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			
+			Frame generatorFrame = new Frame(self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
 			DictionaryProcess iteratorPrototype = (DictionaryProcess)properties.get("Iterator");
 			generator.defineProto("prototype", iteratorPrototype);
@@ -541,7 +548,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 
-			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, arguments);
+			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, currentFrame.self, arguments);
 			DictionaryProcess iterablePrototype = (DictionaryProcess)properties.get("Iterable");
 			generatable.defineProto("prototype", iterablePrototype);
 			currentFrame.stack.push(generatable);
