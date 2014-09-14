@@ -493,6 +493,9 @@ public class Compiler {
 				case DuroLexer.ASSIGN_DIV:
 					instructions.add(new Instruction(Instruction.OPCODE_SP_DIV));
 					break;
+				case DuroLexer.ASSIGN_REM:
+					instructions.add(new Instruction(Instruction.OPCODE_SP_REM));
+					break;
 				}
 			}
 			
