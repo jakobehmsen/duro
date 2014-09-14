@@ -536,6 +536,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SP_CLONE: {
+			DictionaryProcess dict = (DictionaryProcess)currentFrame.stack.pop();
+			DictionaryProcess clone = dict.clone();
+			currentFrame.stack.push(clone);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		}
 	}
