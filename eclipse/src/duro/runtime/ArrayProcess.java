@@ -17,6 +17,10 @@ public class ArrayProcess extends DictionaryProcess implements Iterable<Object> 
 		Arrays.fill(items, new NullProcess());
 	}
 
+	private ArrayProcess(Object[] items) {
+		this.items = items;
+	}
+
 	@Override
 	public void replay(List<Instruction> commands) {
 		// TODO Auto-generated method stub
@@ -51,6 +55,18 @@ public class ArrayProcess extends DictionaryProcess implements Iterable<Object> 
 			keys.add(i);
 		
 		return keys.iterator();
+	}
+	
+	@Override
+	public DictionaryProcess newBase() {
+		Object[] clonedItems = new Object[items.length];
+		for(int i = 0; i < items.length; i++) {
+			Object clonedItem = items[i];
+			if(clonedItem instanceof DictionaryProcess)
+				clonedItem = ((DictionaryProcess)clonedItem).clone();
+			clonedItems[i] = clonedItem;
+		}
+		return new ArrayProcess(clonedItems);
 	}
 	
 	@Override

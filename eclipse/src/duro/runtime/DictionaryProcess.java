@@ -3,6 +3,7 @@ package duro.runtime;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class DictionaryProcess extends Process implements Iterable<Object> {
 	/**
@@ -64,5 +65,21 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	@Override
 	public String toString() {
 		return properties.toString();
+	}
+	
+	public DictionaryProcess clone() {
+		DictionaryProcess clone = newBase();
+		for(Map.Entry<Object, Object> entry: this.properties.entrySet()) {
+			Object clonedValue = entry.getValue();
+			if(clonedValue instanceof DictionaryProcess)
+				clonedValue = ((DictionaryProcess)entry.getValue()).clone();
+			clone.properties.put(entry.getKey(), clonedValue);
+		}
+		clone.defineProto("parent", this);
+		return clone;
+	}
+	
+	public DictionaryProcess newBase() {
+		return new DictionaryProcess();
 	}
 }
