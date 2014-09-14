@@ -569,6 +569,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				}
 			}
 		}
+
+		if(currentFrame != null && currentFrame.stack.size() > 0)
+			Debug.println(Debug.LEVEL_LOW, "stack isn't empty: " + currentFrame.stack);
 		
 		if(currentFrame != null)
 			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
