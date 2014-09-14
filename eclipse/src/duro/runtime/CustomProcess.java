@@ -44,8 +44,16 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	public CustomProcess(int variableCount, Instruction[] instructions) {
 		currentFrame = new Frame(this, new Object[0], variableCount, instructions);
 		
+		// Add Any prototype
+		DictionaryProcess any = new DictionaryProcess();
+		properties.put("Any", any);
+		// Add Iterable prototype
+		DictionaryProcess iterable = any.clone();
+		properties.put("Iterable", iterable);
+		// Add Iterator prototype
+		properties.put("Iterator", any.clone());
 		// Add Array prototype
-		properties.put("Array", new DictionaryProcess());
+		properties.put("Array", iterable.clone());
 	}
 
 	@Override
@@ -477,7 +485,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			int length = (int)currentFrame.stack.pop();
 			ArrayProcess newArray = new ArrayProcess(length);
-			newArray.defineProto("parent", properties.get("Array"));
+			newArray.defineProto("prototype", properties.get("Array"));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
@@ -518,6 +526,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 
 			Frame generatorFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
+			DictionaryProcess iteratorPrototype = (DictionaryProcess)properties.get("Iterator");
+			generator.defineProto("prototype", iteratorPrototype);
 			currentFrame.stack.push(generator);
 			currentFrame.instructionPointer++;
 			
@@ -532,6 +542,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 
 			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, arguments);
+			DictionaryProcess iterablePrototype = (DictionaryProcess)properties.get("Iterable");
+			generatable.defineProto("prototype", iterablePrototype);
 			currentFrame.stack.push(generatable);
 			currentFrame.instructionPointer++;
 			
@@ -546,7 +558,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		}
 		}
 	}
-	
+
 	private String lastReadLine;
 
 	@Override
