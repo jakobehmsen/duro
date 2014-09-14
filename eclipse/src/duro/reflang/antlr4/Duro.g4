@@ -74,7 +74,9 @@ grouping: OPEN_PAR expression CLOSE_PAR;
 // TODO: Multiple assignments should be possible
 variableAssignment: 
     ID (COMMA ID)*
-    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
+    op=(
+        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
+    )
     expression;
 lookup: ID;
 thisMessageExchange: messageExchange;
@@ -102,12 +104,16 @@ computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
 operationEnd: memberAssignment | computedMemberAssignment;
 memberAssignment: 
     DOT ID 
-    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN) 
+    op=(
+        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
+    ) 
     memberAssignmentValue;
 memberAssignmentValue: expression;
 computedMemberAssignment: 
     OPEN_SQ computedMemberAssignmentKey CLOSE_SQ 
-    op=(ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN)
+    op=(
+        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
+    )
     computedMemberAssignmentValue;
 computedMemberAssignmentKey: expression;
 computedMemberAssignmentValue: expression;
@@ -229,6 +235,7 @@ ASSIGN_ADD: '+=';
 ASSIGN_SUB: '-=';
 ASSIGN_MULT: '*=';
 ASSIGN_DIV: '/=';
+ASSIGN_REM: '%=';
 EQUALS: '==';
 NOT_EQUALS: '!=';
 ASSIGN: '=';
