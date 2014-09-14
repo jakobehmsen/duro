@@ -3,7 +3,6 @@ package duro.runtime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 public class ArrayProcess extends DictionaryProcess implements Iterable<Object> {
 	/**
@@ -19,18 +18,6 @@ public class ArrayProcess extends DictionaryProcess implements Iterable<Object> 
 
 	private ArrayProcess(Object[] items) {
 		this.items = items;
-	}
-
-	@Override
-	public void replay(List<Instruction> commands) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resume(List<Instruction> playedInstructions) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
