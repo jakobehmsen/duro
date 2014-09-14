@@ -430,7 +430,14 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} 
+		} case Instruction.OPCODE_SP_REM: {
+			int rhs = (int)currentFrame.stack.pop();
+			int lhs = (int)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs % rhs);
+			currentFrame.instructionPointer++;
+			
+			break;
+		}
 		
 		case Instruction.OPCODE_SP_WRITE: {
 			Object value = currentFrame.stack.pop();
