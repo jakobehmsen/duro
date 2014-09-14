@@ -217,7 +217,7 @@ DOUBLE_PIPE: '||';
 DOUBLE_PLUS: '++';
 DOUBLE_MINUS: '--';
 BIN_OP1: '+'|'-';
-BIN_OP2: '*'|'/';
+BIN_OP2: '*'|'/'|'%';
 HASH: '#';
 OPEN_SQ: '[';
 CLOSE_SQ: ']';
