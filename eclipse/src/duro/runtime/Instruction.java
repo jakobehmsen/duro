@@ -68,6 +68,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_LOAD = 132;
 	public static final int OPCODE_SP_NEW_GENERATOR = 133;
 	public static final int OPCODE_SP_NEW_GENERATABLE = 134;
+	public static final int OPCODE_SP_CLONE = 135;
 
 	public final int opcode;
 	public final Object operand1;
