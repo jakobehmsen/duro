@@ -32,7 +32,6 @@ public class Journal<T extends Player<C>, C> {
 		}
 	}
 	
-//	private static final String journalDirectory = "";
 	private static final String journalFileName = "log";
 	private static final String journalFile = journalFileName + ".jnl";
 	
@@ -47,8 +46,8 @@ public class Journal<T extends Player<C>, C> {
 	}
 	
 	private static class JournalInfo<T extends Player<C>, C> {
-		public final T root;
-		public final ArrayList<Entry<T, C>> transactions;
+		private final T root;
+		private final ArrayList<Entry<T, C>> transactions;
 		
 		public JournalInfo(T root, ArrayList<Entry<T, C>> transactions) {
 			this.root = root;
