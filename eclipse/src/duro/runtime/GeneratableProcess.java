@@ -1,8 +1,6 @@
 package duro.runtime;
 
-import java.util.List;
-
-public class GeneratableProcess extends Process {
+public class GeneratableProcess extends DictionaryProcess {
 	/**
 	 * 
 	 */
@@ -14,18 +12,6 @@ public class GeneratableProcess extends Process {
 	public GeneratableProcess(CallFrameInfo callFrameInfo, Object[] arguments) {
 		this.callFrameInfo = callFrameInfo;
 		this.arguments = arguments;
-	}
-
-	@Override
-	public void replay(List<Instruction> commands) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void resume(List<Instruction> playedInstructions) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -52,18 +38,6 @@ public class GeneratableProcess extends Process {
 			return new CallFrameInfo(0, 0, instructions);
 		}
 		
-		return null;
-	}
-
-	@Override
-	public void define(Object key, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Object lookup(Object key) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getInstructions(key);
 	}
 }
