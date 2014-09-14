@@ -375,34 +375,46 @@ public class Compiler {
 				ParserRuleContext targetCtx = (ParserRuleContext)ctx.getChild(0);
 				switch(targetCtx.getRuleIndex()) {
 				case DuroParser.RULE_unaryExpressionPostIncDecApplicationVariable: {
+					// Either variable assignment or member assignment
 					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
-					int ordinal = idToVariableOrdinalMap.get(id);
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-					appendIncDec(ctx.op);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//					int ordinal = idToVariableOrdinalMap.get(id);
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+//					appendIncDec(ctx.op);
+//					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					
+					if(idToVariableOrdinalMap.containsKey(id))
+						appendUnaryExpressionPostIncDecApplicationVariable(ctx, targetCtx);
+					else {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// receiver
+						appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
+					}
+					
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
-					// receiver, receiver
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+//					// receiver, receiver
+//					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+//					// receiver, receiver, id
+//					instructions.add(new Instruction(Instruction.OPCODE_GET));
+//					// receiver, value
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+//					// value, receiver, value
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+//					// value, receiver, value, 1
+//					appendIncDec(ctx.op);
+//					// value, receiver, value'
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+//					// value, receiver, value', id
+//					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//					// value, receiver, id, value'
+//					instructions.add(new Instruction(Instruction.OPCODE_SET));
+//					// value
 					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					// receiver, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_GET));
-					// receiver, value
-					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-					// value, receiver, value
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-					// value, receiver, value, 1
-					appendIncDec(ctx.op);
-					// value, receiver, value'
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					// value, receiver, value', id
-					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-					// value, receiver, id, value'
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
-					// value
+					appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess:
 					// receiver, receiver, id
@@ -419,6 +431,38 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_SET));
 					break;
 				}
+			}
+			
+			private void appendUnaryExpressionPostIncDecApplicationVariable(UnaryExpressionPostIncDecApplicationContext ctx, ParserRuleContext targetCtx) {
+				String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
+				int ordinal = idToVariableOrdinalMap.get(id);
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+				appendIncDec(ctx.op);
+				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+			}
+			
+			private void appendUnaryExpressionPostIncDecApplicationMemberAccess(UnaryExpressionPostIncDecApplicationContext ctx, String id) {
+				// receiver
+				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
+				// receiver, receiver
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+				// receiver, receiver, id
+				instructions.add(new Instruction(Instruction.OPCODE_GET));
+				// receiver, value
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+				// value, receiver, value
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+				// value, receiver, value, 1
+				appendIncDec(ctx.op);
+				// value, receiver, value'
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+				// value, receiver, value', id
+				instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+				// value, receiver, id, value'
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
+				// value
 			}
 			
 			private void appendIncDec(Token opToken) {
