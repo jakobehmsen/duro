@@ -505,13 +505,22 @@ public class Compiler {
 				
 				Integer parameterOrdinal = idToParameterOrdinalMap.get(id);
 				if(parameterOrdinal != null) {
+					// Load argument
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
-					
 					return;
 				}
 				
-				int ordinal = idToVariableOrdinalMap.get(id);
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+				Integer variableOrdinal = idToVariableOrdinalMap.get(id);
+				if(variableOrdinal != null) {
+					// Load variable
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+					return;
+				}
+				
+				// Get member
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+				instructions.add(new Instruction(Instruction.OPCODE_GET));
 			}
 			
 			@Override
