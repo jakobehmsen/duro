@@ -435,47 +435,101 @@ public class Compiler {
 			@Override
 			public void enterVariableAssignment(VariableAssignmentContext ctx) {
 				String firstId = ctx.ID(0).getText();
-				int firstOrdinal = idToVariableOrdinalMap.get(firstId);
 				
-				switch(ctx.op.getType()) {
-				case DuroLexer.ASSIGN: {
-					break;
-				} default: {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
-					// oldValue
-					break;
-				}
+				if(idToVariableOrdinalMap.containsKey(firstId)) {
+					// Variable assignment
+					int firstOrdinal = idToVariableOrdinalMap.get(firstId);
+					
+					switch(ctx.op.getType()) {
+					case DuroLexer.ASSIGN: {
+						break;
+					} default: {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
+						// oldValue
+						break;
+					}
+					}
+				} else {
+					// Member assignment for this
+					switch(ctx.op.getType()) {
+					case DuroLexer.ASSIGN: {
+						break;
+					} default: {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, firstId));
+						instructions.add(new Instruction(Instruction.OPCODE_GET));
+						// oldValue
+						break;
+					}
+					}
 				}
 			}
 			
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
 				String firstId = ctx.ID(0).getText();
-				int firstOrdinal = idToVariableOrdinalMap.get(firstId);
-				
-				switch(ctx.op.getType()) {
-				case DuroLexer.ASSIGN: {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
-					
-					for(int i = 0; i < ctx.ID().size(); i++) {
-						String id = ctx.ID(i).getText();
-						int ordinal = idToVariableOrdinalMap.get(id);
-						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+
+				if(idToVariableOrdinalMap.containsKey(firstId)) {
+					int firstOrdinal = idToVariableOrdinalMap.get(firstId);
+					// Variable assignment
+					switch(ctx.op.getType()) {
+					case DuroLexer.ASSIGN: {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+						
+						for(int i = 0; i < ctx.ID().size(); i++) {
+							String id = ctx.ID(i).getText();
+							int ordinal = idToVariableOrdinalMap.get(id);
+							instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+						}
+						
+						break;
+					} default: {
+						// Multiple returns values are not supported here yet.
+						
+						// oldValue, newValuePart
+						appendAssignmentReducer(ctx.op);
+						// newValue
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// newValue, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+						// newValue
+						break;
 					}
-					
-					break;
-				} default: {
-					// Multiple returns values are not supported here yet.
-					
-					// oldValue, newValuePart
-					appendAssignmentReducer(ctx.op);
-					// newValue
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
-					// newValue
-					break;
-				}
+					}
+				} else {
+					// Member assignment for this
+					switch(ctx.op.getType()) {
+					case DuroLexer.ASSIGN: {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+						
+						for(int i = 0; i < ctx.ID().size(); i++) {
+							String id = ctx.ID(i).getText();
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+							instructions.add(new Instruction(Instruction.OPCODE_SWAP_ANY, 0, 2));
+							instructions.add(new Instruction(Instruction.OPCODE_SET));
+						}
+						
+						break;
+					} default: {
+						// Multiple returns values are not supported here yet.
+						
+						// oldValue, newValuePart
+						appendAssignmentReducer(ctx.op);
+						// newValue
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// newValue, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, firstId));
+						// newValue, newValue, id
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// newValue, newValue, id, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP_ANY, 0, 2));
+						// newValue, receiver, id, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// newValue
+						break;
+					}
+					}
 				}
 			}
 			
