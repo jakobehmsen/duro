@@ -465,27 +465,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_TO_IT: {
-			@SuppressWarnings("unchecked")
-			Iterable<Object> iterable = (Iterable<Object>)currentFrame.stack.pop();
-			currentFrame.stack.push(iterable.iterator());
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_HAS_NEXT: {
-			@SuppressWarnings("unchecked")
-			Iterator<Object> iterator = (Iterator<Object>)currentFrame.stack.pop();
-			currentFrame.stack.push(iterator.hasNext());
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_NEXT: {
-			@SuppressWarnings("unchecked")
-			Iterator<Object> iterator = (Iterator<Object>)currentFrame.stack.pop();
-			currentFrame.stack.push(iterator.next());
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
 			currentFrame.stack.push(newDict);

@@ -62,15 +62,12 @@ public class Instruction implements Serializable {
 
 	public static final int OPCODE_SP_WRITE = 127;
 	public static final int OPCODE_SP_NEXT_LINE = 128;
-	public static final int OPCODE_SP_TO_IT = 129;
-	public static final int OPCODE_SP_HAS_NEXT = 130;
-	public static final int OPCODE_SP_NEXT = 131;
-	public static final int OPCODE_SP_NEW_DICT = 132;
-	public static final int OPCODE_SP_NEW_ARRAY = 133;
-	public static final int OPCODE_SP_ARRAY_LENGTH = 134;
-	public static final int OPCODE_SP_LOAD = 135;
-	public static final int OPCODE_SP_NEW_GENERATOR = 136;
-	public static final int OPCODE_SP_NEW_GENERATABLE = 137;
+	public static final int OPCODE_SP_NEW_DICT = 129;
+	public static final int OPCODE_SP_NEW_ARRAY = 130;
+	public static final int OPCODE_SP_ARRAY_LENGTH = 131;
+	public static final int OPCODE_SP_LOAD = 132;
+	public static final int OPCODE_SP_NEW_GENERATOR = 133;
+	public static final int OPCODE_SP_NEW_GENERATABLE = 134;
 
 	public final int opcode;
 	public final Object operand1;
