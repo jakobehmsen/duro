@@ -177,10 +177,19 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			for(int i = argumentCount - 1; i >= 0; i--)
 				arguments[i] = currentFrame.stack.pop();
 			
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			Object callable = currentFrame.stack.pop();
 
-			frameStack.push(currentFrame);
-			currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			if(callable instanceof CallFrameInfo) {
+				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else {
+				Process process = (Process)callable;
+				CallFrameInfo callFrameInfo = process.getInstructions("call");
+
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(process, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			}
 			
 			break;
 		} case Instruction.OPCODE_RESUME: {
