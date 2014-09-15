@@ -1,0 +1,262 @@
+/*
+A file containing miscellenous and frequently changed code samples.
+*/
+
+function load(path) {
+	# {
+		load_arg :0
+		sp_load
+		ret :1
+	}
+}
+
+load("std");
+load("collections");
+
+/*
+var arr = [1, 2, 3, 5, 8, 13, 21];
+
+for(var x in arr)
+	writeln(x);
+*/
+
+var myList = List.clone();
+
+myList.add(5);
+myList.add(8);
+myList.add(13);
+myList.add(21);
+myList.add(34);
+
+var f = myList.where(function(x) {return 10 < x < 30;});
+
+for(var x in f)
+	writeln(x);
+
+/*
+function it() {
+	//writeln(1);
+	yield 1;
+	//writeln(2);
+	yield 2;
+	//writeln(3);
+	yield 3;
+	//writeln(4);
+}
+
+var f = it().where(function(x) {return x > 2;});
+
+for(var x in f)
+	writeln(x);
+*/
+
+/*
+
+// Binding function calls to arguments
+function call(f) {
+	f("stuff");
+}
+
+call(function(x) { 
+	this.std.writeln("I was called with '" + x + "'!!!"); 
+});
+
+// Binding function calls to variables
+var u = function(x) { 
+	this.std.writeln("I was called too - with '" + x + "'!!!"); 
+};
+u("hello");
+*/
+
+/*
+function mr() {
+	return 1, 2, 3;
+}
+
+var one;
+var two;
+var three;
+
+var x = one, two, three = mr();
+
+this.std.writeln(one); 
+this.std.writeln(two); 
+this.std.writeln(three); 
+this.std.writeln(x); 
+*/
+
+/*
+function myFunc() {
+	return 1, 2, 3;
+}
+
+x, y, z = myFunc();
+
+std.writeln("" + x + ", " + y + ", " + z);
+*/
+
+/*
+num = 5;
+num++;
+num--;
+num++;
+writeln(num);
+
+
+
+var list = newList();
+
+list.add(41);
+list.add(54);
+list.add(61);
+list.add(76);
+list.add(81);
+list.add(91);
+list.add(101);
+
+var f = where(list, function(x) {
+	//return 50 < x < 100;
+	return x % 2 != 0;
+});
+
+// var f = list.where({50 < :x < 100});
+// var f = list.where({|x| 50 < x < 100});
+
+for(var x in f)
+	writeln(x);
+*/
+
+
+/*
+function interval(from, to) {
+	for(var i = from; i < to; i++)
+		yield i;
+	yield 42;
+}
+
+var generator = this.interval(0, 10);
+
+while(true) {
+	var hadNext, next = generator.next();
+	if(!hadNext) break;
+	this.std.writeln(next);
+}
+*/
+
+
+
+/*
+function interval(from, to) {
+	for(var i = from; i < to; i++)
+		yield i - from, i;
+}
+*/
+
+/*
+function interval(from, to) {
+	for(var i = from; i < to; i++)
+		yield (i - from) + 1, i;
+}
+
+var generator = this.interval(1, 101);
+
+for(var x, y in generator)
+	this.std.writeln("" + x + ": " + y);
+*/
+
+/*
+while(true) {
+	var hadNext, next1, next2 = generator.next();
+	if(!hadNext) break;
+	this.std.writeln("" + next1 + ": " + next2);
+}
+*/
+
+/*
+function x() {
+	return 0, 1;
+}
+
+var x, y = this.x();
+*/
+
+
+//list.where(function(x) {return x > 50;});
+//list.where({x > 50});
+
+/*
+var listIterator = list.iterator();
+
+var hadNext, next = listIterator.next();
+while(hadNext) {
+	this.std.writeln(next);
+	hadNext, next = listIterator.next();
+}
+*/
+
+/*
+var x = 0;
+while(true) {
+	this.std.writeln(x);
+	x++;
+	
+	if(x >= 10)
+		break;
+}
+*/
+
+/*
+for(var x = 0; x < 100; x++) {
+	this.std.writeln(x);
+
+	if(x >= 10)
+		break;
+}
+*/
+
+/*
+var a = [14, 2, 572, 576, 76];
+
+var x = 0;
+for(var i in a) {
+	var o = a[i];
+	this.std.writeln(o);
+
+	x++;
+	if(x >= 3)
+		break;
+}
+*/
+
+/*
+while(true) {
+	var hadNext, next = listIterator.next();
+	if(hadNext)
+		this.std.writeln(next);
+	else
+		break;
+}
+while(true) {
+	var hadNext, next = listIterator.next();
+	if(!hadNext) break;
+	this.std.writeln(next);
+}
+*/
+
+/*
+while(listIterator.hasNext()) {
+	var next = listIterator.next();
+	std.writeln(next);
+}
+*/
+
+writeln("Killed.");
+
+/*
+while(true) {
+	std.writeln(list.toString());
+	std.writeln("Got to take a break now.");
+	pause;
+	std.writeln("Up again!");
+}
+*/
