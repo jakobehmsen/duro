@@ -601,7 +601,7 @@ public class Compiler {
 					closedParameterLookupIndexes.add(instructions.size());
 //					// Locals 0 are bound to arguments array
 //					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 0, immediateParameterOrdinal));
-					return;
+//					return;
 				}
 
 				Integer immediateVariableOrdinal = immediateIdToVariableOrdinalMap.get(id);
@@ -609,7 +609,7 @@ public class Compiler {
 					closedVariableLookupIndexes.add(instructions.size());
 //					// Locals 1 are bound to variables array
 //					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 1, immediateVariableOrdinal));
-					return;
+//					return;
 				}
 				
 				// Get member
