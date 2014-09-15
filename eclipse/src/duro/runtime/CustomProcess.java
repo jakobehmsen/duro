@@ -194,11 +194,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_RET: {
 			int returnCount = (int)instruction.operand1;
 			Frame outerFrame = frameStack.pop();
-//			Object result = currentFrame.stack.peek();
 			for(int i = 0; i < returnCount; i++)
 				outerFrame.stack.push(currentFrame.stack.pop());
 			currentFrame = outerFrame;
-//			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -464,11 +462,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_NEXT_LINE: {
 			try {
-//				DataInputStream in = new DataInputStream(System.in);
-//				int nextKey = in.readByte();
-				
-//				int nextKey = System.console().reader().read();
-				
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				
 				String line = br.readLine();
@@ -521,12 +514,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_GENERATOR: {
-			/*int argumentCount = (int)instruction.operand1;
-			Object[] arguments = new Object[argumentCount];
-			
-			for(int i = argumentCount - 1; i >= 0; i--)
-				arguments[i] = currentFrame.stack.pop();*/
-			
 			Object[] arguments = (Object[])currentFrame.stack.pop();
 			Process self = (Process)currentFrame.stack.pop();
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();

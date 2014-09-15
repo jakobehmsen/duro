@@ -376,13 +376,7 @@ public class Compiler {
 				switch(targetCtx.getRuleIndex()) {
 				case DuroParser.RULE_unaryExpressionPostIncDecApplicationVariable: {
 					// Either variable assignment or member assignment
-					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
-//					int ordinal = idToVariableOrdinalMap.get(id);
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-//					appendIncDec(ctx.op);
-//					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();;
 					
 					if(idToVariableOrdinalMap.containsKey(id))
 						appendUnaryExpressionPostIncDecApplicationVariable(ctx, targetCtx);
@@ -394,25 +388,6 @@ public class Compiler {
 					
 					break;
 				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
-//					// receiver, receiver
-//					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-//					// receiver, receiver, id
-//					instructions.add(new Instruction(Instruction.OPCODE_GET));
-//					// receiver, value
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-//					// value, receiver, value
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-//					// value, receiver, value, 1
-//					appendIncDec(ctx.op);
-//					// value, receiver, value'
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-//					// value, receiver, value', id
-//					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-//					// value, receiver, id, value'
-//					instructions.add(new Instruction(Instruction.OPCODE_SET));
-//					// value
 					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
 					appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
 					break;
@@ -772,7 +747,6 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				//for(int i = ctx.ID().size() - 1; i >= 0; i--) {
 				for(int i = 0; i < ctx.ID().size(); i++) {
 					TerminalNode id = ctx.ID(i);
 					int ordinal = declareVariable(id);
