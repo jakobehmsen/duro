@@ -18,6 +18,24 @@ function newArray(length) {
 	}
 }
 
+Array.set = function(index, value) {
+	# {
+		load_this
+		load_arg :0
+		load_arg :1
+		sp_array_set
+	}
+};
+
+Array.get = function(index) {
+	# {
+		load_this
+		load_arg :0
+		sp_array_get
+		ret :1
+	}
+};
+
 Array.length = function() {
 	#{
 		load_this
@@ -144,4 +162,10 @@ List.iterator = function() {
 			return false, null;
 		}
 	};
+};
+List.set = function(index, value) {
+	items[index] = value;
+};
+List.get = function(index) {
+	return items[index];
 };
