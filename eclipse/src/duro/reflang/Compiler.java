@@ -95,7 +95,7 @@ public class Compiler {
 		ProgramContext programCtx = parser.program();
 		
 		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
-		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx);
+		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx, new Hashtable<String, Integer>(), new Hashtable<String, Integer>());
 		
 		return new CustomProcess(bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
@@ -127,7 +127,10 @@ public class Compiler {
 	
 	private static DuroListener createBodyListener(
 			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, 
-			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
+			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements, 
+			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap,
+			final ArrayList<Integer> closedParameterLookupIndexes, final ArrayList<Integer> closedVariableLookupIndexes,
+			final ArrayList<Integer> closedParameterAssignmentIndexes, final ArrayList<Integer> closedVariableAssignmentIndexes) {
 		return new DuroBaseListener() {
 			@Override
 			public void exitProgram(ProgramContext ctx) {
@@ -593,6 +596,22 @@ public class Compiler {
 					return;
 				}
 				
+				Integer immediateParameterOrdinal = immediateIdToParameterOrdinalMap.get(id);
+				if(immediateParameterOrdinal != null) {
+					closedParameterLookupIndexes.add(instructions.size());
+//					// Locals 0 are bound to arguments array
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 0, immediateParameterOrdinal));
+					return;
+				}
+
+				Integer immediateVariableOrdinal = immediateIdToVariableOrdinalMap.get(id);
+				if(immediateVariableOrdinal != null) {
+					closedVariableLookupIndexes.add(instructions.size());
+//					// Locals 1 are bound to variables array
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 1, immediateVariableOrdinal));
+					return;
+				}
+				
 				// Get member
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
@@ -690,16 +709,20 @@ public class Compiler {
 			@Override
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
-				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.functionParameters().ID(i).getText();
-					idToParameterOrdinalMap.put(parameterId, i);
+					newIdToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+//				if(functionBodyInfo.isClosure) {
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_FUNCTION));
+//				}
 			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
@@ -807,19 +830,19 @@ public class Compiler {
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
-				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.functionParameters().ID(i).getText();
-					idToParameterOrdinalMap.put(parameterId, i);
+					newIdToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 				String id = ctx.ID().getText();
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
 				instructions.add(new Instruction(Instruction.OPCODE_DEF));
 			}
 			
@@ -966,7 +989,12 @@ public class Compiler {
 				ConditionalTreeWalker walker = new ConditionalTreeWalker();
 				// Why isn't the walked here?????
 				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
-				walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), updateElement);
+				walker.walk(
+					createBodyListener(
+						walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
+						closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+					updateElement
+				);
 				
 				int indexAtCondition = forJumpIndexStack.pop();
 				int conditionJump = indexAtCondition - instructions.size();
@@ -1125,7 +1153,12 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
 					ParseTree keyExpression = ctx.indexAssignmentKey().expression();
-					walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), keyExpression);
+					walker.walk(
+						createBodyListener(
+							walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
+							closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+						keyExpression
+					);
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
@@ -1192,13 +1225,38 @@ public class Compiler {
 			.replace("\\t", "\t");
 	}
 	
-	private static BodyInfo getBodyInfo(Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree) {
+	private static BodyInfo getBodyInfo(
+			Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree, 
+			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap) {
 		Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
+		ArrayList<Integer> closedParameterLookupIndexes = new ArrayList<Integer>();
+		ArrayList<Integer> closedVariableLookupIndexes = new ArrayList<Integer>();
+		ArrayList<Integer> closedParameterAssignmentIndexes = new ArrayList<Integer>();
+		ArrayList<Integer> closedVariableAssignmentIndexes = new ArrayList<Integer>();
+		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
-		walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements), tree);
+		walker.walk(
+			createBodyListener(
+				walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
+				closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+			tree
+		);
+		
+		int ordinalCount = idToOrdinalMap.size();
+		@SuppressWarnings("unused")
+		boolean isClosure = false;
+		
+		if(closedParameterLookupIndexes.size() > 0 ||
+				closedVariableLookupIndexes.size() > 0 ||
+				closedParameterAssignmentIndexes.size() > 0 ||
+				closedVariableAssignmentIndexes.size() > 0) {
+			// Body is a closure; make room for arguments and variables
+			isClosure = true;
+		}
+		
 		
 		if(yieldStatements.size() > 0) {
 			// Generatable/generator
@@ -1222,9 +1280,9 @@ public class Compiler {
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 			
-			return new BodyInfo(idToOrdinalMap.size(), generatorInstructions);
+			return new BodyInfo(ordinalCount, generatorInstructions);
 		} else
-			return new BodyInfo(idToOrdinalMap.size(), instructions);
+			return new BodyInfo(ordinalCount, instructions);
 	}
 	
 	private static class LiteralDuroListener extends DuroBaseListener {
