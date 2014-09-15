@@ -6,7 +6,7 @@ function arrayLength(array) {
 	#{
 		load_arg :0
 		sp_array_length
-		ret
+		ret :1
 	}
 }
 
@@ -14,9 +14,53 @@ function newArray(length) {
 	#{
 		load_arg :0
 		sp_new_array
-		ret
+		ret :1
 	}
 }
+
+Array.length = function() {
+	#{
+		load_this
+		sp_array_length
+		ret :1
+	}
+};
+
+Array.iterator = function() {
+	return {
+		array: this,
+		i: 0,
+		next: function() {
+			if(i < array.length()) {
+				var item = list[i];
+				i++;
+				return true, item;
+			}
+				
+			return false, null;
+		}
+	};
+};
+
+/*
+// Implicit inheritance based on protocol?
+
+Iterable = extend(["iterator"]);
+
+Iterable.where = function(predicate) {
+	for(var x in this) {
+		if(predicate(x))
+			yield x;
+	}
+}
+*/
+
+Iterable.where = function(predicate) {
+	for(var x in this) {
+		if(predicate(x))
+			yield x;
+	}
+};
 
 function newList() {
 	var initialCapacity = 12;
@@ -48,15 +92,56 @@ function newList() {
 			return {
 				list: this,
 				i: 0,
-				hasNext: function() {
-					return this.i < this.list.size;
-				},
 				next: function() {
-					var item = this.list.items[this.i];
-					this.i++;
-					return item;
+					if(this.i < this.list.size) {
+						var item = this.list.items[this.i];
+						this.i++;
+						return true, item;
+					}
+						
+					return false, null;
 				}
 			};
+			
+			/*
+			return {
+				for(i = 0; i < this.size; i++)
+					yield this.list.items[i];
+			}().iterator();
+			*/
 		}
+		/*
+		iterable: {
+			for(i = 0; i < this.size; i++)
+				yield this.list.items[i];
+		},
+		iterator: {
+			iterable().iterator();
+		}
+		*/
 	};
 }
+
+List = Iterable.clone();
+List.items = newArray(12);
+List.capacity = 12;
+List.size = 0;
+List.add = function(item) {
+	this.items[this.size] = item;
+	this.size++;
+};
+List.iterator = function() {
+	return {
+		list: this,
+		i: 0,
+		next: function() {
+			if(this.i < this.list.size) {
+				var item = this.list.items[this.i];
+				this.i++;
+				return true, item;
+			}
+				
+			return false, null;
+		}
+	};
+};
