@@ -4,46 +4,48 @@ Simple property catalog application.
 A console application that can set, get and list properties and pause the application.
 */
 
-
 function load(path) {
 	# {
 		load_arg :0
 		sp_load
-		ret
+		ret :1
 	}
 }
 
-var std = load("std");
+load("std");
 
 var properties = {};
 
 while(true) {
-	std.writeln("What do you want to do?");
-	var command = std.readln();
+	writeln("What do you want to do?");
+	var command = readln();
 	
 	if(command == "set") {
-		std.writeln("Enter property name: ");
-		var name = std.readln();
-		std.writeln("Enter property value: ");
-		var value = std.readln();
+		writeln("Enter property name: ");
+		var name = readln();
+		writeln("Enter property value: ");
+		var value = readln();
 		
 		properties[name] = value;
 		
-		std.writeln("Property " + name + " was set to " + value + ".");
+		writeln("Property " + name + " was set to " + value + ".");
 	} else if(command == "get") {
-		std.writeln("Enter property name: ");
-		var name = std.readln();
+		writeln("Enter property name: ");
+		var name = readln();
 		
 		var value = properties[name];
-		std.writeln(value);
+		writeln(value);
 	} else if(command == "pause") {
-		std.writeln("Bye bye then.");
+		writeln("Bye bye then.");
 		pause;
-		std.writeln("Welcome back.");
+		writeln("Welcome back.");
 	} else if(command == "list") {
+		// ***Currently non-functional***
+		// Could probably be fixed by having an instruction creating an iterable of
+		// name/value pairs of a dictionary process
 		for(name in properties)
-		    std.writeln(name + " = " + properties[name] + " ");
+		    writeln(name + " = " + properties[name] + " ");
 	} else {
-		std.writeln("Valid commands are 'set', 'get', 'list' or 'pause'.");
+		writeln("Valid commands are 'set', 'get', 'list' or 'pause'.");
 	}
 }
