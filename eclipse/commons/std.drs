@@ -14,6 +14,25 @@ function writeln(x) {
 function readln() {
 	#{
 		sp_next_line
-		ret
+		ret :1
 	}
 }
+/*
+// Implicit inheritance based on protocol?
+Any = extend([]);
+Any.clone = function clone() {
+	#{
+		load_arg :0
+		sp_clone
+		ret :1
+	}
+}
+*/
+
+Any.clone = function() {
+	#{
+		load_this
+		sp_clone
+		ret :1
+	}
+};
