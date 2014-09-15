@@ -8,22 +8,10 @@ function load(path) {
 	# {
 		load_arg :0
 		sp_load
-		ret
+		ret :1
 	}
 }
 
-var std = load("std");
-var collections = load("collections");
+load("std");
+load("collections");
 
-var list = collections.newList();
-
-list.add(41);
-list.add(51);
-list.add(61);
-
-while(true) {
-	std.writeln(list.toString());
-	std.writeln("Got to take a break now.");
-	pause;
-	std.writeln("Up again!");
-}
