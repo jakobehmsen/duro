@@ -1,9 +1,11 @@
 grammar Duro;
 
 program: programElements;
-programElements: programElement*;
-programElement: 
-    delimitedProgramElement SEMICOLON | undelimitedStatement;
+programElements: programElementsPart*;
+programElementsPart: 
+    //delimitedProgramElement SEMICOLON | undelimitedStatement;
+    delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
+programElement: delimitedProgramElement SEMICOLON | undelimitedStatement;
 delimitedProgramElement: topExpression | delimitedStatement;
 topExpression: expression;
 expression: variableAssignment | binaryExpressionLogicalOr;
@@ -67,7 +69,7 @@ unaryExpressionPostIncDecApplicationIndexAccessReceiver:
     unaryExpressionPostIncDecOperand;
 
 unaryExpressionPostIncDecOperand: 
-    (grouping | lookup | thisMessageExchange | literal | self | nil)
+    (grouping | thisMessageExchange | lookup  | literal | self | nil)
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR expression CLOSE_PAR;
