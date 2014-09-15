@@ -41,7 +41,7 @@ while(true) {
 		writeln("Welcome back.");
 	} else if(command == "list") {
 		// ***Currently non-functional***
-		// Could probably be fixed by having an instruction creating an iterable of
+		// Could probably be fixed by having an instruction for creating an iterable of
 		// name/value pairs of a dictionary process
 		for(name in properties)
 		    writeln(name + " = " + properties[name] + " ");
