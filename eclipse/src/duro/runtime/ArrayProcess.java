@@ -60,4 +60,12 @@ public class ArrayProcess extends DictionaryProcess implements Iterable<Object> 
 	public String toString() {
 		return Arrays.toString(items);
 	}
+
+	public Object get(int index) {
+		return items[index];
+	}
+
+	public void set(int index, Object value) {
+		items[index] = value;
+	}
 }
