@@ -54,16 +54,16 @@ unaryExpressionPostIncDecApplication:
     (
         unaryExpressionPostIncDecApplicationVariable 
         | unaryExpressionPostIncDecApplicationMemberAccess
-        | unaryExpressionPostIncDecApplicationComputedMemberAccess
+        | unaryExpressionPostIncDecApplicationIndexAccess
     ) 
     op=(DOUBLE_PLUS | DOUBLE_MINUS);
 unaryExpressionPostIncDecApplicationVariable: ID;
 unaryExpressionPostIncDecApplicationMemberAccess:
     unaryExpressionPostIncDecOperand DOT ID;
-unaryExpressionPostIncDecApplicationComputedMemberAccess:
-    unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver 
+unaryExpressionPostIncDecApplicationIndexAccess:
+    unaryExpressionPostIncDecApplicationIndexAccessReceiver 
     OPEN_SQ expression CLOSE_SQ;
-unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver:
+unaryExpressionPostIncDecApplicationIndexAccessReceiver:
     unaryExpressionPostIncDecOperand;
 
 unaryExpressionPostIncDecOperand: 
@@ -94,14 +94,14 @@ array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
 nil: KW_NULL;
-operationChain: explicitMessageExchange | memberAccess | computedMemberAccess;
+operationChain: explicitMessageExchange | memberAccess | indexAccess;
 explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT ID;
-computedMemberAccess: OPEN_SQ expression CLOSE_SQ;
+indexAccess: OPEN_SQ expression CLOSE_SQ;
 
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
-operationEnd: memberAssignment | computedMemberAssignment;
+operationEnd: memberAssignment | indexAssignment;
 memberAssignment: 
     DOT ID 
     op=(
@@ -109,14 +109,14 @@ memberAssignment:
     ) 
     memberAssignmentValue;
 memberAssignmentValue: expression;
-computedMemberAssignment: 
-    OPEN_SQ computedMemberAssignmentKey CLOSE_SQ 
+indexAssignment: 
+    OPEN_SQ indexAssignmentKey CLOSE_SQ 
     op=(
         ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
     )
-    computedMemberAssignmentValue;
-computedMemberAssignmentKey: expression;
-computedMemberAssignmentValue: expression;
+    indexAssignmentValue;
+indexAssignmentKey: expression;
+indexAssignmentValue: expression;
 
 delimitedStatement: 
     pause | variableStatement | returnStatement | 

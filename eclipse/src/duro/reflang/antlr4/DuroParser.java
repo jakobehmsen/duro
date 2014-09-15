@@ -45,18 +45,17 @@ public class DuroParser extends Parser {
 		RULE_binaryExpressionArithmetic2Application = 17, RULE_unaryExpressionNot = 18, 
 		RULE_unaryExpressionNotApplication = 19, RULE_unaryExpressionPostIncDec = 20, 
 		RULE_unaryExpressionPostIncDecApplication = 21, RULE_unaryExpressionPostIncDecApplicationVariable = 22, 
-		RULE_unaryExpressionPostIncDecApplicationMemberAccess = 23, RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess = 24, 
-		RULE_unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver = 25, 
-		RULE_unaryExpressionPostIncDecOperand = 26, RULE_grouping = 27, RULE_variableAssignment = 28, 
-		RULE_lookup = 29, RULE_thisMessageExchange = 30, RULE_messageExchange = 31, 
-		RULE_literal = 32, RULE_integer = 33, RULE_bool = 34, RULE_string = 35, 
-		RULE_dictProcess = 36, RULE_dictProcessEntry = 37, RULE_functionLiteral = 38, 
+		RULE_unaryExpressionPostIncDecApplicationMemberAccess = 23, RULE_unaryExpressionPostIncDecApplicationIndexAccess = 24, 
+		RULE_unaryExpressionPostIncDecApplicationIndexAccessReceiver = 25, RULE_unaryExpressionPostIncDecOperand = 26, 
+		RULE_grouping = 27, RULE_variableAssignment = 28, RULE_lookup = 29, RULE_thisMessageExchange = 30, 
+		RULE_messageExchange = 31, RULE_literal = 32, RULE_integer = 33, RULE_bool = 34, 
+		RULE_string = 35, RULE_dictProcess = 36, RULE_dictProcessEntry = 37, RULE_functionLiteral = 38, 
 		RULE_array = 39, RULE_arrayOperand = 40, RULE_self = 41, RULE_nil = 42, 
 		RULE_operationChain = 43, RULE_explicitMessageExchange = 44, RULE_memberAccess = 45, 
-		RULE_computedMemberAccess = 46, RULE_operationEnd = 47, RULE_memberAssignment = 48, 
-		RULE_memberAssignmentValue = 49, RULE_computedMemberAssignment = 50, RULE_computedMemberAssignmentKey = 51, 
-		RULE_computedMemberAssignmentValue = 52, RULE_delimitedStatement = 53, 
-		RULE_pause = 54, RULE_variableStatement = 55, RULE_variableDeclarationAndAssignment = 56, 
+		RULE_indexAccess = 46, RULE_operationEnd = 47, RULE_memberAssignment = 48, 
+		RULE_memberAssignmentValue = 49, RULE_indexAssignment = 50, RULE_indexAssignmentKey = 51, 
+		RULE_indexAssignmentValue = 52, RULE_delimitedStatement = 53, RULE_pause = 54, 
+		RULE_variableStatement = 55, RULE_variableDeclarationAndAssignment = 56, 
 		RULE_variableDeclaration = 57, RULE_returnStatement = 58, RULE_breakStatement = 59, 
 		RULE_yieldStatement = 60, RULE_undelimitedStatement = 61, RULE_functionDefinition = 62, 
 		RULE_functionParameters = 63, RULE_functionBody = 64, RULE_primitiveBody = 65, 
@@ -75,22 +74,22 @@ public class DuroParser extends Parser {
 		"binaryExpressionArithmetic1Application", "binaryExpressionArithmetic2", 
 		"binaryExpressionArithmetic2Application", "unaryExpressionNot", "unaryExpressionNotApplication", 
 		"unaryExpressionPostIncDec", "unaryExpressionPostIncDecApplication", "unaryExpressionPostIncDecApplicationVariable", 
-		"unaryExpressionPostIncDecApplicationMemberAccess", "unaryExpressionPostIncDecApplicationComputedMemberAccess", 
-		"unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver", "unaryExpressionPostIncDecOperand", 
+		"unaryExpressionPostIncDecApplicationMemberAccess", "unaryExpressionPostIncDecApplicationIndexAccess", 
+		"unaryExpressionPostIncDecApplicationIndexAccessReceiver", "unaryExpressionPostIncDecOperand", 
 		"grouping", "variableAssignment", "lookup", "thisMessageExchange", "messageExchange", 
 		"literal", "integer", "bool", "string", "dictProcess", "dictProcessEntry", 
 		"functionLiteral", "array", "arrayOperand", "self", "nil", "operationChain", 
-		"explicitMessageExchange", "memberAccess", "computedMemberAccess", "operationEnd", 
-		"memberAssignment", "memberAssignmentValue", "computedMemberAssignment", 
-		"computedMemberAssignmentKey", "computedMemberAssignmentValue", "delimitedStatement", 
-		"pause", "variableStatement", "variableDeclarationAndAssignment", "variableDeclaration", 
-		"returnStatement", "breakStatement", "yieldStatement", "undelimitedStatement", 
-		"functionDefinition", "functionParameters", "functionBody", "primitiveBody", 
-		"primitiveCall", "primitiveOperand", "ifStatement", "ifStatementCondition", 
-		"ifStatementOnTrue", "elseStatement", "ifStatementOnFalse", "whileStatement", 
-		"whileStatementCondition", "whileStatementBody", "forStatement", "forStatementInitialization", 
-		"forStatementCondition", "forStatementUpdate", "forStatementBody", "forInStatement", 
-		"forInStatementVar", "forInStatementBody"
+		"explicitMessageExchange", "memberAccess", "indexAccess", "operationEnd", 
+		"memberAssignment", "memberAssignmentValue", "indexAssignment", "indexAssignmentKey", 
+		"indexAssignmentValue", "delimitedStatement", "pause", "variableStatement", 
+		"variableDeclarationAndAssignment", "variableDeclaration", "returnStatement", 
+		"breakStatement", "yieldStatement", "undelimitedStatement", "functionDefinition", 
+		"functionParameters", "functionBody", "primitiveBody", "primitiveCall", 
+		"primitiveOperand", "ifStatement", "ifStatementCondition", "ifStatementOnTrue", 
+		"elseStatement", "ifStatementOnFalse", "whileStatement", "whileStatementCondition", 
+		"whileStatementBody", "forStatement", "forStatementInitialization", "forStatementCondition", 
+		"forStatementUpdate", "forStatementBody", "forInStatement", "forInStatementVar", 
+		"forInStatementBody"
 	};
 
 	@Override
@@ -1304,8 +1303,8 @@ public class DuroParser extends Parser {
 		public UnaryExpressionPostIncDecApplicationMemberAccessContext unaryExpressionPostIncDecApplicationMemberAccess() {
 			return getRuleContext(UnaryExpressionPostIncDecApplicationMemberAccessContext.class,0);
 		}
-		public UnaryExpressionPostIncDecApplicationComputedMemberAccessContext unaryExpressionPostIncDecApplicationComputedMemberAccess() {
-			return getRuleContext(UnaryExpressionPostIncDecApplicationComputedMemberAccessContext.class,0);
+		public UnaryExpressionPostIncDecApplicationIndexAccessContext unaryExpressionPostIncDecApplicationIndexAccess() {
+			return getRuleContext(UnaryExpressionPostIncDecApplicationIndexAccessContext.class,0);
 		}
 		public TerminalNode DOUBLE_MINUS() { return getToken(DuroParser.DOUBLE_MINUS, 0); }
 		public UnaryExpressionPostIncDecApplicationVariableContext unaryExpressionPostIncDecApplicationVariable() {
@@ -1353,7 +1352,7 @@ public class DuroParser extends Parser {
 
 			case 3:
 				{
-				setState(265); unaryExpressionPostIncDecApplicationComputedMemberAccess();
+				setState(265); unaryExpressionPostIncDecApplicationIndexAccess();
 				}
 				break;
 			}
@@ -1465,41 +1464,41 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class UnaryExpressionPostIncDecApplicationComputedMemberAccessContext extends ParserRuleContext {
+	public static class UnaryExpressionPostIncDecApplicationIndexAccessContext extends ParserRuleContext {
 		public TerminalNode OPEN_SQ() { return getToken(DuroParser.OPEN_SQ, 0); }
 		public TerminalNode CLOSE_SQ() { return getToken(DuroParser.CLOSE_SQ, 0); }
-		public UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver() {
-			return getRuleContext(UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext.class,0);
-		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public UnaryExpressionPostIncDecApplicationComputedMemberAccessContext(ParserRuleContext parent, int invokingState) {
+		public UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext unaryExpressionPostIncDecApplicationIndexAccessReceiver() {
+			return getRuleContext(UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext.class,0);
+		}
+		public UnaryExpressionPostIncDecApplicationIndexAccessContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess; }
+		@Override public int getRuleIndex() { return RULE_unaryExpressionPostIncDecApplicationIndexAccess; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterUnaryExpressionPostIncDecApplicationComputedMemberAccess(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterUnaryExpressionPostIncDecApplicationIndexAccess(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitUnaryExpressionPostIncDecApplicationComputedMemberAccess(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitUnaryExpressionPostIncDecApplicationIndexAccess(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitUnaryExpressionPostIncDecApplicationComputedMemberAccess(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitUnaryExpressionPostIncDecApplicationIndexAccess(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final UnaryExpressionPostIncDecApplicationComputedMemberAccessContext unaryExpressionPostIncDecApplicationComputedMemberAccess() throws RecognitionException {
-		UnaryExpressionPostIncDecApplicationComputedMemberAccessContext _localctx = new UnaryExpressionPostIncDecApplicationComputedMemberAccessContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess);
+	public final UnaryExpressionPostIncDecApplicationIndexAccessContext unaryExpressionPostIncDecApplicationIndexAccess() throws RecognitionException {
+		UnaryExpressionPostIncDecApplicationIndexAccessContext _localctx = new UnaryExpressionPostIncDecApplicationIndexAccessContext(_ctx, getState());
+		enterRule(_localctx, 48, RULE_unaryExpressionPostIncDecApplicationIndexAccess);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(276); unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver();
+			setState(276); unaryExpressionPostIncDecApplicationIndexAccessReceiver();
 			setState(277); match(OPEN_SQ);
 			setState(278); expression();
 			setState(279); match(CLOSE_SQ);
@@ -1516,32 +1515,32 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext extends ParserRuleContext {
+	public static class UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext extends ParserRuleContext {
 		public UnaryExpressionPostIncDecOperandContext unaryExpressionPostIncDecOperand() {
 			return getRuleContext(UnaryExpressionPostIncDecOperandContext.class,0);
 		}
-		public UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext(ParserRuleContext parent, int invokingState) {
+		public UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver; }
+		@Override public int getRuleIndex() { return RULE_unaryExpressionPostIncDecApplicationIndexAccessReceiver; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterUnaryExpressionPostIncDecApplicationIndexAccessReceiver(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitUnaryExpressionPostIncDecApplicationIndexAccessReceiver(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitUnaryExpressionPostIncDecApplicationIndexAccessReceiver(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver() throws RecognitionException {
-		UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext _localctx = new UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_unaryExpressionPostIncDecApplicationComputedMemberAccessReceiver);
+	public final UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext unaryExpressionPostIncDecApplicationIndexAccessReceiver() throws RecognitionException {
+		UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext _localctx = new UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext(_ctx, getState());
+		enterRule(_localctx, 50, RULE_unaryExpressionPostIncDecApplicationIndexAccessReceiver);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2588,11 +2587,11 @@ public class DuroParser extends Parser {
 		public MemberAccessContext memberAccess() {
 			return getRuleContext(MemberAccessContext.class,0);
 		}
-		public ComputedMemberAccessContext computedMemberAccess() {
-			return getRuleContext(ComputedMemberAccessContext.class,0);
-		}
 		public ExplicitMessageExchangeContext explicitMessageExchange() {
 			return getRuleContext(ExplicitMessageExchangeContext.class,0);
+		}
+		public IndexAccessContext indexAccess() {
+			return getRuleContext(IndexAccessContext.class,0);
 		}
 		public OperationChainContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2636,7 +2635,7 @@ public class DuroParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(393); computedMemberAccess();
+				setState(393); indexAccess();
 				}
 				break;
 			}
@@ -2740,34 +2739,34 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ComputedMemberAccessContext extends ParserRuleContext {
+	public static class IndexAccessContext extends ParserRuleContext {
 		public TerminalNode OPEN_SQ() { return getToken(DuroParser.OPEN_SQ, 0); }
 		public TerminalNode CLOSE_SQ() { return getToken(DuroParser.CLOSE_SQ, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public ComputedMemberAccessContext(ParserRuleContext parent, int invokingState) {
+		public IndexAccessContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_computedMemberAccess; }
+		@Override public int getRuleIndex() { return RULE_indexAccess; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterComputedMemberAccess(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAccess(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitComputedMemberAccess(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAccess(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitComputedMemberAccess(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAccess(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ComputedMemberAccessContext computedMemberAccess() throws RecognitionException {
-		ComputedMemberAccessContext _localctx = new ComputedMemberAccessContext(_ctx, getState());
-		enterRule(_localctx, 92, RULE_computedMemberAccess);
+	public final IndexAccessContext indexAccess() throws RecognitionException {
+		IndexAccessContext _localctx = new IndexAccessContext(_ctx, getState());
+		enterRule(_localctx, 92, RULE_indexAccess);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -2791,8 +2790,8 @@ public class DuroParser extends Parser {
 		public MemberAssignmentContext memberAssignment() {
 			return getRuleContext(MemberAssignmentContext.class,0);
 		}
-		public ComputedMemberAssignmentContext computedMemberAssignment() {
-			return getRuleContext(ComputedMemberAssignmentContext.class,0);
+		public IndexAssignmentContext indexAssignment() {
+			return getRuleContext(IndexAssignmentContext.class,0);
 		}
 		public OperationEndContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2828,7 +2827,7 @@ public class DuroParser extends Parser {
 			case OPEN_SQ:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(407); computedMemberAssignment();
+				setState(407); indexAssignment();
 				}
 				break;
 			default:
@@ -2951,7 +2950,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ComputedMemberAssignmentContext extends ParserRuleContext {
+	public static class IndexAssignmentContext extends ParserRuleContext {
 		public Token op;
 		public TerminalNode ASSIGN_MULT() { return getToken(DuroParser.ASSIGN_MULT, 0); }
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
@@ -2960,50 +2959,50 @@ public class DuroParser extends Parser {
 		public TerminalNode ASSIGN_REM() { return getToken(DuroParser.ASSIGN_REM, 0); }
 		public TerminalNode ASSIGN_ADD() { return getToken(DuroParser.ASSIGN_ADD, 0); }
 		public TerminalNode CLOSE_SQ() { return getToken(DuroParser.CLOSE_SQ, 0); }
-		public ComputedMemberAssignmentKeyContext computedMemberAssignmentKey() {
-			return getRuleContext(ComputedMemberAssignmentKeyContext.class,0);
+		public IndexAssignmentKeyContext indexAssignmentKey() {
+			return getRuleContext(IndexAssignmentKeyContext.class,0);
 		}
-		public ComputedMemberAssignmentValueContext computedMemberAssignmentValue() {
-			return getRuleContext(ComputedMemberAssignmentValueContext.class,0);
+		public IndexAssignmentValueContext indexAssignmentValue() {
+			return getRuleContext(IndexAssignmentValueContext.class,0);
 		}
 		public TerminalNode ASSIGN_SUB() { return getToken(DuroParser.ASSIGN_SUB, 0); }
-		public ComputedMemberAssignmentContext(ParserRuleContext parent, int invokingState) {
+		public IndexAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_computedMemberAssignment; }
+		@Override public int getRuleIndex() { return RULE_indexAssignment; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterComputedMemberAssignment(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAssignment(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitComputedMemberAssignment(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAssignment(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitComputedMemberAssignment(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAssignment(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ComputedMemberAssignmentContext computedMemberAssignment() throws RecognitionException {
-		ComputedMemberAssignmentContext _localctx = new ComputedMemberAssignmentContext(_ctx, getState());
-		enterRule(_localctx, 100, RULE_computedMemberAssignment);
+	public final IndexAssignmentContext indexAssignment() throws RecognitionException {
+		IndexAssignmentContext _localctx = new IndexAssignmentContext(_ctx, getState());
+		enterRule(_localctx, 100, RULE_indexAssignment);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(417); match(OPEN_SQ);
-			setState(418); computedMemberAssignmentKey();
+			setState(418); indexAssignmentKey();
 			setState(419); match(CLOSE_SQ);
 			setState(420);
-			((ComputedMemberAssignmentContext)_localctx).op = _input.LT(1);
+			((IndexAssignmentContext)_localctx).op = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ASSIGN_ADD) | (1L << ASSIGN_SUB) | (1L << ASSIGN_MULT) | (1L << ASSIGN_DIV) | (1L << ASSIGN_REM) | (1L << ASSIGN))) != 0)) ) {
-				((ComputedMemberAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				((IndexAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 			}
 			consume();
-			setState(421); computedMemberAssignmentValue();
+			setState(421); indexAssignmentValue();
 			}
 		}
 		catch (RecognitionException re) {
@@ -3017,32 +3016,32 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ComputedMemberAssignmentKeyContext extends ParserRuleContext {
+	public static class IndexAssignmentKeyContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public ComputedMemberAssignmentKeyContext(ParserRuleContext parent, int invokingState) {
+		public IndexAssignmentKeyContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_computedMemberAssignmentKey; }
+		@Override public int getRuleIndex() { return RULE_indexAssignmentKey; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterComputedMemberAssignmentKey(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAssignmentKey(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitComputedMemberAssignmentKey(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAssignmentKey(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitComputedMemberAssignmentKey(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAssignmentKey(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ComputedMemberAssignmentKeyContext computedMemberAssignmentKey() throws RecognitionException {
-		ComputedMemberAssignmentKeyContext _localctx = new ComputedMemberAssignmentKeyContext(_ctx, getState());
-		enterRule(_localctx, 102, RULE_computedMemberAssignmentKey);
+	public final IndexAssignmentKeyContext indexAssignmentKey() throws RecognitionException {
+		IndexAssignmentKeyContext _localctx = new IndexAssignmentKeyContext(_ctx, getState());
+		enterRule(_localctx, 102, RULE_indexAssignmentKey);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
@@ -3060,32 +3059,32 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ComputedMemberAssignmentValueContext extends ParserRuleContext {
+	public static class IndexAssignmentValueContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public ComputedMemberAssignmentValueContext(ParserRuleContext parent, int invokingState) {
+		public IndexAssignmentValueContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_computedMemberAssignmentValue; }
+		@Override public int getRuleIndex() { return RULE_indexAssignmentValue; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterComputedMemberAssignmentValue(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAssignmentValue(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitComputedMemberAssignmentValue(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAssignmentValue(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitComputedMemberAssignmentValue(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAssignmentValue(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ComputedMemberAssignmentValueContext computedMemberAssignmentValue() throws RecognitionException {
-		ComputedMemberAssignmentValueContext _localctx = new ComputedMemberAssignmentValueContext(_ctx, getState());
-		enterRule(_localctx, 104, RULE_computedMemberAssignmentValue);
+	public final IndexAssignmentValueContext indexAssignmentValue() throws RecognitionException {
+		IndexAssignmentValueContext _localctx = new IndexAssignmentValueContext(_ctx, getState());
+		enterRule(_localctx, 104, RULE_indexAssignmentValue);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
