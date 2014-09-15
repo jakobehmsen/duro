@@ -36,9 +36,6 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContex
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.BreakStatementContext;
-import duro.reflang.antlr4.DuroParser.ComputedMemberAccessContext;
-import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentContext;
-import duro.reflang.antlr4.DuroParser.ComputedMemberAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
@@ -55,6 +52,9 @@ import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
+import duro.reflang.antlr4.DuroParser.IndexAccessContext;
+import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
+import duro.reflang.antlr4.DuroParser.IndexAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
@@ -70,8 +70,8 @@ import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.ThisMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionNotApplicationContext;
-import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationContext;
+import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext;
 import duro.reflang.antlr4.DuroParser.UnaryExpressionPostIncDecApplicationVariableContext;
 import duro.reflang.antlr4.DuroParser.VariableAssignmentContext;
@@ -366,7 +366,7 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitUnaryExpressionPostIncDecApplicationComputedMemberAccessReceiver(UnaryExpressionPostIncDecApplicationComputedMemberAccessReceiverContext ctx) {
+			public void exitUnaryExpressionPostIncDecApplicationIndexAccessReceiver(UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 			}
 			
@@ -391,11 +391,12 @@ public class Compiler {
 					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
 					appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
 					break;
-				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationComputedMemberAccess:
+				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationIndexAccess:
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_GET));
+//					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 					// receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value,
@@ -403,7 +404,7 @@ public class Compiler {
 					// value, receiver, id, value, 1
 					appendIncDec(ctx.op);
 					// value, receiver, id, value'
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
 					break;
 				}
 			}
@@ -579,6 +580,8 @@ public class Compiler {
 				Integer parameterOrdinal = idToParameterOrdinalMap.get(id);
 				if(parameterOrdinal != null) {
 					// Load argument
+					if(parameterOrdinal == 2)
+						new String();
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 					return;
 				}
@@ -680,11 +683,16 @@ public class Compiler {
 			}
 			
 			@Override
+			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
-				int parameterCount = ctx.functionParameters().getChildCount();
+				int parameterCount = ctx.functionParameters().ID().size();
 				Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.functionParameters().getChild(i).getText();
+					String parameterId = ctx.functionParameters().ID(i).getText();
 					idToParameterOrdinalMap.put(parameterId, i);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, ctx.functionBody());
@@ -733,11 +741,6 @@ public class Compiler {
 			@Override
 			public void enterNil(NilContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-			}
-			
-			@Override
-			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
-				walker.suspendWalkWithin(ctx);
 			}
 			
 			@Override
@@ -1051,8 +1054,9 @@ public class Compiler {
 			}
 			
 			@Override
-			public void exitComputedMemberAccess(ComputedMemberAccessContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_GET));
+			public void exitIndexAccess(IndexAccessContext ctx) {
+//				instructions.add(new Instruction(Instruction.OPCODE_GET));
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 			}
 			
 			@Override
@@ -1113,39 +1117,40 @@ public class Compiler {
 			
 			
 			@Override
-			public void enterComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+			public void enterIndexAssignment(IndexAssignmentContext ctx) {
 				// receiver
 
 				if(ctx.op.getType() != DuroLexer.ASSIGN) {
 					// For computed value +=, -=, ...
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
-					ParseTree keyExpression = ctx.computedMemberAssignmentKey().expression();
+					ParseTree keyExpression = ctx.indexAssignmentKey().expression();
 					walker.walk(createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), keyExpression);
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_GET));
+//					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 					// receiver, id, oldValue
 				}
 			}
 			
 			@Override
-			public void enterComputedMemberAssignmentKey(ComputedMemberAssignmentKeyContext ctx) {
-				ComputedMemberAssignmentContext computedMemberAssignmentCtx = (ComputedMemberAssignmentContext)ctx.getParent();
+			public void enterIndexAssignmentKey(IndexAssignmentKeyContext ctx) {
+				IndexAssignmentContext computedMemberAssignmentCtx = (IndexAssignmentContext)ctx.getParent();
 						
 				if(computedMemberAssignmentCtx.op.getType() != DuroLexer.ASSIGN)
 					walker.suspendWalkWithin(ctx);
 			}
 			
 			@Override
-			public void exitComputedMemberAssignment(ComputedMemberAssignmentContext ctx) {
+			public void exitIndexAssignment(IndexAssignmentContext ctx) {
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
 					// receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
 					break;
 				default:
 					// receiver, id, oldValue, newValuePart
@@ -1153,7 +1158,7 @@ public class Compiler {
 					// receiver, id, newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// newValue, receiver, id, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
 					// newValue
 					break;
 				}
