@@ -17,6 +17,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS = new Instruction[] {
+		new Instruction(Instruction.OPCODE_FORWARD_CALL),
+		new Instruction(Instruction.OPCODE_RET_FORWARD)
+	};
 
 	public static class Frame implements Serializable {
 		/**
@@ -164,10 +169,18 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			Process receiver = (Process)currentFrame.stack.pop();
 			
-			CallFrameInfo callFrameInfo = receiver.getInstructions(key);
+			Object callable = receiver.getCallable(key);
 
-			frameStack.push(currentFrame);
-			currentFrame = new Frame(receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			if(callable instanceof CallFrameInfo) {
+				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else {
+				Process process = (Process)callable;
+				
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
+			}
 			
 			break;
 		} case Instruction.OPCODE_CALL: {
@@ -185,12 +198,28 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Process process = (Process)callable;
-				CallFrameInfo callFrameInfo = process.getInstructions("call");
-
+				
 				frameStack.push(currentFrame);
-				currentFrame = new Frame(process, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			
+			break;
+		} case Instruction.OPCODE_FORWARD_CALL: {
+			Object[] arguments = currentFrame.arguments;
+			Process proxyCallable = currentFrame.self;
+			
+			Object callable = proxyCallable.getCallable("call");
+
+			if(callable instanceof CallFrameInfo) {
+				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else {
+				Process process = (Process)callable;
+				
+				frameStack.push(currentFrame);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
+			}
 			break;
 		} case Instruction.OPCODE_RESUME: {
 			Frame frame = (Frame)currentFrame.stack.pop();
@@ -575,6 +604,10 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_BREAK_POINT: {
+			new String();
+			currentFrame.instructionPointer++;
+			break;
 		}
 		}
 	}
@@ -625,8 +658,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
 	
 	@Override
-	public CallFrameInfo getInstructions(Object key) {
-		return (CallFrameInfo)properties.get(key);
+	public Object getCallable(Object key) {
+		return properties.get(key);
 	}
 	
 	@Override
