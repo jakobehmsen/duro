@@ -399,7 +399,6 @@ public class Compiler {
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-//					instructions.add(new Instruction(Instruction.OPCODE_GET));
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 					// receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
@@ -1108,7 +1107,7 @@ public class Compiler {
 			@Override
 			public void exitForStatement(ForStatementContext ctx) {
 				ConditionalTreeWalker walker = new ConditionalTreeWalker();
-				// Why isn't the walked here?????
+
 				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
 				walker.walk(
 					createBodyListener(
@@ -1204,7 +1203,6 @@ public class Compiler {
 			
 			@Override
 			public void exitIndexAccess(IndexAccessContext ctx) {
-//				instructions.add(new Instruction(Instruction.OPCODE_GET));
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 			}
 			
@@ -1283,7 +1281,6 @@ public class Compiler {
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-//					instructions.add(new Instruction(Instruction.OPCODE_GET));
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
 					// receiver, id, oldValue
 				}
