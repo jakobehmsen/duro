@@ -3,7 +3,9 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -129,8 +131,7 @@ public class Compiler {
 			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, 
 			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements, 
 			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap,
-			final ArrayList<Integer> closedParameterLookupIndexes, final ArrayList<Integer> closedVariableLookupIndexes,
-			final ArrayList<Integer> closedParameterAssignmentIndexes, final ArrayList<Integer> closedVariableAssignmentIndexes) {
+			final HashSet<String> closedParameterIds, final HashSet<String> closedVariableIds) {
 		return new DuroBaseListener() {
 			@Override
 			public void exitProgram(ProgramContext ctx) {
@@ -597,20 +598,12 @@ public class Compiler {
 				}
 				
 				Integer immediateParameterOrdinal = immediateIdToParameterOrdinalMap.get(id);
-				if(immediateParameterOrdinal != null) {
-					closedParameterLookupIndexes.add(instructions.size());
-//					// Locals 0 are bound to arguments array
-//					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 0, immediateParameterOrdinal));
-//					return;
-				}
+				if(immediateParameterOrdinal != null)
+					closedParameterIds.add(id);
 
 				Integer immediateVariableOrdinal = immediateIdToVariableOrdinalMap.get(id);
-				if(immediateVariableOrdinal != null) {
-					closedVariableLookupIndexes.add(instructions.size());
-//					// Locals 1 are bound to variables array
-//					instructions.add(new Instruction(Instruction.OPCODE_SP_LOAD_LOC_ARRAY, 1, immediateVariableOrdinal));
-//					return;
-				}
+				if(immediateVariableOrdinal != null)
+					closedVariableIds.add(id);
 				
 				// Get member
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
@@ -685,6 +678,50 @@ public class Compiler {
 			
 			@Override
 			public void enterDictProcess(DictProcessContext ctx) {
+				// The dict becomes the immediate lexical context
+				// Thus immediateIdToParameterOrdinalMap and immediateIdToVariableOrdinalMap should be empty
+				
+				/*
+				var x = 5;
+				var dict = {
+					i: 0,
+					y: function() {
+						return x + i;
+					}
+				}
+				=>
+				var x = 5;
+				var dict = {
+					x: x,
+					i: 0,
+					y: function() {
+						return x + i;
+					}
+				}
+				*/
+				
+				/*
+				What about:
+				
+				var x = 5;
+				var dict = {
+					x: 7,
+					i: 0,
+					y: function() {
+						return x + i;
+					}
+				}
+				=> // No change?
+				var x = 5;
+				var dict = {
+					x: 7, // x in y is assumed to refer to this x?
+					i: 0,
+					y: function() {
+						return x + i;
+					}
+				}
+				*/
+				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 			}
 			
@@ -719,10 +756,46 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-//				if(functionBodyInfo.isClosure) {
-//					instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_FUNCTION));
-//				}
+				if(functionBodyInfo.isClosure) {
+					// Create new object
+					instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+					// [closure]
+
+					// Associate each lexically closed id usage as members to the new object
+					// First parameter ids as members
+					for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// [closure, closure]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+						// [closure, closure, id]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, idAndOrdinal.getValue()));
+						// [closure, closure, id, value]
+						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// [closure]
+					}
+					// Then variable ids as members
+					for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedVariableIdsAndOrdinals.entrySet()) {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// [closure, closure]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+						// [closure, closure, id]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, idAndOrdinal.getValue()));
+						// [closure, closure, id, value]
+						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// [closure]
+					}
+					// Associate call member to callFrameInfo
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// [closure, closure]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "call"));
+					// [closure, closure, "call"]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+					// [closure, closure, "call", function]
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// [closure]
+				} else {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+				}
 			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
@@ -992,7 +1065,7 @@ public class Compiler {
 				walker.walk(
 					createBodyListener(
 						walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-						closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+						closedParameterIds, closedVariableIds), 
 					updateElement
 				);
 				
@@ -1156,7 +1229,7 @@ public class Compiler {
 					walker.walk(
 						createBodyListener(
 							walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-							closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+							closedParameterIds, closedVariableIds), 
 						keyExpression
 					);
 					// receiver, receiver, id
@@ -1228,35 +1301,39 @@ public class Compiler {
 	private static BodyInfo getBodyInfo(
 			Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree, 
 			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap) {
-		Hashtable<String, Integer> idToOrdinalMap = new Hashtable<String, Integer>();
+		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
-		ArrayList<Integer> closedParameterLookupIndexes = new ArrayList<Integer>();
-		ArrayList<Integer> closedVariableLookupIndexes = new ArrayList<Integer>();
-		ArrayList<Integer> closedParameterAssignmentIndexes = new ArrayList<Integer>();
-		ArrayList<Integer> closedVariableAssignmentIndexes = new ArrayList<Integer>();
+		HashSet<String> closedParameterIds = new HashSet<String>();
+		HashSet<String> closedVariableIds = new HashSet<String>();
 		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
 		walker.walk(
 			createBodyListener(
-				walker, idToParameterOrdinalMap, idToOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-				closedParameterLookupIndexes, closedVariableLookupIndexes, closedParameterAssignmentIndexes, closedVariableAssignmentIndexes), 
+				walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
+				closedParameterIds, closedVariableIds), 
 			tree
 		);
 		
-		int ordinalCount = idToOrdinalMap.size();
-		@SuppressWarnings("unused")
-		boolean isClosure = false;
+		int variableCount = idToVariableOrdinalMap.size();
+
+		boolean isClosure = closedParameterIds.size() > 0 || closedVariableIds.size() > 0;
 		
-		if(closedParameterLookupIndexes.size() > 0 ||
-				closedVariableLookupIndexes.size() > 0 ||
-				closedParameterAssignmentIndexes.size() > 0 ||
-				closedVariableAssignmentIndexes.size() > 0) {
-			// Body is a closure; make room for arguments and variables
-			isClosure = true;
+		Hashtable<String, Integer> closedParameterIdsAndOrdinals = new Hashtable<String, Integer>();
+		Hashtable<String, Integer> closedVariableIdsAndOrdinals = new Hashtable<String, Integer>();
+		
+		if(isClosure) {
+			for(String closedParameterId: closedParameterIds) {
+				int ordinal = immediateIdToParameterOrdinalMap.get(closedParameterId);
+				closedParameterIdsAndOrdinals.put(closedParameterId, ordinal);
+			}
+
+			for(String closedVariableId: closedVariableIds) {
+				int ordinal = immediateIdToVariableOrdinalMap.get(closedVariableId);
+				closedVariableIdsAndOrdinals.put(closedVariableId, ordinal);
+			}
 		}
-		
 		
 		if(yieldStatements.size() > 0) {
 			// Generatable/generator
@@ -1270,7 +1347,6 @@ public class Compiler {
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
 			int parameterCount = idToParameterOrdinalMap.size();
-			int variableCount = idToOrdinalMap.size();
 
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, new CallFrameInfo(parameterCount, variableCount, iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]))));
 			// Forward arguments
@@ -1280,9 +1356,9 @@ public class Compiler {
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 			
-			return new BodyInfo(ordinalCount, generatorInstructions);
+			return new BodyInfo(isClosure, closedParameterIdsAndOrdinals, closedVariableIdsAndOrdinals, variableCount, generatorInstructions);
 		} else
-			return new BodyInfo(ordinalCount, instructions);
+			return new BodyInfo(isClosure, closedParameterIdsAndOrdinals, closedVariableIdsAndOrdinals, variableCount, instructions);
 	}
 	
 	private static class LiteralDuroListener extends DuroBaseListener {
@@ -1312,10 +1388,16 @@ public class Compiler {
 	}
 	
 	private static class BodyInfo {
+		private final boolean isClosure;
+		private final Hashtable<String, Integer> closedParameterIdsAndOrdinals;
+		private final Hashtable<String, Integer> closedVariableIdsAndOrdinals;
 		private final int localCount;
 		private final ArrayList<Instruction> instructions;
 		
-		public BodyInfo(int ordinalCount, ArrayList<Instruction> instructions) {
+		public BodyInfo(boolean isClosure, Hashtable<String, Integer> closedParameterIdsAndOrdinals, Hashtable<String, Integer> closedVariableIdsAndOrdinals, int ordinalCount, ArrayList<Instruction> instructions) {
+			this.isClosure = isClosure;
+			this.closedParameterIdsAndOrdinals = closedParameterIdsAndOrdinals;
+			this.closedVariableIdsAndOrdinals = closedVariableIdsAndOrdinals;
 			this.localCount = ordinalCount;
 			this.instructions = instructions;
 		} 
