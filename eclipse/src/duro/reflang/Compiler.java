@@ -913,10 +913,58 @@ public class Compiler {
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+				
+				if(functionBodyInfo.isClosure) {
+					// [target]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					// [target, id]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					
+					// Create new object
+					instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+					// [target, id, closure]
+
+					// Associate each lexically closed id usage as members to the new object
+					// First parameter ids as members
+					for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// [target, id, closure, closure]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+						// [target, id, closure, closure, id]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, idAndOrdinal.getValue()));
+						// [target, id, closure, closure, id, value]
+						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// [target, id, closure]
+					}
+					// Then variable ids as members
+					for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedVariableIdsAndOrdinals.entrySet()) {
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// [target, id, closure, closure]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+						// [target, id, closure, closure, id]
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, idAndOrdinal.getValue()));
+						// [target, id, closure, closure, id, value]
+						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// [target, id, closure]
+					}
+					// Associate call member to callFrameInfo
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// [target, id, closure, closure]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "call"));
+					// [target, id, closure, closure, "call"]
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+					// [target, id, closure, closure, "call", function]
+					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// [target, id, closure]
+					
+					instructions.add(new Instruction(Instruction.OPCODE_DEF));
+					// []
+				} else {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+					instructions.add(new Instruction(Instruction.OPCODE_DEF));
+				}
 			}
 			
 			@Override
