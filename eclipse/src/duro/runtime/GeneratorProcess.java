@@ -17,7 +17,7 @@ public class GeneratorProcess extends DictionaryProcess {
 	}
 
 	@Override
-	public CallFrameInfo getInstructions(Object key) {
+	public Object getCallable(Object key) {
 		if(key.equals("next")) {
 			Instruction[] instructions = new Instruction[] {
 				new Instruction(Instruction.OPCODE_LOAD_FRAME, frame),
@@ -27,6 +27,6 @@ public class GeneratorProcess extends DictionaryProcess {
 			return new CallFrameInfo(0, 0, instructions);
 		}
 		
-		return super.getInstructions(key);
+		return super.getCallable(key);
 	}
 }

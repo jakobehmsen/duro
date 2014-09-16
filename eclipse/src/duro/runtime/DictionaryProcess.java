@@ -26,16 +26,16 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
 	
 	@Override
-	public CallFrameInfo getInstructions(Object key) {
-		CallFrameInfo callFrameInfo = (CallFrameInfo)properties.get(key);
+	public Object getCallable(Object key) {
+		Object callable = properties.get(key);
 		
-		if(callFrameInfo != null)
-			return callFrameInfo;
+		if(callable != null)
+			return callable;
 		
 		for(Object proto: protos.values()) {
-			callFrameInfo = ((Process)proto).getInstructions(key);
-			if(callFrameInfo != null)
-				return callFrameInfo;
+			callable = ((Process)proto).getCallable(key);
+			if(callable != null)
+				return callable;
 		}
 		
 		return null;

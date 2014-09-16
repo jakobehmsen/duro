@@ -17,7 +17,7 @@ public class GeneratableProcess extends DictionaryProcess {
 	}
 
 	@Override
-	public CallFrameInfo getInstructions(Object key) {
+	public Object getCallable(Object key) {
 		if(key.equals("iterator")) {
 			Instruction[] instructions = new Instruction[] {
 				new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo),
@@ -30,6 +30,6 @@ public class GeneratableProcess extends DictionaryProcess {
 			return new CallFrameInfo(0, 0, instructions);
 		}
 		
-		return super.getInstructions(key);
+		return super.getCallable(key);
 	}
 }
