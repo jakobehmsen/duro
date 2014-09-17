@@ -15,3 +15,58 @@ function load(path) {
 load("std");
 load("collections");
 
+var persons = List.clone();
+
+while(true) {
+	writeln("What do you want to do?");
+	var command = readln();
+	
+	if(command == "new") {
+		writeln("Enter name: ");
+		var name = readln();
+		writeln("Enter dob: ");
+		var dob = readln();
+		
+		var newPerson = {
+			name: name,
+			dob: dob
+		};
+		
+		persons.add(newPerson);
+		
+		writeln("" + name + " was created.");
+	} else if(command == "get") {
+		writeln("Enter name to search for: ");
+		var name = readln();
+		
+		for(person in persons.where({:x.name == name}))
+			writeln(person);
+		
+		/*
+		for(person in persons.where(function(x) {return x.name == name}))
+			writeln(person);
+		=>
+		for(person in persons.where({
+			name: name,
+			call: function(x) {return x.name == name;}
+		}))
+			writeln(person);
+		*/
+		
+		// Using short hand syntax binds ids as above
+		// However, this is bound to this of the lexical context
+		/*
+		for(person in persons.where({:x.name == name}))
+			writeln(person);
+		*/
+	} else if(command == "pause") {
+		writeln("Bye bye then.");
+		pause;
+		writeln("Welcome back.");
+	} else if(command == "list") {
+		for(person in persons)
+		    writeln(person);
+	} else {
+		writeln("Valid commands are 'new', 'get', 'list' or 'pause'.");
+	}
+}
