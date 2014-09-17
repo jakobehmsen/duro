@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Stack;
 
+import javax.lang.model.type.DeclaredType;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -23,6 +25,7 @@ import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
 import duro.reflang.antlr4.DuroParser;
+import duro.reflang.antlr4.DuroParser.ArgumentParameterContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.ArrayOperandContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
@@ -584,8 +587,6 @@ public class Compiler {
 				Integer parameterOrdinal = idToParameterOrdinalMap.get(id);
 				if(parameterOrdinal != null) {
 					// Load argument
-					if(parameterOrdinal == 2)
-						new String();
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 					return;
 				}
@@ -609,6 +610,12 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 				instructions.add(new Instruction(Instruction.OPCODE_GET));
+			}
+			
+			@Override
+			public void enterArgumentParameter(ArgumentParameterContext ctx) {
+				int parameterOrdinal = declareParameter(ctx.ID());
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 			}
 			
 			@Override
@@ -1426,12 +1433,20 @@ public class Compiler {
 			}
 			
 			private int declareVariable(TerminalNode idNode) {
+				return declare(idNode, idToVariableOrdinalMap);
+			}
+			
+			private int declareParameter(TerminalNode idNode) {
+				return declare(idNode, idToParameterOrdinalMap);
+			}
+			
+			private int declare(TerminalNode idNode, Hashtable<String, Integer> idOrdinalMap) {
 				String id = idNode.getText();
-				Integer ordinal = idToVariableOrdinalMap.get(id);
+				Integer ordinal = idOrdinalMap.get(id);
 				
 				if(ordinal == null) {
-					ordinal = idToVariableOrdinalMap.size();
-					idToVariableOrdinalMap.put(id, ordinal);
+					ordinal = idOrdinalMap.size();
+					idOrdinalMap.put(id, ordinal);
 				}
 				
 				return ordinal;
