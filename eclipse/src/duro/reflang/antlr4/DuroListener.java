@@ -603,6 +603,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionNot(@NotNull DuroParser.UnaryExpressionNotContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#closureBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterClosureBody(@NotNull DuroParser.ClosureBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#closureBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitClosureBody(@NotNull DuroParser.ClosureBodyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 */

@@ -96,7 +96,8 @@ functionLiteral:
     OPEN_BRA functionBody CLOSE_BRA;
 closureLiteral: 
     KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
-    OPEN_BRA functionBody CLOSE_BRA;
+    OPEN_BRA closureBody CLOSE_BRA;
+closureBody: programElements;
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;

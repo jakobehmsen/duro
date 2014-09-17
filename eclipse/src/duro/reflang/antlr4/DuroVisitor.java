@@ -390,6 +390,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionNot(@NotNull DuroParser.UnaryExpressionNotContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#closureBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClosureBody(@NotNull DuroParser.ClosureBodyContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
