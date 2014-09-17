@@ -37,6 +37,7 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContex
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.BreakStatementContext;
+import duro.reflang.antlr4.DuroParser.ClosureBodyContext;
 import duro.reflang.antlr4.DuroParser.ClosureLiteralContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
@@ -66,6 +67,7 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -139,8 +141,6 @@ public class Compiler {
 				// Add finish instruction to the end
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
-			
-			
 			
 			Stack<ArrayList<Integer>> orConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
 			
@@ -816,6 +816,19 @@ public class Compiler {
 			public void enterClosureLiteral(ClosureLiteralContext ctx) {
 				walker.suspendWalkWithin(ctx);
 			}
+
+			@Override
+			public void exitClosureBody(ClosureBodyContext ctx) {
+				if(instructions.size() > 0) {
+					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
+						// Replace pop with return
+						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET, 1));
+					}
+				} else {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+				}
+			}
 			
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
@@ -826,7 +839,7 @@ public class Compiler {
 					String parameterId = ctx.functionParameters().ID(i).getText();
 					idToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.closureBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -1002,7 +1015,7 @@ public class Compiler {
 					for(int i = 0; i < yieldCount; i++)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
-				} else if(instructions.size() > 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+				} else if(instructions.size() == 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
