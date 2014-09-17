@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -59,7 +58,6 @@ import duro.reflang.antlr4.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
-import duro.reflang.antlr4.DuroParser.LiteralContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
@@ -102,7 +100,7 @@ public class Compiler {
 		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx, new Hashtable<String, Integer>(), new Hashtable<String, Integer>());
 		
-		return new CustomProcess(bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
+		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
 	
 	private static class ConditionalTreeWalker extends ParseTreeWalker {
@@ -821,16 +819,14 @@ public class Compiler {
 			
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
-				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
-				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
+//				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+//				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
 				 // Inherit immediate parameters
-				newIdToParameterOrdinalMap.putAll(idToParameterOrdinalMap);
-				newIdToVariableOrdinalMap.putAll(idToVariableOrdinalMap);
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.functionParameters().ID(i).getText();
-					newIdToParameterOrdinalMap.put(parameterId, i);
+					idToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -1012,67 +1008,67 @@ public class Compiler {
 				}
 			}
 			
-			private void generateClosure(BodyInfo functionBodyInfo, CallFrameInfo callFrameInfo) {
-				/*
-
-				var v;
-				function()
-					return v;
-				}
-				=>
-				{
-					call: function() {
-						as sender {
-							return v;
-						}
-					}
-				}
-				 
-				*/
-				
-//				CallFrameInfo proxyCallFrameInfo = new CallFrameInfo(callFrameInfo.argumentCount, 0, new Instruction[] {
-//					new Instruction(Instruction.OPCODE_DO_AS_SENDER, callFrameInfo.instructions),
-//					new Instruction(Instruction.OPCODE_RET_FORWARD)
-//				});
-				
-				// Create new object to represent a closure
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
-				// [closure]
-				
-				// Associate each lexically closed id usage as members to the new object
-				// First parameter ids as members
-				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// [closure, closure]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
-					// [closure, closure, id]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, idAndOrdinal.getValue()));
-					// [closure, closure, id, value]
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
-					// [closure]
-				}
-				// Then variable ids as members
-				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedVariableIdsAndOrdinals.entrySet()) {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// [closure, closure]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
-					// [closure, closure, id]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, idAndOrdinal.getValue()));
-					// [closure, closure, id, value]
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
-					// [closure]
-				}
-				
-				// Associate call member to callFrameInfo
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				// [closure, closure]
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "call"));
-				// [closure, closure, "call"]
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-				// [closure, closure, "call", function]
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
-				// [closure]
-			}
+//			private void generateClosure(BodyInfo functionBodyInfo, CallFrameInfo callFrameInfo) {
+//				/*
+//
+//				var v;
+//				function()
+//					return v;
+//				}
+//				=>
+//				{
+//					call: function() {
+//						as sender {
+//							return v;
+//						}
+//					}
+//				}
+//				 
+//				*/
+//				
+////				CallFrameInfo proxyCallFrameInfo = new CallFrameInfo(callFrameInfo.argumentCount, 0, new Instruction[] {
+////					new Instruction(Instruction.OPCODE_DO_AS_SENDER, callFrameInfo.instructions),
+////					new Instruction(Instruction.OPCODE_RET_FORWARD)
+////				});
+//				
+//				// Create new object to represent a closure
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+//				// [closure]
+//				
+//				// Associate each lexically closed id usage as members to the new object
+//				// First parameter ids as members
+//				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					// [closure, closure]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+//					// [closure, closure, id]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, idAndOrdinal.getValue()));
+//					// [closure, closure, id, value]
+//					instructions.add(new Instruction(Instruction.OPCODE_SET));
+//					// [closure]
+//				}
+//				// Then variable ids as members
+//				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedVariableIdsAndOrdinals.entrySet()) {
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					// [closure, closure]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
+//					// [closure, closure, id]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, idAndOrdinal.getValue()));
+//					// [closure, closure, id, value]
+//					instructions.add(new Instruction(Instruction.OPCODE_SET));
+//					// [closure]
+//				}
+//				
+//				// Associate call member to callFrameInfo
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				// [closure, closure]
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "call"));
+//				// [closure, closure, "call"]
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+//				// [closure, closure, "call", function]
+//				instructions.add(new Instruction(Instruction.OPCODE_SET));
+//				// [closure]
+//			}
 			
 			@Override
 			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
@@ -1495,9 +1491,9 @@ public class Compiler {
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 			
-			return new BodyInfo(isClosure, closedParameterIdsAndOrdinals, closedVariableIdsAndOrdinals, variableCount, generatorInstructions);
+			return new BodyInfo(variableCount, generatorInstructions);
 		} else
-			return new BodyInfo(isClosure, closedParameterIdsAndOrdinals, closedVariableIdsAndOrdinals, variableCount, instructions);
+			return new BodyInfo(variableCount, instructions);
 	}
 	
 	private static class LiteralDuroListener extends DuroBaseListener {
@@ -1527,16 +1523,10 @@ public class Compiler {
 	}
 	
 	private static class BodyInfo {
-		private final boolean isClosure;
-		private final Hashtable<String, Integer> closedParameterIdsAndOrdinals;
-		private final Hashtable<String, Integer> closedVariableIdsAndOrdinals;
 		private final int localCount;
 		private final ArrayList<Instruction> instructions;
 		
-		public BodyInfo(boolean isClosure, Hashtable<String, Integer> closedParameterIdsAndOrdinals, Hashtable<String, Integer> closedVariableIdsAndOrdinals, int ordinalCount, ArrayList<Instruction> instructions) {
-			this.isClosure = isClosure;
-			this.closedParameterIdsAndOrdinals = closedParameterIdsAndOrdinals;
-			this.closedVariableIdsAndOrdinals = closedVariableIdsAndOrdinals;
+		public BodyInfo(int ordinalCount, ArrayList<Instruction> instructions) {
 			this.localCount = ordinalCount;
 			this.instructions = instructions;
 		} 
