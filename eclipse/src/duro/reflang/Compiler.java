@@ -831,12 +831,12 @@ public class Compiler {
 			}
 			
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
-				int parameterCount = ctx.functionParameters().ID().size();
+				int parameterCount = ctx.closureParameters().ID().size();
 //				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
 //				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
 				 // Inherit immediate parameters
 				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.functionParameters().ID(i).getText();
+					String parameterId = ctx.closureParameters().ID(i).getText();
 					idToParameterOrdinalMap.put(parameterId, i);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.closureBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
