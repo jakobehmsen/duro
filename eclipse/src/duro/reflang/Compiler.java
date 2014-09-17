@@ -58,6 +58,7 @@ import duro.reflang.antlr4.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
+import duro.reflang.antlr4.DuroParser.LiteralContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
@@ -785,30 +786,30 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 
-				if(functionBodyInfo.isClosure) {
-					// Figure out whether to create a closure here or not:
-					// If the function is creating as the right hand side of a entry of a dictionary literal... how should this be handled?
-					// It's all about the this
-					
-					// Perhaps, it should be possible to let processes act as proxies, by overwriting the proxy to the
-					/*
-					var proxyFunc = {
-						call: function(x) {
-							// sender is the this of top-1
-							as sender function(x) {
-								
-							}
-						}
-					};
-					
-					var o = {
-						f: proxyFunc
-					};
-					*/
-					generateClosure(functionBodyInfo, callFrameInfo);
-				} else {
+//				if(functionBodyInfo.isClosure) {
+//					// Figure out whether to create a closure here or not:
+//					// If the function is creating as the right hand side of a entry of a dictionary literal... how should this be handled?
+//					// It's all about the this
+//					
+//					// Perhaps, it should be possible to let processes act as proxies, by overwriting the proxy to the
+//					/*
+//					var proxyFunc = {
+//						call: function(x) {
+//							// sender is the this of top-1
+//							as sender function(x) {
+//								
+//							}
+//						}
+//					};
+//					
+//					var o = {
+//						f: proxyFunc
+//					};
+//					*/
+//					generateClosure(functionBodyInfo, callFrameInfo);
+//				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-				}
+//				}
 			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
@@ -927,23 +928,23 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 				
-				if(functionBodyInfo.isClosure) {
-					// [target]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					// [target, id]
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					
-					generateClosure(functionBodyInfo, callFrameInfo);
-					
-					// [target, id, closure]
-					instructions.add(new Instruction(Instruction.OPCODE_DEF));
-					// []
-				} else {
+//				if(functionBodyInfo.isClosure) {
+//					// [target]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//					// [target, id]
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+//					
+//					generateClosure(functionBodyInfo, callFrameInfo);
+//					
+//					// [target, id, closure]
+//					instructions.add(new Instruction(Instruction.OPCODE_DEF));
+//					// []
+//				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
 					instructions.add(new Instruction(Instruction.OPCODE_DEF));
-				}
+//				}
 			}
 			
 			@Override
