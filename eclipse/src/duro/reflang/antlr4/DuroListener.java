@@ -471,6 +471,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#closureLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void enterClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#closureLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void exitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#delimitedStatement}.
 	 * @param ctx the parse tree
 	 */

@@ -563,6 +563,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -92,6 +92,9 @@ dictProcessEntry: ID COLON expression;
 functionLiteral: 
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
+closureLiteral: 
+    KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
+    OPEN_BRA functionBody CLOSE_BRA;
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
@@ -256,6 +259,7 @@ DOT: '.';
 KW_VAR: 'var';
 KW_PAUSE: 'pause';
 KW_FUNCTION: 'function';
+KW_CLOSURE: 'closure';
 KW_RETURN: 'return';
 KW_BREAK: 'break';
 KW_YIELD: 'yield';

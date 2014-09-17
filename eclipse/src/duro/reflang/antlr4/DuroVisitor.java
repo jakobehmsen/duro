@@ -306,6 +306,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#closureLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#delimitedStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
