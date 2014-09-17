@@ -509,6 +509,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#closureParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

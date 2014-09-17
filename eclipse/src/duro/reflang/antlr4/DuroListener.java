@@ -790,6 +790,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#closureParameters}.
+	 * @param ctx the parse tree
+	 */
+	void enterClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#closureParameters}.
+	 * @param ctx the parse tree
+	 */
+	void exitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 */

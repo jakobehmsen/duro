@@ -95,8 +95,10 @@ functionLiteral:
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 closureLiteral: 
-    KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
-    OPEN_BRA closureBody CLOSE_BRA;
+    //KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
+    //OPEN_BRA closureBody CLOSE_BRA;
+    OPEN_BRA closureParameters closureBody CLOSE_BRA;
+closureParameters: (SINGLE_PIPE (ID (COMMA ID)*)? SINGLE_PIPE)?;
 closureBody: programElements;
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
@@ -230,6 +232,7 @@ DOUBLE_AMP: '&&';
 DOUBLE_PIPE: '||';
 DOUBLE_PLUS: '++';
 DOUBLE_MINUS: '--';
+SINGLE_PIPE: '|';
 BIN_OP1: '+'|'-';
 BIN_OP2: '*'|'/'|'%';
 HASH: '#';
