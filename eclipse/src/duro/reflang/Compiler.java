@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Stack;
 
-import javax.lang.model.type.DeclaredType;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -70,7 +68,6 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
-import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -683,96 +680,22 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 			}
 			
-//			private Stack<HashSet<String>> entryClosedParameterIdsStack = new Stack<HashSet<String>>();
-//			private Stack<HashSet<String>> entryClosedVariablesIdsStack = new Stack<HashSet<String>>();
-			
 			@Override
 			public void enterDictProcess(DictProcessContext ctx) {
-//				entryClosedParameterIdsStack.push(new HashSet<String>());
-//				entryClosedVariablesIdsStack.push(new HashSet<String>());
-				
-				// The dict becomes the immediate lexical context
-				// Thus immediateIdToParameterOrdinalMap and immediateIdToVariableOrdinalMap should be empty
-				
-				/*
-				var x = 5;
-				var dict = {
-					i: 0,
-					y: function() {
-						return x + i;
-					}
-				}
-				=>
-				var x = 5;
-				var dict = {
-					x: x,
-					i: 0,
-					y: function() {
-						return x + i;
-					}
-				}
-				*/
-				
-				/*
-				What about:
-				
-				var x = 5;
-				var dict = {
-					x: 7,
-					i: 0,
-					y: function() {
-						return x + i;
-					}
-				}
-				=> // No change?
-				var x = 5;
-				var dict = {
-					x: 7, // x in y is assumed to refer to this x?
-					i: 0,
-					y: function() {
-						return x + i;
-					}
-				}
-				*/
-				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 			}
 			
 			@Override
 			public void enterDictProcessEntry(DictProcessEntryContext ctx) {
-//				walker.suspendWalkWithin(ctx);
-				
 				String id = ctx.ID().getText();
-				
-//				Hashtable<String, Integer> entryImmediateIdToParameterOrdinalMap = new Hashtable<String, Integer>();
-//				Hashtable<String, Integer> entryImmediateIdToVariableOrdinalMap = new Hashtable<String, Integer>();
-//				
-//				HashSet<String> entryClosedParameterIds = entryClosedParameterIdsStack.peek();
-//				HashSet<String> entryClosedVariableIds = entryClosedVariablesIdsStack.peek();
 				
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-//				ConditionalTreeWalker walker = new ConditionalTreeWalker();
-//				walker.walk(
-//					createBodyListener(
-//						walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, 
-//						entryImmediateIdToParameterOrdinalMap, entryImmediateIdToVariableOrdinalMap, entryClosedParameterIds, entryClosedVariableIds),
-//					ctx.expression()
-//				);
-//				instructions.add(new Instruction(Instruction.OPCODE_DEF));
 			}
 			
 			@Override
 			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_DEF));
-			}
-			
-			@Override
-			public void exitDictProcess(DictProcessContext ctx) {
-//				HashSet<String> entryClosedParameterIds = entryClosedParameterIdsStack.pop();
-//				HashSet<String> entryClosedVariableIds = entryClosedVariablesIdsStack.pop();
-//				
-//				new String();
 			}
 			
 			@Override
@@ -793,31 +716,7 @@ public class Compiler {
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-
-//				if(functionBodyInfo.isClosure) {
-//					// Figure out whether to create a closure here or not:
-//					// If the function is creating as the right hand side of a entry of a dictionary literal... how should this be handled?
-//					// It's all about the this
-//					
-//					// Perhaps, it should be possible to let processes act as proxies, by overwriting the proxy to the
-//					/*
-//					var proxyFunc = {
-//						call: function(x) {
-//							// sender is the this of top-1
-//							as sender function(x) {
-//								
-//							}
-//						}
-//					};
-//					
-//					var o = {
-//						f: proxyFunc
-//					};
-//					*/
-//					generateClosure(functionBodyInfo, callFrameInfo);
-//				} else {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-//				}
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
 			}
 			
 			public void enterClosureLiteral(ClosureLiteralContext ctx) {
@@ -839,8 +738,6 @@ public class Compiler {
 			
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				int parameterCount = ctx.closureParameters().ID().size();
-//				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
-//				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
 				 // Inherit immediate parameters
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.closureParameters().ID(i).getText();
@@ -854,28 +751,6 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE));
 				// [closure]
-				
-				/*
-				A closure is bound to a frame.
-				A closure
-				Variable lookups and assignments are redirec
-				
-				var x = 8;
-				
-				function(y) {
-				var c = {:x + x};
-				
-				var closure = {
-				    ctx: execCtx,
-				    call: function() {
-					load loc 0
-					load arg 0
-					store arg on frame 0
-				        on ctx exec instructions with arguments at the end
-				    }
-				}
-				}
-				*/
 			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
@@ -994,24 +869,11 @@ public class Compiler {
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-				
-//				if(functionBodyInfo.isClosure) {
-//					// [target]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-//					// [target, id]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-//					
-//					generateClosure(functionBodyInfo, callFrameInfo);
-//					
-//					// [target, id, closure]
-//					instructions.add(new Instruction(Instruction.OPCODE_DEF));
-//					// []
-//				} else {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-					instructions.add(new Instruction(Instruction.OPCODE_DEF));
-//				}
+			
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_DEF));
 			}
 			
 			@Override
@@ -1027,68 +889,6 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
 			}
-			
-//			private void generateClosure(BodyInfo functionBodyInfo, CallFrameInfo callFrameInfo) {
-//				/*
-//
-//				var v;
-//				function()
-//					return v;
-//				}
-//				=>
-//				{
-//					call: function() {
-//						as sender {
-//							return v;
-//						}
-//					}
-//				}
-//				 
-//				*/
-//				
-////				CallFrameInfo proxyCallFrameInfo = new CallFrameInfo(callFrameInfo.argumentCount, 0, new Instruction[] {
-////					new Instruction(Instruction.OPCODE_DO_AS_SENDER, callFrameInfo.instructions),
-////					new Instruction(Instruction.OPCODE_RET_FORWARD)
-////				});
-//				
-//				// Create new object to represent a closure
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
-//				// [closure]
-//				
-//				// Associate each lexically closed id usage as members to the new object
-//				// First parameter ids as members
-//				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//					// [closure, closure]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
-//					// [closure, closure, id]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, idAndOrdinal.getValue()));
-//					// [closure, closure, id, value]
-//					instructions.add(new Instruction(Instruction.OPCODE_SET));
-//					// [closure]
-//				}
-//				// Then variable ids as members
-//				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedVariableIdsAndOrdinals.entrySet()) {
-//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//					// [closure, closure]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, idAndOrdinal.getKey()));
-//					// [closure, closure, id]
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, idAndOrdinal.getValue()));
-//					// [closure, closure, id, value]
-//					instructions.add(new Instruction(Instruction.OPCODE_SET));
-//					// [closure]
-//				}
-//				
-//				// Associate call member to callFrameInfo
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				// [closure, closure]
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "call"));
-//				// [closure, closure, "call"]
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-//				// [closure, closure, "call", function]
-//				instructions.add(new Instruction(Instruction.OPCODE_SET));
-//				// [closure]
-//			}
 			
 			@Override
 			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
@@ -1464,7 +1264,6 @@ public class Compiler {
 	private static BodyInfo getBodyInfo(
 			Hashtable<String, Integer> idToParameterOrdinalMap, Hashtable<String, Integer> idToVariableOrdinalMap, ParseTree tree, 
 			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap) {
-//		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
