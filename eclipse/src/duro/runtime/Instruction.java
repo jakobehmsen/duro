@@ -35,18 +35,19 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_JUMP = 22;
 	public static final int OPCODE_SET = 23;
 	public static final int OPCODE_GET = 24;
-	public static final int OPCODE_LOAD_THIS = 25;
-	public static final int OPCODE_LOAD_NULL = 26;
-	public static final int OPCODE_LOAD_LOC = 27;
-	public static final int OPCODE_LOAD_ARG = 28;
-	public static final int OPCODE_LOAD_INT = 29;
-	public static final int OPCODE_LOAD_FUNC = 30;
-	public static final int OPCODE_LOAD_TRUE = 31;
-	public static final int OPCODE_LOAD_FALSE = 32;
-	public static final int OPCODE_LOAD_STRING = 33;
-	public static final int OPCODE_LOAD_FRAME = 34;
-	public static final int OPCODE_LOAD_ARRAY = 35;
-	public static final int OPCODE_LOAD_ANY = 36;
+	public static final int OPCODE_EXEC_ON_FRAME = 25;
+	public static final int OPCODE_LOAD_THIS = 26;
+	public static final int OPCODE_LOAD_NULL = 27;
+	public static final int OPCODE_LOAD_LOC = 28;
+	public static final int OPCODE_LOAD_ARG = 29;
+	public static final int OPCODE_LOAD_INT = 30;
+	public static final int OPCODE_LOAD_FUNC = 31;
+	public static final int OPCODE_LOAD_TRUE = 32;
+	public static final int OPCODE_LOAD_FALSE = 33;
+	public static final int OPCODE_LOAD_STRING = 34;
+	public static final int OPCODE_LOAD_FRAME = 35;
+	public static final int OPCODE_LOAD_ARRAY = 36;
+	public static final int OPCODE_LOAD_ANY = 37;
 
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
@@ -72,7 +73,8 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_LOAD = 132;
 	public static final int OPCODE_SP_NEW_GENERATOR = 133;
 	public static final int OPCODE_SP_NEW_GENERATABLE = 134;
-	public static final int OPCODE_SP_CLONE = 135;
+	public static final int OPCODE_SP_NEW_CLOSURE = 135;
+	public static final int OPCODE_SP_CLONE = 136;
 	
 	public static final int OPCODE_BREAK_POINT = 255;
 
