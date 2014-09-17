@@ -731,8 +731,16 @@ public class Compiler {
 						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET, 1));
 					}
 				} else {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+					if(yieldStatements.size() > 0) {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+						int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
+						for(int i = 0; i < yieldCount; i++)
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+					} else {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+					}
 				}
 			}
 			
