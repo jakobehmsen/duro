@@ -53,8 +53,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	private Frame currentFrame;
 	private Stack<Frame> frameStack = new Stack<Frame>();
 
-	public CustomProcess(int variableCount, Instruction[] instructions) {
-		currentFrame = new Frame(this, new Object[0], variableCount, instructions);
+	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
+		currentFrame = new Frame(this, new Object[parameterCount], variableCount, instructions);
 		
 		// Add Any prototype
 		DictionaryProcess any = new DictionaryProcess();
@@ -316,10 +316,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 			Frame frame = (Frame)currentFrame.stack.pop();
 			// Move forward arguments
-			Object[] arguments = new Object[frame.arguments.length + callFrameInfo.argumentCount];
-			System.arraycopy(currentFrame.arguments, 0, arguments, frame.arguments.length, currentFrame.arguments.length);
+//			Object[] arguments = new Object[frame.arguments.length + callFrameInfo.argumentCount];
+			int start = frame.arguments.length - currentFrame.arguments.length;
+			System.arraycopy(currentFrame.arguments, 0, frame.arguments, start, currentFrame.arguments.length);
 			frameStack.push(currentFrame);
-			currentFrame = new Frame(frame.self, arguments, frame.variables, callFrameInfo.instructions);
+			currentFrame = new Frame(frame.self, frame.arguments, frame.variables, callFrameInfo.instructions);
 			
 			break;
 		}
