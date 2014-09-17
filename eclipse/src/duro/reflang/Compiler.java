@@ -675,8 +675,14 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 			}
 			
+//			private Stack<HashSet<String>> entryClosedParameterIdsStack = new Stack<HashSet<String>>();
+//			private Stack<HashSet<String>> entryClosedVariablesIdsStack = new Stack<HashSet<String>>();
+			
 			@Override
 			public void enterDictProcess(DictProcessContext ctx) {
+//				entryClosedParameterIdsStack.push(new HashSet<String>());
+//				entryClosedVariablesIdsStack.push(new HashSet<String>());
+				
 				// The dict becomes the immediate lexical context
 				// Thus immediateIdToParameterOrdinalMap and immediateIdToVariableOrdinalMap should be empty
 				
@@ -726,15 +732,39 @@ public class Compiler {
 			
 			@Override
 			public void enterDictProcessEntry(DictProcessEntryContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+				
 				String id = ctx.ID().getText();
+				
+//				Hashtable<String, Integer> entryImmediateIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+//				Hashtable<String, Integer> entryImmediateIdToVariableOrdinalMap = new Hashtable<String, Integer>();
+//				
+//				HashSet<String> entryClosedParameterIds = entryClosedParameterIdsStack.peek();
+//				HashSet<String> entryClosedVariableIds = entryClosedVariablesIdsStack.peek();
 				
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
+//				ConditionalTreeWalker walker = new ConditionalTreeWalker();
+//				walker.walk(
+//					createBodyListener(
+//						walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, 
+//						entryImmediateIdToParameterOrdinalMap, entryImmediateIdToVariableOrdinalMap, entryClosedParameterIds, entryClosedVariableIds),
+//					ctx.expression()
+//				);
+//				instructions.add(new Instruction(Instruction.OPCODE_DEF));
 			}
 			
 			@Override
 			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+			}
+			
+			@Override
+			public void exitDictProcess(DictProcessContext ctx) {
+//				HashSet<String> entryClosedParameterIds = entryClosedParameterIdsStack.pop();
+//				HashSet<String> entryClosedVariableIds = entryClosedVariablesIdsStack.pop();
+//				
+//				new String();
 			}
 			
 			@Override
@@ -756,6 +786,25 @@ public class Compiler {
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 
 				if(functionBodyInfo.isClosure) {
+					// Figure out whether to create a closure here or not:
+					// If the function is creating as the right hand side of a entry of a dictionary literal... how should this be handled?
+					// It's all about the this
+					
+					// Perhaps, it should be possible to let processes act as proxies, by overwriting the proxy to the
+					/*
+					var proxyFunc = {
+						call: function(x) {
+							// sender is the this of top-1
+							as sender function(x) {
+								
+							}
+						}
+					};
+					
+					var o = {
+						f: proxyFunc
+					};
+					*/
 					generateClosure(functionBodyInfo, callFrameInfo);
 				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
@@ -912,10 +961,32 @@ public class Compiler {
 			}
 			
 			private void generateClosure(BodyInfo functionBodyInfo, CallFrameInfo callFrameInfo) {
+				/*
+
+				var v;
+				function()
+					return v;
+				}
+				=>
+				{
+					call: function() {
+						as sender {
+							return v;
+						}
+					}
+				}
+				 
+				*/
+				
+//				CallFrameInfo proxyCallFrameInfo = new CallFrameInfo(callFrameInfo.argumentCount, 0, new Instruction[] {
+//					new Instruction(Instruction.OPCODE_DO_AS_SENDER, callFrameInfo.instructions),
+//					new Instruction(Instruction.OPCODE_RET_FORWARD)
+//				});
+				
 				// Create new object to represent a closure
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 				// [closure]
-
+				
 				// Associate each lexically closed id usage as members to the new object
 				// First parameter ids as members
 				for(Map.Entry<String, Integer> idAndOrdinal: functionBodyInfo.closedParameterIdsAndOrdinals.entrySet()) {
@@ -939,6 +1010,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_SET));
 					// [closure]
 				}
+				
 				// Associate call member to callFrameInfo
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				// [closure, closure]
