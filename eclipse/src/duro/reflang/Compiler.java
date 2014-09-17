@@ -38,6 +38,7 @@ import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrApplicationContex
 import duro.reflang.antlr4.DuroParser.BinaryExpressionLogicalOrContext;
 import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.BreakStatementContext;
+import duro.reflang.antlr4.DuroParser.ClosureLiteralContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
@@ -98,7 +99,8 @@ public class Compiler {
 		ProgramContext programCtx = parser.program();
 		
 		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
-		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, programCtx, new Hashtable<String, Integer>(), new Hashtable<String, Integer>());
+		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
+		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx, new Hashtable<String, Integer>(), new Hashtable<String, Integer>());
 		
 		return new CustomProcess(bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
@@ -777,11 +779,12 @@ public class Compiler {
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
 				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.functionParameters().ID(i).getText();
 					newIdToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -810,6 +813,53 @@ public class Compiler {
 //				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
 //				}
+			}
+			
+			public void enterClosureLiteral(ClosureLiteralContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			public void exitClosureLiteral(ClosureLiteralContext ctx) {
+				int parameterCount = ctx.functionParameters().ID().size();
+				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
+				 // Inherit immediate parameters
+				newIdToParameterOrdinalMap.putAll(idToParameterOrdinalMap);
+				newIdToVariableOrdinalMap.putAll(idToVariableOrdinalMap);
+				for(int i = 0; i < parameterCount; i++) {
+					String parameterId = ctx.functionParameters().ID(i).getText();
+					newIdToParameterOrdinalMap.put(parameterId, i);
+				}
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
+
+				CallFrameInfo callFrameInfo = new CallFrameInfo(
+					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
+
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE));
+				// [closure]
+				
+				/*
+				A closure is bound to a frame.
+				A closure
+				Variable lookups and assignments are redirec
+				
+				var x = 8;
+				
+				function(y) {
+				var c = {:x + x};
+				
+				var closure = {
+				    ctx: execCtx,
+				    call: function() {
+					load loc 0
+					load arg 0
+					store arg on frame 0
+				        on ctx exec instructions with arguments at the end
+				    }
+				}
+				}
+				*/
 			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
@@ -918,11 +968,12 @@ public class Compiler {
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
 				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> newIdToVariableOrdinalMap = new Hashtable<String, Integer>();
 				for(int i = 0; i < parameterCount; i++) {
 					String parameterId = ctx.functionParameters().ID(i).getText();
 					newIdToParameterOrdinalMap.put(parameterId, i);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody(), idToParameterOrdinalMap, idToVariableOrdinalMap);
 				String id = ctx.ID().getText();
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
@@ -1387,9 +1438,9 @@ public class Compiler {
 	}
 	
 	private static BodyInfo getBodyInfo(
-			Hashtable<String, Integer> idToParameterOrdinalMap, ParseTree tree, 
+			Hashtable<String, Integer> idToParameterOrdinalMap, Hashtable<String, Integer> idToVariableOrdinalMap, ParseTree tree, 
 			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap) {
-		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
+//		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
