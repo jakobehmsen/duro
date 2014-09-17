@@ -493,6 +493,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#argumentParameter}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgumentParameter(@NotNull DuroParser.ArgumentParameterContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#argumentParameter}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgumentParameter(@NotNull DuroParser.ArgumentParameterContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionLogicalOrApplication}.
 	 * @param ctx the parse tree
 	 */

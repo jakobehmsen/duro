@@ -320,6 +320,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#argumentParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgumentParameter(@NotNull DuroParser.ArgumentParameterContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalOrApplication}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

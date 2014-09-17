@@ -69,7 +69,9 @@ unaryExpressionPostIncDecApplicationIndexAccessReceiver:
     unaryExpressionPostIncDecOperand;
 
 unaryExpressionPostIncDecOperand: 
-    (grouping | thisMessageExchange | lookup  | literal | self | nil)
+    (
+        grouping | thisMessageExchange | lookup | argumentParameter | 
+        literal | self | nil)
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR expression CLOSE_PAR;
@@ -81,6 +83,7 @@ variableAssignment:
     )
     expression;
 lookup: ID;
+argumentParameter: COLON ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
 literal: 
