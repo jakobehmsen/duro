@@ -41,6 +41,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			variables = new Object[variableCount];
 			this.instructions = instructions;
 		}
+		
+		public Frame(Process self, Object[] arguments, Object[] variables, Instruction[] instructions) {
+			this.self = self;
+			this.arguments = arguments;
+			this.variables = variables;
+			this.instructions = instructions;
+		}
 	}
 	
 	private Frame currentFrame;
@@ -305,7 +312,22 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_LOAD_THIS: {
+		} case Instruction.OPCODE_EXEC_ON_FRAME: {
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			Frame frame = (Frame)currentFrame.stack.pop();
+			// Move forward arguments
+			Object[] arguments = new Object[frame.arguments.length + callFrameInfo.argumentCount];
+			System.arraycopy(currentFrame.arguments, 0, arguments, frame.arguments.length, currentFrame.arguments.length);
+			frameStack.push(currentFrame);
+			currentFrame = new Frame(frame.self, arguments, frame.variables, callFrameInfo.instructions);
+			
+			break;
+		}
+//		public static final int OPCODE_FORWARD_ARGS = 25;
+//		public static final int OPCODE_EXEC_ON_FRAME = 26;
+		
+		
+		case Instruction.OPCODE_LOAD_THIS: {
 			currentFrame.stack.push(currentFrame.self);
 			currentFrame.instructionPointer++;
 			
@@ -597,6 +619,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			DictionaryProcess iterablePrototype = (DictionaryProcess)properties.get("Iterable");
 			generatable.defineProto("prototype", iterablePrototype);
 			currentFrame.stack.push(generatable);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
+			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			currentFrame.stack.push(new ClosureProcess(currentFrame, callFrameInfo));
 			currentFrame.instructionPointer++;
 			
 			break;
