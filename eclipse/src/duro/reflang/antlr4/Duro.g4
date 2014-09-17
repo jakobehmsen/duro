@@ -83,7 +83,9 @@ variableAssignment:
 lookup: ID;
 thisMessageExchange: messageExchange;
 messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
-literal: integer | bool | string | dictProcess | functionLiteral | array;
+literal: 
+    integer | bool | string | dictProcess | 
+    functionLiteral | closureLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
