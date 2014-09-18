@@ -863,7 +863,6 @@ public class Compiler {
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				String id = ctx.ID().getText();
-//				int parameterCount = ctx.functionParameters().ID().size();
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
 				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
@@ -1253,28 +1252,6 @@ public class Compiler {
 			public void exitTopExpression(TopExpressionContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
-			
-//			private int declareVariable(TerminalNode idNode) {
-////				return declare(idNode, idToVariableOrdinalMap);
-//				String id = idNode.getText();
-//				return idToVariableOrdinalMap.declare(id);
-//			}
-//			
-//			private int declareParameter(TerminalNode idNode) {
-//				return declare(idNode, idToParameterOrdinalMap);
-//			}
-//			
-//			private int declare(TerminalNode idNode, Hashtable<String, Integer> idOrdinalMap) {
-//				String id = idNode.getText();
-//				Integer ordinal = idOrdinalMap.get(id);
-//				
-//				if(ordinal == null) {
-//					ordinal = idOrdinalMap.size();
-//					idOrdinalMap.put(id, ordinal);
-//				}
-//				
-//				return ordinal;
-//			}
 		};
 	}
 	
