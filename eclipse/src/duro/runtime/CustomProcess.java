@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -52,20 +51,23 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	
 	private Frame currentFrame;
 	private Stack<Frame> frameStack = new Stack<Frame>();
+	private DictionaryProcess any;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
-		currentFrame = new Frame(this, new Object[parameterCount], variableCount, instructions);
-		
+		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
+		// Should CustomProcess not be a process at all? Should CustomProcess hold any and push it instead this?  - Also at other locations, e.g. when loading.
 		// Add Any prototype
-		DictionaryProcess any = new DictionaryProcess();
-		properties.put("Any", any);
+		any = new DictionaryProcess();
+		any.defineShared("Any", any);
 		// Add Iterable prototype
 		DictionaryProcess iterable = any.clone();
-		properties.put("Iterable", iterable);
+		any.defineShared("Iterable", iterable);
 		// Add Iterator prototype
-		properties.put("Iterator", any.clone());
+		any.defineShared("Iterator", any.clone());
 		// Add Array prototype
-		properties.put("Array", iterable.clone());
+		any.defineShared("Array", iterable.clone());
+		
+		currentFrame = new Frame(any, new Object[parameterCount], variableCount, instructions);
 	}
 
 	@Override
@@ -558,6 +560,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
+			newDict.defineProto("parent", any);
 			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
 			
@@ -565,7 +568,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			int length = (int)currentFrame.stack.pop();
 			ArrayProcess newArray = new ArrayProcess(length);
-			newArray.defineProto("prototype", properties.get("Array"));
+			newArray.defineProto("prototype", any.lookup("Array"));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
@@ -588,7 +591,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
 				this.frameStack.push(currentFrame);
-				currentFrame = new Frame(this, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions);
+				currentFrame = new Frame(any, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -601,7 +604,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			Frame generatorFrame = new Frame(self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
-			DictionaryProcess iteratorPrototype = (DictionaryProcess)properties.get("Iterator");
+			DictionaryProcess iteratorPrototype = (DictionaryProcess)any.lookup("Iterator");
 			generator.defineProto("prototype", iteratorPrototype);
 			currentFrame.stack.push(generator);
 			currentFrame.instructionPointer++;
@@ -617,7 +620,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 
 			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, currentFrame.self, arguments);
-			DictionaryProcess iterablePrototype = (DictionaryProcess)properties.get("Iterable");
+			DictionaryProcess iterablePrototype = (DictionaryProcess)any.lookup("Iterable");
 			generatable.defineProto("prototype", iterablePrototype);
 			currentFrame.stack.push(generatable);
 			currentFrame.instructionPointer++;
@@ -687,25 +690,23 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		Debug.println(Debug.LEVEL_HIGH, "/play");
 	}
 	
-	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
-	
 	@Override
 	public Object getCallable(Object key) {
-		return properties.get(key);
+		return null;
 	}
 	
 	@Override
 	public void define(Object key, Object value) {
-		properties.put(key, value);
+
 	}
 
 	@Override
 	public Object lookup(Object key) {
-		return properties.get(key);
+		return null;
 	}
 
 	@Override
 	public Iterator<Object> iterator() {
-		return properties.keySet().iterator();
+		return null;
 	}
 }
