@@ -1,5 +1,7 @@
 package duro.runtime;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -23,17 +25,31 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 		// Does is make sense to have this method here?
 	}
 	
-	private Hashtable<Object, Object> properties = new Hashtable<Object, Object>();
+	private static class Member implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public final boolean isShared;
+		public final Object value;
+		
+		public Member(boolean isShared, Object value) {
+			this.isShared = isShared;
+			this.value = value;
+		}
+	}
+	
+	private Hashtable<Object, Member> properties = new Hashtable<Object, Member>();
 	
 	@Override
 	public Object getCallable(Object key) {
-		Object callable = properties.get(key);
+		Member callableMember = properties.get(key);
 		
-		if(callable != null)
-			return callable;
+		if(callableMember != null)
+			return callableMember.value;
 		
 		for(Object proto: protos.values()) {
-			callable = ((Process)proto).getCallable(key);
+			Object callable = ((Process)proto).getCallable(key);
 			if(callable != null)
 				return callable;
 		}
@@ -42,19 +58,36 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	}
 	
 	public void defineProto(Object key, Object value) {
-		properties.put(key, value);
+		properties.put(key, new Member(true, value));
 		protos.put(key, value);
+	}
+	
+	public void defineShared(Object key, Object value) {
+		properties.put(key, new Member(true, value));
+		protos.remove(key);
 	}
 	
 	@Override
 	public void define(Object key, Object value) {
-		properties.put(key, value);
+		properties.put(key, new Member(false, value));
 		protos.remove(key);
 	}
 
 	@Override
 	public Object lookup(Object key) {
-		return properties.get(key);
+		Member valueMember = properties.get(key);
+		
+		if(valueMember != null)
+			return valueMember.value;
+		
+		for(Object proto: protos.values()) {
+			Object value = ((Process)proto).lookup(key);
+			if(value != null)
+				return value;
+		}
+		
+		return null;
+		
 	}
 
 	@Override
@@ -64,18 +97,35 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	
 	@Override
 	public String toString() {
-		return properties.toString();
+		return "<dict>";
 	}
 	
 	public DictionaryProcess clone() {
+//		DictionaryProcess clone = newBase();
+//		clone.defineProto("parent", this);
+//		return clone;
+		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>());
+	}
+	
+	private DictionaryProcess clone(Hashtable<DictionaryProcess, DictionaryProcess> cachedClones) {
+		DictionaryProcess cachedClone = cachedClones.get(this);
+		if(cachedClone != null)
+			return cachedClone;
+		
 		DictionaryProcess clone = newBase();
-		for(Map.Entry<Object, Object> entry: this.properties.entrySet()) {
-			Object clonedValue = entry.getValue();
-			if(clonedValue instanceof DictionaryProcess)
-				clonedValue = ((DictionaryProcess)entry.getValue()).clone();
-			clone.properties.put(entry.getKey(), clonedValue);
+		cachedClones.put(this, clone);
+		
+		for(Map.Entry<Object, Member> entry: this.properties.entrySet()) {
+			if(!entry.getValue().isShared) {
+				Object clonedValue = entry.getValue().value;
+				if(clonedValue instanceof DictionaryProcess)
+					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
+				clone.properties.put(entry.getKey(), new Member(false, clonedValue));
+			}
 		}
+		
 		clone.defineProto("parent", this);
+		
 		return clone;
 	}
 	
