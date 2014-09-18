@@ -3,7 +3,6 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Stack;
 
@@ -137,9 +136,7 @@ public class Compiler {
 	
 	private static DuroListener createBodyListener(
 			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, final Hashtable<String, Integer> idToVariableOrdinalMap, 
-			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements, 
-			final Hashtable<String, Integer> immediateIdToParameterOrdinalMap, final Hashtable<String, Integer> immediateIdToVariableOrdinalMap,
-			final HashSet<String> closedParameterIds, final HashSet<String> closedVariableIds) {
+			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
 		return new DuroBaseListener() {
 			@Override
 			public void exitProgram(ProgramContext ctx) {
@@ -600,14 +597,6 @@ public class Compiler {
 					return;
 				}
 				
-				Integer immediateParameterOrdinal = immediateIdToParameterOrdinalMap.get(id);
-				if(immediateParameterOrdinal != null)
-					closedParameterIds.add(id);
-
-				Integer immediateVariableOrdinal = immediateIdToVariableOrdinalMap.get(id);
-				if(immediateVariableOrdinal != null)
-					closedVariableIds.add(id);
-				
 				// Get member
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
@@ -1033,9 +1022,7 @@ public class Compiler {
 
 				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
 				walker.walk(
-					createBodyListener(
-						walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-						closedParameterIds, closedVariableIds), 
+					createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), 
 					updateElement
 				);
 				
@@ -1196,9 +1183,7 @@ public class Compiler {
 					// receiver, receiver
 					ParseTree keyExpression = ctx.indexAssignmentKey().expression();
 					walker.walk(
-						createBodyListener(
-							walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-							closedParameterIds, closedVariableIds), 
+						createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), 
 						keyExpression
 					);
 					// receiver, receiver, id
@@ -1280,35 +1265,13 @@ public class Compiler {
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
-		HashSet<String> closedParameterIds = new HashSet<String>();
-		HashSet<String> closedVariableIds = new HashSet<String>();
-		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
 		walker.walk(
-			createBodyListener(
-				walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements, immediateIdToParameterOrdinalMap, immediateIdToVariableOrdinalMap,
-				closedParameterIds, closedVariableIds), 
+			createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), 
 			tree
 		);
 		
 		int variableCount = idToVariableOrdinalMap.size();
-
-		boolean isClosure = closedParameterIds.size() > 0 || closedVariableIds.size() > 0;
-		
-		Hashtable<String, Integer> closedParameterIdsAndOrdinals = new Hashtable<String, Integer>();
-		Hashtable<String, Integer> closedVariableIdsAndOrdinals = new Hashtable<String, Integer>();
-		
-		if(isClosure) {
-			for(String closedParameterId: closedParameterIds) {
-				int ordinal = immediateIdToParameterOrdinalMap.get(closedParameterId);
-				closedParameterIdsAndOrdinals.put(closedParameterId, ordinal);
-			}
-
-			for(String closedVariableId: closedVariableIds) {
-				int ordinal = immediateIdToVariableOrdinalMap.get(closedVariableId);
-				closedVariableIdsAndOrdinals.put(closedVariableId, ordinal);
-			}
-		}
 		
 		if(yieldStatements.size() > 0) {
 			// Generatable/generator
