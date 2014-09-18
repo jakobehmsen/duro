@@ -1015,6 +1015,7 @@ public class Compiler {
 			@Override
 			public void enterForStatement(ForStatementContext ctx) {
 				startBreakable();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 			}
 			
 			@Override
@@ -1053,6 +1054,7 @@ public class Compiler {
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 
+				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
 			}
 			
