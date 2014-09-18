@@ -320,24 +320,36 @@ public class Compiler {
 			
 
 			Stack<ArrayList<Integer>> greaterLessConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
+			Stack<Integer> greaterLessOperandCountStack = new Stack<Integer>();
 			
 			@Override
 			public void enterBinaryExpressionGreaterLess(BinaryExpressionGreaterLessContext ctx) {
-				greaterLessConditionalJumpIndexesStack.add(new ArrayList<Integer>());
+				int operandCount = ctx.binaryExpressionGreaterLessApplication().size() + 1;
+				greaterLessOperandCountStack.push(operandCount);
+				
+				if(operandCount > 2) {
+					greaterLessConditionalJumpIndexesStack.add(new ArrayList<Integer>());
+				}
 			}
 			
 			@Override
 			public void exitBinaryExpressionGreaterLessApplication(BinaryExpressionGreaterLessApplicationContext ctx) {
-				ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.peek();
+				int operandCount = greaterLessOperandCountStack.peek();
 				
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
-				
-				appendGreaterLessOperator(ctx);
-
-				int conditionalJumpIndex = instructions.size();
-				instructions.add(null);
-				greaterLessConditionalJumpIndexes.add(conditionalJumpIndex);
+				if(operandCount > 2) {
+					ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.peek();
+					
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
+					
+					appendGreaterLessOperator(ctx);
+	
+					int conditionalJumpIndex = instructions.size();
+					instructions.add(null);
+					greaterLessConditionalJumpIndexes.add(conditionalJumpIndex);
+				} else if(operandCount == 2){
+					appendGreaterLessOperator(ctx);
+				}
 			}
 
 			private void appendGreaterLessOperator(BinaryExpressionGreaterLessApplicationContext ctx) {
@@ -359,25 +371,29 @@ public class Compiler {
 			
 			@Override
 			public void exitBinaryExpressionGreaterLess(BinaryExpressionGreaterLessContext ctx) {
-				ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.pop();
-				
-				if(greaterLessConditionalJumpIndexes.size() > 0) {
-					// If there were any applications
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
-					instructions.add(new Instruction(Instruction.OPCODE_JUMP, 2));
-	
-					int equalsEndIndex = instructions.size();
+				int operandCount = greaterLessOperandCountStack.pop();
+
+				if(operandCount > 2) {
+					ArrayList<Integer> greaterLessConditionalJumpIndexes = greaterLessConditionalJumpIndexesStack.pop();
 					
-					for(int greaterLessConditionalJumpIndex: greaterLessConditionalJumpIndexes) {
-						int conditionalJump = equalsEndIndex - greaterLessConditionalJumpIndex;
-						// If false, skip the rest
-						instructions.set(greaterLessConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					if(greaterLessConditionalJumpIndexes.size() > 0) {
+						// If there were any applications
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+						instructions.add(new Instruction(Instruction.OPCODE_JUMP, 2));
+		
+						int equalsEndIndex = instructions.size();
+						
+						for(int greaterLessConditionalJumpIndex: greaterLessConditionalJumpIndexes) {
+							int conditionalJump = equalsEndIndex - greaterLessConditionalJumpIndex;
+							// If false, skip the rest
+							instructions.set(greaterLessConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+						}
+						
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+						
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						instructions.add(new Instruction(Instruction.OPCODE_POP));
 					}
-					
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
-					
-					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-					instructions.add(new Instruction(Instruction.OPCODE_POP));
 				}
 			}
 			
