@@ -268,7 +268,6 @@ DOT: '.';
 KW_VAR: 'var';
 KW_PAUSE: 'pause';
 KW_FUNCTION: 'function';
-KW_CLOSURE: 'closure';
 KW_RETURN: 'return';
 KW_BREAK: 'break';
 KW_YIELD: 'yield';
