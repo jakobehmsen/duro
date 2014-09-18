@@ -30,4 +30,9 @@ public class ClosureProcess extends DictionaryProcess {
 		
 		return super.getCallable(key);
 	}
+	
+	@Override
+	public DictionaryProcess newBase() {
+		return new ClosureProcess(frame, callFrameInfo);
+	}
 }

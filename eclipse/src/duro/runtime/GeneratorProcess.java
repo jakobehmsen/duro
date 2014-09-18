@@ -29,4 +29,9 @@ public class GeneratorProcess extends DictionaryProcess {
 		
 		return super.getCallable(key);
 	}
+	
+	@Override
+	public DictionaryProcess newBase() {
+		return new GeneratorProcess(frame);
+	}
 }

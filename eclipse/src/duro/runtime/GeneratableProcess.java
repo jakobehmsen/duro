@@ -32,4 +32,9 @@ public class GeneratableProcess extends DictionaryProcess {
 		
 		return super.getCallable(key);
 	}
+	
+	@Override
+	public DictionaryProcess newBase() {
+		return new GeneratableProcess(callFrameInfo, self, arguments);
+	}
 }
