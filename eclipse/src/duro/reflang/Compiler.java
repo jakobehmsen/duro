@@ -977,6 +977,7 @@ public class Compiler {
 			@Override
 			public void enterWhileStatement(WhileStatementContext ctx) {
 				startBreakable();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 				
 				int jumpIndex = instructions.size();
 				whileJumpIndexStack.push(jumpIndex);
@@ -1004,6 +1005,7 @@ public class Compiler {
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
 
+				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
 			}
 			
