@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import duro.debugging.Debug;
 import duro.reflang.antlr4.DuroBaseListener;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroListener;
@@ -96,11 +97,15 @@ public class Compiler {
 		TokenStream tokenStream = new CommonTokenStream(lexer);
 		DuroParser parser = new DuroParser(tokenStream);
 		
+		Debug.println(Debug.LEVEL_HIGH, "Parsing program...");
 		ProgramContext programCtx = parser.program();
+		Debug.println(Debug.LEVEL_HIGH, "Parsed program.");
 		
 		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
 		Hashtable<String, Integer> idToVariableOrdinalMap = new Hashtable<String, Integer>();
+		Debug.println(Debug.LEVEL_HIGH, "Generating program...");
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx, new Hashtable<String, Integer>(), new Hashtable<String, Integer>());
+		Debug.println(Debug.LEVEL_HIGH, "Generated program.");
 		
 		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
@@ -892,7 +897,7 @@ public class Compiler {
 					for(int i = 0; i < yieldCount; i++)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
-				} else if(instructions.size() == 0 && !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+				} else if(instructions.size() == 0 || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
