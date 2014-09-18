@@ -171,20 +171,29 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_SEND: {
 			String key = (String)instruction.operand1;
 			int argumentCount = (int)instruction.operand2;
-			Object[] arguments = new Object[argumentCount];
 			
-			for(int i = argumentCount - 1; i >= 0; i--)
-				arguments[i] = currentFrame.stack.pop();
-			
-			Process receiver = (Process)currentFrame.stack.pop();
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
 			
 			Object callable = receiver.getCallable(key);
 
 			if(callable instanceof CallFrameInfo) {
 				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				
+				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
 				frameStack.push(currentFrame);
 				currentFrame = new Frame(receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
+				Object[] arguments = new Object[argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
 				Process process = (Process)callable;
 				Process self = new CallProcess(process, receiver);
 				
@@ -195,18 +204,27 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_CALL: {
 			int argumentCount = (int)instruction.operand1;
-			Object[] arguments = new Object[argumentCount];
 			
-			for(int i = argumentCount - 1; i >= 0; i--)
-				arguments[i] = currentFrame.stack.pop();
-			
-			Object callable = currentFrame.stack.pop();
+			Object callable = currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
 
 			if(callable instanceof CallFrameInfo) {
 				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				
+				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
 				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
+				Object[] arguments = new Object[argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
 				Process process = (Process)callable;
 				Process self = new CallProcess(process, currentFrame.self);
 				
@@ -223,8 +241,14 @@ public class CustomProcess extends Process implements Iterable<Object> {
 
 			if(callable instanceof CallFrameInfo) {
 				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				Object[] callArguments;
+				if(arguments.length < callFrameInfo.argumentCount) {
+					callArguments = new Object[callFrameInfo.argumentCount];
+					System.arraycopy(arguments, 0, callFrameInfo.argumentCount, 0, arguments.length);
+				} else
+					callArguments = arguments;
 				frameStack.push(currentFrame);
-				currentFrame = new Frame(currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				currentFrame = new Frame(currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Process process = (Process)callable;
 				Process self = new CallProcess(process, currentFrame.self);
@@ -325,12 +349,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame = new Frame(frame.self, frame.arguments, frame.variables, callFrameInfo.instructions);
 			
 			break;
-		}
-//		public static final int OPCODE_FORWARD_ARGS = 25;
-//		public static final int OPCODE_EXEC_ON_FRAME = 26;
-		
-		
-		case Instruction.OPCODE_LOAD_THIS: {
+		} case Instruction.OPCODE_LOAD_THIS: {
 			currentFrame.stack.push(currentFrame.self);
 			currentFrame.instructionPointer++;
 			
