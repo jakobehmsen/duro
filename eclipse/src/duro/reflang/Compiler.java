@@ -3,7 +3,6 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -100,7 +99,7 @@ public class Compiler {
 		ProgramContext programCtx = parser.program();
 		Debug.println(Debug.LEVEL_HIGH, "Parsed program.");
 		
-		Hashtable<String, Integer> idToParameterOrdinalMap = new Hashtable<String, Integer>();
+		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
 		Debug.println(Debug.LEVEL_HIGH, "Generating program...");
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
@@ -135,7 +134,7 @@ public class Compiler {
 	}
 	
 	private static DuroListener createBodyListener(
-			final ConditionalTreeWalker walker, final Hashtable<String, Integer> idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMapArg, 
+			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMapArg, 
 			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
 		return new DuroBaseListener() {
 			OrdinalAllocator idToVariableOrdinalMap = idToVariableOrdinalMapArg;
@@ -585,7 +584,7 @@ public class Compiler {
 			public void enterLookup(LookupContext ctx) {
 				String id = ctx.ID().getText();
 				
-				Integer parameterOrdinal = idToParameterOrdinalMap.get(id);
+				Integer parameterOrdinal = idToParameterOrdinalMap.ordinalFor(id);
 				if(parameterOrdinal != null) {
 					// Load argument
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
@@ -607,16 +606,16 @@ public class Compiler {
 			
 			@Override
 			public void enterArgumentParameter(ArgumentParameterContext ctx) {
-				int parameterOrdinal = declareParameter(ctx.ID());
+				int parameterOrdinal = idToParameterOrdinalMap.declare(ctx.ID().getText());
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 			}
 			
 			@Override
 			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
 				String id = ctx.messageExchange().ID().getText();
-				if(idToParameterOrdinalMap.containsKey(id)) {
+				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
-					int ordinal = idToParameterOrdinalMap.get(id);
+					int ordinal = idToParameterOrdinalMap.ordinalFor(id);
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
 				} else if(idToVariableOrdinalMap.isDeclared(id)) {
 					// Call variable
@@ -632,7 +631,7 @@ public class Compiler {
 				int argumentCount = ctx.messageExchange().expression().size();
 				
 				String id = ctx.messageExchange().ID().getText();
-				if(idToParameterOrdinalMap.containsKey(id)) {
+				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
 					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
 				} else if(idToVariableOrdinalMap.isDeclared(id)) {
@@ -702,11 +701,11 @@ public class Compiler {
 			@Override
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
 				int parameterCount = ctx.functionParameters().ID().size();
-				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
-				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.functionParameters().ID(i).getText();
-					newIdToParameterOrdinalMap.put(parameterId, i);
+				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
 
@@ -744,13 +743,13 @@ public class Compiler {
 			
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInner();
 				int parameterCount = ctx.closureParameters().ID().size();
-				 // Inherit immediate parameters
-				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.closureParameters().ID(i).getText();
-					idToParameterOrdinalMap.put(parameterId, i);
+				for(TerminalNode parameterIdNode: ctx.closureParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
 				}
-				BodyInfo functionBodyInfo = getBodyInfo(idToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
@@ -808,16 +807,15 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				for(int i = 0; i < ctx.ID().size(); i++) {
-					TerminalNode id = ctx.ID(i);
-					int ordinal = declareVariable(id);
+				for(TerminalNode idNode: ctx.ID()) {
+					int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
 					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 				}
 			}
 			
 			@Override
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
-				declareVariable(ctx.ID());
+				idToVariableOrdinalMap.declare(ctx.ID().getText());
 			}
 			
 			@Override
@@ -864,18 +862,18 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
-				int parameterCount = ctx.functionParameters().ID().size();
-				Hashtable<String, Integer> newIdToParameterOrdinalMap = new Hashtable<String, Integer>();
+				String id = ctx.ID().getText();
+//				int parameterCount = ctx.functionParameters().ID().size();
+				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
-				for(int i = 0; i < parameterCount; i++) {
-					String parameterId = ctx.functionParameters().ID(i).getText();
-					newIdToParameterOrdinalMap.put(parameterId, i);
+				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
-				String id = ctx.ID().getText();
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
+					newIdToParameterOrdinalMap.size(), functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 			
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
@@ -1071,7 +1069,7 @@ public class Compiler {
 				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 
 				for(ForInStatementVarContext varCtx: ctx.forInStatementVar())
-					declareVariable(varCtx.ID());
+					idToVariableOrdinalMap.declare(varCtx.ID().getText());
 			}
 			
 			@Override
@@ -1256,27 +1254,27 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
-			private int declareVariable(TerminalNode idNode) {
-//				return declare(idNode, idToVariableOrdinalMap);
-				String id = idNode.getText();
-				return idToVariableOrdinalMap.declare(id);
-			}
-			
-			private int declareParameter(TerminalNode idNode) {
-				return declare(idNode, idToParameterOrdinalMap);
-			}
-			
-			private int declare(TerminalNode idNode, Hashtable<String, Integer> idOrdinalMap) {
-				String id = idNode.getText();
-				Integer ordinal = idOrdinalMap.get(id);
-				
-				if(ordinal == null) {
-					ordinal = idOrdinalMap.size();
-					idOrdinalMap.put(id, ordinal);
-				}
-				
-				return ordinal;
-			}
+//			private int declareVariable(TerminalNode idNode) {
+////				return declare(idNode, idToVariableOrdinalMap);
+//				String id = idNode.getText();
+//				return idToVariableOrdinalMap.declare(id);
+//			}
+//			
+//			private int declareParameter(TerminalNode idNode) {
+//				return declare(idNode, idToParameterOrdinalMap);
+//			}
+//			
+//			private int declare(TerminalNode idNode, Hashtable<String, Integer> idOrdinalMap) {
+//				String id = idNode.getText();
+//				Integer ordinal = idOrdinalMap.get(id);
+//				
+//				if(ordinal == null) {
+//					ordinal = idOrdinalMap.size();
+//					idOrdinalMap.put(id, ordinal);
+//				}
+//				
+//				return ordinal;
+//			}
 		};
 	}
 	
@@ -1288,7 +1286,7 @@ public class Compiler {
 	}
 	
 	private static BodyInfo getBodyInfo(
-			Hashtable<String, Integer> idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree) {
+			OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree) {
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
 		
