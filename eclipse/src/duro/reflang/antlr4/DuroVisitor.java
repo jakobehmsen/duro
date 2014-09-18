@@ -523,6 +523,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#conditionalExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -542,6 +549,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForStatement(@NotNull DuroParser.ForStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#ifStatement}.
@@ -586,11 +600,25 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionTrue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#forStatementUpdate}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#messageExchange}.

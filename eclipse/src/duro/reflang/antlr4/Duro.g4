@@ -8,7 +8,7 @@ programElementsPart:
 programElement: delimitedProgramElement SEMICOLON | undelimitedStatement;
 delimitedProgramElement: topExpression | delimitedStatement;
 topExpression: expression;
-expression: variableAssignment | binaryExpressionLogicalOr;
+expression: variableAssignment | conditionalExpression;
 
 /*
 binaryExpression: 
@@ -16,6 +16,15 @@ binaryExpression:
     | expression EQUALS expression
     ;
 */
+
+conditionalExpression: 
+    conditionalExpressionCondition QUESTION_MARK conditionalExpressionTrue
+    COLON conditionalExpressionFalse
+    |
+    binaryExpressionLogicalOr;
+conditionalExpressionCondition: binaryExpressionLogicalOr;
+conditionalExpressionTrue: binaryExpressionLogicalOr;
+conditionalExpressionFalse: binaryExpressionLogicalOr;
 
 binaryExpressionLogicalOr: 
     binaryExpressionLogicalAnd binaryExpressionLogicalOrApplication*;
@@ -71,7 +80,8 @@ unaryExpressionPostIncDecApplicationIndexAccessReceiver:
 unaryExpressionPostIncDecOperand: 
     (
         grouping | thisMessageExchange | lookup | argumentParameter | 
-        literal | self | nil)
+        literal | self | nil
+    )
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR expression CLOSE_PAR;
@@ -264,6 +274,7 @@ INT: DIGIT+;
 SEMICOLON: ';';
 COMMA: ',';
 COLON: ':';
+QUESTION_MARK: '?';
 DOT: '.';
 KW_VAR: 'var';
 KW_PAUSE: 'pause';

@@ -966,6 +966,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -999,6 +1012,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitForStatement(@NotNull DuroParser.ForStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1083,6 +1109,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1090,6 +1129,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

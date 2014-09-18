@@ -812,6 +812,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#conditionalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#conditionalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionDefinition}.
 	 * @param ctx the parse tree
 	 */
@@ -843,6 +854,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStatement(@NotNull DuroParser.ForStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#ifStatement}.
@@ -911,6 +933,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#conditionalExpressionTrue}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#conditionalExpressionTrue}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#forStatementUpdate}.
 	 * @param ctx the parse tree
 	 */
@@ -920,6 +953,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.
+	 * @param ctx the parse tree
+	 */
+	void enterConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.
+	 * @param ctx the parse tree
+	 */
+	void exitConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#messageExchange}.
