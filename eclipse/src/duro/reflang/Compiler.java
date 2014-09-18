@@ -1066,6 +1066,7 @@ public class Compiler {
 			@Override
 			public void enterForInStatement(ForInStatementContext ctx) {
 				startBreakable();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 
 				for(ForInStatementVarContext varCtx: ctx.forInStatementVar())
 					declareVariable(varCtx.ID());
@@ -1118,6 +1119,8 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatement(ForInStatementContext ctx) {
+				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
+				endBreakable();
 			}
 			
 			
