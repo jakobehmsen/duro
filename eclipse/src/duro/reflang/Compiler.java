@@ -39,6 +39,10 @@ import duro.reflang.antlr4.DuroParser.BoolContext;
 import duro.reflang.antlr4.DuroParser.BreakStatementContext;
 import duro.reflang.antlr4.DuroParser.ClosureBodyContext;
 import duro.reflang.antlr4.DuroParser.ClosureLiteralContext;
+import duro.reflang.antlr4.DuroParser.ConditionalExpressionConditionContext;
+import duro.reflang.antlr4.DuroParser.ConditionalExpressionContext;
+import duro.reflang.antlr4.DuroParser.ConditionalExpressionFalseContext;
+import duro.reflang.antlr4.DuroParser.ConditionalExpressionTrueContext;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
@@ -144,6 +148,54 @@ public class Compiler {
 				// Add finish instruction to the end
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
+			
+			
+
+			Stack<Integer> conditionalConditionalJumpIndexesStack = new Stack<Integer>();
+			Stack<Integer> conditionalJumpIndexStack = new Stack<Integer>();
+			
+			@Override
+			public void enterConditionalExpression(ConditionalExpressionContext ctx) {
+				
+			}
+			
+			@Override
+			public void exitConditionalExpressionCondition(ConditionalExpressionConditionContext ctx) {
+				// [<bool>]
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				int conditionalJumpIndex = instructions.size();
+				instructions.add(null); // If false, jump to else expression
+				conditionalConditionalJumpIndexesStack.add(conditionalJumpIndex);
+			}
+			
+			@Override
+			public void exitConditionalExpressionTrue(ConditionalExpressionTrueContext ctx) {
+				// TODO Auto-generated method stub
+				super.exitConditionalExpressionTrue(ctx);
+				
+				int jumpIndex = instructions.size();
+				conditionalJumpIndexStack.push(jumpIndex);
+				instructions.add(null); // Jump to the end of the conditional expression
+				
+				int trueEndIndex = instructions.size();
+				
+				int conditionalConditionalJumpIndex = conditionalConditionalJumpIndexesStack.pop();
+				int conditionalJump = trueEndIndex - conditionalConditionalJumpIndex;
+				instructions.set(conditionalConditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+			}
+			
+			@Override
+			public void exitConditionalExpressionFalse(ConditionalExpressionFalseContext ctx) {
+				int jumpIndex = conditionalJumpIndexStack.pop();
+				int jump = instructions.size() - jumpIndex;
+				instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, jump));
+			}
+			
+			@Override
+			public void exitConditionalExpression(ConditionalExpressionContext ctx) {
+				
+			}
+			
 			
 			Stack<ArrayList<Integer>> orConditionalJumpIndexesStack = new Stack<ArrayList<Integer>>();
 			
@@ -281,6 +333,14 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
 				
+				appendGreaterLessOperator(ctx);
+
+				int conditionalJumpIndex = instructions.size();
+				instructions.add(null);
+				greaterLessConditionalJumpIndexes.add(conditionalJumpIndex);
+			}
+
+			private void appendGreaterLessOperator(BinaryExpressionGreaterLessApplicationContext ctx) {
 				switch(ctx.op.getType()) {
 				case DuroLexer.GREATER_THAN:
 					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER));
@@ -295,10 +355,6 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS_EQUALS));
 					break;
 				}
-
-				int conditionalJumpIndex = instructions.size();
-				instructions.add(null);
-				greaterLessConditionalJumpIndexes.add(conditionalJumpIndex);
 			}
 			
 			@Override
@@ -714,6 +770,7 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
 			}
 			
+			@Override
 			public void enterClosureLiteral(ClosureLiteralContext ctx) {
 				// TODO: Instead of this, there could be a stack of instructions, where it is the top instructions that are manipulated
 				// In exit body, the instructions stack can be popped
@@ -741,6 +798,7 @@ public class Compiler {
 				}
 			}
 			
+			@Override
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInner();
