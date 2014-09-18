@@ -1,7 +1,6 @@
 package duro.runtime;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -101,9 +100,6 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	}
 	
 	public DictionaryProcess clone() {
-//		DictionaryProcess clone = newBase();
-//		clone.defineProto("parent", this);
-//		return clone;
 		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>());
 	}
 	
