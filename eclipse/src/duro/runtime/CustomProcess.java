@@ -68,6 +68,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		any.defineShared("Array", iterable.clone());
 		// Add String prototype
 		any.defineShared("String", any.clone());
+		// Add Integer prototype
+		any.defineShared("Integer", any.clone());
 		
 		currentFrame = new Frame(any, new Object[parameterCount], variableCount, instructions);
 	}
@@ -365,7 +367,10 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_LOAD_INT: {
-			currentFrame.stack.push(instruction.operand1);
+			int intValue = (int)instruction.operand1;
+			IntegerProcess integer = new IntegerProcess(intValue);
+			integer.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(integer);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -551,6 +556,59 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess result = new StringProcess(lhs.str + rhs.str);
+			result.defineProto("parent", any.lookup("String"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_ADD: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess result = new IntegerProcess(lhs.intValue + rhs.intValue);
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		}case Instruction.OPCODE_SP_INT_SUB: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess result = new IntegerProcess(lhs.intValue - rhs.intValue);
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_MULT: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess result = new IntegerProcess(lhs.intValue * rhs.intValue);
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_DIV: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess result = new IntegerProcess(lhs.intValue / rhs.intValue);
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_REM: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess result = new IntegerProcess(lhs.intValue % rhs.intValue);
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_TO_STRING: {
+			IntegerProcess integer = (IntegerProcess)currentFrame.stack.pop();
+			StringProcess result = new StringProcess(Integer.toString(integer.intValue));
 			result.defineProto("parent", any.lookup("String"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
