@@ -401,43 +401,49 @@ public class Compiler {
 			
 			@Override
 			public void exitBinaryExpressionArithmetic1Application(BinaryExpressionArithmetic1ApplicationContext ctx) {
-				int binaryOpCode;
+//				int binaryOpCode;
+//				
+//				switch(ctx.BIN_OP1().getText()) {
+//				case "+":
+//					binaryOpCode = Instruction.OPCODE_SP_ADD;
+//					break;
+//				case "-":
+//					binaryOpCode = Instruction.OPCODE_SP_SUB;
+//					break;
+//				default:
+//					binaryOpCode = -1;
+//					break;
+//				}
+//				
+//				instructions.add(new Instruction(binaryOpCode));
 				
-				switch(ctx.BIN_OP1().getText()) {
-				case "+":
-					binaryOpCode = Instruction.OPCODE_SP_ADD;
-					break;
-				case "-":
-					binaryOpCode = Instruction.OPCODE_SP_SUB;
-					break;
-				default:
-					binaryOpCode = -1;
-					break;
-				}
-				
-				instructions.add(new Instruction(binaryOpCode));
+				String id = ctx.BIN_OP1().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
 			}
 			
 			@Override
 			public void exitBinaryExpressionArithmetic2Application(BinaryExpressionArithmetic2ApplicationContext ctx) {
-				int binaryOpCode;
+//				int binaryOpCode;
+//				
+//				switch(ctx.BIN_OP2().getText()) {
+//				case "*":
+//					binaryOpCode = Instruction.OPCODE_SP_MULT;
+//					break;
+//				case "/":
+//					binaryOpCode = Instruction.OPCODE_SP_DIV;
+//					break;
+//				case "%":
+//					binaryOpCode = Instruction.OPCODE_SP_REM;
+//					break;
+//				default:
+//					binaryOpCode = -1;
+//					break;
+//				}
+//				
+//				instructions.add(new Instruction(binaryOpCode));
 				
-				switch(ctx.BIN_OP2().getText()) {
-				case "*":
-					binaryOpCode = Instruction.OPCODE_SP_MULT;
-					break;
-				case "/":
-					binaryOpCode = Instruction.OPCODE_SP_DIV;
-					break;
-				case "%":
-					binaryOpCode = Instruction.OPCODE_SP_REM;
-					break;
-				default:
-					binaryOpCode = -1;
-					break;
-				}
-				
-				instructions.add(new Instruction(binaryOpCode));
+				String id = ctx.BIN_OP2().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
 			}
 			
 			@Override
@@ -684,7 +690,7 @@ public class Compiler {
 			
 			@Override
 			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
-				String id = ctx.messageExchange().ID().getText();
+				String id = ctx.messageExchange().messageId().getText();
 				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
 					int ordinal = idToParameterOrdinalMap.ordinalFor(id);
@@ -702,7 +708,7 @@ public class Compiler {
 			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
 				int argumentCount = ctx.messageExchange().expression().size();
 				
-				String id = ctx.messageExchange().ID().getText();
+				String id = ctx.messageExchange().messageId().getText();
 				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
 					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
@@ -710,13 +716,11 @@ public class Compiler {
 					// Call variable
 					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
 				} else {
-					appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
+					appendMessageExchange(id, argumentCount);
 				}
 			}
 			
-			private void appendMessageExchange(TerminalNode node, int argumentCount) {
-				String id = node.getText();
-				
+			private void appendMessageExchange(String id, int argumentCount) {
 				// Currently: just resolve function and then call it.
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, argumentCount));
 			}
@@ -762,7 +766,7 @@ public class Compiler {
 			
 			@Override
 			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
 			@Override
@@ -856,7 +860,7 @@ public class Compiler {
 			
 			@Override
 			public void exitArrayOperand(ArrayOperandContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "set"));
 			}
 			
 			@Override
@@ -936,7 +940,7 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
-				String id = ctx.ID().getText();
+				String id = ctx.messageId().getText();
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
 				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
@@ -951,7 +955,7 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
-				instructions.add(new Instruction(Instruction.OPCODE_DEF));
+				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
 			@Override
@@ -1199,7 +1203,7 @@ public class Compiler {
 			
 			@Override
 			public void enterMemberAccess(MemberAccessContext ctx) {
-				String id = ctx.ID().getText();
+				String id = ctx.messageId().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 			}
 			
@@ -1216,13 +1220,14 @@ public class Compiler {
 			@Override
 			public void exitExplicitMessageExchange(ExplicitMessageExchangeContext ctx) {
 				int argumentCount = ctx.messageExchange().expression().size();
-				appendMessageExchange(ctx.messageExchange().ID(), argumentCount);
+				String id = ctx.messageExchange().messageId().getText();
+				appendMessageExchange(id, argumentCount);
 			}
 			
 			@Override
 			public void enterMemberAssignment(MemberAssignmentContext ctx) {
 				// receiver
-				String id = ctx.ID().getText();
+				String id = ctx.messageId().getText();
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
@@ -1251,7 +1256,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_SET));
 					break;
 				default:
-					String id = ctx.ID().getText();
+					String id = ctx.messageId().getText();
 					
 					// receiver, oldValue, newValuePart
 					appendAssignmentReducer(ctx.op);
