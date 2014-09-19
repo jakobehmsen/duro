@@ -194,7 +194,7 @@ public class DuroParser extends Parser {
 			setState(195);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << HASH) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_IF) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << KW_WHILE) | (1L << KW_FOR) | (1L << ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << HASH) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_IF) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << KW_WHILE) | (1L << KW_FOR) | (1L << ID))) != 0)) {
 				{
 				{
 				setState(192); programElementsPart();
@@ -401,6 +401,10 @@ public class DuroParser extends Parser {
 			case OPEN_SQ:
 			case OPEN_BRA:
 			case OPEN_PAR:
+			case LESS_THAN:
+			case LESS_THAN_OR_EQUALS:
+			case GREATER_THAN:
+			case GREATER_THAN_OR_EQUALS:
 			case BIN_OP1:
 			case BIN_OP2:
 			case INT:
@@ -1463,6 +1467,10 @@ public class DuroParser extends Parser {
 			case OPEN_SQ:
 			case OPEN_BRA:
 			case OPEN_PAR:
+			case LESS_THAN:
+			case LESS_THAN_OR_EQUALS:
+			case GREATER_THAN:
+			case GREATER_THAN_OR_EQUALS:
 			case BIN_OP1:
 			case BIN_OP2:
 			case INT:
@@ -2295,7 +2303,7 @@ public class DuroParser extends Parser {
 			setState(374); match(OPEN_PAR);
 			setState(383);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
 				setState(375); expression();
 				setState(380);
@@ -2366,6 +2374,10 @@ public class DuroParser extends Parser {
 				setState(387); match(ID);
 				}
 				break;
+			case LESS_THAN:
+			case LESS_THAN_OR_EQUALS:
+			case GREATER_THAN:
+			case GREATER_THAN_OR_EQUALS:
 			case BIN_OP1:
 			case BIN_OP2:
 				{
@@ -2389,7 +2401,11 @@ public class DuroParser extends Parser {
 	}
 
 	public static class OperatorContext extends ParserRuleContext {
+		public TerminalNode LESS_THAN_OR_EQUALS() { return getToken(DuroParser.LESS_THAN_OR_EQUALS, 0); }
 		public TerminalNode BIN_OP1() { return getToken(DuroParser.BIN_OP1, 0); }
+		public TerminalNode LESS_THAN() { return getToken(DuroParser.LESS_THAN, 0); }
+		public TerminalNode GREATER_THAN() { return getToken(DuroParser.GREATER_THAN, 0); }
+		public TerminalNode GREATER_THAN_OR_EQUALS() { return getToken(DuroParser.GREATER_THAN_OR_EQUALS, 0); }
 		public TerminalNode BIN_OP2() { return getToken(DuroParser.BIN_OP2, 0); }
 		public OperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2419,7 +2435,7 @@ public class DuroParser extends Parser {
 			{
 			setState(391);
 			_la = _input.LA(1);
-			if ( !(_la==BIN_OP1 || _la==BIN_OP2) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			consume();
@@ -3073,7 +3089,7 @@ public class DuroParser extends Parser {
 			setState(454); match(OPEN_SQ);
 			setState(463);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
 				setState(455); arrayOperand();
 				setState(460);
@@ -5216,7 +5232,7 @@ public class DuroParser extends Parser {
 			{
 			setState(661);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
 				setState(660); delimitedProgramElement();
 				}
@@ -5267,7 +5283,7 @@ public class DuroParser extends Parser {
 			{
 			setState(664);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_FUNCTION) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
 				setState(663); expression();
 				}
@@ -5318,7 +5334,7 @@ public class DuroParser extends Parser {
 			{
 			setState(667);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STRING_LITERAL) | (1L << NOT) | (1L << OPEN_SQ) | (1L << OPEN_BRA) | (1L << OPEN_PAR) | (1L << LESS_THAN) | (1L << LESS_THAN_OR_EQUALS) | (1L << GREATER_THAN) | (1L << GREATER_THAN_OR_EQUALS) | (1L << BIN_OP1) | (1L << BIN_OP2) | (1L << INT) | (1L << COLON) | (1L << KW_VAR) | (1L << KW_PAUSE) | (1L << KW_FUNCTION) | (1L << KW_RETURN) | (1L << KW_BREAK) | (1L << KW_YIELD) | (1L << KW_TRUE) | (1L << KW_FALSE) | (1L << KW_THIS) | (1L << KW_NULL) | (1L << ID))) != 0)) {
 				{
 				setState(666); delimitedProgramElement();
 				}
@@ -5644,7 +5660,7 @@ public class DuroParser extends Parser {
 		"\u0088\u008a\u008c\u008e\u0090\u0092\u0094\u0096\u0098\u009a\u009c\u009e"+
 		"\u00a0\u00a2\u00a4\u00a6\u00a8\u00aa\u00ac\u00ae\u00b0\u00b2\u00b4\u00b6"+
 		"\u00b8\u00ba\u00bc\u00be\2\b\3\2\30\31\3\2\32\35\3\2\b\t\3\2\22\27\3\2"+
-		"\36\37\3\2,-\u02ad\2\u00c0\3\2\2\2\4\u00c5\3\2\2\2\6\u00d3\3\2\2\2\b\u00d9"+
+		"\32\37\3\2,-\u02ad\2\u00c0\3\2\2\2\4\u00c5\3\2\2\2\6\u00d3\3\2\2\2\b\u00d9"+
 		"\3\2\2\2\n\u00dd\3\2\2\2\f\u00df\3\2\2\2\16\u00e3\3\2\2\2\20\u00ec\3\2"+
 		"\2\2\22\u00ee\3\2\2\2\24\u00f0\3\2\2\2\26\u00f2\3\2\2\2\30\u00f4\3\2\2"+
 		"\2\32\u00fb\3\2\2\2\34\u00fe\3\2\2\2\36\u0105\3\2\2\2 \u0108\3\2\2\2\""+

@@ -99,11 +99,11 @@ messageExchange: messageId OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
 messageId: (ID | operator);
 operator:
     /*EQUALS | 
-    NOT_EQUALS | 
+    NOT_EQUALS | */
     LESS_THAN |
     LESS_THAN_OR_EQUALS |
     GREATER_THAN |
-    GREATER_THAN_OR_EQUALS |*/
+    GREATER_THAN_OR_EQUALS |
     BIN_OP1 |
     BIN_OP2
 ;
