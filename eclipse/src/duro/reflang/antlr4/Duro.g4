@@ -172,9 +172,11 @@ functionDefinition:
     OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
-primitiveBody: HASH OPEN_BRA primitiveCall* CLOSE_BRA;
-primitiveCall: ID primitiveOperand*;
-primitiveOperand: (COLON literal);
+primitiveBody: HASH OPEN_BRA primitiveBodyPart* CLOSE_BRA;
+primitiveBodyPart: primitiveCall | primitiveLabel;
+primitiveCall: ID primitiveOperand* SEMICOLON;
+primitiveOperand: (literal | ID);
+primitiveLabel: ID COLON;
 ifStatement: 
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;

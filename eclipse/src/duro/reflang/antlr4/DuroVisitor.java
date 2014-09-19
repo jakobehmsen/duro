@@ -33,13 +33,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionLogicalAndApplication(@NotNull DuroParser.BinaryExpressionLogicalAndApplicationContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#variableAssignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#forStatementInitialization}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -47,18 +40,312 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotApplication}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitProgram(@NotNull DuroParser.ProgramContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#nil}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNil(@NotNull DuroParser.NilContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#arrayOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#memberAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#programElementsPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgramElementsPart(@NotNull DuroParser.ProgramElementsPartContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#explicitMessageExchange}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#memberAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#grouping}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGrouping(@NotNull DuroParser.GroupingContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#indexAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIndexAssignmentValue(@NotNull DuroParser.IndexAssignmentValueContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitiveBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#closureLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#delimitedStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#argumentParameter}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgumentParameter(@NotNull DuroParser.ArgumentParameterContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalOrApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionLogicalOrApplication(@NotNull DuroParser.BinaryExpressionLogicalOrApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionArithmetic2(@NotNull DuroParser.BinaryExpressionArithmetic2Context ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic1}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionArithmetic1(@NotNull DuroParser.BinaryExpressionArithmetic1Context ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2Application}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionArithmetic2Application(@NotNull DuroParser.BinaryExpressionArithmetic2ApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#returnStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#literal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitiveBodyPart}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitiveBodyPart(@NotNull DuroParser.PrimitiveBodyPartContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntry(@NotNull DuroParser.DictProcessEntryContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionEqualityApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionEqualityApplication(@NotNull DuroParser.BinaryExpressionEqualityApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnTrue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationIndexAccess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecApplicationIndexAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationIndexAccessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#operationEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperationEnd(@NotNull DuroParser.OperationEndContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalAnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryExpressionLogicalAnd(@NotNull DuroParser.BinaryExpressionLogicalAndContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatement(@NotNull DuroParser.ForStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableDeclaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forStatementUpdate}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageExchange}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#self}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSelf(@NotNull DuroParser.SelfContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#forInStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForInStatement(@NotNull DuroParser.ForInStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecOperand}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#variableAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNotApplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#integer}.
@@ -96,32 +383,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitOperator(@NotNull DuroParser.OperatorContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#nil}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNil(@NotNull DuroParser.NilContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexAssignmentKey}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIndexAssignmentKey(@NotNull DuroParser.IndexAssignmentKeyContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#arrayOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#memberAssignmentValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#operationChain}.
@@ -138,25 +404,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionPostIncDecApplicationVariable(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationVariableContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#yieldStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitYieldStatement(@NotNull DuroParser.YieldStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#forInStatementVar}.
@@ -173,32 +425,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMemberAccess(@NotNull DuroParser.MemberAccessContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#programElementsPart}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitProgramElementsPart(@NotNull DuroParser.ProgramElementsPartContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#explicitMessageExchange}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#messageId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitMessageId(@NotNull DuroParser.MessageIdContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#memberAssignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclarationAndAssignment}.
@@ -208,25 +439,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitVariableDeclarationAndAssignment(@NotNull DuroParser.VariableDeclarationAndAssignmentContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#ifStatementCondition}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfStatementCondition(@NotNull DuroParser.IfStatementConditionContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationIndexAccessReceiver}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitUnaryExpressionPostIncDecApplicationIndexAccessReceiver(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationIndexAccessReceiverContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#grouping}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGrouping(@NotNull DuroParser.GroupingContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#programElements}.
@@ -241,13 +458,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPause(@NotNull DuroParser.PauseContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#indexAssignmentValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIndexAssignmentValue(@NotNull DuroParser.IndexAssignmentValueContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexAccess}.
@@ -313,60 +523,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveBody}.
+	 * Visit a parse tree produced by {@link DuroParser#primitiveLabel}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#closureLiteral}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#delimitedStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#argumentParameter}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArgumentParameter(@NotNull DuroParser.ArgumentParameterContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalOrApplication}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionLogicalOrApplication(@NotNull DuroParser.BinaryExpressionLogicalOrApplicationContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionArithmetic2(@NotNull DuroParser.BinaryExpressionArithmetic2Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic1}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionArithmetic1(@NotNull DuroParser.BinaryExpressionArithmetic1Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2Application}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionArithmetic2Application(@NotNull DuroParser.BinaryExpressionArithmetic2ApplicationContext ctx);
+	T visitPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#bool}.
@@ -390,20 +551,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryExpressionPostIncDecApplication(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#returnStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReturnStatement(@NotNull DuroParser.ReturnStatementContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNot}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -416,20 +563,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitClosureBody(@NotNull DuroParser.ClosureBodyContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#literal}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionGreaterLess}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableStatement}.
@@ -446,20 +579,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitProgramElement(@NotNull DuroParser.ProgramElementContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDictProcessEntry(@NotNull DuroParser.DictProcessEntryContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionEqualityApplication}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionEqualityApplication(@NotNull DuroParser.BinaryExpressionEqualityApplicationContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -472,34 +591,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArray(@NotNull DuroParser.ArrayContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnTrue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfStatementOnTrue(@NotNull DuroParser.IfStatementOnTrueContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplicationIndexAccess}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryExpressionPostIncDecApplicationIndexAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationIndexAccessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#operationEnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOperationEnd(@NotNull DuroParser.OperationEndContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionLogicalAnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryExpressionLogicalAnd(@NotNull DuroParser.BinaryExpressionLogicalAndContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#lookup}.
@@ -516,20 +607,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#dictProcess}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#closureParameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -544,25 +621,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitConditionalExpression(@NotNull DuroParser.ConditionalExpressionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#breakStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBreakStatement(@NotNull DuroParser.BreakStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#forStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForStatement(@NotNull DuroParser.ForStatementContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
@@ -593,13 +656,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#variableDeclaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#whileStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -619,48 +675,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#forStatementUpdate}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitConditionalExpressionFalse(@NotNull DuroParser.ConditionalExpressionFalseContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#messageExchange}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#self}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSelf(@NotNull DuroParser.SelfContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#forInStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForInStatement(@NotNull DuroParser.ForInStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionBody}.
