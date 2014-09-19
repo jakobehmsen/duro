@@ -88,6 +88,23 @@ String.+ = function(other) {
 String.toString = function() {
 	return this;
 };
+String.== = function(other) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_string_equal;
+		ret 1;
+	}
+};
+String.!= = function(other) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_string_equal;
+		sp_not;
+		ret 1;
+	}
+};
 
 Integer.+ = function(other) {
 	// Should do double dispatching
@@ -194,6 +211,23 @@ Integer.<= = function(other) {
 		load_this;
 		load_arg 0;
 		sp_int_equal;
+		ret 1;
+	}
+};
+Integer.== = function(other) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_equal;
+		ret 1;
+	}
+};
+Integer.!= = function(other) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_equal;
+		sp_not;
 		ret 1;
 	}
 };
