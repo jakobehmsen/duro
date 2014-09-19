@@ -64,6 +64,12 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_ARRAY_GET = 78;
 	public static final int OPCODE_SP_ARRAY_SET = 79;
 	public static final int OPCODE_SP_STRING_CONCAT = 80;
+	public static final int OPCODE_SP_INT_ADD = 81;
+	public static final int OPCODE_SP_INT_SUB = 82;
+	public static final int OPCODE_SP_INT_MULT = 83;
+	public static final int OPCODE_SP_INT_DIV = 84;
+	public static final int OPCODE_SP_INT_REM = 85;
+	public static final int OPCODE_SP_INT_TO_STRING = 86;
 
 	public static final int OPCODE_SP_WRITE = 127;
 	public static final int OPCODE_SP_NEXT_LINE = 128;
