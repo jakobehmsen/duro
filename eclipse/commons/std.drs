@@ -2,13 +2,16 @@
 Standard library
 */
 
-function writeln(x) {
+function write(x) {
 	#{
 		load_arg :0
-		load_string :"\n"
-		sp_add
+		send :"toString" :0
 		sp_write
 	}
+}
+
+function writeln(x) {
+	write("" + x + "\n");
 }
 
 function readln() {
@@ -20,11 +23,21 @@ function readln() {
 /*
 // Implicit inheritance based on protocol?
 Any = extend([]);
-Any.clone = function clone() {
+Any.clone = function() {
 	#{
 		load_arg :0
 		sp_clone
 		ret :1
+	}
+}
+*/
+
+/*
+// Inlines? How?
+Any.callFunc = inline(args, function) {
+	// stack: function, args
+	#{
+		sp_call
 	}
 }
 */
@@ -35,4 +48,44 @@ Any.clone = function() {
 		sp_clone
 		ret :1
 	}
+};
+
+/*
+What about associating each definition with a particular number of arguments?
+
+E.g. binary and unary version of +
+function +(other) {
+	...
+}
+function +() {
+	...
+}
+
+Then how to solve the following case? How many arguments?
+
+var x = function(other) {
+	...
+};
+this.+ = x;
+
+Perhaps:
+
+this.+ = x; // No arguments
+this.+() = x; // No arguments
+this.+(:) = x; // One argument
+this.+(::) = x; // Two arguments
+*/
+
+String.+ = function(other) {
+	#{
+		load_this
+		load_arg :0
+		send :"toString" :0
+		sp_string_concat
+		ret :1
+	}
+};
+
+String.toString = function() {
+	return this;
 };
