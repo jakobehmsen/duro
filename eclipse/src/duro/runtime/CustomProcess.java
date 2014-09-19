@@ -538,17 +538,17 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_GET: {
-			int index = (int)currentFrame.stack.pop();
+			IntegerProcess index = (IntegerProcess)currentFrame.stack.pop();
 			ArrayProcess array = (ArrayProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(array.get(index));
+			currentFrame.stack.push(array.get(index.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_SET: {
 			Object value = currentFrame.stack.pop();
-			int index = (int)currentFrame.stack.pop();
+			IntegerProcess index = (IntegerProcess)currentFrame.stack.pop();
 			ArrayProcess array = (ArrayProcess)currentFrame.stack.pop();
-			array.set(index, value);
+			array.set(index.intValue, value);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -666,8 +666,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
-			int length = (int)currentFrame.stack.pop();
-			ArrayProcess newArray = new ArrayProcess(length);
+			IntegerProcess length = (IntegerProcess)currentFrame.stack.pop();
+			ArrayProcess newArray = new ArrayProcess(length.intValue);
 			newArray.defineProto("prototype", any.lookup("Array"));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
