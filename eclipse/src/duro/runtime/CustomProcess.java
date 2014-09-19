@@ -66,6 +66,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		any.defineShared("Iterator", any.clone());
 		// Add Array prototype
 		any.defineShared("Array", iterable.clone());
+		// Add String prototype
+		any.defineShared("String", any.clone());
 		
 		currentFrame = new Frame(any, new Object[parameterCount], variableCount, instructions);
 	}
@@ -288,17 +290,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_DEF: {
-			Object value = currentFrame.stack.pop();
-			Object key = currentFrame.stack.pop();
-			
-			Process receiver = (Process)currentFrame.stack.pop();
-			
-			receiver.define(key, value);
-			
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_IF_TRUE: {
 			boolean value = (boolean)currentFrame.stack.pop();
 			if(value) {
@@ -324,16 +315,16 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SET: {
 			Object value = currentFrame.stack.pop();
-			Object key = currentFrame.stack.pop(); // Assumed to be string only
+			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.define(key, value);
+			receiver.define(key.str, value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_GET: {
-			Object key = currentFrame.stack.pop(); // Assumed to be string only
+			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			Object value = receiver.lookup(key);
+			Object value = receiver.lookup(key.str);
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
@@ -394,7 +385,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_LOAD_STRING: {
-			String string = (String)instruction.operand1;
+			String str = (String)instruction.operand1;
+			StringProcess string = new StringProcess(str);
+			string.defineProto("parent", any.lookup("String"));
 			currentFrame.stack.push(string);
 			currentFrame.instructionPointer++;
 			
@@ -547,18 +540,27 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_SET: {
-			Object value = (Object)currentFrame.stack.pop();
+			Object value = currentFrame.stack.pop();
 			int index = (int)currentFrame.stack.pop();
 			ArrayProcess array = (ArrayProcess)currentFrame.stack.pop();
 			array.set(index, value);
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SP_STRING_CONCAT: {
+			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
+			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
+			StringProcess result = new StringProcess(lhs.str + rhs.str);
+			result.defineProto("parent", any.lookup("String"));
+			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		case Instruction.OPCODE_SP_WRITE: {
-			Object value = currentFrame.stack.pop();
-			System.out.print(value);
+			StringProcess value = (StringProcess)currentFrame.stack.pop();
+			System.out.print(value.str);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -599,7 +601,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_SP_LOAD: {
-			String path = (String)currentFrame.stack.pop();
+			StringProcess pathSource = (StringProcess)currentFrame.stack.pop();
+			String path = pathSource.str;
 			try {
 				// What to do here during replay?
 				// or rather, what to replace this instruction with for replay?
