@@ -33,6 +33,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		public final Instruction[] instructions;
 		public int instructionPointer;
 		public Stack<Object> stack = new Stack<Object>();
+		public FrameProcess reification;
 		
 		public Frame(Process self, Object[] arguments, int variableCount, Instruction[] instructions) {
 			this.self = self;
@@ -70,6 +71,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		any.defineShared("String", any.clone());
 		// Add Integer prototype
 		any.defineShared("Integer", any.clone());
+		// Add Frame prototype
+		any.defineShared("Frame", any.clone());
 		
 		currentFrame = new Frame(any, new Object[parameterCount], variableCount, instructions);
 	}
@@ -409,6 +412,15 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_LOAD_ANY: {
 			Process process = (Process)instruction.operand1;
 			currentFrame.stack.push(process);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_REIFIED_FRAME: {
+			if(currentFrame.reification == null) {
+				currentFrame.reification = new FrameProcess(currentFrame);
+				currentFrame.reification.defineProto("parent", any.lookup("Frame"));
+			}
+			currentFrame.stack.push(currentFrame.reification);
 			currentFrame.instructionPointer++;
 			
 			break;
