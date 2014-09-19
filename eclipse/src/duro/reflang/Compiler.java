@@ -446,6 +446,7 @@ public class Compiler {
 					appendIncDec(ctx.op);
 					// value, receiver, id, value'
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					break;
 				}
 			}
@@ -816,7 +817,8 @@ public class Compiler {
 			
 			@Override
 			public void exitArrayOperand(ArrayOperandContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "set"));
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
 			@Override
@@ -1312,6 +1314,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					break;
 				default:
 					// receiver, id, oldValue, newValuePart
@@ -1320,6 +1323,7 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// newValue, receiver, id, newValue
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					// newValue
 					break;
 				}
