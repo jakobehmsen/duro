@@ -4,43 +4,43 @@ Collections library
 
 function arrayLength(array) {
 	#{
-		load_arg :0
-		sp_array_length
-		ret :1
+		load_arg 0;
+		sp_array_length;
+		ret 1;
 	}
 }
 
 function newArray(length) {
 	#{
-		load_arg :0
-		sp_new_array
-		ret :1
+		load_arg 0;
+		sp_new_array;
+		ret 1;
 	}
 }
 
 Array.set = function(index, value) {
 	# {
-		load_this
-		load_arg :0
-		load_arg :1
-		sp_array_set
+		load_this;
+		load_arg 0;
+		load_arg 1;
+		sp_array_set;
 	}
 };
 
 Array.get = function(index) {
 	# {
-		load_this
-		load_arg :0
-		sp_array_get
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_array_get;
+		ret 1;
 	}
 };
 
 Array.length = function() {
 	#{
-		load_this
-		sp_array_length
-		ret :1
+		load_this;
+		sp_array_length;
+		ret 1;
 	}
 };
 
@@ -79,66 +79,6 @@ Iterable.where = function(predicate) {
 			yield x;
 	}
 };
-
-function newList() {
-	var initialCapacity = 12;
-	
-	return {
-		items: newArray(initialCapacity),
-		capacity: initialCapacity,
-		size: 0,
-		add: function(item) {
-			this.items[this.size] = item;
-			this.size++;
-		},
-		toString: function() {
-			var str = "[";
-			
-			if(this.size > 0) {
-				str += this.items[0];
-				
-				for(var i = 1; i < this.size; i++) {
-					str += ", " + this.items[i];
-				}
-			}
-			
-			str += "]";
-			
-			return str;
-		},
-		iterator: function() {
-			return {
-				list: this,
-				i: 0,
-				next: function() {
-					if(this.i < this.list.size) {
-						var item = this.list.items[this.i];
-						this.i++;
-						return true, item;
-					}
-						
-					return false, null;
-				}
-			};
-			
-			/*
-			return {
-				for(i = 0; i < this.size; i++)
-					yield this.list.items[i];
-			}().iterator();
-			*/
-		}
-		/*
-		iterable: {
-			for(i = 0; i < this.size; i++)
-				yield this.list.items[i];
-		},
-		iterator: {
-			iterable().iterator();
-		}
-		*/
-	};
-}
 
 List = Iterable.clone();
 List.items = newArray(12);
