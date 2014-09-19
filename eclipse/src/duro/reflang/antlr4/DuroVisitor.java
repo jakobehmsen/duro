@@ -89,6 +89,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#operator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperator(@NotNull DuroParser.OperatorContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#nil}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -178,6 +185,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageId(@NotNull DuroParser.MessageIdContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#memberAssignment}.

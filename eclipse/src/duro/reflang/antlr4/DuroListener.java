@@ -130,6 +130,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitWhileStatementBody(@NotNull DuroParser.WhileStatementBodyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#operator}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperator(@NotNull DuroParser.OperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#operator}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperator(@NotNull DuroParser.OperatorContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#nil}.
 	 * @param ctx the parse tree
 	 */
@@ -271,6 +282,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageId}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageId(@NotNull DuroParser.MessageIdContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageId}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageId(@NotNull DuroParser.MessageIdContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#memberAssignment}.

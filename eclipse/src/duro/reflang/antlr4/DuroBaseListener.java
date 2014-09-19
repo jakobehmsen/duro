@@ -160,6 +160,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterOperator(@NotNull DuroParser.OperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitOperator(@NotNull DuroParser.OperatorContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterNil(@NotNull DuroParser.NilContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -323,6 +336,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMessageId(@NotNull DuroParser.MessageIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageId(@NotNull DuroParser.MessageIdContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

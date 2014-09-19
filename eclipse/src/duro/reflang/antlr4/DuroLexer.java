@@ -15,26 +15,26 @@ public class DuroLexer extends Lexer {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		STRING_LITERAL=1, LINE_TERMINATOR=2, DOUBLE_AMP=3, DOUBLE_PIPE=4, DOUBLE_PLUS=5, 
-		DOUBLE_MINUS=6, SINGLE_PIPE=7, BIN_OP1=8, BIN_OP2=9, HASH=10, OPEN_SQ=11, 
-		CLOSE_SQ=12, OPEN_BRA=13, CLOSE_BRA=14, OPEN_PAR=15, CLOSE_PAR=16, ASSIGN_ADD=17, 
+		STRING_LITERAL=1, LINE_TERMINATOR=2, DOUBLE_AMP=3, DOUBLE_PIPE=4, NOT=5, 
+		DOUBLE_PLUS=6, DOUBLE_MINUS=7, SINGLE_PIPE=8, HASH=9, OPEN_SQ=10, CLOSE_SQ=11, 
+		OPEN_BRA=12, CLOSE_BRA=13, OPEN_PAR=14, CLOSE_PAR=15, ASSIGN=16, ASSIGN_ADD=17, 
 		ASSIGN_SUB=18, ASSIGN_MULT=19, ASSIGN_DIV=20, ASSIGN_REM=21, EQUALS=22, 
-		NOT_EQUALS=23, ASSIGN=24, NOT=25, LESS_THAN=26, LESS_THAN_OR_EQUALS=27, 
-		GREATER_THAN=28, GREATER_THAN_OR_EQUALS=29, INT=30, SEMICOLON=31, COMMA=32, 
-		COLON=33, QUESTION_MARK=34, DOT=35, KW_VAR=36, KW_PAUSE=37, KW_FUNCTION=38, 
-		KW_RETURN=39, KW_BREAK=40, KW_YIELD=41, KW_TRUE=42, KW_FALSE=43, KW_IF=44, 
-		KW_ELSE=45, KW_THIS=46, KW_NULL=47, KW_WHILE=48, KW_FOR=49, KW_IN=50, 
-		ID=51, WS=52, SINGLELINE_COMMENT=53, MULTI_LINE_COMMENT=54;
+		NOT_EQUALS=23, LESS_THAN=24, LESS_THAN_OR_EQUALS=25, GREATER_THAN=26, 
+		GREATER_THAN_OR_EQUALS=27, BIN_OP1=28, BIN_OP2=29, INT=30, SEMICOLON=31, 
+		COMMA=32, COLON=33, QUESTION_MARK=34, DOT=35, KW_VAR=36, KW_PAUSE=37, 
+		KW_FUNCTION=38, KW_RETURN=39, KW_BREAK=40, KW_YIELD=41, KW_TRUE=42, KW_FALSE=43, 
+		KW_IF=44, KW_ELSE=45, KW_THIS=46, KW_NULL=47, KW_WHILE=48, KW_FOR=49, 
+		KW_IN=50, ID=51, WS=52, SINGLELINE_COMMENT=53, MULTI_LINE_COMMENT=54;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
 	public static final String[] tokenNames = {
 		"<INVALID>",
-		"STRING_LITERAL", "LINE_TERMINATOR", "'&&'", "'||'", "'++'", "'--'", "'|'", 
-		"BIN_OP1", "BIN_OP2", "'#'", "'['", "']'", "'{'", "'}'", "'('", "')'", 
-		"'+='", "'-='", "'*='", "'/='", "'%='", "'=='", "'!='", "'='", "'!'", 
-		"'<'", "'<='", "'>'", "'>='", "INT", "';'", "','", "':'", "'?'", "'.'", 
+		"STRING_LITERAL", "LINE_TERMINATOR", "'&&'", "'||'", "'!'", "'++'", "'--'", 
+		"'|'", "'#'", "'['", "']'", "'{'", "'}'", "'('", "')'", "'='", "'+='", 
+		"'-='", "'*='", "'/='", "'%='", "'=='", "'!='", "'<'", "'<='", "'>'", 
+		"'>='", "BIN_OP1", "BIN_OP2", "INT", "';'", "','", "':'", "'?'", "'.'", 
 		"'var'", "'pause'", "'function'", "'return'", "'break'", "'yield'", "'true'", 
 		"'false'", "'if'", "'else'", "'this'", "'null'", "'while'", "'for'", "'in'", 
 		"ID", "WS", "SINGLELINE_COMMENT", "MULTI_LINE_COMMENT"
@@ -44,15 +44,16 @@ public class DuroLexer extends Lexer {
 		"ESCAPE_SEQUENCE", "CHARACTER_ESCAPE_SEQUENCE", "HEX_ESCAPE_SEQUENCE", 
 		"UNICODE_ESCAPE_SEQUENCE", "SINGLE_ESCAPE_CHARACTER", "NON_ESCAPE_CHARACTER", 
 		"ESCAPE_CHARACTER", "LINE_CONTINUATION", "LINE_TERMINATOR_SEQUENCE", "HEX_DIGIT", 
-		"LINE_TERMINATOR", "DOUBLE_AMP", "DOUBLE_PIPE", "DOUBLE_PLUS", "DOUBLE_MINUS", 
-		"SINGLE_PIPE", "BIN_OP1", "BIN_OP2", "HASH", "OPEN_SQ", "CLOSE_SQ", "OPEN_BRA", 
-		"CLOSE_BRA", "OPEN_PAR", "CLOSE_PAR", "ASSIGN_ADD", "ASSIGN_SUB", "ASSIGN_MULT", 
-		"ASSIGN_DIV", "ASSIGN_REM", "EQUALS", "NOT_EQUALS", "ASSIGN", "NOT", "LESS_THAN", 
-		"LESS_THAN_OR_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUALS", "INT", 
-		"SEMICOLON", "COMMA", "COLON", "QUESTION_MARK", "DOT", "KW_VAR", "KW_PAUSE", 
-		"KW_FUNCTION", "KW_RETURN", "KW_BREAK", "KW_YIELD", "KW_TRUE", "KW_FALSE", 
-		"KW_IF", "KW_ELSE", "KW_THIS", "KW_NULL", "KW_WHILE", "KW_FOR", "KW_IN", 
-		"DIGIT", "LETTER", "ID", "WS", "SINGLELINE_COMMENT", "MULTI_LINE_COMMENT"
+		"LINE_TERMINATOR", "DOUBLE_AMP", "DOUBLE_PIPE", "NOT", "DOUBLE_PLUS", 
+		"DOUBLE_MINUS", "SINGLE_PIPE", "HASH", "OPEN_SQ", "CLOSE_SQ", "OPEN_BRA", 
+		"CLOSE_BRA", "OPEN_PAR", "CLOSE_PAR", "ASSIGN", "ASSIGN_ADD", "ASSIGN_SUB", 
+		"ASSIGN_MULT", "ASSIGN_DIV", "ASSIGN_REM", "EQUALS", "NOT_EQUALS", "LESS_THAN", 
+		"LESS_THAN_OR_EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUALS", "BIN_OP1", 
+		"BIN_OP2", "INT", "SEMICOLON", "COMMA", "COLON", "QUESTION_MARK", "DOT", 
+		"KW_VAR", "KW_PAUSE", "KW_FUNCTION", "KW_RETURN", "KW_BREAK", "KW_YIELD", 
+		"KW_TRUE", "KW_FALSE", "KW_IF", "KW_ELSE", "KW_THIS", "KW_NULL", "KW_WHILE", 
+		"KW_FOR", "KW_IN", "DIGIT", "LETTER", "ID", "WS", "SINGLELINE_COMMENT", 
+		"MULTI_LINE_COMMENT"
 	};
 
 
@@ -124,10 +125,10 @@ public class DuroLexer extends Lexer {
 		"\n\4\3\5\3\5\3\5\3\5\5\5\u00ae\n\5\3\6\3\6\5\6\u00b2\n\6\3\7\3\7\3\7\3"+
 		"\7\3\b\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\n\3\n\3\13\3\13\3\13\5\13\u00c5\n"+
 		"\13\3\f\3\f\3\f\3\r\3\r\3\r\5\r\u00cd\n\r\3\16\3\16\3\17\3\17\3\17\3\17"+
-		"\3\20\3\20\3\20\3\21\3\21\3\21\3\22\3\22\3\22\3\23\3\23\3\23\3\24\3\24"+
+		"\3\20\3\20\3\20\3\21\3\21\3\21\3\22\3\22\3\23\3\23\3\23\3\24\3\24\3\24"+
 		"\3\25\3\25\3\26\3\26\3\27\3\27\3\30\3\30\3\31\3\31\3\32\3\32\3\33\3\33"+
 		"\3\34\3\34\3\35\3\35\3\36\3\36\3\36\3\37\3\37\3\37\3 \3 \3 \3!\3!\3!\3"+
-		"\"\3\"\3\"\3#\3#\3#\3$\3$\3$\3%\3%\3&\3&\3\'\3\'\3(\3(\3(\3)\3)\3*\3*"+
+		"\"\3\"\3\"\3#\3#\3#\3$\3$\3$\3%\3%\3&\3&\3&\3\'\3\'\3(\3(\3(\3)\3)\3*"+
 		"\3*\3+\6+\u0119\n+\r+\16+\u011a\3,\3,\3-\3-\3.\3.\3/\3/\3\60\3\60\3\61"+
 		"\3\61\3\61\3\61\3\62\3\62\3\62\3\62\3\62\3\62\3\63\3\63\3\63\3\63\3\63"+
 		"\3\63\3\63\3\63\3\63\3\64\3\64\3\64\3\64\3\64\3\64\3\64\3\65\3\65\3\65"+
@@ -158,12 +159,12 @@ public class DuroLexer extends Lexer {
 		"\3\2\2\2\7\u00a7\3\2\2\2\t\u00ad\3\2\2\2\13\u00b1\3\2\2\2\r\u00b3\3\2"+
 		"\2\2\17\u00b7\3\2\2\2\21\u00bd\3\2\2\2\23\u00bf\3\2\2\2\25\u00c4\3\2\2"+
 		"\2\27\u00c6\3\2\2\2\31\u00cc\3\2\2\2\33\u00ce\3\2\2\2\35\u00d0\3\2\2\2"+
-		"\37\u00d4\3\2\2\2!\u00d7\3\2\2\2#\u00da\3\2\2\2%\u00dd\3\2\2\2\'\u00e0"+
+		"\37\u00d4\3\2\2\2!\u00d7\3\2\2\2#\u00da\3\2\2\2%\u00dc\3\2\2\2\'\u00df"+
 		"\3\2\2\2)\u00e2\3\2\2\2+\u00e4\3\2\2\2-\u00e6\3\2\2\2/\u00e8\3\2\2\2\61"+
 		"\u00ea\3\2\2\2\63\u00ec\3\2\2\2\65\u00ee\3\2\2\2\67\u00f0\3\2\2\29\u00f2"+
 		"\3\2\2\2;\u00f4\3\2\2\2=\u00f7\3\2\2\2?\u00fa\3\2\2\2A\u00fd\3\2\2\2C"+
 		"\u0100\3\2\2\2E\u0103\3\2\2\2G\u0106\3\2\2\2I\u0109\3\2\2\2K\u010b\3\2"+
-		"\2\2M\u010d\3\2\2\2O\u010f\3\2\2\2Q\u0112\3\2\2\2S\u0114\3\2\2\2U\u0118"+
+		"\2\2M\u010e\3\2\2\2O\u0110\3\2\2\2Q\u0113\3\2\2\2S\u0115\3\2\2\2U\u0118"+
 		"\3\2\2\2W\u011c\3\2\2\2Y\u011e\3\2\2\2[\u0120\3\2\2\2]\u0122\3\2\2\2_"+
 		"\u0124\3\2\2\2a\u0126\3\2\2\2c\u012a\3\2\2\2e\u0130\3\2\2\2g\u0139\3\2"+
 		"\2\2i\u0140\3\2\2\2k\u0146\3\2\2\2m\u014c\3\2\2\2o\u0151\3\2\2\2q\u0157"+
@@ -195,22 +196,22 @@ public class DuroLexer extends Lexer {
 		"\2\u00cc\u00cb\3\2\2\2\u00cd\32\3\2\2\2\u00ce\u00cf\t\7\2\2\u00cf\34\3"+
 		"\2\2\2\u00d0\u00d1\t\b\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d3\b\17\2\2\u00d3"+
 		"\36\3\2\2\2\u00d4\u00d5\7(\2\2\u00d5\u00d6\7(\2\2\u00d6 \3\2\2\2\u00d7"+
-		"\u00d8\7~\2\2\u00d8\u00d9\7~\2\2\u00d9\"\3\2\2\2\u00da\u00db\7-\2\2\u00db"+
-		"\u00dc\7-\2\2\u00dc$\3\2\2\2\u00dd\u00de\7/\2\2\u00de\u00df\7/\2\2\u00df"+
-		"&\3\2\2\2\u00e0\u00e1\7~\2\2\u00e1(\3\2\2\2\u00e2\u00e3\t\t\2\2\u00e3"+
-		"*\3\2\2\2\u00e4\u00e5\t\n\2\2\u00e5,\3\2\2\2\u00e6\u00e7\7%\2\2\u00e7"+
-		".\3\2\2\2\u00e8\u00e9\7]\2\2\u00e9\60\3\2\2\2\u00ea\u00eb\7_\2\2\u00eb"+
-		"\62\3\2\2\2\u00ec\u00ed\7}\2\2\u00ed\64\3\2\2\2\u00ee\u00ef\7\177\2\2"+
-		"\u00ef\66\3\2\2\2\u00f0\u00f1\7*\2\2\u00f18\3\2\2\2\u00f2\u00f3\7+\2\2"+
-		"\u00f3:\3\2\2\2\u00f4\u00f5\7-\2\2\u00f5\u00f6\7?\2\2\u00f6<\3\2\2\2\u00f7"+
-		"\u00f8\7/\2\2\u00f8\u00f9\7?\2\2\u00f9>\3\2\2\2\u00fa\u00fb\7,\2\2\u00fb"+
-		"\u00fc\7?\2\2\u00fc@\3\2\2\2\u00fd\u00fe\7\61\2\2\u00fe\u00ff\7?\2\2\u00ff"+
-		"B\3\2\2\2\u0100\u0101\7\'\2\2\u0101\u0102\7?\2\2\u0102D\3\2\2\2\u0103"+
-		"\u0104\7?\2\2\u0104\u0105\7?\2\2\u0105F\3\2\2\2\u0106\u0107\7#\2\2\u0107"+
-		"\u0108\7?\2\2\u0108H\3\2\2\2\u0109\u010a\7?\2\2\u010aJ\3\2\2\2\u010b\u010c"+
-		"\7#\2\2\u010cL\3\2\2\2\u010d\u010e\7>\2\2\u010eN\3\2\2\2\u010f\u0110\7"+
-		">\2\2\u0110\u0111\7?\2\2\u0111P\3\2\2\2\u0112\u0113\7@\2\2\u0113R\3\2"+
-		"\2\2\u0114\u0115\7@\2\2\u0115\u0116\7?\2\2\u0116T\3\2\2\2\u0117\u0119"+
+		"\u00d8\7~\2\2\u00d8\u00d9\7~\2\2\u00d9\"\3\2\2\2\u00da\u00db\7#\2\2\u00db"+
+		"$\3\2\2\2\u00dc\u00dd\7-\2\2\u00dd\u00de\7-\2\2\u00de&\3\2\2\2\u00df\u00e0"+
+		"\7/\2\2\u00e0\u00e1\7/\2\2\u00e1(\3\2\2\2\u00e2\u00e3\7~\2\2\u00e3*\3"+
+		"\2\2\2\u00e4\u00e5\7%\2\2\u00e5,\3\2\2\2\u00e6\u00e7\7]\2\2\u00e7.\3\2"+
+		"\2\2\u00e8\u00e9\7_\2\2\u00e9\60\3\2\2\2\u00ea\u00eb\7}\2\2\u00eb\62\3"+
+		"\2\2\2\u00ec\u00ed\7\177\2\2\u00ed\64\3\2\2\2\u00ee\u00ef\7*\2\2\u00ef"+
+		"\66\3\2\2\2\u00f0\u00f1\7+\2\2\u00f18\3\2\2\2\u00f2\u00f3\7?\2\2\u00f3"+
+		":\3\2\2\2\u00f4\u00f5\7-\2\2\u00f5\u00f6\7?\2\2\u00f6<\3\2\2\2\u00f7\u00f8"+
+		"\7/\2\2\u00f8\u00f9\7?\2\2\u00f9>\3\2\2\2\u00fa\u00fb\7,\2\2\u00fb\u00fc"+
+		"\7?\2\2\u00fc@\3\2\2\2\u00fd\u00fe\7\61\2\2\u00fe\u00ff\7?\2\2\u00ffB"+
+		"\3\2\2\2\u0100\u0101\7\'\2\2\u0101\u0102\7?\2\2\u0102D\3\2\2\2\u0103\u0104"+
+		"\7?\2\2\u0104\u0105\7?\2\2\u0105F\3\2\2\2\u0106\u0107\7#\2\2\u0107\u0108"+
+		"\7?\2\2\u0108H\3\2\2\2\u0109\u010a\7>\2\2\u010aJ\3\2\2\2\u010b\u010c\7"+
+		">\2\2\u010c\u010d\7?\2\2\u010dL\3\2\2\2\u010e\u010f\7@\2\2\u010fN\3\2"+
+		"\2\2\u0110\u0111\7@\2\2\u0111\u0112\7?\2\2\u0112P\3\2\2\2\u0113\u0114"+
+		"\t\t\2\2\u0114R\3\2\2\2\u0115\u0116\t\n\2\2\u0116T\3\2\2\2\u0117\u0119"+
 		"\5\177@\2\u0118\u0117\3\2\2\2\u0119\u011a\3\2\2\2\u011a\u0118\3\2\2\2"+
 		"\u011a\u011b\3\2\2\2\u011bV\3\2\2\2\u011c\u011d\7=\2\2\u011dX\3\2\2\2"+
 		"\u011e\u011f\7.\2\2\u011fZ\3\2\2\2\u0120\u0121\7<\2\2\u0121\\\3\2\2\2"+

@@ -95,7 +95,18 @@ variableAssignment:
 lookup: ID;
 argumentParameter: COLON ID;
 thisMessageExchange: messageExchange;
-messageExchange: ID OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
+messageExchange: messageId OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
+messageId: (ID | operator);
+operator:
+    /*EQUALS | 
+    NOT_EQUALS | 
+    LESS_THAN |
+    LESS_THAN_OR_EQUALS |
+    GREATER_THAN |
+    GREATER_THAN_OR_EQUALS |*/
+    BIN_OP1 |
+    BIN_OP2
+;
 literal: 
     integer | bool | string | dictProcess | 
     functionLiteral | closureLiteral | array;
@@ -119,14 +130,14 @@ self: KW_THIS;
 nil: KW_NULL;
 operationChain: explicitMessageExchange | memberAccess | indexAccess;
 explicitMessageExchange: DOT messageExchange;
-memberAccess: DOT ID;
+memberAccess: DOT messageId;
 indexAccess: OPEN_SQ expression CLOSE_SQ;
 
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
 operationEnd: memberAssignment | indexAssignment;
 memberAssignment: 
-    DOT ID 
+    DOT messageId 
     op=(
         ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
     ) 
@@ -157,7 +168,7 @@ undelimitedStatement:
     functionDefinition | primitiveBody | ifStatement | 
     whileStatement | forStatement | forInStatement;
 functionDefinition: 
-    KW_FUNCTION ID OPEN_PAR functionParameters CLOSE_PAR 
+    KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
@@ -243,11 +254,10 @@ LINE_TERMINATOR: [\r\n\u2028\u2029] -> channel(HIDDEN);
 
 DOUBLE_AMP: '&&';
 DOUBLE_PIPE: '||';
+NOT: '!';
 DOUBLE_PLUS: '++';
 DOUBLE_MINUS: '--';
 SINGLE_PIPE: '|';
-BIN_OP1: '+'|'-';
-BIN_OP2: '*'|'/'|'%';
 HASH: '#';
 OPEN_SQ: '[';
 CLOSE_SQ: ']';
@@ -255,20 +265,21 @@ OPEN_BRA: '{';
 CLOSE_BRA: '}';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
+ASSIGN: '=';
 ASSIGN_ADD: '+=';
 ASSIGN_SUB: '-=';
 ASSIGN_MULT: '*=';
 ASSIGN_DIV: '/=';
 ASSIGN_REM: '%=';
+
 EQUALS: '==';
 NOT_EQUALS: '!=';
-ASSIGN: '=';
-NOT: '!';
-
 LESS_THAN: '<';
 LESS_THAN_OR_EQUALS: '<=';
 GREATER_THAN: '>';
 GREATER_THAN_OR_EQUALS: '>=';
+BIN_OP1: '+'|'-';
+BIN_OP2: '*'|'/'|'%';
 
 INT: DIGIT+;
 SEMICOLON: ';';
