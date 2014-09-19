@@ -4,9 +4,9 @@ Standard library
 
 function write(x) {
 	#{
-		load_arg :0
-		send :"toString" :0
-		sp_write
+		load_arg 0;
+		send "toString" 0;
+		sp_write;
 	}
 }
 
@@ -16,8 +16,8 @@ function writeln(x) {
 
 function readln() {
 	#{
-		sp_next_line
-		ret :1
+		sp_next_line;
+		ret 1;
 	}
 }
 /*
@@ -25,9 +25,9 @@ function readln() {
 Any = extend([]);
 Any.clone = function() {
 	#{
-		load_arg :0
-		sp_clone
-		ret :1
+		load_arg 0;
+		sp_clone;
+		ret 1;
 	}
 }
 */
@@ -37,16 +37,16 @@ Any.clone = function() {
 Any.callFunc = inline(args, function) {
 	// stack: function, args
 	#{
-		sp_call
+		sp_call;
 	}
 }
 */
 
 Any.clone = function() {
 	#{
-		load_this
-		sp_clone
-		ret :1
+		load_this;
+		sp_clone;
+		ret 1;
 	}
 };
 
@@ -78,11 +78,11 @@ this.+(::) = x; // Two arguments
 
 String.+ = function(other) {
 	#{
-		load_this
-		load_arg :0
-		send :"toString" :0
-		sp_string_concat
-		ret :1
+		load_this;
+		load_arg 0;
+		send "toString" 0;
+		sp_string_concat;
+		ret 1;
 	}
 };
 String.toString = function() {
@@ -92,52 +92,108 @@ String.toString = function() {
 Integer.+ = function(other) {
 	// Should do double dispatching
 	#{
-		load_this
-		load_arg :0
-		sp_int_add
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_int_add;
+		ret 1;
 	}
 };
 Integer.- = function(other) {
 	// Should do double dispatching
 	#{
-		load_this
-		load_arg :0
-		sp_int_sub
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_int_sub;
+		ret 1;
 	}
 };
 Integer.* = function(other) {
 	// Should do double dispatching
 	#{
-		load_this
-		load_arg :0
-		sp_int_mult
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_int_mult;
+		ret 1;
 	}
 };
 Integer./ = function(other) {
 	// Should do double dispatching
 	#{
-		load_this
-		load_arg :0
-		sp_int_div
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_int_div;
+		ret 1;
 	}
 };
 Integer.% = function(other) {
 	// Should do double dispatching
 	#{
-		load_this
-		load_arg :0
-		sp_int_rem
-		ret :1
+		load_this;
+		load_arg 0;
+		sp_int_rem;
+		ret 1;
 	}
 };
 Integer.toString = function() {
 	#{
-		load_this
-		sp_int_to_string
-		ret :1
+		load_this;
+		sp_int_to_string;
+		ret 1;
+	}
+};
+
+/*
+Add definition of greater/less operator here for Integer prototype
+*/
+
+Integer.> = function(other) {
+	// Should do double dispatching
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_greater;
+		ret 1;
+	}
+};
+Integer.>= = function(other) {
+	// Should do double dispatching
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_greater;
+		if_false test_equals;
+		load_true;
+		ret 1;
+		
+		test_equals:
+		load_this;
+		load_arg 0;
+		sp_int_equal;
+		ret 1;
+	}
+};
+Integer.< = function(other) {
+	// Should do double dispatching
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_less;
+		ret 1;
+	}
+};
+Integer.<= = function(other) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_int_less;
+		if_false test_equals;
+		load_true;
+		ret 1;
+		
+		test_equals:
+		load_this;
+		load_arg 0;
+		sp_int_equal;
+		ret 1;
 	}
 };
