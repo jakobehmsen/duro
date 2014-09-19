@@ -98,8 +98,8 @@ thisMessageExchange: messageExchange;
 messageExchange: messageId OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
 messageId: (ID | operator);
 operator:
-    /*EQUALS | 
-    NOT_EQUALS | */
+    EQUALS | 
+    NOT_EQUALS |
     LESS_THAN |
     LESS_THAN_OR_EQUALS |
     GREATER_THAN |
@@ -114,7 +114,7 @@ integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
 dictProcess: OPEN_BRA (dictProcessEntry (COMMA dictProcessEntry)*)? CLOSE_BRA;
-dictProcessEntry: ID COLON expression;
+dictProcessEntry: messageId COLON expression;
 functionLiteral: 
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
