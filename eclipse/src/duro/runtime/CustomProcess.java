@@ -185,7 +185,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				
 				Object[] arguments = new Object[callFrameInfo.argumentCount];
 				
-				for(int i = argumentCount - 1; i >= 0; i--)
+				for(int i = callFrameInfo.argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
@@ -603,6 +603,27 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			IntegerProcess result = new IntegerProcess(lhs.intValue % rhs.intValue);
 			result.defineProto("parent", any.lookup("Integer"));
 			currentFrame.stack.push(result);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_EQUAL: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs.intValue == rhs.intValue);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_GREATER: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs.intValue > rhs.intValue);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_INT_LESS: {
+			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs.intValue < rhs.intValue);
 			currentFrame.instructionPointer++;
 			
 			break;
