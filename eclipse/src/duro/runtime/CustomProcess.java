@@ -558,6 +558,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SP_STRING_EQUAL: {
+			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
+			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(lhs.str.equals(rhs.str));
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_SP_INT_ADD: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
