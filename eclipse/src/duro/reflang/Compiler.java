@@ -538,10 +538,12 @@ public class Compiler {
 			private void appendIncDec(Token opToken) {
 				switch(opToken.getType()) {
 				case DuroLexer.DOUBLE_PLUS:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "+", 1));
 					break;
 				case DuroLexer.DOUBLE_MINUS:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "-", 1));
 					break;
 				}
 			}
@@ -650,19 +652,24 @@ public class Compiler {
 			private void appendAssignmentReducer(Token op) {
 				switch(op.getType()) {
 				case DuroLexer.ASSIGN_ADD:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_ADD));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "+", 1));
 					break;
 				case DuroLexer.ASSIGN_SUB:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_SUB));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "-", 1));
 					break;
 				case DuroLexer.ASSIGN_MULT:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_MULT));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_MULT));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "*", 1));
 					break;
 				case DuroLexer.ASSIGN_DIV:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_DIV));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_DIV));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "/", 1));
 					break;
 				case DuroLexer.ASSIGN_REM:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_REM));
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_REM));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "%", 1));
 					break;
 				}
 			}
