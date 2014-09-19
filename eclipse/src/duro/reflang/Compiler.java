@@ -3,6 +3,8 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -16,6 +18,8 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import com.sun.javafx.geom.AreaOp.AddOp;
 
 import duro.debugging.Debug;
 import duro.reflang.antlr4.DuroBaseListener;
@@ -69,7 +73,9 @@ import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveBodyPartContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveLabelContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
@@ -353,20 +359,23 @@ public class Compiler {
 			}
 
 			private void appendGreaterLessOperator(BinaryExpressionGreaterLessApplicationContext ctx) {
-				switch(ctx.op.getType()) {
-				case DuroLexer.GREATER_THAN:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER));
-					break;
-				case DuroLexer.GREATER_THAN_OR_EQUALS:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER_EQUALS));
-					break;
-				case DuroLexer.LESS_THAN:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS));
-					break;
-				case DuroLexer.LESS_THAN_OR_EQUALS:
-					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS_EQUALS));
-					break;
-				}
+//				switch(ctx.op.getType()) {
+//				case DuroLexer.GREATER_THAN:
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER));
+//					break;
+//				case DuroLexer.GREATER_THAN_OR_EQUALS:
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_GREATER_EQUALS));
+//					break;
+//				case DuroLexer.LESS_THAN:
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS));
+//					break;
+//				case DuroLexer.LESS_THAN_OR_EQUALS:
+//					instructions.add(new Instruction(Instruction.OPCODE_SP_LESS_EQUALS));
+//					break;
+//				}
+				
+				String operator = ctx.op.getText();
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, operator, 1));
 			}
 			
 			@Override
@@ -979,21 +988,60 @@ public class Compiler {
 			
 			@Override
 			public void exitPrimitiveBody(PrimitiveBodyContext ctx) {
-				for(PrimitiveCallContext primitiveCallCtx: ctx.primitiveCall()) {
-					String opcodeId = primitiveCallCtx.ID().getText();
-					Object operand1 = null;
-					Object operand2 = null;
-					if(primitiveCallCtx.primitiveOperand().size() > 0) {
-						operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
+				final Hashtable<String, Integer> labelDefinitionsToIndexMap = new Hashtable<String, Integer>();
+				ArrayList<Runnable> labelUsageLinkers = new ArrayList<Runnable>();
+				
+				for(PrimitiveBodyPartContext primitiveBodyPartCtx: ctx.primitiveBodyPart()) {
+					ParserRuleContext part = (ParserRuleContext)primitiveBodyPartCtx.getChild(0);
+					switch(part.getRuleIndex()) {
+					case DuroParser.RULE_primitiveLabel:
+						PrimitiveLabelContext primitiveLabelCtx = (PrimitiveLabelContext)part;
+						String label = primitiveLabelCtx.ID().getText();
+						int index = instructions.size();
+						labelDefinitionsToIndexMap.put(label, index);
+						break;
+					case DuroParser.RULE_primitiveCall:
+						Instruction instruction;
+						
+						PrimitiveCallContext primitiveCallCtx = (PrimitiveCallContext)part;
+						String opcodeId = primitiveCallCtx.ID().getText();
 
-						if(primitiveCallCtx.primitiveOperand().size() > 1) {
-							operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
+						int opcode = Instruction.getOpcodeFromId(opcodeId);
+						
+						switch(opcode) {
+						case Instruction.OPCODE_IF_TRUE:
+						case Instruction.OPCODE_IF_FALSE:
+							instruction = null;
+							final int indexUsage = instructions.size();
+							final String jumpLabel = primitiveCallCtx.primitiveOperand().get(0).getText();
+							labelUsageLinkers.add(() -> { 
+								int indexDefinition = labelDefinitionsToIndexMap.get(jumpLabel);
+								int jump = indexDefinition - indexUsage; 
+								instructions.set(indexUsage, new Instruction(opcode, jump));
+							});
+							break;
+						default:
+							Object operand1 = null;
+							Object operand2 = null;
+							
+							if(primitiveCallCtx.primitiveOperand().size() > 0) {
+								operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
+		
+								if(primitiveCallCtx.primitiveOperand().size() > 1) {
+									operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
+								}
+							}
+							
+							instruction = new Instruction(opcode, operand1, operand2);
 						}
+						
+						instructions.add(instruction);
+						break;
 					}
-					
-					int opcode = Instruction.getOpcodeFromId(opcodeId);
-					instructions.add(new Instruction(opcode, operand1, operand2));
 				}
+				
+				for(Runnable labelUsageLinker: labelUsageLinkers)
+					labelUsageLinker.run();
 			}
 			
 			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
