@@ -199,10 +199,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
-				Process self = new CallProcess(process, receiver);
 				
 				frameStack.push(currentFrame);
-				currentFrame = new Frame(self, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			
 			break;
@@ -230,10 +229,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
-				Process self = new CallProcess(process, currentFrame.self);
 				
 				frameStack.push(currentFrame);
-				currentFrame = new Frame(self, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			
 			break;
@@ -255,10 +253,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame = new Frame(currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Process process = (Process)callable;
-				Process self = new CallProcess(process, currentFrame.self);
 				
 				frameStack.push(currentFrame);
-				currentFrame = new Frame(self, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
+				currentFrame = new Frame(process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			break;
 		} case Instruction.OPCODE_RESUME: {
