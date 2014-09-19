@@ -288,9 +288,6 @@ public class Compiler {
 				
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_SWAP1));
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_EQUALS));
-//				if(ctx.op.getType() == DuroLexer.NOT_EQUALS)
-//					instructions.add(new Instruction(Instruction.OPCODE_SP_NOT));
 				String operatorId = ctx.op.getText();
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, operatorId, 1));
 				int conditionalJumpIndex = instructions.size();
