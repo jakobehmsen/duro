@@ -15,13 +15,4 @@ public class StringProcess extends DictionaryProcess {
 	public DictionaryProcess newBase() {
 		return new StringProcess(str);
 	}
-
-	public String getString() {
-		return str;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return this.str.equals(((StringProcess)obj).str);
-	}
 }
