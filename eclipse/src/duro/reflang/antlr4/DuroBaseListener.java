@@ -979,6 +979,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterFrame(@NotNull DuroParser.FrameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitFrame(@NotNull DuroParser.FrameContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterBool(@NotNull DuroParser.BoolContext ctx) { }
 	/**
 	 * {@inheritDoc}

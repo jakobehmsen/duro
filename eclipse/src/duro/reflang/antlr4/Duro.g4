@@ -80,7 +80,7 @@ unaryExpressionPostIncDecApplicationIndexAccessReceiver:
 unaryExpressionPostIncDecOperand: 
     (
         grouping | thisMessageExchange | lookup | argumentParameter | 
-        literal | self | nil
+        literal | self | nil | frame
     )
     operationChain* operationEnd?;
 
@@ -128,6 +128,7 @@ array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
 nil: KW_NULL;
+frame: KW_FRAME;
 operationChain: explicitMessageExchange | memberAccess | indexAccess;
 explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT messageId;
@@ -301,6 +302,7 @@ KW_IF: 'if';
 KW_ELSE: 'else';
 KW_THIS: 'this';
 KW_NULL: 'null';
+KW_FRAME: 'frame';
 KW_WHILE: 'while';
 KW_FOR: 'for';
 KW_IN: 'in';

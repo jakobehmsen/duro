@@ -530,6 +530,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#frame}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFrame(@NotNull DuroParser.FrameContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#bool}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

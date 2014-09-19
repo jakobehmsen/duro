@@ -823,6 +823,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#frame}.
+	 * @param ctx the parse tree
+	 */
+	void enterFrame(@NotNull DuroParser.FrameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#frame}.
+	 * @param ctx the parse tree
+	 */
+	void exitFrame(@NotNull DuroParser.FrameContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#bool}.
 	 * @param ctx the parse tree
 	 */
