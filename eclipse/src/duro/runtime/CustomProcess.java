@@ -64,6 +64,15 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			this.instructions = instructions;
 			this.reificationHandle = reificationHandle;
 		}
+		
+		public final FrameProcess getReifiedFrame(Process any) {
+			if(reificationHandle.value == null) {
+				reificationHandle.value = new FrameProcess(this);
+				reificationHandle.value.defineProto("parent", any.lookup("Frame"));
+			}
+			
+			return reificationHandle.value;
+		}
 	}
 	
 	private Frame currentFrame;
@@ -427,11 +436,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_LOAD_REIFIED_FRAME: {
-			if(currentFrame.reificationHandle.value == null) {
-				currentFrame.reificationHandle.value = new FrameProcess(currentFrame);
-				currentFrame.reificationHandle.value.defineProto("parent", any.lookup("Frame"));
-			}
-			currentFrame.stack.push(currentFrame.reificationHandle.value);
+			currentFrame.stack.push(currentFrame.getReifiedFrame(any));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -565,11 +570,15 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_REIFIED_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			if(frame.frame.sender.reificationHandle.value == null) {
-				frame.frame.sender.reificationHandle.value = new FrameProcess(frame.frame.sender);
-				frame.frame.sender.reificationHandle.value.defineProto("parent", any.lookup("Frame"));
-			}
-			currentFrame.stack.push(frame.frame.sender.reificationHandle.value);
+			currentFrame.stack.push(frame.frame.sender.getReifiedFrame(any));
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_REIFIED_FRAME_RESUME: {
+			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
+			frame.frame.returnFrame = currentFrame;
+
+			currentFrame = frame.frame;
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -643,7 +652,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 			
 			Frame generatorFrame = new Frame(currentFrame, currentFrame, self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-			GeneratorProcess generator = new GeneratorProcess(generatorFrame);
+			GeneratorProcess generator = new GeneratorProcess(generatorFrame.getReifiedFrame(any));
 			DictionaryProcess iteratorPrototype = (DictionaryProcess)any.lookup("Iterator");
 			generator.defineProto("prototype", iteratorPrototype);
 			currentFrame.stack.push(generator);
