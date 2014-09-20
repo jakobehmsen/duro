@@ -17,7 +17,7 @@ public class FrameProcess extends DictionaryProcess {
 		
 		Instruction[] iteratorInstructions = new Instruction[] {
 			new Instruction(Instruction.OPCODE_LOAD_THIS),
-			new Instruction(Instruction.OPCODE_SP_REIFIED_FRAME_SENDER),
+			new Instruction(Instruction.OPCODE_SP_FRAME_SENDER),
 			new Instruction(Instruction.OPCODE_RET, 1)
 		};
 		outerCallFrameInfo = new CallFrameInfo(0, 0, iteratorInstructions);
