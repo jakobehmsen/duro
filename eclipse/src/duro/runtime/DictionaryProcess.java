@@ -41,14 +41,14 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 	private Hashtable<Object, Member> properties = new Hashtable<Object, Member>();
 	
 	@Override
-	public Object getCallable(Object key) {
+	public Object getCallable(ProcessFactory factory, Object key) {
 		Member callableMember = properties.get(key);
 		
 		if(callableMember != null)
 			return callableMember.value;
 		
 		for(Object proto: protos.values()) {
-			Object callable = ((Process)proto).getCallable(key);
+			Object callable = ((Process)proto).getCallable(factory, key);
 			if(callable != null)
 				return callable;
 		}

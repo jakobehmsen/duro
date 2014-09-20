@@ -21,7 +21,7 @@ public class NullProcess extends Process {
 	}
 
 	@Override
-	public Object getCallable(Object key) {
+	public Object getCallable(ProcessFactory factory, Object key) {
 		// TODO Auto-generated method stub
 		return null;
 	}

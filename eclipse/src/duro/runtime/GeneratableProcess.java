@@ -28,11 +28,11 @@ public class GeneratableProcess extends DictionaryProcess {
 	}
 
 	@Override
-	public Object getCallable(Object key) {
+	public Object getCallable(ProcessFactory factory, Object key) {
 		if(key.equals("iterator"))
 			return iteratorCallFrameInfo;
 		
-		return super.getCallable(key);
+		return super.getCallable(factory, key);
 	}
 	
 	@Override
