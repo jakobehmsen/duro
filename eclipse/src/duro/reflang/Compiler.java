@@ -92,7 +92,6 @@ import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementContext;
 import duro.reflang.antlr4.DuroParser.YieldStatementContext;
-import duro.runtime.CallFrameInfo;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
