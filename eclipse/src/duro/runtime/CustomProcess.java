@@ -347,11 +347,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_EXEC_ON_FRAME: {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-			Frame frame = (Frame)currentFrame.stack.pop();
+			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
 			// Move forward arguments
-			int start = frame.arguments.length - currentFrame.arguments.length;
-			System.arraycopy(currentFrame.arguments, 0, frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.sender, frame.self, frame.arguments, frame.variables, callFrameInfo.instructions, frame.reificationHandle);
+			int start = frame.frame.arguments.length - currentFrame.arguments.length;
+			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
+			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, callFrameInfo.instructions, frame.frame.reificationHandle);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -427,8 +427,14 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_LOAD_REIFIED_FRAME: {
+		} case Instruction.OPCODE_LOAD_THIS_REIFIED_FRAME: {
 			currentFrame.stack.push(currentFrame.getReifiedFrame(any));
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_REIFIED_FRAME: {
+			FrameProcess frame = (FrameProcess)instruction.operand1;
+			currentFrame.stack.push(frame);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -669,7 +675,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-			currentFrame.stack.push(new ClosureProcess(currentFrame, callFrameInfo));
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), callFrameInfo);
+			closure.defineProto("prototype", any);
+			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
 			
 			break;
