@@ -24,11 +24,11 @@ public class FrameProcess extends DictionaryProcess {
 	}
 
 	@Override
-	public Object getCallable(Object key) {
+	public Object getCallable(ProcessFactory factory, Object key) {
 		if(key.equals("sender"))
 			return outerCallFrameInfo;
 		
-		return super.getCallable(key);
+		return super.getCallable(factory, key);
 	}
 	
 	@Override
