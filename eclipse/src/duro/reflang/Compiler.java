@@ -1371,7 +1371,7 @@ public class Compiler {
 			
 			int parameterCount = idToParameterOrdinalMap.size();
 
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, new CallFrameInfo(parameterCount, variableCount, iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]))));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, new CallFrameInfo(parameterCount, variableCount, iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]))));
 			// Forward arguments
 			for(int i = 0; i < parameterCount; i++)
 				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
