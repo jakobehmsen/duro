@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import javax.management.RuntimeErrorException;
-
 import duro.debugging.Debug;
 import duro.transcriber.Journal;
 
@@ -216,7 +214,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
-//				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else if(callable != null) {
 				Object[] arguments = new Object[argumentCount];
@@ -227,7 +224,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				
 				Process process = (Process)callable;
 				
-//				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + key + "'.");
@@ -248,7 +244,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
-//				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Object[] arguments = new Object[argumentCount];
@@ -259,7 +254,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				
 				Process process = (Process)callable;
 				
-//				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			
@@ -278,12 +272,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 					System.arraycopy(arguments, 0, callFrameInfo.argumentCount, 0, arguments.length);
 				} else
 					callArguments = arguments;
-//				frameStack.push(currentFrame);
+
 				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Process process = (Process)callable;
 				
-//				frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			break;
@@ -291,14 +284,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			Frame frame = (Frame)currentFrame.stack.pop();
 			frame.returnFrame = currentFrame;
 
-//			frameStack.push(currentFrame);
 			currentFrame = frame;
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_RET: {
 			int returnCount = (int)instruction.operand1;
-//			Frame outerFrame = frameStack.pop();
 			Frame returnFrame = currentFrame.returnFrame;
 			for(int i = 0; i < returnCount; i++)
 				returnFrame.stack.push(currentFrame.stack.pop());
@@ -308,14 +299,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_RET_THIS: {
 			Object result = currentFrame.self;
-//			currentFrame = frameStack.pop();
 			currentFrame = currentFrame.returnFrame;
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_RET_FORWARD: {
-//			Frame outerFrame = frameStack.pop();
 			Frame returnFrame = currentFrame.returnFrame;
 			returnFrame.stack.addAll(currentFrame.stack);
 			currentFrame = returnFrame;
@@ -365,10 +354,8 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
 			Frame frame = (Frame)currentFrame.stack.pop();
 			// Move forward arguments
-//			Object[] arguments = new Object[frame.arguments.length + callFrameInfo.argumentCount];
 			int start = frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.arguments, start, currentFrame.arguments.length);
-//			frameStack.push(currentFrame);
 			currentFrame = new Frame(currentFrame, frame.outer, frame.self, frame.arguments, frame.variables, callFrameInfo.instructions, frame.reificationHandle);
 			
 			break;
@@ -392,8 +379,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_LOAD_ARG: {
 			int ordinal = (int)instruction.operand1;
 			Object value = currentFrame.arguments[ordinal];
-			if(value == null)
-				new String();
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
@@ -741,7 +726,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
-//				this.frameStack.push(currentFrame);
 				currentFrame = new Frame(currentFrame, currentFrame, any, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
