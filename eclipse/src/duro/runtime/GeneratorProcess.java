@@ -16,7 +16,7 @@ public class GeneratorProcess extends DictionaryProcess {
 		this.frame = frame;
 		
 		Instruction[] nextInstructions = new Instruction[] {
-			new Instruction(Instruction.OPCODE_LOAD_REIFIED_FRAME, frame),
+			new Instruction(Instruction.OPCODE_LOAD_FRAME, frame),
 			new Instruction(Instruction.OPCODE_SP_REIFIED_FRAME_RESUME),
 			new Instruction(Instruction.OPCODE_RET_FORWARD),
 		};
