@@ -1,7 +1,5 @@
 package duro.runtime;
 
-import duro.runtime.CustomProcess.Frame;
-
 public class ClosureProcess extends DictionaryProcess {
 	/**
 	 * 

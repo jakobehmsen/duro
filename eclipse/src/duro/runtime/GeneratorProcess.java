@@ -1,7 +1,5 @@
 package duro.runtime;
 
-import duro.runtime.CustomProcess.Frame;
-
 public class GeneratorProcess extends DictionaryProcess {
 	/**
 	 * 
