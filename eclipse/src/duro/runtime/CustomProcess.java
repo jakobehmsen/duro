@@ -36,7 +36,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		 */
 		private static final long serialVersionUID = 1L;
 		public Frame returnFrame;
-		public final Frame outer;
+		public final Frame sender;
 		public final Process self;
 		public Object[] arguments;
 		public Object[] variables;
@@ -45,12 +45,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		public Stack<Object> stack = new Stack<Object>();
 		public Handle reificationHandle;
 		
-		public Frame(Frame returnFrame, Frame outer, Process self, Object[] arguments, int variableCount, Instruction[] instructions) {
-			if(self == null)
-				new String();
-			
+		public Frame(Frame returnFrame, Frame sender, Process self, Object[] arguments, int variableCount, Instruction[] instructions) {
 			this.returnFrame = returnFrame;
-			this.outer = outer;
+			this.sender = sender;
 			this.self = self;
 			this.arguments = arguments;
 			variables = new Object[variableCount];
@@ -58,12 +55,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			reificationHandle = new Handle();
 		}
 		
-		public Frame(Frame returnFrame, Frame outer, Process self, Object[] arguments, Object[] variables, Instruction[] instructions, Handle reificationHandle) {
-			if(self == null)
-				new String();
-			
+		public Frame(Frame returnFrame, Frame sender, Process self, Object[] arguments, Object[] variables, Instruction[] instructions, Handle reificationHandle) {
 			this.returnFrame = returnFrame;
-			this.outer = outer;
+			this.sender = sender;
 			this.self = self;
 			this.arguments = arguments;
 			this.variables = variables;
@@ -356,7 +350,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			// Move forward arguments
 			int start = frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.outer, frame.self, frame.arguments, frame.variables, callFrameInfo.instructions, frame.reificationHandle);
+			currentFrame = new Frame(currentFrame, frame.sender, frame.self, frame.arguments, frame.variables, callFrameInfo.instructions, frame.reificationHandle);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -571,11 +565,11 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_REIFIED_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			if(frame.frame.outer.reificationHandle.value == null) {
-				frame.frame.outer.reificationHandle.value = new FrameProcess(frame.frame.outer);
-				frame.frame.outer.reificationHandle.value.defineProto("parent", any.lookup("Frame"));
+			if(frame.frame.sender.reificationHandle.value == null) {
+				frame.frame.sender.reificationHandle.value = new FrameProcess(frame.frame.sender);
+				frame.frame.sender.reificationHandle.value.defineProto("parent", any.lookup("Frame"));
 			}
-			currentFrame.stack.push(frame.frame.outer.reificationHandle.value);
+			currentFrame.stack.push(frame.frame.sender.reificationHandle.value);
 			currentFrame.instructionPointer++;
 			
 			break;
