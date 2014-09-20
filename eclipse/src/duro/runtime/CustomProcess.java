@@ -711,9 +711,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-			BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
-			behavior.defineProto("prototype", any.lookup("Behavior"));
+			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior);
 			closure.defineProto("prototype", any.lookup("Closure"));
 			currentFrame.stack.push(closure);
