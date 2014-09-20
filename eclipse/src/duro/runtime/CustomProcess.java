@@ -224,15 +224,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
 				
-				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				Object[] arguments = new Object[behavior.parameterCount];
 				
-				for(int i = callFrameInfo.argumentCount - 1; i >= 0; i--)
+				for(int i = behavior.parameterCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions);
 			} else if(callable != null) {
 				Object[] arguments = new Object[argumentCount];
 				
@@ -265,15 +264,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
 				
-				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				Object[] arguments = new Object[behavior.parameterCount];
 				
 				for(int i = argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, behavior.variableCount, behavior.instructions);
 			} else {
 				Object[] arguments = new Object[argumentCount];
 				
@@ -305,15 +303,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
 				Object[] callArguments;
-				if(arguments.length < callFrameInfo.argumentCount) {
-					callArguments = new Object[callFrameInfo.argumentCount];
-					System.arraycopy(arguments, 0, callFrameInfo.argumentCount, 0, arguments.length);
+				if(arguments.length < behavior.parameterCount) {
+					callArguments = new Object[behavior.parameterCount];
+					System.arraycopy(arguments, 0, behavior.parameterCount, 0, arguments.length);
 				} else
 					callArguments = arguments;
 
-				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, behavior.variableCount, behavior.instructions);
 			} else {
 				Process process = (Process)callable;
 				
@@ -388,7 +385,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			// Move forward arguments
 			int start = frame.frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.callFrameInfo.instructions, frame.frame.reificationHandle);
+			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.reificationHandle);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -681,7 +678,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			Process self = (Process)currentFrame.stack.pop();
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			
-			Frame generatorFrame = new Frame(currentFrame, currentFrame, self, arguments, behavior.callFrameInfo.variableCount, behavior.callFrameInfo.instructions);
+			Frame generatorFrame = new Frame(currentFrame, currentFrame, self, arguments, behavior.variableCount, behavior.instructions);
 			GeneratorProcess generator = new GeneratorProcess(generatorFrame.getReifiedFrame(any));
 			DictionaryProcess iteratorPrototype = (DictionaryProcess)any.lookup("Iterator");
 			generator.defineProto("prototype", iteratorPrototype);
@@ -714,8 +711,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_BEHAVIOR: {
-			CallFrameInfo callFrameInfo = (CallFrameInfo)instruction.operand1;
-			BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
+			int parameterCount = (int)instruction.operand1;
+			int variableCount = (int)instruction.operand2;
+			Instruction[] instructions = (Instruction[])instruction.operand3;
+			BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
 			behavior.defineProto("prototype", any.lookup("Behavior"));
 			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
@@ -801,7 +800,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	
 	@Override
 	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
-		BehaviorProcess behavior = new BehaviorProcess(new CallFrameInfo(parameterCount, variableCount, instructions));
+		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
 		behavior.defineProto("prototype", any.lookup("Behavior"));
 		return behavior;
 	}
