@@ -742,9 +742,8 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
 
-				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo)); // Should this create a function process?
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
 			}
 			
 			@Override
@@ -786,10 +785,9 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
 
-				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo));
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE));
 				// [closure]
 			}
@@ -911,13 +909,12 @@ public class Compiler {
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
-
-				CallFrameInfo callFrameInfo = new CallFrameInfo(
-					newIdToParameterOrdinalMap.size(), functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 			
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, newIdToParameterOrdinalMap.size(), functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
@@ -1376,7 +1373,8 @@ public class Compiler {
 			
 			int parameterCount = idToParameterOrdinalMap.size();
 
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, new CallFrameInfo(parameterCount, variableCount, iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]))));
+			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
 			// Forward arguments
 			for(int i = 0; i < parameterCount; i++)
 				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
