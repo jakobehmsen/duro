@@ -838,7 +838,7 @@ public class Compiler {
 			
 			@Override
 			public void enterFrame(FrameContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_REIFIED_FRAME));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS_REIFIED_FRAME));
 			}
 			
 			@Override
