@@ -16,22 +16,11 @@ public class GeneratableProcess extends DictionaryProcess {
 		this.behavior = behavior;
 		this.self = self;
 		this.arguments = arguments;
-		
-//		Instruction[] iteratorInstructions = new Instruction[] {
-//			new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo),
-//			new Instruction(Instruction.OPCODE_LOAD_ANY, self),
-//			new Instruction(Instruction.OPCODE_LOAD_ARRAY, arguments),
-//			new Instruction(Instruction.OPCODE_SP_NEW_GENERATOR),
-//			new Instruction(Instruction.OPCODE_RET, 1)
-//		};
-//		iteratorCallFrameInfo = new CallFrameInfo(0, 0, iteratorInstructions);
 	}
 
 	@Override
 	public Object getCallable(ProcessFactory factory, Object key) {
 		if(key.equals("iterator")) {
-//			return iteratorCallFrameInfo;
-
 			if(iteratorBehavior == null) {
 				Instruction[] iteratorInstructions = new Instruction[] {
 					new Instruction(Instruction.OPCODE_LOAD_BEHAVIOR, behavior),
