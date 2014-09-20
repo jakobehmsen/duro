@@ -458,112 +458,13 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_EQUALS: {
-			Object rhs = (Object)currentFrame.stack.pop();
-			Object lhs = (Object)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs.equals(rhs));
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_GREATER: {
-			@SuppressWarnings("rawtypes")
-			Comparable rhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("rawtypes")
-			Comparable lhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("unchecked")
-			boolean result = lhs.compareTo(rhs) > 0;
-			currentFrame.stack.push(result);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_GREATER_EQUALS: {
-			@SuppressWarnings("rawtypes")
-			Comparable rhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("rawtypes")
-			Comparable lhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("unchecked")
-			int comparison = lhs.compareTo(rhs);
-			boolean result = comparison >= 0;
-			currentFrame.stack.push(result);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_LESS: {
-			@SuppressWarnings("rawtypes")
-			Comparable rhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("rawtypes")
-			Comparable lhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("unchecked")
-			boolean result = lhs.compareTo(rhs) < 0;
-			currentFrame.stack.push(result);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_LESS_EQUALS: {
-			@SuppressWarnings("rawtypes")
-			Comparable rhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("rawtypes")
-			Comparable lhs = (Comparable)currentFrame.stack.pop();
-			@SuppressWarnings("unchecked")
-			int comparison = lhs.compareTo(rhs);
-			boolean result = comparison <= 0;
-			currentFrame.stack.push(result);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} 
-		
-		
-		case Instruction.OPCODE_SP_NOT: {
+		} case Instruction.OPCODE_SP_NOT: {
 			boolean b = (boolean)currentFrame.stack.pop();
 			currentFrame.stack.push(!b);
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_ADD: {
-			Object rhs = currentFrame.stack.pop();
-			Object lhs = currentFrame.stack.pop();
-			
-			if(lhs instanceof Integer && rhs instanceof Integer)
-				currentFrame.stack.push((int)lhs + (int)rhs);
-			else if(lhs instanceof String || rhs instanceof String)
-				currentFrame.stack.push(lhs.toString() + rhs.toString());
-			else {
-				Debug.println(Debug.LEVEL_LOW, "Invalid add operation.");
-			}
-			
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_SUB: {
-			int rhs = (int)currentFrame.stack.pop();
-			int lhs = (int)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs - rhs);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_MULT: {
-			int rhs = (int)currentFrame.stack.pop();
-			int lhs = (int)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs * rhs);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_DIV: {
-			int rhs = (int)currentFrame.stack.pop();
-			int lhs = (int)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs / rhs);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_REM: {
-			int rhs = (int)currentFrame.stack.pop();
-			int lhs = (int)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs % rhs);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_ARRAY_GET: {
+		}  case Instruction.OPCODE_SP_ARRAY_GET: {
 			IntegerProcess index = (IntegerProcess)currentFrame.stack.pop();
 			ArrayProcess array = (ArrayProcess)currentFrame.stack.pop();
 			currentFrame.stack.push(array.get(index.intValue));
