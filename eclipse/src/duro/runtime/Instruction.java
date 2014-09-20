@@ -84,6 +84,7 @@ public class Instruction implements Serializable {
 	public final int opcode;
 	public final Object operand1;
 	public final Object operand2;
+	public final Object operand3;
 	
 	public Instruction(int opcode) {
 		this(opcode, null);
@@ -94,9 +95,14 @@ public class Instruction implements Serializable {
 	}
 	
 	public Instruction(int opcode, Object operand1, Object operand2) {
+		this(opcode, operand1, operand2, null);
+	}
+	
+	public Instruction(int opcode, Object operand1, Object operand2, Object operand3) {
 		this.opcode = opcode;
 		this.operand1 = operand1;
 		this.operand2 = operand2;
+		this.operand3 = operand3;
 	}
 	
 	private static Hashtable<Integer, String> opcodeToIdMap;
