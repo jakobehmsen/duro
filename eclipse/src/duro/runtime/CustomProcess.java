@@ -212,17 +212,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Object callable = receiver.getCallable(this, key);
 
-			if(callable instanceof CallFrameInfo) {
-				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
-				
-				Object[] arguments = new Object[callFrameInfo.argumentCount];
-				
-				for(int i = callFrameInfo.argumentCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
-				currentFrame.stack.pop(); // Pop receiver
-				
-				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-			} else if(callable instanceof BehaviorProcess) {
+			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
 				Object[] arguments = new Object[behavior.parameterCount];
@@ -252,17 +242,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Object callable = currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
 
-			if(callable instanceof CallFrameInfo) {
-				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
-				
-				Object[] arguments = new Object[callFrameInfo.argumentCount];
-				
-				for(int i = argumentCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
-				currentFrame.stack.pop(); // Pop receiver
-				
-				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-			} else if(callable instanceof BehaviorProcess) {
+			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
 				Object[] arguments = new Object[behavior.parameterCount];
@@ -291,17 +271,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Object callable = proxyCallable.getCallable(this, "call");
 
-			if(callable instanceof CallFrameInfo) {
-				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
-				Object[] callArguments;
-				if(arguments.length < callFrameInfo.argumentCount) {
-					callArguments = new Object[callFrameInfo.argumentCount];
-					System.arraycopy(arguments, 0, callFrameInfo.argumentCount, 0, arguments.length);
-				} else
-					callArguments = arguments;
-
-				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
-			} else if(callable instanceof BehaviorProcess) {
+			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				Object[] callArguments;
 				if(arguments.length < behavior.parameterCount) {
