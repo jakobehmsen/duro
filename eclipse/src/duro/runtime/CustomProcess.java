@@ -800,8 +800,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	}
 	
 	@Override
-	public BehaviorProcess createBehavior(CallFrameInfo callFrameInfo) {
-		BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
+	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
+		BehaviorProcess behavior = new BehaviorProcess(new CallFrameInfo(parameterCount, variableCount, instructions));
 		behavior.defineProto("prototype", any.lookup("Behavior"));
 		return behavior;
 	}

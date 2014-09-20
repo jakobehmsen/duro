@@ -26,7 +26,7 @@ public class ClosureProcess extends DictionaryProcess {
 					new Instruction(Instruction.OPCODE_RET, 1)
 				};
 				
-				callBehavior = factory.createBehavior(new CallFrameInfo(0, 0, callInstructions));
+				callBehavior = factory.createBehavior(0, 0, callInstructions);
 			}
 			return callBehavior;
 		}

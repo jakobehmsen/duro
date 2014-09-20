@@ -26,7 +26,7 @@ public class FrameProcess extends DictionaryProcess {
 					new Instruction(Instruction.OPCODE_RET, 1)
 				};
 				
-				senderBehavior = factory.createBehavior(new CallFrameInfo(0, 0, senderInstructions));
+				senderBehavior = factory.createBehavior(0, 0, senderInstructions);
 			}
 			return senderBehavior;
 		}

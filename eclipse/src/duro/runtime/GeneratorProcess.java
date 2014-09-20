@@ -26,7 +26,7 @@ public class GeneratorProcess extends DictionaryProcess {
 					new Instruction(Instruction.OPCODE_RET_FORWARD),
 				};
 				
-				nextBehavior = factory.createBehavior(new CallFrameInfo(0, 0, nextInstructions));
+				nextBehavior = factory.createBehavior(0, 0, nextInstructions);
 			}
 			return nextBehavior;
 		}

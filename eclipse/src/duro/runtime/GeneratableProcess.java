@@ -41,7 +41,7 @@ public class GeneratableProcess extends DictionaryProcess {
 					new Instruction(Instruction.OPCODE_RET, 1)
 				};
 				
-				iteratorBehavior = factory.createBehavior(new CallFrameInfo(0, 0, iteratorInstructions));
+				iteratorBehavior = factory.createBehavior(0, 0, iteratorInstructions);
 			}
 			return iteratorBehavior;
 		}
