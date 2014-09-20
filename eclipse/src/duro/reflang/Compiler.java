@@ -977,16 +977,21 @@ public class Compiler {
 						default:
 							Object operand1 = null;
 							Object operand2 = null;
+							Object operand3 = null;
 							
 							if(primitiveCallCtx.primitiveOperand().size() > 0) {
 								operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
 		
 								if(primitiveCallCtx.primitiveOperand().size() > 1) {
 									operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
+									
+									if(primitiveCallCtx.primitiveOperand().size() > 2) {
+										operand3 = getLiteral(primitiveCallCtx.primitiveOperand().get(2));
+									}
 								}
 							}
 							
-							instruction = new Instruction(opcode, operand1, operand2);
+							instruction = new Instruction(opcode, operand1, operand2, operand3);
 						}
 						
 						instructions.add(instruction);
