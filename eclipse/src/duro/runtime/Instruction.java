@@ -47,6 +47,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_ANY = 34;
 	public static final int OPCODE_LOAD_THIS_FRAME = 35;
 	public static final int OPCODE_LOAD_FRAME = 36;
+	public static final int OPCODE_LOAD_BEHAVIOR = 37;
 
 	public static final int OPCODE_SP_OR = 65;
 	public static final int OPCODE_SP_AND = 66;
