@@ -283,14 +283,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame = new Frame(currentFrame, currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS);
 			}
 			break;
-		} case Instruction.OPCODE_RESUME: {
-			Frame frame = (Frame)currentFrame.stack.pop();
-			frame.returnFrame = currentFrame;
-
-			currentFrame = frame;
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_RET: {
 			int returnCount = (int)instruction.operand1;
 			Frame returnFrame = currentFrame.returnFrame;
