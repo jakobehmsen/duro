@@ -11,7 +11,7 @@ import java.util.Stack;
 import duro.debugging.Debug;
 import duro.transcriber.Journal;
 
-public class CustomProcess extends Process implements Iterable<Object> {
+public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory {
 	/**
 	 * 
 	 */
@@ -98,6 +98,10 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		any.defineShared("Integer", any.clone());
 		// Add Frame prototype
 		any.defineShared("Frame", any.clone());
+		// Add Behavior prototype
+		any.defineShared("Behavior", any.clone());
+		// Add Closure prototype
+		any.defineShared("Closure", any.clone());
 		
 		currentFrame = new Frame(null, null /*Both frames should be a representation of the operating system?*/, any, new Object[parameterCount], variableCount, instructions);
 	}
@@ -206,10 +210,21 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
 			
-			Object callable = receiver.getCallable(key);
+			Object callable = receiver.getCallable(this, key);
 
 			if(callable instanceof CallFrameInfo) {
 				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				
+				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				
+				for(int i = callFrameInfo.argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				currentFrame = new Frame(currentFrame, currentFrame, receiver, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
 				
 				Object[] arguments = new Object[callFrameInfo.argumentCount];
 				
@@ -248,6 +263,17 @@ public class CustomProcess extends Process implements Iterable<Object> {
 				currentFrame.stack.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
+				
+				Object[] arguments = new Object[callFrameInfo.argumentCount];
+				
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
 			} else {
 				Object[] arguments = new Object[argumentCount];
 				
@@ -265,10 +291,21 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			Object[] arguments = currentFrame.arguments;
 			Process proxyCallable = currentFrame.self;
 			
-			Object callable = proxyCallable.getCallable("call");
+			Object callable = proxyCallable.getCallable(this, "call");
 
 			if(callable instanceof CallFrameInfo) {
 				CallFrameInfo callFrameInfo = (CallFrameInfo)callable;
+				Object[] callArguments;
+				if(arguments.length < callFrameInfo.argumentCount) {
+					callArguments = new Object[callFrameInfo.argumentCount];
+					System.arraycopy(arguments, 0, callFrameInfo.argumentCount, 0, arguments.length);
+				} else
+					callArguments = arguments;
+
+				currentFrame = new Frame(currentFrame, currentFrame, currentFrame.self, callArguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			} else if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				CallFrameInfo callFrameInfo = behavior.callFrameInfo;
 				Object[] callArguments;
 				if(arguments.length < callFrameInfo.argumentCount) {
 					callArguments = new Object[callFrameInfo.argumentCount];
@@ -346,12 +383,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			
 			break;
 		} case Instruction.OPCODE_EXEC_ON_FRAME: {
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
 			// Move forward arguments
 			int start = frame.frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, callFrameInfo.instructions, frame.frame.reificationHandle);
+			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.callFrameInfo.instructions, frame.frame.reificationHandle);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -429,6 +466,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 		} case Instruction.OPCODE_LOAD_FRAME: {
 			FrameProcess frame = (FrameProcess)instruction.operand1;
 			currentFrame.stack.push(frame);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_LOAD_BEHAVIOR: {
+			BehaviorProcess behavior = (BehaviorProcess)instruction.operand1;
+			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -669,8 +712,10 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
 			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), callFrameInfo);
-			closure.defineProto("prototype", any);
+			BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
+			behavior.defineProto("prototype", any.lookup("Behavior"));
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior);
+			closure.defineProto("prototype", any.lookup("Closure"));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
 			
@@ -734,7 +779,7 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	}
 	
 	@Override
-	public Object getCallable(Object key) {
+	public Object getCallable(ProcessFactory factory, Object key) {
 		return null;
 	}
 	
@@ -751,5 +796,12 @@ public class CustomProcess extends Process implements Iterable<Object> {
 	@Override
 	public Iterator<Object> iterator() {
 		return null;
+	}
+	
+	@Override
+	public BehaviorProcess createBehavior(CallFrameInfo callFrameInfo) {
+		BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
+		behavior.defineProto("prototype", any.lookup("Behavior"));
+		return behavior;
 	}
 }
