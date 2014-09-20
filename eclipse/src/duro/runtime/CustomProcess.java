@@ -723,7 +723,9 @@ public class CustomProcess extends Process implements Iterable<Object> {
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_LENGTH: {
 			ArrayProcess newArray = (ArrayProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(newArray.length());
+			IntegerProcess result = new IntegerProcess(newArray.length());
+			result.defineProto("parent", any.lookup("Integer"));
+			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
