@@ -50,7 +50,7 @@ Array.iterator = function() {
 		i: 0,
 		next: function() {
 			if(i < array.length()) {
-				var item = list[i];
+				var item = array[i];
 				i++;
 				return true, item;
 			}
