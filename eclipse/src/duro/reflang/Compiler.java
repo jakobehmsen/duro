@@ -789,7 +789,7 @@ public class Compiler {
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
 
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE));
 				// [closure]
 			}
