@@ -684,9 +684,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_NEW_GENERATOR: {
 			Object[] arguments = (Object[])currentFrame.stack.pop();
 			Process self = (Process)currentFrame.stack.pop();
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			
-			Frame generatorFrame = new Frame(currentFrame, currentFrame, self, arguments, callFrameInfo.variableCount, callFrameInfo.instructions);
+			Frame generatorFrame = new Frame(currentFrame, currentFrame, self, arguments, behavior.callFrameInfo.variableCount, behavior.callFrameInfo.instructions);
 			GeneratorProcess generator = new GeneratorProcess(generatorFrame.getReifiedFrame(any));
 			DictionaryProcess iteratorPrototype = (DictionaryProcess)any.lookup("Iterator");
 			generator.defineProto("prototype", iteratorPrototype);
@@ -701,9 +701,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			for(int i = argumentCount - 1; i >= 0; i--)
 				arguments[i] = currentFrame.stack.pop();
 			
-			CallFrameInfo callFrameInfo = (CallFrameInfo)currentFrame.stack.pop();
+			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 
-			GeneratableProcess generatable = new GeneratableProcess(callFrameInfo, currentFrame.self, arguments);
+			GeneratableProcess generatable = new GeneratableProcess(behavior, currentFrame.self, arguments);
 			DictionaryProcess iterablePrototype = (DictionaryProcess)any.lookup("Iterable");
 			generatable.defineProto("prototype", iterablePrototype);
 			currentFrame.stack.push(generatable);
@@ -717,6 +717,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior);
 			closure.defineProto("prototype", any.lookup("Closure"));
 			currentFrame.stack.push(closure);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SP_NEW_BEHAVIOR: {
+			CallFrameInfo callFrameInfo = (CallFrameInfo)instruction.operand1;
+			BehaviorProcess behavior = new BehaviorProcess(callFrameInfo);
+			behavior.defineProto("prototype", any.lookup("Behavior"));
+			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
 			
 			break;
