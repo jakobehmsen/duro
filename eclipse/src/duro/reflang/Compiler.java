@@ -744,7 +744,7 @@ public class Compiler {
 
 				CallFrameInfo callFrameInfo = new CallFrameInfo(
 					parameterCount, functionBodyInfo.localCount, functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo)); // Should this create a function process?
 			}
 			
 			@Override
@@ -917,7 +917,7 @@ public class Compiler {
 			
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_FUNC, callFrameInfo)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, callFrameInfo)); // Should this create a function process?
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
