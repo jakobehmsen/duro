@@ -758,6 +758,10 @@ public class Compiler {
 					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
 						// Replace pop with return
 						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET, 1));
+					} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+						// If the last program elements isn't an expression, e.g. a for statement
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 					}
 				} else {
 					if(yieldStatements.size() > 0) {
