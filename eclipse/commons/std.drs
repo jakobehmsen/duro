@@ -231,3 +231,38 @@ Integer.!= = function(other) {
 		ret 1;
 	}
 };
+
+Any.isNull = function() {
+	return false;
+};
+
+Null.isNull = function() {
+	return true;
+};
+Null.== = function(other) {
+	return other.isNull();
+};
+
+Frame.sender = function() {
+	#{
+		load_this;
+		sp_frame_sender;
+		ret 1;
+	}
+};
+Frame.setSender = function(newSender) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_frame_set_sender;
+	}
+};
+Frame.resume = function(x) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_frame_resume_with;
+		ret 1;
+	}
+};
+
