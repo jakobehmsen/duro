@@ -1,288 +1,689 @@
 /*
-A file containing miscellenous and frequently changed code samples.
+A file containing miscellaneous and frequently changed code samples.
 */
 
 function load(path) {
 	# {
-		load_arg :0
-		sp_load
-		ret :1
+		load_arg 0;
+		sp_load;
+		ret 1;
 	}
 }
+
 
 load("std");
 load("collections");
 
 /*
-var a = [1, 3, 5];
+Frame.getSender = function() {
+	#{
+		load_this;
+		sp_frame_sender;
+		ret 1;
+	}
+};
+Frame.resume = function(x) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_frame_resume_with;
+		ret 1;
+	}
+};
 
-a[1] += 7;
-a[1]++;
-a[1]++;
-a[1]++;
-a[1]--;
-a[1]++;
-a[1]++;
+frame.toString = function() {return "Root frame"};
 
-var i = a[1];
+function x(outer) {
+	var s = frame.getSender();
+	writeln(s);
+	outer.resume(null);
+	writeln("This shouldn't be reached.");
+}
+x(frame);
+writeln("This should be reached.");
+*/
 
-writeln(i);
+Any.isNull = function() {
+	return false;
+};
+
+Null.isNull = function() {
+	return true;
+};
+Null.== = function(other) {
+	return other.isNull();
+};
+
+Frame.sender = function() {
+	#{
+		load_this;
+		sp_frame_sender;
+		ret 1;
+	}
+};
+Frame.setSender = function(newSender) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_frame_set_sender;
+	}
+};
+Frame.resume = function(x) {
+	#{
+		load_this;
+		load_arg 0;
+		sp_frame_resume_with;
+		ret 1;
+	}
+};
+
+Generator = {
+	on: function(block) {
+		var generator = {
+			current: null,
+			producer: null,
+			mover: null,
+			moveNext: function() {
+				current = null;
+				mover = frame;
+				producer.setSender(mover);
+				producer.resume(null);
+			},
+			atEnd: function() {
+				return current.isNull();
+			},
+			put: function(item) {
+				current = item;
+				producer = frame.sender();
+				mover.resume(null);
+			},
+			next: function() {
+				var previous = current;
+				moveNext();
+				return previous;
+			}
+		};
+		generator.mover = frame;
+		block(generator);
+		return generator;
+	}
+};
+
+/*
+var g = Generator.on({
+	:g.put(1);
+	:g.put(2);
+	:g.put(3);
+	:g.put(5);
+	:g.put(8);
+});
+*/
+
+var g = Generator.on({
+	// Seems like "i" is not allocated properly
+	for(var i = 0; i < 10; i++)
+		:g.put(i);
+});
+
+while(!g.atEnd()) {
+	var next = g.next();
+	writeln(next);
+}
+
+/*
+var numbers = Generator.on({
+	for(var i = 0; i < 10; i++)
+		:generator.put(i);
+});
+
+while(!numbers.atEnd()) {
+	var next = generator.next();
+	writeln(next);
+}
+*/
+
+
+
+/*
+var myObject = {
+	iter: function() {
+		for(var i = 0; i < 10; i++) {
+			frame.sender().resume("next", i);
+		}
+		frame.sender().resume("end");
+	}
+};
+
+frame.handle = function(cont, id, arg) {
+	if(id == "next") {
+		writeln(arg);
+		cont.resume();
+	} else if(id == "end") {
+		
+	}
+};
+
+myObject.iter();
+
 */
 
 /*
-var arr = [1, 2, 3, 5, 8, 13, 21];
-
-for(var x in arr)
+Integer.to = function(other) {
+	for(var i = this; i < other; i++)
+		yield i;
+};
+for(var x in 1.to(1000))
 	writeln(x);
 */
 
+/*
+for(var x in [1, 2, 3, 5, 8])
+	writeln(x);
+*/
 
+/*
+var clo = {writeln(:x)};
+clo("Stuff");
+*/
+
+/*
+frame.toString = function() {return "Root frame"};
+function x() {
+	var sender = frame.sender();
+	writeln(sender)
+}
+x();
+writeln(frame)
+*/
+
+/*
+function x() {
+	var sender = frame.sender();
+	sender.toString = function() {return "Root frame"};
+}
+x();
+writeln(frame)
+*/
+
+/*
+if(1 <= 2) 
+	writeln("Yes");
+else
+	writeln("No");
+*/
+
+/*
 var myList = List.clone();
 
-
+myList.add(1);
+myList.add(3);
 myList.add(5);
-myList.add(8);
-myList.add(13);
-myList.add(21);
-myList.add(34);
 
-myList[1] += 3;
-
-myList[1]++;
-var i = myList[1];
-writeln(i);
-
-/*
-var f = myList.where(function(x) {return 10 < x < 30;});
-
-for(var x in f)
-	writeln(x);
-*/
-
-/*
-function it() {
-	//writeln(1);
-	yield 1;
-	//writeln(2);
-	yield 2;
-	//writeln(3);
-	yield 3;
-	//writeln(4);
+while(true) {
+	for(var x in myList.where({:x < 4}))
+		writeln(x);
+	pause;
+	myList.add(1);
 }
-
-var f = it().where(function(x) {return x > 2;});
-
-for(var x in f)
-	writeln(x);
 */
-
-/*
-
-// Binding function calls to arguments
-function call(f) {
-	f("stuff");
-}
-
-call(function(x) { 
-	this.std.writeln("I was called with '" + x + "'!!!"); 
-});
-
-// Binding function calls to variables
-var u = function(x) { 
-	this.std.writeln("I was called too - with '" + x + "'!!!"); 
-};
-u("hello");
-*/
-
-/*
-function mr() {
-	return 1, 2, 3;
-}
-
-var one;
-var two;
-var three;
-
-var x = one, two, three = mr();
-
-this.std.writeln(one); 
-this.std.writeln(two); 
-this.std.writeln(three); 
-this.std.writeln(x); 
-*/
-
-/*
-function myFunc() {
-	return 1, 2, 3;
-}
-
-x, y, z = myFunc();
-
-std.writeln("" + x + ", " + y + ", " + z);
-*/
-
-/*
-num = 5;
-num++;
-num--;
-num++;
-writeln(num);
-
-
-
-var list = newList();
-
-list.add(41);
-list.add(54);
-list.add(61);
-list.add(76);
-list.add(81);
-list.add(91);
-list.add(101);
-
-var f = where(list, function(x) {
-	//return 50 < x < 100;
-	return x % 2 != 0;
-});
-
-// var f = list.where({50 < :x < 100});
-// var f = list.where({|x| 50 < x < 100});
-
-for(var x in f)
-	writeln(x);
-*/
-
 
 /*
 function interval(from, to) {
 	for(var i = from; i < to; i++)
 		yield i;
-	yield 42;
 }
 
-var generator = this.interval(0, 10);
+var int = interval(1, 10);
+writeln("a");
+for(var x in interval(1, 10))
+	writeln(x);
+*/
 
-while(true) {
-	var hadNext, next = generator.next();
-	if(!hadNext) break;
-	this.std.writeln(next);
+/*
+for(var i = 1; i < 10; i++)
+	writeln(i);
+*/
+
+/*
+// There seems to be some issue in the array iterator:
+var array = [1, 2, 3, 5, 8];
+
+for(var x in array)
+	writeln(x);
+*/
+
+/*
+// General toString behavior in Frame prototype
+Frame.toString = function() {return "A frame"};
+
+// Specific toString behavior to this frame
+frame.toString = function() {return "Captured frame"};
+
+// Frame is captured into closure and used each time this closure is called
+var aClosure = {
+	writeln(frame);
+};
+
+// A new frame is created each time this function is called
+var aFunction = function() {
+	writeln(frame);
+};
+
+aClosure();
+aFunction();
+*/
+
+/*
+if("sdf" != "sdf")
+	writeln("Yes");
+else
+	writeln("No");
+*/
+//writeln("Hello World");
+//writeln("Age is: " + 9 % 2 * 32);
+
+//var str = "abc".add("def");
+
+/*
+function createClosure(x) {
+	return function() {
+		return x * 2;
+	}
+}
+
+var c = createClosure(5);
+var r = c();
+writeln(r);
+*/
+
+/*
+var createClosure = function(y) {
+	var x = 5;
+	return function() {
+		return x * y;
+	}
+};
+*/
+
+/*
+function createClosure(y) {
+	var x = 5;
+	return function() {
+		return x * y;
+	}
+}
+
+var c = createClosure(8);
+writeln(c);
+var r = c();
+writeln(r);
+*/
+
+/*
+var x = 5;
+var p = {
+	i: 3,
+	j: function() {
+		return x + i;
+	}
+};
+writeln(p);
+*/
+
+/*
+var i = 5;
+
+var o = {
+	j: 2,
+	y: function() {
+		return j * i;
+	}
+};
+
+writeln(o.y());
+
+*/
+
+/*
+var i = 3;
+var f = function() {
+	j++;
+	return j * i;
+};
+var o = {
+	j: 2,
+	y: f
+};
+writeln(o.y());
+writeln(o.y());
+*/
+
+/*
+var list = List.clone();
+list.add(3);
+list.add(56);
+list.add(34);
+list.add(23);
+list.add(634);
+list.add(456);
+list.add(127);
+
+for(var x in list.where(function(i) {return i > 100})) {
+	writeln(x);
+}
+*/
+
+/*
+var list = List.clone();
+
+list.add(3);
+list.add(56);
+list.add(34);
+list.add(23);
+list.add(133);
+list.add(634);
+list.add(456);
+list.add(127);
+
+var min = 100;
+var max = 200;
+
+writeln("Numbers between " + min + " and " + max + ":");
+for(var x in list.where({:i > min}).where({:i < max})) {
+	writeln(x);
+}
+
+writeln("Even numbers:");
+for(var x in list.where({:i % 2 == 0})) {
+	writeln(x);
 }
 */
 
 
 
+
 /*
-function interval(from, to) {
-	for(var i = from; i < to; i++)
-		yield i - from, i;
-}
+var c = {:x * 2};
+writeln(c(5));
 */
 
 /*
-function interval(from, to) {
-	for(var i = from; i < to; i++)
-		yield (i - from) + 1, i;
-}
-
-var generator = this.interval(1, 101);
-
-for(var x, y in generator)
-	this.std.writeln("" + x + ": " + y);
+var min = 100;
+var myClosure = {|i| i > min};
+writeln(myClosure(200));
+writeln(myClosure(20));
 */
 
 /*
-while(true) {
-	var hadNext, next1, next2 = generator.next();
-	if(!hadNext) break;
-	this.std.writeln("" + next1 + ": " + next2);
-}
+var x = 5;
+var c = closure() { x * 5 };
+var r = c();
+writeln(r);
 */
 
 /*
-function x() {
-	return 0, 1;
-}
-
-var x, y = this.x();
-*/
-
-
-//list.where(function(x) {return x > 50;});
-//list.where({x > 50});
-
-/*
-var listIterator = list.iterator();
-
-var hadNext, next = listIterator.next();
-while(hadNext) {
-	this.std.writeln(next);
-	hadNext, next = listIterator.next();
-}
+var o = {
+	i: 5,
+	f: {
+		j: 5,
+		call: function(k, l) {
+			return i * j * k * l;
+		}
+	}
+};
+writeln(o.f(2, 3));
 */
 
 /*
-var x = 0;
-while(true) {
-	this.std.writeln(x);
-	x++;
+var x = 5;
+var l = closure(a) {
+	var h = 5;
+	return x * a * h;
+};
+var r = l(6);
+writeln(r);
+*/
+
+/*
+function newClosure(a) {
+	var x = 4;
+	return closure(b) {
+		x++;
+		var y = 6;
+		return a + x + b + y;
+	}
+}
+
+var c = newClosure(3);
+writeln(c(5));
+writeln(c(5));
+writeln(c(5));
+*/
+
+/*
+var o = {
+	x: 5,
+	f: function() {
+		return closure() {
+			return x;
+		}
+	}
+};
+
+var c = o.f();
+var r = c();
+writeln(r);
+*/
+
+/*
+function x(i) {
+	var j = 3;
 	
-	if(x >= 10)
-		break;
+	return closure(k) {
+		//return i * j * k
+		return j;
+	};
 }
+var c = x(5);
+var r = c(6);
+writeln(r);
 */
 
 /*
-for(var x = 0; x < 100; x++) {
-	this.std.writeln(x);
+var o = {
+	y: function() {
+		writeln("Stuff");
+	}
+};
 
-	if(x >= 10)
-		break;
-}
+o.y();
 */
 
 /*
-var a = [14, 2, 572, 576, 76];
+var l = List.clone();
 
-var x = 0;
-for(var i in a) {
-	var o = a[i];
-	this.std.writeln(o);
+l.add(1);
+l.add(67);
 
-	x++;
-	if(x >= 3)
-		break;
-}
+writeln("Here");
+for(var x in l.where({:i > 50}))
+	writeln(x);
 */
 
 /*
-while(true) {
-	var hadNext, next = listIterator.next();
-	if(hadNext)
-		this.std.writeln(next);
-	else
-		break;
+var i = 0;
+while(i < 10) {
+	var x = i;
+	writeln(x);
+	i++;
 }
-while(true) {
-	var hadNext, next = listIterator.next();
-	if(!hadNext) break;
-	this.std.writeln(next);
-}
+writeln(x);
 */
 
 /*
-while(listIterator.hasNext()) {
-	var next = listIterator.next();
-	std.writeln(next);
+var x = 12;
+
+function func(x) {
+	return x * x;
 }
+
+writeln(func(x));
 */
 
+/*
+function newClosure(a) {
+	var x = 3;
+	return {|b, c|
+		var y = 5;
+		
+		//writeln("a=" + a + ", x=" + x + ", b=" + b + ", y=" + y + ", c=" + c);
+
+		return a * x * b * y * c;
+	};
+}
+
+var closure = newClosure(2);
+*/
+
+/*
+writeln("Counting from 1 to 100000...");
+for(var i = 0; i < 100000; i++) {
+
+}
+writeln("Finished dounting from 1 to 100000.");
+*/
+
+/*
+var r = 8 > 7 ? "yes" : "no";
+writeln(r);
+*/
+
+/*
+writeln("Hello World");
+*/
+
+/*
+//This should be possible (two x's):
+for(var x in l.where({:x > 50}))
+	writeln(x);
+*/
+
+/*
+What about multiple returns?
+for(var x, y in coll.where({|x y| y > 50}))
+	writeln(x + " = " + y);
+*/
+	
+/*	
+writeln(l.Any.clone);
+*/
+
+/*
+var closure = {writeln(:x)};
+closure("Stuff");
+*/
+
+/*
+var i = 5;
+
+function x() {
+	return i;
+}
+writeln(x());
+
+y = function() {
+	return i;
+};
+writeln(y());
+
+var z = function() {
+	return i;
+};
+writeln(z());
+
+var a = {
+	call: function() {
+		return i;
+	}
+}; 
+writeln(a());
+
+var b = {
+	call: {
+		call: function() {
+			return i;
+		}
+	}
+}; 
+writeln(b());
+*/
+
+/*
+var x = 5;
+
+function f1() {
+	return x * 3;
+}
+
+f2 = function() {
+	return x * 4;
+};
+
+writeln(f2);
+writeln(f1());
+*/
+
+/*
+function createClosure() {
+	var x = 15;
+	
+	return function() {
+		writeln("In closure.");
+		return x;
+	}
+}
+=>
+function createClosure() {
+	var x = 15;
+	
+	return {
+		x: x,
+		call: function() {
+			writeln("In closure.");
+			return x;
+		}
+	};
+}
+
+/*
+function createClosure() {
+	var x = 15;
+	
+	return function() {
+		writeln("In closure.");
+		return x;
+	}
+}
+
+var closure = createClosure();
+var r = closure();
+writeln(r);
+*/
+
+/*
+var func = {
+	x: 5,
+	call: function(i) {
+		return x + i;
+	}
+};
+
+writeln(func(1));
+func.x = 6;
+writeln(func(1));
+*/
+
+
+/*
 writeln("Killed.");
-
-/*
-while(true) {
-	std.writeln(list.toString());
-	std.writeln("Got to take a break now.");
-	pause;
-	std.writeln("Up again!");
-}
 */
