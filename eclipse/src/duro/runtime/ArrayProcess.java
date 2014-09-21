@@ -19,16 +19,6 @@ public class ArrayProcess extends DictionaryProcess implements Iterable<Object> 
 	private ArrayProcess(Object[] items) {
 		this.items = items;
 	}
-
-	@Override
-	public void define(Object key, Object value) {
-		items[(int)key] = value;
-	}
-
-	@Override
-	public Object lookup(Object key) {
-		return items[(int)key];
-	}
 	
 	public int length() {
 		return items.length;
