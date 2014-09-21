@@ -216,8 +216,16 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				Object[] arguments = new Object[behavior.parameterCount];
 				
-				for(int i = behavior.parameterCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
+				if(argumentCount < behavior.parameterCount) {
+					for(int i = argumentCount - 1; i >= 0; i--)
+						arguments[i] = currentFrame.stack.pop();
+					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
+						arguments[i] = any.lookup("Null");
+				} else {
+					for(int i = behavior.parameterCount - 1; i >= 0; i--)
+						arguments[i] = currentFrame.stack.pop();
+				}
+				
 				currentFrame.stack.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions);
@@ -246,8 +254,16 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				Object[] arguments = new Object[behavior.parameterCount];
 				
-				for(int i = argumentCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
+				if(argumentCount < behavior.parameterCount) {
+					for(int i = argumentCount - 1; i >= 0; i--)
+						arguments[i] = currentFrame.stack.pop();
+					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
+						arguments[i] = any.lookup("Null");
+				} else {
+					for(int i = behavior.parameterCount - 1; i >= 0; i--)
+						arguments[i] = currentFrame.stack.pop();
+				}
+				
 				currentFrame.stack.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, currentFrame.self, arguments, behavior.variableCount, behavior.instructions);
