@@ -7,12 +7,14 @@ public class ClosureProcess extends DictionaryProcess {
 	private static final long serialVersionUID = 1L;
 	private FrameProcess frame;
 	private BehaviorProcess behavior;
+	private int[] ordinals;
 	
 	private BehaviorProcess callBehavior;
 
-	public ClosureProcess(FrameProcess frame, BehaviorProcess behavior) {
+	public ClosureProcess(FrameProcess frame, BehaviorProcess behavior, int[] ordinals) {
 		this.frame = frame;
 		this.behavior = behavior;
+		this.ordinals = ordinals;
 	}
 
 	@Override
@@ -22,7 +24,7 @@ public class ClosureProcess extends DictionaryProcess {
 				Instruction[] callInstructions = new Instruction[] {
 					new Instruction(Instruction.OPCODE_LOAD_FRAME, frame),
 					new Instruction(Instruction.OPCODE_LOAD_BEHAVIOR, behavior),
-					new Instruction(Instruction.OPCODE_EXEC_ON_FRAME),
+					new Instruction(Instruction.OPCODE_EXEC_ON_FRAME, ordinals),
 					new Instruction(Instruction.OPCODE_RET, 1)
 				};
 				
@@ -36,6 +38,6 @@ public class ClosureProcess extends DictionaryProcess {
 	
 	@Override
 	public DictionaryProcess newBase() {
-		return new ClosureProcess(frame, behavior);
+		return new ClosureProcess(frame, behavior, ordinals);
 	}
 }
