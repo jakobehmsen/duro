@@ -786,12 +786,13 @@ public class Compiler {
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
+				int[] ordinals = newIdToParameterOrdinalMap.getOrdinals();
 				int parameterCount = newIdToParameterOrdinalMap.size();
 
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
 				// [closure]
 			}
 			
