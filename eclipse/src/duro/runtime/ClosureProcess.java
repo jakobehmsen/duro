@@ -20,7 +20,7 @@ public class ClosureProcess extends DictionaryProcess {
 		if(key.equals("call")) {
 			if(callBehavior == null) {
 				Instruction[] callInstructions = new Instruction[] {
-					new Instruction(Instruction.OPCODE_LOAD_THIS_FRAME, frame),
+					new Instruction(Instruction.OPCODE_LOAD_FRAME, frame),
 					new Instruction(Instruction.OPCODE_LOAD_BEHAVIOR, behavior),
 					new Instruction(Instruction.OPCODE_EXEC_ON_FRAME),
 					new Instruction(Instruction.OPCODE_RET, 1)
