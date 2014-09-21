@@ -53,13 +53,13 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			reificationHandle = new Handle();
 		}
 		
-		public Frame(Frame sender, Process self, Object[] arguments, Object[] variables, Instruction[] instructions, Handle reificationHandle) {
+		public Frame(Frame sender, Process self, Object[] arguments, Object[] variables, Instruction[] instructions) {
 			this.sender = sender;
 			this.self = self;
 			this.arguments = arguments;
 			this.variables = variables;
 			this.instructions = instructions;
-			this.reificationHandle = reificationHandle;
+			reificationHandle = new Handle();
 		}
 		
 		public final FrameProcess getReifiedFrame(Process any) {
@@ -82,6 +82,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		// Add Any prototype
 		any = new DictionaryProcess();
 		any.defineShared("Any", any);
+		// Add Null singleton
+		any.defineShared("Null", any.clone());
 		// Add Iterable prototype
 		DictionaryProcess iterable = any.clone();
 		any.defineShared("Iterable", iterable);
@@ -352,7 +354,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			// Move forward arguments
 			int start = frame.frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.reificationHandle);
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
@@ -361,7 +363,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_NULL: {
-			currentFrame.stack.push(new NullProcess());
+			Object nil = any.lookup("Null");
+			currentFrame.stack.push(nil);
 			currentFrame.instructionPointer++;
 			
 			break;
