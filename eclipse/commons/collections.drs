@@ -2,6 +2,38 @@
 Collections library
 */
 
+Generator = {
+	on: function(block) {
+		var generator = {
+			current: null,
+			producer: null,
+			mover: null,
+			moveNext: function() {
+				current = null;
+				mover = frame;
+				producer.setSender(mover);
+				producer.resume(null);
+			},
+			atEnd: function() {
+				return current.isNull();
+			},
+			put: function(item) {
+				current = item;
+				producer = frame.sender();
+				mover.resume(null);
+			},
+			next: function() {
+				var previous = current;
+				moveNext();
+				return previous;
+			}
+		};
+		generator.mover = frame;
+		block(generator);
+		return generator;
+	}
+};
+
 function arrayLength(array) {
 	#{
 		load_arg 0;
@@ -44,7 +76,7 @@ Array.length = function() {
 	}
 };
 
-Array.iterator = function() {
+Array.iterator2 = function() {
 	return {
 		array: this,
 		i: 0,
@@ -58,6 +90,15 @@ Array.iterator = function() {
 			return false, null;
 		}
 	};
+};
+
+Array.iterator = function() {
+	return Generator.on({
+		for(var i = 0; i < length(); i++) {
+			var item = this[i];
+			:generator.put(item);
+		}
+	});
 };
 
 /*
