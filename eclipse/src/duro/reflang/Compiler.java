@@ -1161,6 +1161,26 @@ public class Compiler {
 			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
 				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
 
+//				// iterable
+//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
+//				// iterator
+//				int jumpIndex = instructions.size();
+//				forInJumpIndexStack.push(jumpIndex);
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				// iterator, iterator
+//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+//				// iterator, nextValues..., hadNext
+//				int conditionalJumpIndex = instructions.size();
+//				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
+//				instructions.add(null);
+//				// iterator, nextValues...
+//				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
+//					String id = varCtx.ID().getText();
+//					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//				}
+//				// iterator
+				
 				// iterable
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
 				// iterator
@@ -1168,35 +1188,51 @@ public class Compiler {
 				forInJumpIndexStack.push(jumpIndex);
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				// iterator, iterator
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
-				// iterator, nextValues..., hadNext
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "atEnd", 0));
+				// iterator, bool
 				int conditionalJumpIndex = instructions.size();
 				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
-				// iterator, nextValues...
-				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
-					String id = varCtx.ID().getText();
-					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-				}
+				// iterator
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				// iterator, iterator
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+				// iterator, next
+				String id = forInStatementCtx.forInStatementVar(0).ID().getText();
+				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 				// iterator
 			}
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
+//				int jumpIndex = forInJumpIndexStack.pop();
+//				int jump = jumpIndex - instructions.size();
+//				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+//				
+//				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
+//				int conditionalJump = instructions.size() - conditionalJumpIndex;
+//				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+//
+//				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+//				// iterator, nextValues...
+//				
+//				for(int i = 0; i < forInStatementCtx.forInStatementVar().size(); i++)
+//					instructions.add(new Instruction(Instruction.OPCODE_POP));
+//				// iterator
+//				instructions.add(new Instruction(Instruction.OPCODE_POP));
+//				//
+				
+				
+				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
 				
 				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
 				int conditionalJump = instructions.size() - conditionalJumpIndex;
-				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_TRUE, conditionalJump));
 
-				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-				// iterator, nextValues...
-				
-				for(int i = 0; i < forInStatementCtx.forInStatementVar().size(); i++)
-					instructions.add(new Instruction(Instruction.OPCODE_POP));
 				// iterator
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 				// 
