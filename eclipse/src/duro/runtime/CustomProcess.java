@@ -355,7 +355,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			// Move forward arguments
 			int start = frame.frame.arguments.length - currentFrame.arguments.length;
 			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
-			currentFrame = new Frame(currentFrame, frame.frame.sender, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.reificationHandle);
+			currentFrame = new Frame(currentFrame, currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.reificationHandle);
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS: {
