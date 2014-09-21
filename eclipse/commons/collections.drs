@@ -129,7 +129,7 @@ List.add = function(item) {
 	this.items[this.size] = item;
 	this.size++;
 };
-List.iterator = function() {
+List.iterator2 = function() {
 	return {
 		list: this,
 		i: 0,
@@ -143,6 +143,14 @@ List.iterator = function() {
 			return false, null;
 		}
 	};
+};
+List.iterator = function() {
+	return Generator.on({
+		for(var i = 0; i < size; i++) {
+			var item = items[i];
+			:generator.put(item);
+		}
+	});
 };
 List.set = function(index, value) {
 	items[index] = value;
