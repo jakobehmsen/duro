@@ -568,6 +568,13 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SP_FRAME_SET_SENDER: {
+			FrameProcess newSender = (FrameProcess)currentFrame.stack.pop();
+			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
+			frame.frame.sender = newSender.frame;
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_SP_FRAME_RESUME: {
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
 			frame.frame.sender = currentFrame;
@@ -579,7 +586,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_FRAME_RESUME_WITH: {
 			Object value = currentFrame.stack.pop();
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			frame.frame.sender = currentFrame;
 
 			currentFrame = frame.frame;
 			currentFrame.stack.push(value);
