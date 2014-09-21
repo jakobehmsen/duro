@@ -34,6 +34,19 @@ Generator = {
 	}
 };
 
+Generatable = {
+	on: function(block) {
+		var generatable = Iterable.clone();
+		
+		generatable.block = block;
+		generatable.iterator = function() {
+			return Generator.on(block);
+		};
+		
+		return generatable;
+	}
+};
+
 function arrayLength(array) {
 	#{
 		load_arg 0;
@@ -58,7 +71,6 @@ Array.set = function(index, value) {
 		sp_array_set;
 	}
 };
-
 Array.get = function(index) {
 	# {
 		load_this;
@@ -67,7 +79,6 @@ Array.get = function(index) {
 		ret 1;
 	}
 };
-
 Array.length = function() {
 	#{
 		load_this;
@@ -75,23 +86,6 @@ Array.length = function() {
 		ret 1;
 	}
 };
-
-Array.iterator2 = function() {
-	return {
-		array: this,
-		i: 0,
-		next: function() {
-			if(i < array.length()) {
-				var item = array[i];
-				i++;
-				return true, item;
-			}
-				
-			return false, null;
-		}
-	};
-};
-
 Array.iterator = function() {
 	return Generator.on({
 		for(var i = 0; i < length(); i++) {
@@ -104,7 +98,7 @@ Array.iterator = function() {
 /*
 // Implicit inheritance based on protocol?
 
-Iterable = extend(["iterator"]);
+Iterable = extend(["iterable"]);
 
 Iterable.where = function(predicate) {
 	for(var x in this) {
@@ -115,10 +109,16 @@ Iterable.where = function(predicate) {
 */
 
 Iterable.where = function(predicate) {
-	for(var x in this) {
-		if(predicate(x))
-			yield x;
-	}
+	return Generatable.on({
+		for(var x in this) {
+			if(predicate(x))
+				:generator.put(x);
+		}
+	});
+};
+Iterable.each = function(block) {
+	for(var x in this)
+		block(x);
 };
 
 List = Iterable.clone();
@@ -128,21 +128,6 @@ List.size = 0;
 List.add = function(item) {
 	this.items[this.size] = item;
 	this.size++;
-};
-List.iterator2 = function() {
-	return {
-		list: this,
-		i: 0,
-		next: function() {
-			if(this.i < this.list.size) {
-				var item = this.list.items[this.i];
-				this.i++;
-				return true, item;
-			}
-				
-			return false, null;
-		}
-	};
 };
 List.iterator = function() {
 	return Generator.on({
