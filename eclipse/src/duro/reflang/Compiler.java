@@ -732,7 +732,6 @@ public class Compiler {
 			
 			@Override
 			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
-				int parameterCount = ctx.functionParameters().ID().size();
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
 				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
@@ -740,6 +739,7 @@ public class Compiler {
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
+				int parameterCount = newIdToParameterOrdinalMap.size();
 
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
@@ -781,12 +781,12 @@ public class Compiler {
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInner();
-				int parameterCount = ctx.closureParameters().ID().size();
 				for(TerminalNode parameterIdNode: ctx.closureParameters().ID()) {
 					String parameterId = parameterIdNode.getText();
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
+				int parameterCount = newIdToParameterOrdinalMap.size();
 
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				
@@ -914,10 +914,11 @@ public class Compiler {
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
 			
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				int parameterCount = newIdToParameterOrdinalMap.size();
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, newIdToParameterOrdinalMap.size(), functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
 				instructions.add(new Instruction(Instruction.OPCODE_SET));
 			}
 			
