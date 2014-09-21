@@ -61,4 +61,8 @@ public class OrdinalAllocator {
 	public int size() {
 		return allocation.blockIdToOrdinalMap.size();
 	}
+
+	public int[] getOrdinals() {
+		return localIdToBlockIdMap.values().stream().mapToInt(x -> (int)x).sorted().toArray();
+	}
 }
