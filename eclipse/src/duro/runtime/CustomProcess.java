@@ -367,9 +367,25 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_EXEC_ON_FRAME: {
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
+			int[] ordinals = (int[])instruction.operand1;
 			// Move forward arguments
-			int start = frame.frame.arguments.length - currentFrame.arguments.length;
-			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, start, currentFrame.arguments.length);
+			if(currentFrame.arguments.length < ordinals.length) {
+				for(int i = 0; i < currentFrame.arguments.length; i++) {
+					int ordinal = ordinals[i];
+					Object argument = currentFrame.arguments[i];
+					frame.frame.arguments[ordinal] = argument;
+				}
+				for(int i = currentFrame.arguments.length; i < ordinals.length; i++) {
+					int ordinal = ordinals[i];
+					frame.frame.arguments[ordinal] = any.lookup("Null");
+				}
+			} else {
+				for(int i = 0; i < ordinals.length; i++) {
+					int ordinal = ordinals[i];
+					Object argument = currentFrame.arguments[i];
+					frame.frame.arguments[ordinal] = argument;
+				}
+			}
 			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions);
 			
 			break;
@@ -705,8 +721,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
+			int[] ordinals = (int[])instruction.operand1;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior);
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior, ordinals);
 			closure.defineProto("prototype", any.lookup("Closure"));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
