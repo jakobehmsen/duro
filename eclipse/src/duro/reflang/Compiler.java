@@ -1255,6 +1255,7 @@ public class Compiler {
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
+				case DuroLexer.PROTO_ASSIGN:
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 					// receiver, id
 					break;
@@ -1278,6 +1279,12 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					break;
+				case DuroLexer.PROTO_ASSIGN:
+					// receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+					// value, receiver, id, value
+					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO));
 					break;
 				default:
 					String id = ctx.messageId().getText();
