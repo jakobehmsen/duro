@@ -9,9 +9,9 @@ public class ArrayProcess extends DictionaryProcess {
 	private static final long serialVersionUID = 1L;
 	private Object[] items;
 
-	public ArrayProcess(int length) {
+	public ArrayProcess(int length, Object exemplar) {
 		this.items = new Object[length];
-		Arrays.fill(items, new NullProcess());
+		Arrays.fill(items, exemplar);
 	}
 
 	private ArrayProcess(Object[] items) {
