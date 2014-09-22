@@ -92,13 +92,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		BooleanProcess f = new BooleanProcess(false);
 		f.defineShared("prototype", any);
 		any.defineShared("False", f);
-		// Add Iterable prototype
-		DictionaryProcess iterable = any.clone();
-		any.defineShared("Iterable", iterable);
-		// Add Iterator prototype
-		any.defineShared("Iterator", any.clone());
-		// Add Array prototype
-		any.defineShared("Array", iterable.clone());
+		any.defineShared("Array", any.clone());
 		// Add String prototype
 		any.defineShared("String", any.clone());
 		// Add Integer prototype
