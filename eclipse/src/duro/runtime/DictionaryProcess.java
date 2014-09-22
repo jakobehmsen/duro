@@ -11,7 +11,7 @@ public class DictionaryProcess extends Process {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Hashtable<Object, Object> protos = new Hashtable<Object, Object>();
+	private Hashtable<Object, Process> protos = new Hashtable<Object, Process>();
 
 	@Override
 	public void replay(List<Instruction> commands) {
@@ -29,9 +29,9 @@ public class DictionaryProcess extends Process {
 		 */
 		private static final long serialVersionUID = 1L;
 		public final boolean isShared;
-		public final Object value;
+		public final Process value;
 		
-		public Member(boolean isShared, Object value) {
+		public Member(boolean isShared, Process value) {
 			this.isShared = isShared;
 			this.value = value;
 		}
@@ -56,31 +56,31 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public void defineProto(Object key, Object value) {
+	public void defineProto(Object key, Process value) {
 		properties.put(key, new Member(true, value));
 		protos.put(key, value);
 	}
 	
-	public void defineShared(Object key, Object value) {
+	public void defineShared(Object key, Process value) {
 		properties.put(key, new Member(true, value));
 		protos.remove(key);
 	}
 	
 	@Override
-	public void define(Object key, Object value) {
+	public void define(Object key, Process value) {
 		properties.put(key, new Member(false, value));
 		protos.remove(key);
 	}
 
 	@Override
-	public Object lookup(Object key) {
+	public Process lookup(Object key) {
 		Member valueMember = properties.get(key);
 		
 		if(valueMember != null)
 			return valueMember.value;
 		
-		for(Object proto: protos.values()) {
-			Object value = ((Process)proto).lookup(key);
+		for(Process proto: protos.values()) {
+			Process value = proto.lookup(key);
 			if(value != null)
 				return value;
 		}
@@ -108,7 +108,7 @@ public class DictionaryProcess extends Process {
 		
 		for(Map.Entry<Object, Member> entry: this.properties.entrySet()) {
 			if(!entry.getValue().isShared) {
-				Object clonedValue = entry.getValue().value;
+				Process clonedValue = entry.getValue().value;
 				if(clonedValue instanceof DictionaryProcess)
 					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
 				clone.properties.put(entry.getKey(), new Member(false, clonedValue));

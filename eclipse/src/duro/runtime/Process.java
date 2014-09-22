@@ -17,9 +17,9 @@ public abstract class Process implements Serializable, Player<Instruction> {
 
 	public abstract Object getCallable(ProcessFactory factory, Object key);
 
-	public abstract void define(Object key, Object value);
+	public abstract void define(Object key, Process value);
 
-	public abstract Object lookup(Object key);
+	public abstract Process lookup(Object key);
 
-	public abstract void defineProto(Object key, Object value);
+	public abstract void defineProto(Object key, Process value);
 }

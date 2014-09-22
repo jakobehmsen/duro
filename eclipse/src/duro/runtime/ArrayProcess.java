@@ -7,14 +7,14 @@ public class ArrayProcess extends DictionaryProcess {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Object[] items;
+	private Process[] items;
 
-	public ArrayProcess(int length, Object exemplar) {
-		this.items = new Object[length];
+	public ArrayProcess(int length, Process exemplar) {
+		this.items = new Process[length];
 		Arrays.fill(items, exemplar);
 	}
 
-	private ArrayProcess(Object[] items) {
+	private ArrayProcess(Process[] items) {
 		this.items = items;
 	}
 	
@@ -24,9 +24,9 @@ public class ArrayProcess extends DictionaryProcess {
 	
 	@Override
 	public DictionaryProcess newBase() {
-		Object[] clonedItems = new Object[items.length];
+		Process[] clonedItems = new Process[items.length];
 		for(int i = 0; i < items.length; i++) {
-			Object clonedItem = items[i];
+			Process clonedItem = items[i];
 			if(clonedItem instanceof DictionaryProcess)
 				clonedItem = ((DictionaryProcess)clonedItem).clone();
 			clonedItems[i] = clonedItem;
@@ -34,11 +34,11 @@ public class ArrayProcess extends DictionaryProcess {
 		return new ArrayProcess(clonedItems);
 	}
 
-	public Object get(int index) {
+	public Process get(int index) {
 		return items[index];
 	}
 
-	public void set(int index, Object value) {
+	public void set(int index, Process value) {
 		items[index] = value;
 	}
 }
