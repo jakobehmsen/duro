@@ -364,6 +364,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SET_PROTO: {
+			Object value = currentFrame.stack.pop();
+			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
+			Process receiver = (Process)currentFrame.stack.pop();
+			receiver.defineProto(key.str, value);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_GET: {
 			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
@@ -765,6 +773,11 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	
 	@Override
 	public void define(Object key, Object value) {
+
+	}
+	
+	@Override
+	public void defineProto(Object key, Object value) {
 
 	}
 
