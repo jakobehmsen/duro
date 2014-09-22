@@ -65,7 +65,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		public final FrameProcess getReifiedFrame(Process any) {
 			if(reificationHandle.value == null) {
 				reificationHandle.value = new FrameProcess(this);
-				reificationHandle.value.defineProto("parent", any.lookup("Frame"));
+				reificationHandle.value.defineProto("prototype", any.lookup("Frame"));
 			}
 			
 			return reificationHandle.value;
@@ -429,7 +429,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_LOAD_INT: {
 			int intValue = (int)instruction.operand1;
 			IntegerProcess integer = new IntegerProcess(intValue);
-			integer.defineProto("parent", any.lookup("Integer"));
+			integer.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(integer);
 			currentFrame.instructionPointer++;
 			
@@ -447,7 +447,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_LOAD_STRING: {
 			String str = (String)instruction.operand1;
 			StringProcess string = new StringProcess(str);
-			string.defineProto("parent", any.lookup("String"));
+			string.defineProto("prototype", any.lookup("String"));
 			currentFrame.stack.push(string);
 			currentFrame.instructionPointer++;
 			
@@ -517,7 +517,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess result = new StringProcess(lhs.str + rhs.str);
-			result.defineProto("parent", any.lookup("String"));
+			result.defineProto("prototype", any.lookup("String"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -533,7 +533,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue + rhs.intValue);
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -542,7 +542,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue - rhs.intValue);
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -551,7 +551,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue * rhs.intValue);
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -560,7 +560,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue / rhs.intValue);
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -569,7 +569,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue % rhs.intValue);
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -598,7 +598,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_INT_TO_STRING: {
 			IntegerProcess integer = (IntegerProcess)currentFrame.stack.pop();
 			StringProcess result = new StringProcess(Integer.toString(integer.intValue));
-			result.defineProto("parent", any.lookup("String"));
+			result.defineProto("prototype", any.lookup("String"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -650,7 +650,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
-			newDict.defineProto("parent", any);
+			newDict.defineProto("prototype", any);
 			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
 			
@@ -666,7 +666,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_ARRAY_LENGTH: {
 			ArrayProcess newArray = (ArrayProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(newArray.length());
-			result.defineProto("parent", any.lookup("Integer"));
+			result.defineProto("prototype", any.lookup("Integer"));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
