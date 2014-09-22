@@ -2,6 +2,8 @@
 Collections library
 */
 
+Iterable = { };
+
 Generator = {
 	on: function(block) {
 		var generator = {
@@ -63,6 +65,7 @@ function newArray(length) {
 	}
 }
 
+Array.prototype ^= Iterable;
 Array.set = function(index, value) {
 	# {
 		load_this;
