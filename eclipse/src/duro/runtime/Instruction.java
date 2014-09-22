@@ -75,11 +75,9 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_NEW_ARRAY = 130;
 	public static final int OPCODE_SP_ARRAY_LENGTH = 131;
 	public static final int OPCODE_SP_LOAD = 132;
-	public static final int OPCODE_SP_NEW_GENERATOR = 133;
-	public static final int OPCODE_SP_NEW_GENERATABLE = 134;
-	public static final int OPCODE_SP_NEW_CLOSURE = 135;
-	public static final int OPCODE_SP_NEW_BEHAVIOR = 136;
-	public static final int OPCODE_SP_CLONE = 137;
+	public static final int OPCODE_SP_NEW_CLOSURE = 133;
+	public static final int OPCODE_SP_NEW_BEHAVIOR = 134;
+	public static final int OPCODE_SP_CLONE = 135;
 	
 	public static final int OPCODE_BREAK_POINT = 255;
 
