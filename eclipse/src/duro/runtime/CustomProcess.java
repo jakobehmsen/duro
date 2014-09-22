@@ -687,35 +687,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			}
 			
 			break;
-		} case Instruction.OPCODE_SP_NEW_GENERATOR: {
-			Object[] arguments = (Object[])currentFrame.stack.pop();
-			Process self = (Process)currentFrame.stack.pop();
-			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			
-			Frame generatorFrame = new Frame(currentFrame, self, arguments, behavior.variableCount, behavior.instructions);
-			GeneratorProcess generator = new GeneratorProcess(generatorFrame.getReifiedFrame(any));
-			DictionaryProcess iteratorPrototype = (DictionaryProcess)any.lookup("Iterator");
-			generator.defineProto("prototype", iteratorPrototype);
-			currentFrame.stack.push(generator);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_NEW_GENERATABLE: {
-			int argumentCount = (int)instruction.operand1;
-			Object[] arguments = new Object[argumentCount];
-			
-			for(int i = argumentCount - 1; i >= 0; i--)
-				arguments[i] = currentFrame.stack.pop();
-			
-			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-
-			GeneratableProcess generatable = new GeneratableProcess(behavior, currentFrame.self, arguments);
-			DictionaryProcess iterablePrototype = (DictionaryProcess)any.lookup("Iterable");
-			generatable.defineProto("prototype", iterablePrototype);
-			currentFrame.stack.push(generatable);
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
 			int[] ordinals = (int[])instruction.operand1;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
