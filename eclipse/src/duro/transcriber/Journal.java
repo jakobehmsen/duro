@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
-public class Journal<T extends Player<C>, C> {
-	private static class Entry<T extends Player<C>, C> implements Serializable {
+public class Journal<C> {
+	private static class Entry<C> implements Serializable {
 		/**
 		 * 
 		 */
@@ -37,30 +36,23 @@ public class Journal<T extends Player<C>, C> {
 	private static final String journalFile = journalFileName + ".jnl";
 	
 	private String journalPath;
-//	private T root;
 	private ExecutorService journalLogger;
 
-	public Journal(String journalPath/*, T root*/) throws IOException, ClassNotFoundException {
+	public Journal(String journalPath) throws IOException, ClassNotFoundException {
 		this.journalPath = journalPath;
-//		this.root = root;
 		journalLogger = Executors.newSingleThreadExecutor();
 	}
 	
-	private static class JournalInfo<T extends Player<C>, C> {
-//		private final T root;
-		private final ArrayList<Entry<T, C>> transactions;
+	private static class JournalInfo<C> {
+		private final ArrayList<Entry<C>> transactions;
 		
-		public JournalInfo(/*T root, */ArrayList<Entry<T, C>> transactions) {
-//			this.root = root;
+		public JournalInfo(ArrayList<Entry<C>> transactions) {
 			this.transactions = transactions;
 		}
 	}
 	
-	public static <T extends Player<C>, C> Journal<T, C> read(String journalPath) throws ClassNotFoundException, IOException {
-//		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
-		
-		Journal<T, C> journal = new Journal<T, C>(journalPath/*, journalInfo.root*/);
-//		journal.replay(journalInfo.transactions);
+	public static <C> Journal<C> read(String journalPath) throws ClassNotFoundException, IOException {
+		Journal<C> journal = new Journal<C>(journalPath);
 		
 		if(!java.nio.file.Files.exists(Paths.get(journalPath)))
 			java.nio.file.Files.createDirectory(Paths.get(journalPath));
@@ -72,49 +64,28 @@ public class Journal<T extends Player<C>, C> {
 	}
 	
 	public List<C> getCommands() throws ClassNotFoundException, IOException {
-		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
+		JournalInfo<C> journalInfo = readJournal(journalPath + "/" + journalFile);
 		
 		ArrayList<C> commands = new ArrayList<C>();
 		
-		for(Entry<T, C> transaction: journalInfo.transactions)
+		for(Entry<C> transaction: journalInfo.transactions)
 			commands.addAll(transaction.replayableCommands);
 		
 		return commands;
 	}
-	
-	public static <T extends Player<C>, C> void write(T root, String journalPath) throws IOException {
-		if(!java.nio.file.Files.exists(Paths.get(journalPath)))
-			java.nio.file.Files.createDirectory(Paths.get(journalPath));
-		else {
-			java.nio.file.Files.deleteIfExists(Paths.get(journalPath + "/" + journalFile));
-		}
-		
-		FileOutputStream fileOutput = new FileOutputStream(journalPath + "/" + journalFile, true);
-		BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
-		ObjectOutputStream objectOutput = new ObjectOutputStream(bufferedOutput);
-		
-		objectOutput.writeObject(root);
-		
-		objectOutput.close();
-	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends Player<C>, C> JournalInfo<T, C> readJournal(String journalPath) throws ClassNotFoundException, IOException {
-//		T root;
-		ArrayList<Entry<T, C>> transactions = new ArrayList<Entry<T, C>>();
+	private static <C> JournalInfo<C> readJournal(String journalPath) throws ClassNotFoundException, IOException {
+		ArrayList<Entry<C>> transactions = new ArrayList<Entry<C>>();
 		
 		FileInputStream fileOutput = new FileInputStream(journalPath);
 		BufferedInputStream bufferedOutput = new BufferedInputStream(fileOutput);
 		
 		try {
-//			@SuppressWarnings("resource")
-//			ObjectInputStream rootObjectInput = new ObjectInputStream(bufferedOutput);
-//			root = (T)rootObjectInput.readObject();
-			
 			while(bufferedOutput.available() != 0) {
 				// Should be read in chunks
 				ObjectInputStream objectInput = new ObjectInputStream(bufferedOutput);
-				Entry<T, C> transaction = (Entry<T, C>)objectInput.readObject();
+				Entry<C> transaction = (Entry<C>)objectInput.readObject();
 					
 				transactions.add(transaction);
 			}
@@ -122,19 +93,7 @@ public class Journal<T extends Player<C>, C> {
 			bufferedOutput.close();
 		}
 		
-		return new JournalInfo<T, C>(/*root, */transactions);
-	}
-	
-	private void replay(ArrayList<Entry<T, C>> transactions) {
-//		for(Entry<T, C> entry: transactions) {
-//			T player = root;
-//			player.replay(entry.replayableCommands);
-//		}
-	}
-	
-	public T getRoot() {
-//		return root;
-		return null;
+		return new JournalInfo<C>(transactions);
 	}
 	
 	public void log(/*Here should be the identifier/reference?, */ final List<C> commands) {
@@ -146,7 +105,7 @@ public class Journal<T extends Player<C>, C> {
 					BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutput);
 					ObjectOutputStream objectOutput = new ObjectOutputStream(bufferedOutput);
 					
-					objectOutput.writeObject(new Entry<T, C>(commands));
+					objectOutput.writeObject(new Entry<C>(commands));
 					
 					objectOutput.close();
 				} catch (FileNotFoundException e) {

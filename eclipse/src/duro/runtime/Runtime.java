@@ -6,9 +6,9 @@ import java.util.List;
 import duro.transcriber.Journal;
 
 public class Runtime {
-	private Journal<CustomProcess, InteractionHistory.Interaction> journal;
+	private Journal<InteractionHistory.Interaction> journal;
 	
-	public Runtime(Journal<CustomProcess, InteractionHistory.Interaction> journal) {
+	public Runtime(Journal<InteractionHistory.Interaction> journal) {
 		this.journal = journal;
 	}
 

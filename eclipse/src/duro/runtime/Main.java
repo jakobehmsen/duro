@@ -27,7 +27,7 @@ public class Main {
 				mainProcess = (CustomProcess) oo.readObject();
 		    }
 			
-			Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(mainObjectCodeJournalPath);
+			Journal<InteractionHistory.Interaction> journal = Journal.read(mainObjectCodeJournalPath);
 			List<InteractionHistory.Interaction> commands = journal.getCommands();
 			if(commands.size() > 0)
 				mainProcess.replay(commands);
