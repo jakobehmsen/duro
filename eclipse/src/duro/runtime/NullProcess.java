@@ -31,6 +31,12 @@ public class NullProcess extends Process {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void defineProto(Object key, Object value) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public Object lookup(Object key) {

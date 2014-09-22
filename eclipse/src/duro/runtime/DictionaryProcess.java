@@ -54,7 +54,8 @@ public class DictionaryProcess extends Process {
 		
 		return null;
 	}
-	
+
+	@Override
 	public void defineProto(Object key, Object value) {
 		properties.put(key, new Member(true, value));
 		protos.put(key, value);

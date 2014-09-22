@@ -20,4 +20,6 @@ public abstract class Process implements Serializable, Player<Instruction> {
 	public abstract void define(Object key, Object value);
 
 	public abstract Object lookup(Object key);
+
+	public abstract void defineProto(Object key, Object value);
 }
