@@ -92,6 +92,7 @@ import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.WhileStatementContext;
 import duro.reflang.antlr4.DuroParser.YieldStatementContext;
+import duro.reflang.antlr4.DuroParser.YieldStatementExpressionContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
@@ -781,11 +782,14 @@ public class Compiler {
 					}
 				} else {
 					if(yieldStatements.size() > 0) {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
-						int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
-						for(int i = 0; i < yieldCount; i++)
-							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-						instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+//						int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
+//						for(int i = 0; i < yieldCount; i++)
+//							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//						instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+						
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 					} else {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
@@ -909,14 +913,25 @@ public class Compiler {
 			
 			@Override
 			public void enterYieldStatement(YieldStatementContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+			}
+			
+			@Override
+			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
+				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+			}
+			
+			@Override
+			public void exitYieldStatementExpression(YieldStatementExpressionContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "put", 1));
 			}
 			
 			@Override
 			public void exitYieldStatement(YieldStatementContext ctx) {
 				yieldStatements.add(ctx);
-				int yieldCount = ctx.expression().size();
-				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+//				int yieldCount = ctx.expression().size();
+//				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
 			}
 			
 			@Override
@@ -942,11 +957,14 @@ public class Compiler {
 			@Override
 			public void exitFunctionBody(FunctionBodyContext ctx) {
 				if(yieldStatements.size() > 0) {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
-					int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
-					for(int i = 0; i < yieldCount; i++)
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+//					int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
+//					for(int i = 0; i < yieldCount; i++)
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
+					
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				} else if(instructions.size() == 0 || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
@@ -1421,22 +1439,52 @@ public class Compiler {
 			// Generatable/generator
 			// Function returns iterables
 			
-			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.expression().size()).distinct().count();
+			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.yieldStatementExpression().size()).distinct().count();
 			if(distinctYieldCount > 1)
 				throw new RuntimeException("Multiple distinct yield counts.");
 			
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-			int parameterCount = idToParameterOrdinalMap.size();
-
+//			idToParameterOrdinalMap.declare("generator");
+			
+			int[] ordinals = new int[] {idToParameterOrdinalMap.ordinalFor("generator")};
+			int parameterCount = idToParameterOrdinalMap.size();// + 1;
+//			int[] generatorOrdinals = new int[bodyOrdinals.length + 1];
+//			System.arraycopy(bodyOrdinals, 0, generatorOrdinals, 1, bodyOrdinals.length);
+//			generatorOrdinals[0] = 0;
+//
 			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
+//			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
+//			// Forward arguments
+//			for(int i = 0; i < parameterCount; i++)
+//				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
+//			// A generator is a special object, which understands a single kind of message: next
+//			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
+//			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+			
+			/*
+			
+			Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
+			
+			*/
+			
+
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS, 1));
+			// This
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "Generatable"));
+			// This, "Generatable"
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET));
+			// Generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
-			// Forward arguments
-			for(int i = 0; i < parameterCount; i++)
-				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
-			// A generator is a special object, which understands a single kind of message: next
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
+			// Generatable, Behavior
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
+			// Generatable, Closure
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
+			// a generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 			
 			return new BodyInfo(variableCount, generatorInstructions);
