@@ -600,14 +600,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_FRAME_RESUME: {
-			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			frame.frame.sender = currentFrame;
-
-			currentFrame = frame.frame;
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_SP_FRAME_RESUME_WITH: {
 			Object value = currentFrame.stack.pop();
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
