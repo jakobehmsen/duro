@@ -2,11 +2,10 @@ package duro.runtime;
 
 import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DictionaryProcess extends Process implements Iterable<Object> {
+public class DictionaryProcess extends Process {
 	/**
 	 * 
 	 */
@@ -87,11 +86,6 @@ public class DictionaryProcess extends Process implements Iterable<Object> {
 		
 		return null;
 		
-	}
-
-	@Override
-	public Iterator<Object> iterator() {
-		return properties.keySet().iterator();
 	}
 	
 	@Override
