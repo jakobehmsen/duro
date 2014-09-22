@@ -65,7 +65,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_INT_TO_STRING = 80;
 	public static final int OPCODE_SP_FRAME_SENDER = 81;
 	public static final int OPCODE_SP_FRAME_SET_SENDER = 82;
-	public static final int OPCODE_SP_FRAME_RESUME_WITH = 83;
+	public static final int OPCODE_SP_FRAME_RESUME = 83;
 
 	public static final int OPCODE_SP_WRITE = 127;
 	public static final int OPCODE_SP_NEXT_LINE = 128;
