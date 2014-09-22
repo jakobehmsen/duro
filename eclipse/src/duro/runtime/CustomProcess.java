@@ -375,10 +375,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					Object argument = currentFrame.arguments[i];
 					frame.frame.arguments[ordinal] = argument;
 				}
-				for(int i = currentFrame.arguments.length; i < ordinals.length; i++) {
-					int ordinal = ordinals[i];
-					frame.frame.arguments[ordinal] = any.lookup("Null");
-				}
 			} else {
 				for(int i = 0; i < ordinals.length; i++) {
 					int ordinal = ordinals[i];
