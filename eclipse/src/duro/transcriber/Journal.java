@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class Journal<T extends Player<C>, C> {
 	private static class Entry<T extends Player<C>, C> implements Serializable {
@@ -36,32 +37,49 @@ public class Journal<T extends Player<C>, C> {
 	private static final String journalFile = journalFileName + ".jnl";
 	
 	private String journalPath;
-	private T root;
+//	private T root;
 	private ExecutorService journalLogger;
 
-	public Journal(String journalPath, T root) throws IOException, ClassNotFoundException {
+	public Journal(String journalPath/*, T root*/) throws IOException, ClassNotFoundException {
 		this.journalPath = journalPath;
-		this.root = root;
+//		this.root = root;
 		journalLogger = Executors.newSingleThreadExecutor();
 	}
 	
 	private static class JournalInfo<T extends Player<C>, C> {
-		private final T root;
+//		private final T root;
 		private final ArrayList<Entry<T, C>> transactions;
 		
-		public JournalInfo(T root, ArrayList<Entry<T, C>> transactions) {
-			this.root = root;
+		public JournalInfo(/*T root, */ArrayList<Entry<T, C>> transactions) {
+//			this.root = root;
 			this.transactions = transactions;
 		}
 	}
 	
 	public static <T extends Player<C>, C> Journal<T, C> read(String journalPath) throws ClassNotFoundException, IOException {
-		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
+//		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
 		
-		Journal<T, C> journal = new Journal<T, C>(journalPath, journalInfo.root);
-		journal.replay(journalInfo.transactions);
+		Journal<T, C> journal = new Journal<T, C>(journalPath/*, journalInfo.root*/);
+//		journal.replay(journalInfo.transactions);
+		
+		if(!java.nio.file.Files.exists(Paths.get(journalPath)))
+			java.nio.file.Files.createDirectory(Paths.get(journalPath));
+		
+		if(!java.nio.file.Files.exists(Paths.get(journalPath + "/" + journalFile)))
+			java.nio.file.Files.createFile(Paths.get(journalPath + "/" + journalFile));
 		
 		return journal;
+	}
+	
+	public List<C> getCommands() throws ClassNotFoundException, IOException {
+		JournalInfo<T, C> journalInfo = readJournal(journalPath + "/" + journalFile);
+		
+		ArrayList<C> commands = new ArrayList<C>();
+		
+		for(Entry<T, C> transaction: journalInfo.transactions)
+			commands.addAll(transaction.replayableCommands);
+		
+		return commands;
 	}
 	
 	public static <T extends Player<C>, C> void write(T root, String journalPath) throws IOException {
@@ -82,16 +100,16 @@ public class Journal<T extends Player<C>, C> {
 
 	@SuppressWarnings("unchecked")
 	private static <T extends Player<C>, C> JournalInfo<T, C> readJournal(String journalPath) throws ClassNotFoundException, IOException {
-		T root;
+//		T root;
 		ArrayList<Entry<T, C>> transactions = new ArrayList<Entry<T, C>>();
 		
 		FileInputStream fileOutput = new FileInputStream(journalPath);
 		BufferedInputStream bufferedOutput = new BufferedInputStream(fileOutput);
 		
 		try {
-			@SuppressWarnings("resource")
-			ObjectInputStream rootObjectInput = new ObjectInputStream(bufferedOutput);
-			root = (T)rootObjectInput.readObject();
+//			@SuppressWarnings("resource")
+//			ObjectInputStream rootObjectInput = new ObjectInputStream(bufferedOutput);
+//			root = (T)rootObjectInput.readObject();
 			
 			while(bufferedOutput.available() != 0) {
 				// Should be read in chunks
@@ -104,18 +122,19 @@ public class Journal<T extends Player<C>, C> {
 			bufferedOutput.close();
 		}
 		
-		return new JournalInfo<T, C>(root, transactions);
+		return new JournalInfo<T, C>(/*root, */transactions);
 	}
 	
 	private void replay(ArrayList<Entry<T, C>> transactions) {
-		for(Entry<T, C> entry: transactions) {
-			T player = root;
-			player.replay(entry.replayableCommands);
-		}
+//		for(Entry<T, C> entry: transactions) {
+//			T player = root;
+//			player.replay(entry.replayableCommands);
+//		}
 	}
 	
 	public T getRoot() {
-		return root;
+//		return root;
+		return null;
 	}
 	
 	public void log(/*Here should be the identifier/reference?, */ final List<C> commands) {

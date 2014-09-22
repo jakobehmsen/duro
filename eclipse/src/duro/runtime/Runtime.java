@@ -1,6 +1,7 @@
 package duro.runtime;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import duro.transcriber.Journal;
 
@@ -11,7 +12,7 @@ public class Runtime {
 		this.journal = journal;
 	}
 
-	public void resume(Process process) {
+	public void resume(CustomProcess process) {
 		// Start off where the process left of, which may be from its beginning
 		
 		ArrayList<InteractionHistory.Interaction> playedInstructions = new ArrayList<InteractionHistory.Interaction>();

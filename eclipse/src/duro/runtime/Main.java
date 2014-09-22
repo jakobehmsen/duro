@@ -1,6 +1,13 @@
 package duro.runtime;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.List;
 
 import duro.transcriber.Journal;
 
@@ -11,11 +18,21 @@ public class Main {
 			return;
 		}
 		
-		String path = args[0];
+		String mainObjectCodePath = args[0];
+		String mainObjectCodeJournalPath = mainObjectCodePath + ".jnl";
 		try {
-			Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
+			CustomProcess mainProcess;
+			
+			try (ObjectInput oo = new ObjectInputStream(new FileInputStream(mainObjectCodePath))) {
+				mainProcess = (CustomProcess) oo.readObject();
+		    }
+			
+			Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(mainObjectCodeJournalPath);
+			List<InteractionHistory.Interaction> commands = journal.getCommands();
+			if(commands.size() > 0)
+				mainProcess.replay(commands);
 			duro.runtime.Runtime runtime = new Runtime(journal);
-			runtime.resume(journal.getRoot());
+			runtime.resume(mainProcess);
 			journal.close();
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();

@@ -1,7 +1,10 @@
 package duro.reflang;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 
 import duro.runtime.CustomProcess;
 import duro.transcriber.Journal;
@@ -14,13 +17,19 @@ public class Main {
 		}
 		
 		String sourceCodePath = args[0];
-		String journalPath = args[1];
+//		String journalPath = args[1];
+		String objectCodePath = args[1];
 		FileInputStream inputStream;
 		try {
 			inputStream = new FileInputStream(sourceCodePath);
 			CustomProcess process = duro.reflang.Compiler.compile(inputStream);
-			Journal.write(process, journalPath);
-			System.out.println("Compiled '" + sourceCodePath + "' into '" + journalPath + "'.");
+//			Journal.write(process, journalPath);
+			
+			try (ObjectOutput oo = new ObjectOutputStream(new FileOutputStream(objectCodePath))) {
+		        oo.writeObject(process);
+		    }
+			
+			System.out.println("Compiled '" + sourceCodePath + "' into '" + objectCodePath + "'.");
 		} catch (IOException e) {
 			System.out.println("Compilation failed.");
 			e.printStackTrace();

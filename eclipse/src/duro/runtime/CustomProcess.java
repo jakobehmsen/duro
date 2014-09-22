@@ -1,8 +1,11 @@
 package duro.runtime;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -705,9 +708,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			try {
 				// What to do here during replay?
 				// or rather, what to replace this instruction with for replay?
-				path = "commons/gens/" + path;
-				Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
-				CustomProcess customProcess = (CustomProcess)journal.getRoot();
+				path = "commons/gens/" + path + ".drr";
+//				Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
+//				CustomProcess customProcess = (CustomProcess)journal.getRoot();
+				CustomProcess customProcess;
+				
+				try (ObjectInput oo = new ObjectInputStream(new FileInputStream(path))) {
+					customProcess = (CustomProcess) oo.readObject();
+			    }
 				
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
