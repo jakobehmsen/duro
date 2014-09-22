@@ -140,14 +140,16 @@ operationEnd: memberAssignment | indexAssignment;
 memberAssignment: 
     DOT messageId 
     op=(
-        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
+        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | 
+        ASSIGN_DIV | ASSIGN_REM | PROTO_ASSIGN | ASSIGN
     ) 
     memberAssignmentValue;
 memberAssignmentValue: expression;
 indexAssignment: 
     OPEN_SQ indexAssignmentKey CLOSE_SQ 
     op=(
-        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
+        ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | 
+        ASSIGN_DIV | ASSIGN_REM | PROTO_ASSIGN | ASSIGN
     )
     indexAssignmentValue;
 indexAssignmentKey: expression;
@@ -164,7 +166,8 @@ variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN (expression (COMMA expression)*)?;
 breakStatement: KW_BREAK;
-yieldStatement: KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
+yieldStatement: 
+    KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
@@ -270,6 +273,7 @@ CLOSE_BRA: '}';
 OPEN_PAR: '(';
 CLOSE_PAR: ')';
 ASSIGN: '=';
+PROTO_ASSIGN: '^=';
 ASSIGN_ADD: '+=';
 ASSIGN_SUB: '-=';
 ASSIGN_MULT: '*=';
