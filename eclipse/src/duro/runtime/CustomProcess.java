@@ -84,6 +84,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		any.defineShared("Any", any);
 		// Add Null singleton
 		any.defineShared("Null", any.clone());
+		// Add boolean True singleton
+		BooleanProcess t = new BooleanProcess(true);
+		t.defineShared("prototype", any);
+		any.defineShared("True", t);
+		// Add boolean False singleton
+		BooleanProcess f = new BooleanProcess(false);
+		f.defineShared("prototype", any);
+		any.defineShared("False", f);
 		// Add Iterable prototype
 		DictionaryProcess iterable = any.clone();
 		any.defineShared("Iterable", iterable);
@@ -326,8 +334,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_IF_TRUE: {
-			boolean value = (boolean)currentFrame.stack.pop();
-			if(value) {
+			BooleanProcess value = (BooleanProcess)currentFrame.stack.pop();
+			if(value.value) {
 				int jump = (int)instruction.operand1;
 				currentFrame.instructionPointer += jump;
 			} else
@@ -335,8 +343,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_IF_FALSE: {
-			boolean value = (boolean)currentFrame.stack.pop();
-			if(!value) {
+			BooleanProcess value = (BooleanProcess)currentFrame.stack.pop();
+			if(!value.value) {
 				int jump = (int)instruction.operand1;
 				currentFrame.instructionPointer += jump;
 			} else
@@ -419,12 +427,12 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_TRUE: {
-			currentFrame.stack.push(true);
+			currentFrame.stack.push(getTrue());
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_LOAD_FALSE: {
-			currentFrame.stack.push(false);
+			currentFrame.stack.push(getFalse());
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -463,22 +471,22 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		
 		// Special opcodes
 		case Instruction.OPCODE_SP_OR: {
-			boolean rhs = (boolean)currentFrame.stack.pop();
-			boolean lhs = (boolean)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs || rhs);
+			BooleanProcess rhs = (BooleanProcess)currentFrame.stack.pop();
+			BooleanProcess lhs = (BooleanProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(getBoolean(lhs.value || rhs.value));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_AND: {
-			boolean rhs = (boolean)currentFrame.stack.pop();
-			boolean lhs = (boolean)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs && rhs);
+			BooleanProcess rhs = (BooleanProcess)currentFrame.stack.pop();
+			BooleanProcess lhs = (BooleanProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(getBoolean(lhs.value && rhs.value));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_NOT: {
-			boolean b = (boolean)currentFrame.stack.pop();
-			currentFrame.stack.push(!b);
+			BooleanProcess b = (BooleanProcess)currentFrame.stack.pop();
+			currentFrame.stack.push(getBoolean(!b.value));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -509,7 +517,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_STRING_EQUAL: {
 			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs.str.equals(rhs.str));
+			currentFrame.stack.push(getBoolean(lhs.str.equals(rhs.str)));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -561,21 +569,21 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_INT_EQUAL: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs.intValue == rhs.intValue);
+			currentFrame.stack.push(getBoolean(lhs.intValue == rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_GREATER: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs.intValue > rhs.intValue);
+			currentFrame.stack.push(getBoolean(lhs.intValue > rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_LESS: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(lhs.intValue < rhs.intValue);
+			currentFrame.stack.push(getBoolean(lhs.intValue < rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -775,5 +783,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
 		behavior.defineProto("prototype", any.lookup("Behavior"));
 		return behavior;
+	}
+	
+	public BooleanProcess getBoolean(boolean value) {
+		return value ? getTrue() : getFalse();
+	}
+	
+	public BooleanProcess getTrue() {
+		return (BooleanProcess)any.lookup("True");
+	}
+	
+	public BooleanProcess getFalse() {
+		return (BooleanProcess)any.lookup("False");
 	}
 }
