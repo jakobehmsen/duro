@@ -190,9 +190,6 @@ public class Compiler {
 			
 			@Override
 			public void exitConditionalExpressionTrue(ConditionalExpressionTrueContext ctx) {
-				// TODO Auto-generated method stub
-				super.exitConditionalExpressionTrue(ctx);
-				
 				int jumpIndex = instructions.size();
 				conditionalJumpIndexStack.push(jumpIndex);
 				instructions.add(null); // Jump to the end of the conditional expression
@@ -782,12 +779,6 @@ public class Compiler {
 					}
 				} else {
 					if(yieldStatements.size() > 0) {
-//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
-//						int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
-//						for(int i = 0; i < yieldCount; i++)
-//							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-//						instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
-						
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 					} else {
@@ -912,11 +903,6 @@ public class Compiler {
 			}
 			
 			@Override
-			public void enterYieldStatement(YieldStatementContext ctx) {
-//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
-			}
-			
-			@Override
 			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
 				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
@@ -930,8 +916,6 @@ public class Compiler {
 			@Override
 			public void exitYieldStatement(YieldStatementContext ctx) {
 				yieldStatements.add(ctx);
-//				int yieldCount = ctx.expression().size();
-//				instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
 			}
 			
 			@Override
@@ -957,12 +941,6 @@ public class Compiler {
 			@Override
 			public void exitFunctionBody(FunctionBodyContext ctx) {
 				if(yieldStatements.size() > 0) {
-//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
-//					int yieldCount = yieldStatements.stream().map(i -> i.expression().size()).distinct().findFirst().get();
-//					for(int i = 0; i < yieldCount; i++)
-//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-//					instructions.add(new Instruction(Instruction.OPCODE_RET, yieldCount + 1));
-					
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				} else if(instructions.size() == 0 || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
@@ -1195,26 +1173,6 @@ public class Compiler {
 			@Override
 			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
 				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-
-//				// iterable
-//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
-//				// iterator
-//				int jumpIndex = instructions.size();
-//				forInJumpIndexStack.push(jumpIndex);
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				// iterator, iterator
-//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
-//				// iterator, nextValues..., hadNext
-//				int conditionalJumpIndex = instructions.size();
-//				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
-//				instructions.add(null);
-//				// iterator, nextValues...
-//				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
-//					String id = varCtx.ID().getText();
-//					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-//					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-//				}
-//				// iterator
 				
 				// iterable
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
@@ -1228,15 +1186,7 @@ public class Compiler {
 				int conditionalJumpIndex = instructions.size();
 				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
-//				// iterator
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-//				// iterator, iterator
-//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
-//				// iterator, next
-//				String id = forInStatementCtx.forInStatementVar(0).ID().getText();
-//				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-//				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-				
+				// iterator
 				
 				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
 					// iterator
@@ -1255,25 +1205,6 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
-//				int jumpIndex = forInJumpIndexStack.pop();
-//				int jump = jumpIndex - instructions.size();
-//				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
-//				
-//				int conditionalJumpIndex = forInConditionalJumpIndexStack.pop();
-//				int conditionalJump = instructions.size() - conditionalJumpIndex;
-//				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
-//
-//				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-//				// iterator, nextValues...
-//				
-//				for(int i = 0; i < forInStatementCtx.forInStatementVar().size(); i++)
-//					instructions.add(new Instruction(Instruction.OPCODE_POP));
-//				// iterator
-//				instructions.add(new Instruction(Instruction.OPCODE_POP));
-//				//
-				
-				
-				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
@@ -1460,32 +1391,10 @@ public class Compiler {
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-//			idToParameterOrdinalMap.declare("generator");
-			
 			int[] ordinals = new int[] {idToParameterOrdinalMap.ordinalFor("generator")};
-			int parameterCount = idToParameterOrdinalMap.size();// + 1;
-//			int[] generatorOrdinals = new int[bodyOrdinals.length + 1];
-//			System.arraycopy(bodyOrdinals, 0, generatorOrdinals, 1, bodyOrdinals.length);
-//			generatorOrdinals[0] = 0;
-//
+			int parameterCount = idToParameterOrdinalMap.size();
+
 			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
-//			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
-//			// Forward arguments
-//			for(int i = 0; i < parameterCount; i++)
-//				generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, i));
-//			// A generator is a special object, which understands a single kind of message: next
-//			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_GENERATABLE, parameterCount));
-//			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
-			
-			/*
-			
-			Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-				
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
-			
-			*/
-			
 
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS, 1));
 			// This
