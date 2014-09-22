@@ -303,6 +303,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterYieldStatementExpression(@NotNull DuroParser.YieldStatementExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitYieldStatementExpression(@NotNull DuroParser.YieldStatementExpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterBinaryExpressionArithmetic1(@NotNull DuroParser.BinaryExpressionArithmetic1Context ctx) { }
 	/**
 	 * {@inheritDoc}

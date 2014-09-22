@@ -166,6 +166,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionArithmetic2(@NotNull DuroParser.BinaryExpressionArithmetic2Context ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#yieldStatementExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitYieldStatementExpression(@NotNull DuroParser.YieldStatementExpressionContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryExpressionArithmetic1}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

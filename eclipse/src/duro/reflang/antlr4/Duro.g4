@@ -164,7 +164,8 @@ variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
 returnStatement: KW_RETURN (expression (COMMA expression)*)?;
 breakStatement: KW_BREAK;
-yieldStatement: KW_YIELD expression (COMMA expression)*;
+yieldStatement: KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
+yieldStatementExpression: expression;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
     whileStatement | forStatement | forInStatement;
