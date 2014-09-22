@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -99,11 +99,27 @@ public class Compiler {
 	public static duro.runtime.Process compile(InputStream sourceCode) throws IOException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
-		TokenStream tokenStream = new CommonTokenStream(lexer);
+		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		DuroParser parser = new DuroParser(tokenStream);
 		
+		
+		
 		Debug.println(Debug.LEVEL_HIGH, "Parsing program...");
-		ProgramContext programCtx = parser.program();
+		ProgramContext programCtx;
+		
+		// Parsing approach following https://theantlrguy.atlassian.net/wiki/pages/viewpage.action?pageId=1900591
+		parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+		try {
+			programCtx = parser.program();  // STAGE 1
+		}
+		catch (Exception ex) {
+			tokenStream.reset(); // rewind input stream
+		    parser.reset();
+		    parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+		    programCtx = parser.program();  // STAGE 2
+		    // if we parse ok, it's LL not SLL
+		}
+		
 		Debug.println(Debug.LEVEL_HIGH, "Parsed program.");
 		
 		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
