@@ -1228,14 +1228,28 @@ public class Compiler {
 				int conditionalJumpIndex = instructions.size();
 				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
-				// iterator
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				// iterator, iterator
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
-				// iterator, next
-				String id = forInStatementCtx.forInStatementVar(0).ID().getText();
-				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//				// iterator
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				// iterator, iterator
+//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+//				// iterator, next
+//				String id = forInStatementCtx.forInStatementVar(0).ID().getText();
+//				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+				
+				
+				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
+					// iterator
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// iterator, iterator
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+					// iterator, next
+					String id = varCtx.ID().getText();
+					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					// iterator
+				}
+				
 				// iterator
 			}
 			
