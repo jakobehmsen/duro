@@ -7,13 +7,11 @@ import java.io.InputStreamReader;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
-import duro.transcriber.Journal;
 import duro.transcriber.Player;
 
 public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory, Player<InteractionHistory.Interaction> {
@@ -77,9 +75,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 	}
 	
-	private Frame rootFrame;
 	private Frame currentFrame;
-//	private Stack<Frame> frameStack = new Stack<Frame>();
 	private DictionaryProcess any;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
@@ -110,20 +106,13 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		// Add Closure prototype
 		any.defineShared("Closure", any.clone());
 		
-		currentFrame = rootFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions);
+		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions);
 		
 	}
 
 	@Override
 	public void replay(List<InteractionHistory.Interaction> commands) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
-
-//		for(Instruction instruction: commands) {
-//			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
-//			Debug.println(Debug.LEVEL_HIGH, "replay: " + instruction);
-//			
-//			next(instruction, interactionHistory);
-//		}
 		
 		InteractionHistory interactionHistory = new InteractionHistory(commands);
 		

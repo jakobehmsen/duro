@@ -1,7 +1,6 @@
 package duro.runtime;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import duro.transcriber.Journal;
 

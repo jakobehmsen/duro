@@ -1,11 +1,14 @@
 package duro.runtime;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class InteractionHistory {
 	public static class Interaction implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		public final Instruction instruction;
 		public final Object output;
 		

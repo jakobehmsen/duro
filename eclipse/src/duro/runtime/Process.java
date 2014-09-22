@@ -3,8 +3,6 @@ package duro.runtime;
 import java.io.Serializable;
 import java.util.List;
 
-import duro.transcriber.Player;
-
 public abstract class Process implements Serializable {
 	/**
 	 * 
