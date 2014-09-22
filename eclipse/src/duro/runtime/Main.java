@@ -13,7 +13,7 @@ public class Main {
 		
 		String path = args[0];
 		try {
-			Journal<duro.runtime.Process, Instruction> journal = Journal.read(path);
+			Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
 			duro.runtime.Runtime runtime = new Runtime(journal);
 			runtime.resume(journal.getRoot());
 			journal.close();

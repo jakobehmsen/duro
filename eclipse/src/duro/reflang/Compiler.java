@@ -97,7 +97,7 @@ import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
 public class Compiler {
-	public static duro.runtime.Process compile(InputStream sourceCode) throws IOException {
+	public static CustomProcess compile(InputStream sourceCode) throws IOException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);

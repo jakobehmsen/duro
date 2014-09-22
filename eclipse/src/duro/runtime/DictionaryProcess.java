@@ -14,12 +14,7 @@ public class DictionaryProcess extends Process {
 	private Hashtable<Object, Process> protos = new Hashtable<Object, Process>();
 
 	@Override
-	public void replay(List<Instruction> commands) {
-		// Does is make sense to have this method here?
-	}
-
-	@Override
-	public void resume(List<Instruction> playedInstructions) {
+	public void resume(List<InteractionHistory.Interaction> playedInstructions) {
 		// Does is make sense to have this method here?
 	}
 	

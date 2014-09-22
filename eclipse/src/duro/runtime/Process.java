@@ -5,15 +5,13 @@ import java.util.List;
 
 import duro.transcriber.Player;
 
-public abstract class Process implements Serializable, Player<Instruction> {
+public abstract class Process implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public abstract void replay(List<Instruction> commands);
-
-	public abstract void resume(List<Instruction> playedInstructions);
+	public abstract void resume(List<InteractionHistory.Interaction> playedInstructions);
 
 	public abstract Object getCallable(ProcessFactory factory, Object key);
 

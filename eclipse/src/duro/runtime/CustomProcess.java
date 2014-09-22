@@ -4,14 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
 import duro.transcriber.Journal;
+import duro.transcriber.Player;
 
-public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory {
+public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory, Player<InteractionHistory.Interaction> {
 	/**
 	 * 
 	 */
@@ -72,6 +74,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 	}
 	
+	private Frame rootFrame;
 	private Frame currentFrame;
 //	private Stack<Frame> frameStack = new Stack<Frame>();
 	private DictionaryProcess any;
@@ -104,18 +107,32 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		// Add Closure prototype
 		any.defineShared("Closure", any.clone());
 		
-		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions);
+		currentFrame = rootFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions);
+		
 	}
 
 	@Override
-	public void replay(List<Instruction> commands) {
+	public void replay(List<InteractionHistory.Interaction> commands) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
 
-		for(Instruction instruction: commands) {
-			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
-			Debug.println(Debug.LEVEL_HIGH, "replay: " + instruction);
-			
-			next(instruction);
+//		for(Instruction instruction: commands) {
+//			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+//			Debug.println(Debug.LEVEL_HIGH, "replay: " + instruction);
+//			
+//			next(instruction, interactionHistory);
+//		}
+		
+		InteractionHistory interactionHistory = new InteractionHistory(commands);
+		
+		if(currentFrame != null) {
+			while(!stopRequested) {
+				Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
+				
+				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+				
+				next(instruction, interactionHistory);
+			}
 		}
 		
 		if(currentFrame != null)
@@ -126,10 +143,13 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	
 	private boolean stopRequested;
 	
-	private void next(Instruction instruction) {
+	private void next(Instruction instruction, InteractionHistory interactionHistory) {
 		switch(instruction.opcode) {
 		case Instruction.OPCODE_PAUSE: {
-			stopRequested = true;
+			Object output = interactionHistory.nextOutputFor(Instruction.OPCODE_PAUSE);
+			if(output == null) {
+				stopRequested = true;
+			}
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -622,26 +642,37 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 		
 		case Instruction.OPCODE_SP_WRITE: {
-			StringProcess value = (StringProcess)currentFrame.stack.pop();
-			System.out.print(value.str);
+			Object output = interactionHistory.nextOutputFor(Instruction.OPCODE_SP_WRITE);
+			if(output == null) {
+				StringProcess value = (StringProcess)currentFrame.stack.pop();
+				System.out.print(value.str);
+			}
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_NEXT_LINE: {
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-				
-				String line = br.readLine();
+			String line;
 
-				StringProcess string = new StringProcess(line);
-				string.defineProto("prototype", any.lookup("String"));
-				
-				currentFrame.stack.push(string);
-				// Store the value for the replay instruction
-				lastReadLine = line;
-			} catch (IOException e) {
-				e.printStackTrace();
+			Object output = interactionHistory.nextOutputFor(Instruction.OPCODE_SP_NEXT_LINE);
+			
+			if(output == null) {
+				try {
+					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+					line = br.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+					line = null;
+				}
+			} else {
+				line = (String)output;
 			}
+
+			StringProcess string = new StringProcess(line);
+			string.defineProto("prototype", any.lookup("String"));
+			
+			currentFrame.stack.push(string);
+			// Store the value for the replay instruction
+			lastReadLine = line;
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -675,7 +706,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				// What to do here during replay?
 				// or rather, what to replace this instruction with for replay?
 				path = "commons/gens/" + path;
-				Journal<duro.runtime.Process, Instruction> journal = Journal.read(path);
+				Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
 				CustomProcess customProcess = (CustomProcess)journal.getRoot();
 				
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
@@ -723,7 +754,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	private String lastReadLine;
 
 	@Override
-	public void resume(List<Instruction> playedInstructions) {
+	public void resume(List<InteractionHistory.Interaction> playedInstructions) {
+		InteractionHistory interactionHistory = new InteractionHistory(playedInstructions);
 		Debug.println(Debug.LEVEL_HIGH, "play");
 		
 		if(currentFrame != null) {
@@ -733,22 +765,25 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
 				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
 				
-				next(instruction);
+				next(instruction, interactionHistory);
 				
 				switch(instruction.opcode) {
 				case Instruction.OPCODE_PAUSE:
-					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
+//					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
+					interactionHistory.append(instruction, instruction);
 					break;
 				case Instruction.OPCODE_SP_WRITE:
 					// Don't manipulate peripherals on replay
+					interactionHistory.append(instruction, instruction);
 					break;
 				case Instruction.OPCODE_SP_NEXT_LINE:
 					// The replay instruction simply pushes the read key consistently
-					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine));
+//					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine, null, null, true, instruction));
+					interactionHistory.append(instruction, lastReadLine);
 					// Don't manipulate peripherals on replay
 					break;
 				default:
-					playedInstructions.add(instruction);
+//					playedInstructions.add(instruction);
 					break;
 				}
 			}

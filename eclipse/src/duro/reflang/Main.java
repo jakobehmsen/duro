@@ -3,6 +3,7 @@ package duro.reflang;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import duro.runtime.CustomProcess;
 import duro.transcriber.Journal;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
 		FileInputStream inputStream;
 		try {
 			inputStream = new FileInputStream(sourceCodePath);
-			duro.runtime.Process process = duro.reflang.Compiler.compile(inputStream);
+			CustomProcess process = duro.reflang.Compiler.compile(inputStream);
 			Journal.write(process, journalPath);
 			System.out.println("Compiled '" + sourceCodePath + "' into '" + journalPath + "'.");
 		} catch (IOException e) {
