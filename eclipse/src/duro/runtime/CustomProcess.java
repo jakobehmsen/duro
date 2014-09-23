@@ -13,9 +13,8 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import duro.debugging.Debug;
-import duro.transcriber.Player;
 
-public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory, Player<InteractionHistory.Interaction> {
+public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory {
 	/**
 	 * 
 	 */
