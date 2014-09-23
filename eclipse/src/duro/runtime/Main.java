@@ -27,12 +27,11 @@ public class Main {
 			Journal<InteractionHistory.Interaction> journal = Journal.read(mainObjectCodeJournalPath);
 			List<InteractionHistory.Interaction> commands = journal.getCommands();
 			
-			if(commands.size() > 0) {
-				InteractionHistory interactionHistory = new InteractionHistory(commands);
-				mainProcess.replay(interactionHistory);
-				if(interactionHistory.hasNewInteractions())
-					journal.log(interactionHistory.getNewInteractions());
-			}
+			InteractionHistory interactionHistory = new InteractionHistory(commands);
+			mainProcess.replay(interactionHistory);
+			if(interactionHistory.hasNewInteractions())
+				journal.log(interactionHistory.getNewInteractions());
+			
 //			duro.runtime.Runtime runtime = new Runtime(journal);
 //			runtime.resume(mainProcess);
 			journal.close();
