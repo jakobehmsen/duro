@@ -169,6 +169,18 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
 			
+			public void enterDelimitedProgramElement(duro.reflang.antlr4.DuroParser.DelimitedProgramElementContext ctx) {
+				if(ctx.interfaceId() != null) {
+					String interfaceId = ctx.interfaceId().ID().getText();
+					instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
+				}
+			}
+			
+			public void exitDelimitedProgramElement(duro.reflang.antlr4.DuroParser.DelimitedProgramElementContext ctx) {
+				if(ctx.interfaceId() != null) {
+					instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
+				}
+			}
 			
 
 			Stack<Integer> conditionalConditionalJumpIndexesStack = new Stack<Integer>();
