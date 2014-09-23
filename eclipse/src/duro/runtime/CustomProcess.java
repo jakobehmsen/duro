@@ -141,6 +141,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			Object output = interactionHistory.nextOutputFor(Instruction.OPCODE_PAUSE);
 			if(output == null) {
 				stopRequested = true;
+				interactionHistory.append(instruction, instruction);
+			} else {
 			}
 			currentFrame.instructionPointer++;
 			
@@ -638,6 +640,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			if(output == null) {
 				StringProcess value = (StringProcess)currentFrame.stack.pop();
 				System.out.print(value.str);
+				interactionHistory.append(instruction, instruction);
+			} else {
 			}
 			currentFrame.instructionPointer++;
 			
@@ -651,6 +655,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				try {
 					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 					line = br.readLine();
+					interactionHistory.append(instruction, line);
 				} catch (IOException e) {
 					e.printStackTrace();
 					line = null;
@@ -663,8 +668,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			string.defineProto("prototype", any.lookup("String"));
 			
 			currentFrame.stack.push(string);
-			// Store the value for the replay instruction
-			lastReadLine = line;
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -698,8 +701,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				// What to do here during replay?
 				// or rather, what to replace this instruction with for replay?
 				path = "commons/gens/" + path + ".drr";
-//				Journal<CustomProcess, InteractionHistory.Interaction> journal = Journal.read(path);
-//				CustomProcess customProcess = (CustomProcess)journal.getRoot();
 				CustomProcess customProcess;
 				
 				try (ObjectInput oo = new ObjectInputStream(new FileInputStream(path))) {
@@ -748,8 +749,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 	}
 
-	private String lastReadLine;
-
 	@Override
 	public void resume(List<InteractionHistory.Interaction> playedInstructions) {
 		InteractionHistory interactionHistory = new InteractionHistory(playedInstructions);
@@ -763,26 +762,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
 				
 				next(instruction, interactionHistory);
-				
-				switch(instruction.opcode) {
-				case Instruction.OPCODE_PAUSE:
-//					playedInstructions.add(new Instruction(Instruction.OPCODE_INC_IP));
-					interactionHistory.append(instruction, instruction);
-					break;
-				case Instruction.OPCODE_SP_WRITE:
-					// Don't manipulate peripherals on replay
-					interactionHistory.append(instruction, instruction);
-					break;
-				case Instruction.OPCODE_SP_NEXT_LINE:
-					// The replay instruction simply pushes the read key consistently
-//					playedInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, lastReadLine, null, null, true, instruction));
-					interactionHistory.append(instruction, lastReadLine);
-					// Don't manipulate peripherals on replay
-					break;
-				default:
-//					playedInstructions.add(instruction);
-					break;
-				}
 			}
 		}
 
