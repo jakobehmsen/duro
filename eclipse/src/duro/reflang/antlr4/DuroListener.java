@@ -526,6 +526,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#interfaceId}.
+	 * @param ctx the parse tree
+	 */
+	void enterInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#interfaceId}.
+	 * @param ctx the parse tree
+	 */
+	void exitInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 */

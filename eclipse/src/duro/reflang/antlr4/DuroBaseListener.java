@@ -628,6 +628,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}

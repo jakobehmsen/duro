@@ -6,7 +6,8 @@ programElementsPart:
     //delimitedProgramElement SEMICOLON | undelimitedStatement;
     delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
 programElement: delimitedProgramElement SEMICOLON | undelimitedStatement;
-delimitedProgramElement: topExpression | delimitedStatement;
+delimitedProgramElement: interfaceId? (topExpression | delimitedStatement);
+interfaceId: DOLLAR ID;
 topExpression: expression;
 expression: variableAssignment | conditionalExpression;
 
@@ -266,6 +267,7 @@ DOUBLE_PLUS: '++';
 DOUBLE_MINUS: '--';
 SINGLE_PIPE: '|';
 HASH: '#';
+DOLLAR: '$';
 OPEN_SQ: '[';
 CLOSE_SQ: ']';
 OPEN_BRA: '{';

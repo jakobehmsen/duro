@@ -341,6 +341,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#interfaceId}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
