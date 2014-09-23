@@ -41,19 +41,23 @@ public class InteractionHistory {
 	
 	public void append(String interfaceId, Instruction instruction, Object output) {
 		interactions.add(new Interaction(interfaceId, instruction, output));
+		
+		tracks.put(interfaceId, interactions.size() - 1);
 	}
 	
 	public Object nextOutputFor(String interfaceId, int opcode) {
-		tracks.putIfAbsent(interfaceId, 0);
+		tracks.putIfAbsent(interfaceId, -1);
 		int trackIndex = tracks.get(interfaceId);
-		for(int i = trackIndex; i < interactions.size(); i++) {
+		for(int i = trackIndex + 1; i < interactions.size(); i++) {
 			Interaction interaction = interactions.get(i);
 			if(interaction.instruction.opcode == opcode && interaction.interfaceId.equals(interfaceId)) {
-				tracks.put(interfaceId, trackIndex + 1);
+				tracks.put(interfaceId, i);
+//				System.out.println("***Found next output for " + interfaceId + " at index " + i + "***");
 				return interaction.output;
 			}
 		}
-		
+
+//		System.out.println("***Couldn't find next output for " + interfaceId + "***");
 		return null;
 	}
 }
