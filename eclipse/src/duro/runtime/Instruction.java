@@ -34,7 +34,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SET = 21;
 	public static final int OPCODE_SET_PROTO = 22;
 	public static final int OPCODE_GET = 23;
-	public static final int OPCODE_EXEC_ON_FRAME = 24;
+	public static final int OPCODE_CALL_CLOSURE = 24;
 	public static final int OPCODE_EXTEND_INTER_ID = 25;
 	public static final int OPCODE_SHRINK_INTER_ID = 26;
 	public static final int OPCODE_LOAD_THIS = 27;
