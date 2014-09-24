@@ -490,9 +490,7 @@ public class Compiler {
 				// receiver
 				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 				// receiver, receiver
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				// receiver, receiver, id
-				instructions.add(new Instruction(Instruction.OPCODE_GET));
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
 				// receiver, value
 				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 				// value, receiver, value
@@ -539,8 +537,7 @@ public class Compiler {
 						break;
 					} default: {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, firstId));
-						instructions.add(new Instruction(Instruction.OPCODE_GET));
+						instructions.add(new Instruction(Instruction.OPCODE_GET, firstId));
 						// oldValue
 						break;
 					}
@@ -653,8 +650,7 @@ public class Compiler {
 				
 				// Get member
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				instructions.add(new Instruction(Instruction.OPCODE_GET));
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
 			}
 			
 			@Override
@@ -1227,16 +1223,10 @@ public class Compiler {
 				endBreakable();
 			}
 			
-			
-			@Override
-			public void enterMemberAccess(MemberAccessContext ctx) {
-				String id = ctx.messageId().getText();
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-			}
-			
 			@Override
 			public void exitMemberAccess(MemberAccessContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_GET));
+				String id = ctx.messageId().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
 			}
 			
 			@Override
@@ -1263,9 +1253,7 @@ public class Compiler {
 					// For computed value +=, -=, ...
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					// receiver, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_GET));
+					instructions.add(new Instruction(Instruction.OPCODE_GET, id));
 					// receiver, oldValue
 					break;
 				}
@@ -1405,9 +1393,7 @@ public class Compiler {
 
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS, 1));
 			// This
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, "Generatable"));
-			// This, "Generatable"
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET, "Generatable"));
 			// Generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
 			// Generatable, Behavior
