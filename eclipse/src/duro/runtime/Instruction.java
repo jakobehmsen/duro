@@ -155,6 +155,7 @@ public class Instruction implements Serializable {
 
 	public static boolean doesReturn(int opcode2) {
 		switch(opcode2) {
+		case OPCODE_SP_WRITE:
 		case OPCODE_SP_FRAME_SET_SENDER:
 		case OPCODE_SP_FRAME_RESUME:
 			return false;
