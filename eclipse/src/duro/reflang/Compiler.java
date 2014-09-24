@@ -500,11 +500,7 @@ public class Compiler {
 				// value, receiver, value, 1
 				appendIncDec(ctx.op);
 				// value, receiver, value'
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-				// value, receiver, value', id
-				instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-				// value, receiver, id, value'
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 				// value
 			}
 			
@@ -591,10 +587,9 @@ public class Compiler {
 						
 						for(int i = 0; i < ctx.ID().size(); i++) {
 							String id = ctx.ID(i).getText();
-							instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 							instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-							instructions.add(new Instruction(Instruction.OPCODE_SWAP_ANY, 0, 2));
-							instructions.add(new Instruction(Instruction.OPCODE_SET));
+							instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+							instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 						}
 						
 						break;
@@ -606,13 +601,11 @@ public class Compiler {
 						// newValue
 						instructions.add(new Instruction(Instruction.OPCODE_DUP));
 						// newValue, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, firstId));
-						// newValue, newValue, id
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, id, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP_ANY, 0, 2));
-						// newValue, receiver, id, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET));
+						// newValue, newValue, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						// newValue, receiver, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId));
 						// newValue
 						break;
 					}
@@ -740,15 +733,14 @@ public class Compiler {
 			
 			@Override
 			public void enterDictProcessEntry(DictProcessEntryContext ctx) {
-				String id = ctx.messageId().getText();
-				
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 			}
 			
 			@Override
 			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
+				String id = ctx.messageId().getText();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 			}
 			
 			@Override
@@ -945,9 +937,8 @@ public class Compiler {
 				int parameterCount = newIdToParameterOrdinalMap.size();
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-				instructions.add(new Instruction(Instruction.OPCODE_SET));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 			}
 			
 			@Override
@@ -1263,15 +1254,12 @@ public class Compiler {
 			@Override
 			public void enterMemberAssignment(MemberAssignmentContext ctx) {
 				// receiver
-				String id = ctx.messageId().getText();
-				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
 				case DuroLexer.PROTO_ASSIGN:
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					// receiver, id
 					break;
 				default:
+					String id = ctx.messageId().getText();
 					// For computed value +=, -=, ...
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
@@ -1285,32 +1273,32 @@ public class Compiler {
 			
 			@Override
 			public void exitMemberAssignment(MemberAssignmentContext ctx) {
+				String id = ctx.messageId().getText();
+				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
-					// receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-					// value, receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					// receiver, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// value, receiver, value
+					instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+					// value
 					break;
 				case DuroLexer.PROTO_ASSIGN:
-					// receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-					// value, receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO));
+					// receiver, value
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// value, receiver, value
+					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id));
+					// value
 					break;
 				default:
-					String id = ctx.messageId().getText();
-					
 					// receiver, oldValue, newValuePart
 					appendAssignmentReducer(ctx.op);
 					// receiver, newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// newValue, receiver, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, id));
-					// newValue, receiver, newValue, id
 					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
 					// newValue, receiver, id, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_SET));
+					instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 					// newValue
 					break;
 				}
