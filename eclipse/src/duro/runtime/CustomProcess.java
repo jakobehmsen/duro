@@ -402,10 +402,12 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_EXEC_ON_FRAME: {
-			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			int[] ordinals = (int[])instruction.operand1;
+		} case Instruction.OPCODE_CALL_CLOSURE: {
+			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
+			BehaviorProcess behavior = closure.behavior;
+			FrameProcess frame = closure.frame;
+			int[] ordinals = closure.ordinals;
+			
 			// Move forward arguments
 			if(currentFrame.arguments.length < ordinals.length) {
 				for(int i = 0; i < currentFrame.arguments.length; i++) {
