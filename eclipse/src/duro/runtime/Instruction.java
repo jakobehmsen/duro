@@ -152,4 +152,14 @@ public class Instruction implements Serializable {
 	public static boolean isReturn(int opcode) {
 		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS || opcode == OPCODE_RET_FORWARD;
 	}
+
+	public static boolean doesReturn(int opcode2) {
+		switch(opcode2) {
+		case OPCODE_SP_FRAME_SET_SENDER:
+		case OPCODE_SP_FRAME_RESUME:
+			return false;
+		}
+		
+		return true;
+	}
 }
