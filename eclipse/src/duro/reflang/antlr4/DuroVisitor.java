@@ -54,6 +54,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNil(@NotNull DuroParser.NilContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#interfaceIdBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInterfaceIdBody(@NotNull DuroParser.InterfaceIdBodyContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#arrayOperand}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

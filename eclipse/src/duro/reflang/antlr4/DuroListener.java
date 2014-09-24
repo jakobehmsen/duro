@@ -75,6 +75,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitNil(@NotNull DuroParser.NilContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#interfaceIdBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterInterfaceIdBody(@NotNull DuroParser.InterfaceIdBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#interfaceIdBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitInterfaceIdBody(@NotNull DuroParser.InterfaceIdBodyContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#arrayOperand}.
 	 * @param ctx the parse tree
 	 */

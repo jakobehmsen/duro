@@ -6,8 +6,7 @@ programElementsPart:
     //delimitedProgramElement SEMICOLON | undelimitedStatement;
     delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
 programElement: delimitedProgramElement SEMICOLON | undelimitedStatement;
-delimitedProgramElement: interfaceId? (topExpression | delimitedStatement);
-interfaceId: DOLLAR ID;
+delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: variableAssignment | conditionalExpression;
 
@@ -172,7 +171,7 @@ yieldStatement:
 yieldStatementExpression: expression;
 undelimitedStatement: 
     functionDefinition | primitiveBody | ifStatement | 
-    whileStatement | forStatement | forInStatement;
+    whileStatement | forStatement | forInStatement | interfaceId;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
@@ -212,6 +211,8 @@ forInStatement:
     KW_IN expression CLOSE_PAR forInStatementBody;
 forInStatementVar: KW_VAR? ID;
 forInStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+interfaceId: DOLLAR ID interfaceIdBody;
+interfaceIdBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 // STRING_LITERAL deprived and adjusted from:
 // https://github.com/antlr/grammars-v4/blob/master/ecmascript/ECMAScript.g4

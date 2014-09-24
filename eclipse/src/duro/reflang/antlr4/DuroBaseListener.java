@@ -95,6 +95,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterInterfaceIdBody(@NotNull DuroParser.InterfaceIdBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitInterfaceIdBody(@NotNull DuroParser.InterfaceIdBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterArrayOperand(@NotNull DuroParser.ArrayOperandContext ctx) { }
 	/**
 	 * {@inheritDoc}
