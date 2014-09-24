@@ -517,21 +517,21 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 		
 		// Special opcodes
-		case Instruction.OPCODE_SP_OR: {
+		case Instruction.OPCODE_SP_BOOLEAN_OR: {
 			BooleanProcess rhs = (BooleanProcess)currentFrame.stack.pop();
 			BooleanProcess lhs = (BooleanProcess)currentFrame.stack.pop();
 			currentFrame.stack.push(getBoolean(lhs.value || rhs.value));
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_AND: {
+		} case Instruction.OPCODE_SP_BOOLEAN_AND: {
 			BooleanProcess rhs = (BooleanProcess)currentFrame.stack.pop();
 			BooleanProcess lhs = (BooleanProcess)currentFrame.stack.pop();
 			currentFrame.stack.push(getBoolean(lhs.value && rhs.value));
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_NOT: {
+		} case Instruction.OPCODE_SP_BOOLEAN_NOT: {
 			BooleanProcess b = (BooleanProcess)currentFrame.stack.pop();
 			currentFrame.stack.push(getBoolean(!b.value));
 			currentFrame.instructionPointer++;

@@ -50,9 +50,9 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_FRAME = 37;
 	public static final int OPCODE_LOAD_BEHAVIOR = 38;
 
-	public static final int OPCODE_SP_OR = 65;
-	public static final int OPCODE_SP_AND = 66;
-	public static final int OPCODE_SP_NOT = 67;
+	public static final int OPCODE_SP_BOOLEAN_OR = 65;
+	public static final int OPCODE_SP_BOOLEAN_AND = 66;
+	public static final int OPCODE_SP_BOOLEAN_NOT = 67;
 	public static final int OPCODE_SP_ARRAY_GET = 68;
 	public static final int OPCODE_SP_ARRAY_SET = 69;
 	public static final int OPCODE_SP_STRING_CONCAT = 70;

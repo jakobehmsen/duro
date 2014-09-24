@@ -245,7 +245,7 @@ public class Compiler {
 			
 			@Override
 			public void exitBinaryExpressionLogicalOrApplication(BinaryExpressionLogicalOrApplicationContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SP_OR));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_BOOLEAN_OR));
 			}
 			
 			@Override
@@ -282,7 +282,7 @@ public class Compiler {
 			
 			@Override
 			public void exitBinaryExpressionLogicalAndApplication(BinaryExpressionLogicalAndApplicationContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SP_AND));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_BOOLEAN_AND));
 			}
 			
 			@Override
@@ -429,7 +429,7 @@ public class Compiler {
 			
 			@Override
 			public void exitUnaryExpressionNotApplication(UnaryExpressionNotApplicationContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NOT));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_BOOLEAN_NOT));
 			}
 			
 			@Override
