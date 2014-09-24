@@ -74,7 +74,9 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveBodyPartContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveLabelContext;
+import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
@@ -840,6 +842,41 @@ public class Compiler {
 			@Override
 			public void enterFrame(FrameContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS_FRAME));
+			}
+			
+			@Override
+			public void enterPrimitiveOperand2(PrimitiveOperand2Context ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitPrimitiveOperand2(PrimitiveOperand2Context ctx) {
+				super.exitPrimitiveOperand2(ctx);
+			}
+			
+			@Override
+			public void exitPrimitive(PrimitiveContext ctx) {
+				String opcodeId = ctx.ID().getText();
+
+				int opcode = Instruction.getOpcodeFromId(opcodeId);
+				
+				Object operand1 = null;
+				Object operand2 = null;
+				Object operand3 = null;
+				
+				if(ctx.primitiveOperand2().size() > 0) {
+					operand1 = getLiteral(ctx.primitiveOperand2().get(0));
+
+					if(ctx.primitiveOperand2().size() > 1) {
+						operand2 = getLiteral(ctx.primitiveOperand2().get(1));
+						
+						if(ctx.primitiveOperand2().size() > 2) {
+							operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+						}
+					}
+				}
+				
+				instructions.add(new Instruction(opcode, operand1, operand2, operand3));
 			}
 			
 			@Override
