@@ -395,9 +395,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_GET: {
-			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
+			String key = (String)instruction.operand1; // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			Process value = receiver.lookup(key.str);
+			Process value = receiver.lookup(key);
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
