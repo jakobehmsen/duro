@@ -380,17 +380,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SET: {
 			Process value = currentFrame.stack.pop();
-			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
+			String key = (String)instruction.operand1; // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.define(key.str, value);
+			receiver.define(key, value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SET_PROTO: {
 			Process value = currentFrame.stack.pop();
-			StringProcess key = (StringProcess)currentFrame.stack.pop(); // Assumed to be string only
+			String key = (String)instruction.operand1; // Assumed to be string only
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.defineProto(key.str, value);
+			receiver.defineProto(key, value);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -774,7 +774,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_BREAK_POINT: {
-			new String();
 			currentFrame.instructionPointer++;
 			break;
 		}
