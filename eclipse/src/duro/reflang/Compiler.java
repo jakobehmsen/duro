@@ -65,6 +65,7 @@ import duro.reflang.antlr4.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentKeyContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
+import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
@@ -167,19 +168,6 @@ public class Compiler {
 			public void exitProgram(ProgramContext ctx) {
 				// Add finish instruction to the end
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
-			}
-			
-			public void enterDelimitedProgramElement(duro.reflang.antlr4.DuroParser.DelimitedProgramElementContext ctx) {
-				if(ctx.interfaceId() != null) {
-					String interfaceId = ctx.interfaceId().ID().getText();
-					instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
-				}
-			}
-			
-			public void exitDelimitedProgramElement(duro.reflang.antlr4.DuroParser.DelimitedProgramElementContext ctx) {
-				if(ctx.interfaceId() != null) {
-					instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
-				}
 			}
 			
 
@@ -1221,6 +1209,17 @@ public class Compiler {
 			public void exitForInStatement(ForInStatementContext ctx) {
 				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
+			}
+			
+			@Override
+			public void enterInterfaceId(InterfaceIdContext ctx) {
+				String interfaceId = ctx.ID().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
+			}
+			
+			@Override
+			public void exitInterfaceId(InterfaceIdContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
 			}
 			
 			@Override
