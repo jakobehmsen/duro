@@ -266,3 +266,10 @@ Frame.resume = function(x) {
 	}
 };
 
+Closure.call = function() {
+	#{
+		load_this;
+		call_closure;
+		ret 1;
+	}
+};
