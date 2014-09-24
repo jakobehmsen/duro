@@ -877,6 +877,9 @@ public class Compiler {
 				}
 				
 				instructions.add(new Instruction(opcode, operand1, operand2, operand3));
+				if(!Instruction.doesReturn(opcode)) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+				}
 			}
 			
 			@Override
