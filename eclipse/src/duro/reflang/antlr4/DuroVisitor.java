@@ -47,6 +47,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitProgram(@NotNull DuroParser.ProgramContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitiveOperand2(@NotNull DuroParser.PrimitiveOperand2Context ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#nil}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -194,6 +201,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryExpressionArithmetic2Application(@NotNull DuroParser.BinaryExpressionArithmetic2ApplicationContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -311,6 +325,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#primitiveArgument}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.

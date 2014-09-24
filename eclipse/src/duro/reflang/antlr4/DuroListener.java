@@ -64,6 +64,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitProgram(@NotNull DuroParser.ProgramContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveOperand2}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveOperand2(@NotNull DuroParser.PrimitiveOperand2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveOperand2}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveOperand2(@NotNull DuroParser.PrimitiveOperand2Context ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#nil}.
 	 * @param ctx the parse tree
 	 */
@@ -295,6 +306,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryExpressionArithmetic2Application(@NotNull DuroParser.BinaryExpressionArithmetic2ApplicationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitive}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitive}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionPostIncDecApplication}.
 	 * @param ctx the parse tree
 	 */
@@ -480,6 +502,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStatementUpdate(@NotNull DuroParser.ForStatementUpdateContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#primitiveArgument}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#primitiveArgument}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#conditionalExpressionFalse}.

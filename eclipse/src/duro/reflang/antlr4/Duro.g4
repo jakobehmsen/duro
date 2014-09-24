@@ -80,7 +80,7 @@ unaryExpressionPostIncDecApplicationIndexAccessReceiver:
 unaryExpressionPostIncDecOperand: 
     (
         grouping | thisMessageExchange | lookup | argumentParameter | 
-        literal | self | nil | frame
+        literal | self | nil | frame | primitive
     )
     operationChain* operationEnd?;
 
@@ -129,6 +129,11 @@ arrayOperand: expression;
 self: KW_THIS;
 nil: KW_NULL;
 frame: KW_FRAME;
+primitive: 
+    PARAGRAPH ID primitiveOperand2* 
+    OPEN_PAR (primitiveArgument (COMMA primitiveArgument)*)? CLOSE_PAR;
+primitiveArgument: expression;
+primitiveOperand2: (literal | ID);
 operationChain: explicitMessageExchange | memberAccess | indexAccess;
 explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT messageId;
@@ -261,6 +266,7 @@ fragment LINE_TERMINATOR_SEQUENCE: '\r\n' | LINE_TERMINATOR;
 fragment HEX_DIGIT: [0-9a-fA-F];
 LINE_TERMINATOR: [\r\n\u2028\u2029] -> channel(HIDDEN);
 
+PARAGRAPH: '§';
 DOUBLE_AMP: '&&';
 DOUBLE_PIPE: '||';
 NOT: '!';
