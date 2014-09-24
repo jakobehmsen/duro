@@ -6,9 +6,9 @@ A console application that ?.
 
 function load(path) {
 	# {
-		load_arg :0
-		sp_load
-		ret :1
+		load_arg 0;
+		sp_load;
+		ret 1;
 	}
 }
 
@@ -18,55 +18,59 @@ load("collections");
 var persons = List.clone();
 
 while(true) {
+	$PrintWhatToDo
 	writeln("What do you want to do?");
+	$ReadWhatToDo
 	var command = readln();
 	
 	if(command == "new") {
+		$PrintEnterNewName
 		writeln("Enter name: ");
+		$PrintReadNewName
 		var name = readln();
+		$PrintEnterNewDoB
 		writeln("Enter dob: ");
+		$ReadEnterNewDoB
 		var dob = readln();
 		
 		var newPerson = {
 			name: name,
-			dob: dob
+			dob: dob,
+			toString: function () {
+				return name + ", " + dob
+			}
 		};
 		
 		persons.add(newPerson);
 		
+		$PrintPersonCreated
 		writeln("" + name + " was created.");
 	} else if(command == "get") {
+		$PrintEnterNameToSearchFor
 		writeln("Enter name to search for: ");
+		$ReadNameToSearchFor
 		var name = readln();
 		
-		for(person in persons.where({:x.name == name}))
+		for(person in persons.where({:x.name == name})) {
+			$PrintPersonMatched
 			writeln(person);
-		
-		/*
-		for(person in persons.where(function(x) {return x.name == name}))
-			writeln(person);
-		=>
-		for(person in persons.where({
-			name: name,
-			call: function(x) {return x.name == name;}
-		}))
-			writeln(person);
-		*/
-		
-		// Using short hand syntax binds ids as above
-		// However, this is bound to this of the lexical context
-		/*
-		for(person in persons.where({:x.name == name}))
-			writeln(person);
-		*/
+		}
 	} else if(command == "pause") {
+		$PrintByeGreeting
 		writeln("Bye bye then.");
+		$Pause
 		pause;
+		$PrintWelcomeBack
 		writeln("Welcome back.");
 	} else if(command == "list") {
-		for(person in persons)
+		for(person in persons) {
+			$PrintPerson
 		    writeln(person);
+	    }
+		$PrintPersonCount
+	    writeln("Printed " + persons.size + " person(s).");
 	} else {
+		$PrintValidCommands
 		writeln("Valid commands are 'new', 'get', 'list' or 'pause'.");
 	}
 }
