@@ -158,6 +158,7 @@ public class Instruction implements Serializable {
 		case OPCODE_SP_WRITE:
 		case OPCODE_SP_FRAME_SET_SENDER:
 		case OPCODE_SP_FRAME_RESUME:
+		case OPCODE_SP_ARRAY_SET:
 			return false;
 		}
 		
