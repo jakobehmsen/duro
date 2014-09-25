@@ -453,21 +453,24 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			int[] ordinals = closure.ordinals;
+			int argumentOffset = closure.argumentOffset;
+			int argumentCount = closure.parameterCount;
 			
 			// Move forward arguments
-			if(currentFrame.arguments.length < ordinals.length) {
-				for(int i = 0; i < currentFrame.arguments.length; i++) {
-					int ordinal = ordinals[i];
-					Process argument = currentFrame.arguments[i];
-					frame.frame.arguments[ordinal] = argument;
-				}
+			if(currentFrame.arguments.length < argumentCount) {
+				System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, argumentOffset, currentFrame.arguments.length);
+//				for(int i = 0; i < currentFrame.arguments.length; i++) {
+//					int ordinal = ordinals[i];
+//					Process argument = currentFrame.arguments[i];
+//					frame.frame.arguments[ordinal] = argument;
+//				}
 			} else {
-				for(int i = 0; i < ordinals.length; i++) {
-					int ordinal = ordinals[i];
-					Process argument = currentFrame.arguments[i];
-					frame.frame.arguments[ordinal] = argument;
-				}
+				System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, argumentOffset, argumentCount);
+//				for(int i = 0; i < ordinals.length; i++) {
+//					int ordinal = ordinals[i];
+//					Process argument = currentFrame.arguments[i];
+//					frame.frame.arguments[ordinal] = argument;
+//				}
 			}
 			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceIdStack);
 			
@@ -798,9 +801,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
-			int[] ordinals = (int[])instruction.operand1;
+			int argumentOffset = (int)instruction.operand1;
+			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior, ordinals);
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior, argumentOffset, parameterCount);
 			closure.defineProto("prototype", any.lookup("Closure"));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
