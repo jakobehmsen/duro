@@ -34,22 +34,32 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SET = 21;
 	public static final int OPCODE_SET_PROTO = 22;
 	public static final int OPCODE_GET = 23;
+	@ExpressionCompatible
+	public static final int OPCODE_SLOTS_SET = 24;
+	@ExpressionCompatible
+	public static final int OPCODE_SLOTS_SET_PROTO = 25;
 	@ExpressionCompatible @DoesReturn
-	public static final int OPCODE_CALL_CLOSURE = 24;
-	public static final int OPCODE_EXTEND_INTER_ID = 25;
-	public static final int OPCODE_SHRINK_INTER_ID = 26;
-	public static final int OPCODE_LOAD_THIS = 27;
-	public static final int OPCODE_LOAD_NULL = 28;
-	public static final int OPCODE_LOAD_LOC = 29;
-	public static final int OPCODE_LOAD_ARG = 30;
-	public static final int OPCODE_LOAD_INT = 31;
-	public static final int OPCODE_LOAD_TRUE = 32;
-	public static final int OPCODE_LOAD_FALSE = 33;
-	public static final int OPCODE_LOAD_STRING = 34;
-	public static final int OPCODE_LOAD_ARRAY = 35;
-	public static final int OPCODE_LOAD_THIS_FRAME = 36;
-	public static final int OPCODE_LOAD_FRAME = 37;
-	public static final int OPCODE_LOAD_BEHAVIOR = 38;
+	public static final int OPCODE_SLOTS_GET = 26;
+	@ExpressionCompatible @DoesReturn
+	public static final int OPCODE_SLOTS_IS_DEFINED = 27;
+	@ExpressionCompatible @DoesReturn
+	public static final int OPCODE_SLOTS_NAMES = 28;
+	@ExpressionCompatible @DoesReturn
+	public static final int OPCODE_CALL_CLOSURE = 29;
+	public static final int OPCODE_EXTEND_INTER_ID = 30;
+	public static final int OPCODE_SHRINK_INTER_ID = 31;
+	public static final int OPCODE_LOAD_THIS = 32;
+	public static final int OPCODE_LOAD_NULL = 33;
+	public static final int OPCODE_LOAD_LOC = 34;
+	public static final int OPCODE_LOAD_ARG = 35;
+	public static final int OPCODE_LOAD_INT = 36;
+	public static final int OPCODE_LOAD_TRUE = 37;
+	public static final int OPCODE_LOAD_FALSE = 38;
+	public static final int OPCODE_LOAD_STRING = 39;
+	public static final int OPCODE_LOAD_ARRAY = 40;
+	public static final int OPCODE_LOAD_THIS_FRAME = 41;
+	public static final int OPCODE_LOAD_FRAME = 42;
+	public static final int OPCODE_LOAD_BEHAVIOR = 43;
 
 	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_BOOLEAN_OR = 65;
@@ -85,9 +95,9 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_INT_TO_STRING = 80;
 	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_FRAME_SENDER = 81;
-	@ExpressionCompatible @DoesReturn
-	public static final int OPCODE_SP_FRAME_SET_SENDER = 82;
 	@ExpressionCompatible
+	public static final int OPCODE_SP_FRAME_SET_SENDER = 82;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_FRAME_RESUME = 83;
 	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_REF_EQUAL = 84;
