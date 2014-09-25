@@ -3,11 +3,7 @@ Standard library
 */
 
 function write(x) {
-	#{
-		load_arg 0;
-		send "toString" 0;
-		sp_write;
-	}
+	§sp_write(x.toString());
 }
 
 function writeln(x) {
@@ -15,10 +11,7 @@ function writeln(x) {
 }
 
 function readln() {
-	#{
-		sp_next_line;
-		ret 1;
-	}
+	return §sp_next_line();
 }
 /*
 // Implicit inheritance based on protocol?
@@ -43,22 +36,13 @@ Any.callFunc = inline(args, function) {
 */
 
 Any.clone = function() {
-	#{
-		load_this;
-		sp_clone;
-		ret 1;
-	}
+	return §sp_clone(this);
 };
 Any.== = function(other) {
 	return other.equalsAny(this);
 };
 Any.equalsAny = function(lhs) {
-	#{
-		load_arg 0;
-		load_this;
-		sp_ref_equal;
-		ret 1;
-	}
+	return §sp_ref_equal(lhs, this);
 };
 Any.equalsInt = function(lhs) {
 	return false;
@@ -97,13 +81,7 @@ this.+(::) = x; // Two arguments
 */
 
 String.+ = function(other) {
-	#{
-		load_this;
-		load_arg 0;
-		send "toString" 0;
-		sp_string_concat;
-		ret 1;
-	}
+	return §sp_string_concat(this, other.toString());
 };
 String.toString = function() {
 	return this;
@@ -112,64 +90,31 @@ String.== = function(other) {
 	return other.equalsString(this);
 };
 String.equalsString = function(lhs) {
-	#{
-		load_arg 0;
-		load_this;
-		sp_string_equal;
-		ret 1;
-	}
+	return §sp_string_equal(lhs, this);
 };
+
 Integer.+ = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_add;
-		ret 1;
-	}
+	return §sp_int_add(this, other);
 };
 Integer.- = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_sub;
-		ret 1;
-	}
+	return §sp_int_sub(this, other);
 };
 Integer.* = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_mult;
-		ret 1;
-	}
+	return §sp_int_mult(this, other);
 };
 Integer./ = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_div;
-		ret 1;
-	}
+	return §sp_int_div(this, other);
 };
 Integer.% = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_rem;
-		ret 1;
-	}
+	return §sp_int_rem(this, other);
 };
 Integer.toString = function() {
-	#{
-		load_this;
-		sp_int_to_string;
-		ret 1;
-	}
+	return §sp_int_to_string(this);
 };
 
 /*
@@ -178,95 +123,41 @@ Add definition of greater/less operator here for Integer prototype
 
 Integer.> = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_greater;
-		ret 1;
-	}
+	return §sp_int_greater(this, other);
 };
 Integer.>= = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_greater;
-		if_false test_equals;
-		load_true;
-		ret 1;
-		
-		test_equals:
-		load_this;
-		load_arg 0;
-		sp_int_equal;
-		ret 1;
-	}
+	if(§sp_int_greater(this, other))
+		return true;
+	return §sp_int_equal(this, other);
 };
 Integer.< = function(other) {
 	// Should do double dispatching
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_less;
-		ret 1;
-	}
+	return §sp_int_less(this, other);
 };
 Integer.<= = function(other) {
-	#{
-		load_this;
-		load_arg 0;
-		sp_int_less;
-		if_false test_equals;
-		load_true;
-		ret 1;
-		
-		test_equals:
-		load_this;
-		load_arg 0;
-		sp_int_equal;
-		ret 1;
-	}
+	// Should do double dispatching
+	if(§sp_int_less(this, other))
+		return true;
+	return §sp_int_equal(this, other);
 };
-
 Integer.== = function(other) {
-	return other.integerString(this);
+	return other.equalsInt(this);
 };
-Integer.integerString = function(lhs) {
-	#{
-		load_arg 0;
-		load_this;
-		sp_int_equal;
-		ret 1;
-	}
+Integer.equalsInt = function(lhs) {
+	return §sp_int_equal(lhs, this);
 };
 
 Frame.sender = function() {
-	#{
-		load_this;
-		sp_frame_sender;
-		ret 1;
-	}
+	return §sp_frame_sender(this);
 };
 Frame.setSender = function(newSender) {
-	#{
-		load_this;
-		load_arg 0;
-		sp_frame_set_sender;
-	}
+	return §sp_frame_set_sender(this, newSender);
 };
 Frame.resume = function(x) {
-	#{
-		load_this;
-		load_arg 0;
-		sp_frame_resume;
-		ret 1;
-	}
+	return §sp_frame_resume(this, x);
 };
 
 Closure.call = function() {
-	#{
-		load_this;
-		call_closure;
-		ret 1;
-	}
+	return §call_closure(this);
 };
