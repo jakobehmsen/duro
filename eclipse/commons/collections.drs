@@ -17,7 +17,7 @@ Generator = {
 				producer.resume(null);
 			},
 			atEnd: function() {
-				return current.isNull();
+				return current == null;
 			},
 			put: function(item) {
 				current = item;
@@ -50,44 +50,22 @@ Generatable = {
 };
 
 function arrayLength(array) {
-	#{
-		load_arg 0;
-		sp_array_length;
-		ret 1;
-	}
+	return §sp_array_length(array);
 }
 
 function newArray(length) {
-	#{
-		load_arg 0;
-		sp_new_array;
-		ret 1;
-	}
+	return §sp_new_array(length);
 }
 
 Array.prototype ^= Iterable;
 Array.set = function(index, value) {
-	# {
-		load_this;
-		load_arg 0;
-		load_arg 1;
-		sp_array_set;
-	}
+	return §sp_array_set(this, index, value);
 };
 Array.get = function(index) {
-	# {
-		load_this;
-		load_arg 0;
-		sp_array_get;
-		ret 1;
-	}
+	return §sp_array_get(this, index);
 };
 Array.length = function() {
-	#{
-		load_this;
-		sp_array_length;
-		ret 1;
-	}
+	return §sp_array_length(this);
 };
 Array.iterator = function() {
 	return Generator.on({
