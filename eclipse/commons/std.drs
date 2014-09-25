@@ -53,6 +53,38 @@ Any.equalsString = function(lhs) {
 Any.!= = function(other) {
 	return !(this == other);
 };
+Any.slots = function() {
+
+	return {
+		target: this,
+		set: function(name, value) {
+			return §slots_set(target, name, value);
+		},
+		setProto: function(name, value) {
+			return §slots_set_proto(target, name, value);
+		},
+		get: function(name) {
+			return §slots_get(target, name);
+		},
+		isDefined: function(name) {
+			return §slots_is_defined(target, name);
+		},
+		names: function() {
+			return §slots_names(target);
+		}
+	}
+
+
+/*
+	return new {
+		set: {§slots_set(this, :name, :value)},
+		setProto: {§slots_set_proto(this, :name, :value)},
+		get: {§slots_get(this, :name)},
+		isDefined: {§slots_is_defined(this, :name)},
+		names: {§slots_names(this)}
+	}
+*/
+};
 
 /*
 What about associating each definition with a particular number of arguments?
