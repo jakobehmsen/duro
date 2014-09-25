@@ -402,7 +402,54 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_CALL_CLOSURE: {
+		} case Instruction.OPCODE_SLOTS_SET: {
+			Process value = currentFrame.stack.pop();
+			StringProcess key = (StringProcess)currentFrame.stack.pop();
+			Process receiver = (Process)currentFrame.stack.pop();
+			receiver.define(key.str, value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SLOTS_SET_PROTO: {
+			Process value = currentFrame.stack.pop();
+			StringProcess key = (StringProcess)currentFrame.stack.pop();
+			Process receiver = (Process)currentFrame.stack.pop();
+			receiver.defineProto(key.str, value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SLOTS_GET: {
+			StringProcess key = (StringProcess)currentFrame.stack.pop();
+			Process receiver = (Process)currentFrame.stack.pop();
+			Process value = receiver.lookup(key.str);
+			currentFrame.stack.push(value);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SLOTS_IS_DEFINED: {
+			StringProcess key = (StringProcess)currentFrame.stack.pop();
+			Process receiver = (Process)currentFrame.stack.pop();
+			Process value = receiver.lookup(key.str);
+			currentFrame.stack.push(getBoolean(value != null));
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_SLOTS_NAMES: {
+			Process receiver = (Process)currentFrame.stack.pop();
+			String[] rawNames = receiver.getNames();
+			Process[] names = new Process[rawNames.length];
+			for(int i = 0; i < names.length; i++)
+				names[i] = createString(rawNames[i]);
+			ArrayProcess namesArray = new ArrayProcess(names);
+			namesArray.defineProto("prototype", any.lookup("Array"));
+			currentFrame.stack.push(namesArray);
+			currentFrame.instructionPointer++;
+			
+			break;
+		}
+		
+		
+		case Instruction.OPCODE_CALL_CLOSURE: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
@@ -485,8 +532,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_LOAD_STRING: {
 			String str = (String)instruction.operand1;
-			StringProcess string = new StringProcess(str);
-			string.defineProto("prototype", any.lookup("String"));
+			StringProcess string = createString(str);
 			currentFrame.stack.push(string);
 			currentFrame.instructionPointer++;
 			
@@ -555,8 +601,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_STRING_CONCAT: {
 			StringProcess rhs = (StringProcess)currentFrame.stack.pop();
 			StringProcess lhs = (StringProcess)currentFrame.stack.pop();
-			StringProcess result = new StringProcess(lhs.str + rhs.str);
-			result.defineProto("prototype", any.lookup("String"));
+			StringProcess result = createString(lhs.str + rhs.str);
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -636,8 +681,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_INT_TO_STRING: {
 			IntegerProcess integer = (IntegerProcess)currentFrame.stack.pop();
-			StringProcess result = new StringProcess(Integer.toString(integer.intValue));
-			result.defineProto("prototype", any.lookup("String"));
+			StringProcess result = createString(Integer.toString(integer.intValue));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -702,8 +746,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				line = (String)output;
 			}
 
-			StringProcess string = new StringProcess(line);
-			string.defineProto("prototype", any.lookup("String"));
+			StringProcess string = createString(line);
 			
 			currentFrame.stack.push(string);
 			currentFrame.instructionPointer++;
@@ -854,5 +897,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	
 	public BooleanProcess getFalse() {
 		return (BooleanProcess)any.lookup("False");
+	}
+
+	public StringProcess createString(String str) {
+		StringProcess string = new StringProcess(str);
+		string.defineProto("prototype", any.lookup("String"));
+		return string;
+	}
+
+	@Override
+	public String[] getNames() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
