@@ -11,6 +11,7 @@ public class OrdinalAllocator {
 	private Allocation allocation;
 	private OrdinalAllocator outer;
 	private Hashtable<String, Integer> localIdToBlockIdMap = new Hashtable<String, Integer>();
+	private int offset;
 	
 	public OrdinalAllocator() {
 		allocation = new Allocation();
@@ -19,6 +20,7 @@ public class OrdinalAllocator {
 	private OrdinalAllocator(OrdinalAllocator outer) {
 		this.outer = outer;
 		allocation = outer.allocation;
+		offset = allocation.blockIdToOrdinalMap.size();
 	}
 	
 	public OrdinalAllocator newInner() {
@@ -62,7 +64,16 @@ public class OrdinalAllocator {
 		return allocation.blockIdToOrdinalMap.size();
 	}
 
-	public int[] getOrdinals() {
-		return localIdToBlockIdMap.values().stream().mapToInt(x -> (int)x).sorted().toArray();
+//	public int[] getOrdinals() {
+//		return localIdToBlockIdMap.values().stream().mapToInt(x -> (int)x).sorted().toArray();
+//	}
+
+	public int getLocalParameterCount() {
+//		return localIdToBlockIdMap.size();
+		return allocation.blockIdToOrdinalMap.size() - offset;
+	}
+
+	public int getLocalParameterOffset() {
+		return offset;
 	}
 }
