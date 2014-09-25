@@ -14,7 +14,7 @@ public class ArrayProcess extends DictionaryProcess {
 		Arrays.fill(items, exemplar);
 	}
 
-	private ArrayProcess(Process[] items) {
+	public ArrayProcess(Process[] items) {
 		this.items = items;
 	}
 	
