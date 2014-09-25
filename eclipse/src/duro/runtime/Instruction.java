@@ -34,6 +34,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SET = 21;
 	public static final int OPCODE_SET_PROTO = 22;
 	public static final int OPCODE_GET = 23;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_CALL_CLOSURE = 24;
 	public static final int OPCODE_EXTEND_INTER_ID = 25;
 	public static final int OPCODE_SHRINK_INTER_ID = 26;
@@ -50,35 +51,62 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_FRAME = 37;
 	public static final int OPCODE_LOAD_BEHAVIOR = 38;
 
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_BOOLEAN_OR = 65;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_BOOLEAN_AND = 66;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_BOOLEAN_NOT = 67;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_ARRAY_GET = 68;
+	@ExpressionCompatible
 	public static final int OPCODE_SP_ARRAY_SET = 69;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_STRING_CONCAT = 70;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_STRING_EQUAL = 71;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_ADD = 72;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_SUB = 73;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_MULT = 74;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_DIV = 75;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_REM = 76;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_EQUAL = 77;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_GREATER = 78;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_LESS = 79;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_INT_TO_STRING = 80;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_FRAME_SENDER = 81;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_FRAME_SET_SENDER = 82;
+	@ExpressionCompatible
 	public static final int OPCODE_SP_FRAME_RESUME = 83;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_REF_EQUAL = 84;
 
+	@ExpressionCompatible
 	public static final int OPCODE_SP_WRITE = 127;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_NEXT_LINE = 128;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_NEW_DICT = 129;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_NEW_ARRAY = 130;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_ARRAY_LENGTH = 131;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_LOAD = 132;
 	public static final int OPCODE_SP_NEW_CLOSURE = 133;
 	public static final int OPCODE_SP_NEW_BEHAVIOR = 134;
+	@ExpressionCompatible @DoesReturn
 	public static final int OPCODE_SP_CLONE = 135;
 	
 	public static final int OPCODE_BREAK_POINT = 255;
@@ -107,26 +135,42 @@ public class Instruction implements Serializable {
 		this.operand3 = operand3;
 	}
 	
-	private static Hashtable<Integer, String> opcodeToIdMap;
+	private static class InstructionInfo {
+		public final String name;
+		public final ExpressionCompatible expressionCompatible;
+		public final DoesReturn doesReturn;
+		
+		public InstructionInfo(String name, ExpressionCompatible expressionCompatible, DoesReturn doesReturn) {
+			this.name = name;
+			this.expressionCompatible = expressionCompatible;
+			this.doesReturn = doesReturn;
+		}
+	}
+	
+	private static Hashtable<Integer, InstructionInfo> opcodeToIdMap;
 	private static Hashtable<String, Integer> idToOpcodeMap;
 	
 	private static String getNameFromOpcode(int opcode) {
 		ensureMapCreated();
 		
-		return opcodeToIdMap.get(opcode);
+		return opcodeToIdMap.get(opcode).name;
 	}
 
 	private static void ensureMapCreated() {
 		if(opcodeToIdMap == null) {
-			opcodeToIdMap = new Hashtable<Integer, String>();
+			opcodeToIdMap = new Hashtable<Integer, InstructionInfo>();
 			idToOpcodeMap = new Hashtable<String, Integer>();
 			
 			try {
 				for (Field field : Instruction.class.getDeclaredFields()) {
 				    if (java.lang.reflect.Modifier.isStatic(field.getModifiers()) && field.getName().startsWith("OPCODE_")) {
 				    	int fieldOpcode = (int)field.get(null);
-				    	opcodeToIdMap.put(fieldOpcode, field.getName().substring("OPCODE_".length()));
-				    	idToOpcodeMap.put(field.getName().substring("OPCODE_".length()).toLowerCase(), fieldOpcode);
+				    	String name = field.getName().substring("OPCODE_".length());
+				    	
+				    	InstructionInfo info = new InstructionInfo(name, field.getDeclaredAnnotation(ExpressionCompatible.class), field.getDeclaredAnnotation(DoesReturn.class));
+				    	
+				    	opcodeToIdMap.put(fieldOpcode, info);
+				    	idToOpcodeMap.put(name.toLowerCase(), fieldOpcode);
 				    }
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -146,22 +190,26 @@ public class Instruction implements Serializable {
 		ArrayList<Object> operands = new ArrayList<Object>();
 		if(operand1 != null)
 			operands.add(operand1);
+		if(operand2 != null)
+			operands.add(operand2);
+		if(operand3 != null)
+			operands.add(operand3);
 		return getNameFromOpcode(opcode) + operands;
 	}
 
 	public static boolean isReturn(int opcode) {
 		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS || opcode == OPCODE_RET_FORWARD;
 	}
-
-	public static boolean doesReturn(int opcode2) {
-		switch(opcode2) {
-		case OPCODE_SP_WRITE:
-		case OPCODE_SP_FRAME_SET_SENDER:
-		case OPCODE_SP_FRAME_RESUME:
-		case OPCODE_SP_ARRAY_SET:
-			return false;
-		}
+	
+	public static boolean isExpressionCompatible(int opcode) {
+		ensureMapCreated();
 		
-		return true;
+		return opcodeToIdMap.get(opcode).expressionCompatible != null;
+	}
+
+	public static boolean doesReturn(int opcode) {
+		ensureMapCreated();
+		
+		return opcodeToIdMap.get(opcode).doesReturn != null;
 	}
 }
