@@ -49,10 +49,6 @@ Generatable = {
 	}
 };
 
-function arrayLength(array) {
-	return §sp_array_length(array);
-}
-
 function newArray(length) {
 	return §sp_new_array(length);
 }
