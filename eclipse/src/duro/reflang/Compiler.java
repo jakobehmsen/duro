@@ -787,13 +787,15 @@ public class Compiler {
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
-				int[] ordinals = newIdToParameterOrdinalMap.getOrdinals();
+//				int[] ordinals = newIdToParameterOrdinalMap.getOrdinals();
 				int parameterCount = newIdToParameterOrdinalMap.size();
-
+				int closureParameterOffset = newIdToParameterOrdinalMap.getLocalParameterOffset();
+				int closureParameterCount = newIdToParameterOrdinalMap.getLocalParameterCount();
+				
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 				// [closure]
 			}
 			
@@ -1430,8 +1432,10 @@ public class Compiler {
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-			int[] ordinals = new int[] {idToParameterOrdinalMap.ordinalFor("generator")};
+//			int[] ordinals = new int[] {idToParameterOrdinalMap.ordinalFor("generator")};
+			int argumentOffset = idToParameterOrdinalMap.ordinalFor("generator");
 			int parameterCount = idToParameterOrdinalMap.size();
+			int closureParameterCount = 1;
 
 			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
 
@@ -1441,7 +1445,7 @@ public class Compiler {
 			// Generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
 			// Generatable, Behavior
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, ordinals));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, argumentOffset, closureParameterCount));
 			// Generatable, Closure
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
 			// a generatable
