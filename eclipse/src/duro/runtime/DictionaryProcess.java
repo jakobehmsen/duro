@@ -51,23 +51,6 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public void defineProto(Object key, Process value) {
-		properties.put(key, new Member(true, value));
-		protos.put(key, value);
-	}
-	
-	public void defineShared(Object key, Process value) {
-		properties.put(key, new Member(true, value));
-		protos.remove(key);
-	}
-	
-	@Override
-	public void define(Object key, Process value) {
-		properties.put(key, new Member(false, value));
-		protos.remove(key);
-	}
-
-	@Override
 	public Process lookup(Object key) {
 		Member valueMember = properties.get(key);
 		
@@ -82,6 +65,28 @@ public class DictionaryProcess extends Process {
 		
 		return null;
 		
+	}
+	
+	@Override
+	public String[] getNames() {
+		return properties.keySet().toArray(new String[properties.size()]);
+	}
+
+	@Override
+	public void defineProto(Object key, Process value) {
+		properties.put(key, new Member(true, value));
+		protos.put(key, value);
+	}
+	
+	public void defineShared(Object key, Process value) {
+		properties.put(key, new Member(true, value));
+		protos.remove(key);
+	}
+	
+	@Override
+	public void define(Object key, Process value) {
+		properties.put(key, new Member(false, value));
+		protos.remove(key);
 	}
 	
 	@Override

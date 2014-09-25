@@ -13,9 +13,11 @@ public abstract class Process implements Serializable {
 
 	public abstract Object getCallable(ProcessFactory factory, Object key);
 
-	public abstract void define(Object key, Process value);
-
 	public abstract Process lookup(Object key);
+
+	public abstract String[] getNames();
+
+	public abstract void define(Object key, Process value);
 
 	public abstract void defineProto(Object key, Process value);
 }
