@@ -985,7 +985,7 @@ public class Compiler {
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
 				for(TerminalNode idNode: ctx.ID()) {
-					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText())) {
+					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText()) && !idToParameterOrdinalMap.isDeclared(idNode.getText())) {
 						int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
 						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					} else {
@@ -996,7 +996,7 @@ public class Compiler {
 			
 			@Override
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
-				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.ID().getText())) {
+				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.ID().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.ID().getText())) {
 					idToVariableOrdinalMap.declare(ctx.ID().getText());
 				} else {
 					appendError(ctx, "Variable '" + ctx.ID().getText() + "' is already declared in this scope.");
