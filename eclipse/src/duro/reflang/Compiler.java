@@ -916,33 +916,35 @@ public class Compiler {
 			public void exitPrimitive(PrimitiveContext ctx) {
 				String opcodeId = ctx.ID().getText();
 
-				int opcode = Instruction.getOpcodeFromId(opcodeId);
+				Integer opcode = Instruction.getOpcodeFromId(opcodeId);
 				
-				if(Instruction.isExpressionCompatible(opcode)) {
-					Object operand1 = null;
-					Object operand2 = null;
-					Object operand3 = null;
-					
-					if(ctx.primitiveOperand2().size() > 0) {
-						operand1 = getLiteral(ctx.primitiveOperand2().get(0));
-	
-						if(ctx.primitiveOperand2().size() > 1) {
-							operand2 = getLiteral(ctx.primitiveOperand2().get(1));
-							
-							if(ctx.primitiveOperand2().size() > 2) {
-								operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+				if(opcode != null) {
+					if(Instruction.isExpressionCompatible(opcode)) {
+						Object operand1 = null;
+						Object operand2 = null;
+						Object operand3 = null;
+						
+						if(ctx.primitiveOperand2().size() > 0) {
+							operand1 = getLiteral(ctx.primitiveOperand2().get(0));
+		
+							if(ctx.primitiveOperand2().size() > 1) {
+								operand2 = getLiteral(ctx.primitiveOperand2().get(1));
+								
+								if(ctx.primitiveOperand2().size() > 2) {
+									operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+								}
 							}
 						}
-					}
-					
-					instructions.add(new Instruction(opcode, operand1, operand2, operand3));
-					if(!Instruction.doesReturn(opcode)) {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						
+						instructions.add(new Instruction(opcode, operand1, operand2, operand3));
+						if(!Instruction.doesReturn(opcode)) {
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+						}
+					} else {
+						appendError(ctx, "Opcode not compatible with expressions: " + opcodeId);
 					}
 				} else {
-					// How to handle compile time errors?
-//					Debug.println(Debug.LEVEL_LOW, "Primitive not compatible with expression: " + opcodeId);
-					appendError(ctx, "Invalid opcode for primitive expressions: " + opcodeId);
+					appendError(ctx, "Invalid opcode: " + opcodeId);
 				}
 			}
 			
