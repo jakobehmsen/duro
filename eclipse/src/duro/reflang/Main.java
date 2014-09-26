@@ -23,11 +23,15 @@ public class Main {
 			duro.reflang.Compiler compiler = new Compiler();
 			CustomProcess process = compiler.compile(inputStream);
 			
-			try (ObjectOutput oo = new ObjectOutputStream(new FileOutputStream(objectCodePath))) {
-		        oo.writeObject(process);
-		    }
-			
-			System.out.println("Compiled '" + sourceCodePath + "' into '" + objectCodePath + "'.");
+			if(compiler.hasErrors())
+				compiler.printErrors();
+			else {
+				try (ObjectOutput oo = new ObjectOutputStream(new FileOutputStream(objectCodePath))) {
+			        oo.writeObject(process);
+			    }
+				
+				System.out.println("Compiled '" + sourceCodePath + "' into '" + objectCodePath + "'.");
+			}
 		} catch (IOException e) {
 			System.out.println("Compilation failed.");
 			e.printStackTrace();
