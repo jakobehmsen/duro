@@ -985,14 +985,22 @@ public class Compiler {
 			@Override
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
 				for(TerminalNode idNode: ctx.ID()) {
-					int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText())) {
+						int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
+						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					} else {
+						appendError(ctx, "Variable '" + idNode.getText() + "' is already declared in this scope.");
+					}
 				}
 			}
 			
 			@Override
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
-				idToVariableOrdinalMap.declare(ctx.ID().getText());
+				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.ID().getText())) {
+					idToVariableOrdinalMap.declare(ctx.ID().getText());
+				} else {
+					appendError(ctx, "Variable '" + ctx.ID().getText() + "' is already declared in this scope.");
+				}
 			}
 			
 			@Override
