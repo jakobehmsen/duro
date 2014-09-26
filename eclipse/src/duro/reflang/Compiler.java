@@ -6,12 +6,18 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Stack;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
+import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -101,19 +107,29 @@ import duro.runtime.Instruction;
 
 public class Compiler {
 	private static class ErrorInfo {
-		public final ParserRuleContext ctx;
+		public final int line;
+		public final int charPositionInLine;
 		public final String message;
 		
-		public ErrorInfo(ParserRuleContext ctx, String message) {
-			this.ctx = ctx;
+		public ErrorInfo(int line, int charPositionInLine, String message) {
+			this.line = line;
+			this.charPositionInLine = charPositionInLine;
 			this.message = message;
 		}
 	}
 	
 	private ArrayList<ErrorInfo> errors = new ArrayList<ErrorInfo>();
 	
-	private void appendError(ParserRuleContext ctx, String message) {
-		errors.add(new ErrorInfo(ctx, message));
+	private void appendError(int line, int charPositionInLine, String message) {
+		errors.add(new ErrorInfo(line, charPositionInLine, message));
+	}
+	
+	public boolean hasErrors() {
+		return errors.size() > 0;
+	}
+	
+	public void printErrors() {
+		errors.forEach(x -> System.err.println("@" + x.line + "," + (x.charPositionInLine + 1) + ": " + x.message));
 	}
 	
 	public CustomProcess compile(InputStream sourceCode) throws IOException {
@@ -121,8 +137,28 @@ public class Compiler {
 		DuroLexer lexer = new DuroLexer(charStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		DuroParser parser = new DuroParser(tokenStream);
-		
-		
+		parser.removeErrorListeners();
+		parser.addErrorListener(new ANTLRErrorListener() {
+			@Override
+			public void syntaxError(Recognizer<?,?> recognizer, java.lang.Object offendingSymbol, int line, int charPositionInLine, java.lang.String msg, RecognitionException e) {
+				appendError(line, charPositionInLine, msg);
+			}
+			
+			@Override
+			public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
+				new String();
+			}
+			
+			@Override
+			public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, java.util.BitSet conflictingAlts, ATNConfigSet configs) {
+				new String();
+			}
+			
+			@Override
+			public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, java.util.BitSet ambigAlts, ATNConfigSet configs) {
+				new String();
+			}
+		});
 		
 		Debug.println(Debug.LEVEL_HIGH, "Parsing program...");
 		ProgramContext programCtx;
