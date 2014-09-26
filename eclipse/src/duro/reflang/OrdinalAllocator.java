@@ -76,4 +76,8 @@ public class OrdinalAllocator {
 	public int getLocalParameterOffset() {
 		return offset;
 	}
+
+	public boolean isDeclaredLocally(String id) {
+		return localIdToBlockIdMap.get(id) != null;
+	}
 }
