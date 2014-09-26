@@ -120,6 +120,10 @@ public class Compiler {
 	
 	private ArrayList<ErrorInfo> errors = new ArrayList<ErrorInfo>();
 	
+	private void appendError(ParserRuleContext ctx, String message) {
+		errors.add(new ErrorInfo(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message));
+	}
+	
 	private void appendError(int line, int charPositionInLine, String message) {
 		errors.add(new ErrorInfo(line, charPositionInLine, message));
 	}
@@ -937,7 +941,8 @@ public class Compiler {
 					}
 				} else {
 					// How to handle compile time errors?
-					Debug.println(Debug.LEVEL_LOW, "Primitive not compatible with expression: " + opcodeId);
+//					Debug.println(Debug.LEVEL_LOW, "Primitive not compatible with expression: " + opcodeId);
+					appendError(ctx, "Invalid opcode for primitive expressions: " + opcodeId);
 				}
 			}
 			
