@@ -3,8 +3,10 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -921,33 +923,45 @@ public class Compiler {
 				
 				if(opcode != null) {
 					if(Instruction.isExpressionCompatible(opcode)) {
-						Class<?>[] operandTypes = Instruction.getOperandTypes(opcode);
+						Class<?>[] expectedOperandTypes = Instruction.getOperandTypes(opcode);
 						
-						if(operandTypes.length == ctx.primitiveOperand2().size()) {
+						if(expectedOperandTypes.length == ctx.primitiveOperand2().size()) {
 							Object operand1 = null;
 							Object operand2 = null;
 							Object operand3 = null;
 							
+							Class<?>[] actualOperandTypes = new Class<?>[expectedOperandTypes.length];
+							
 							if(ctx.primitiveOperand2().size() > 0) {
 								operand1 = getLiteral(ctx.primitiveOperand2().get(0));
+								actualOperandTypes[0] = operand1.getClass();
 			
 								if(ctx.primitiveOperand2().size() > 1) {
 									operand2 = getLiteral(ctx.primitiveOperand2().get(1));
+									actualOperandTypes[1] = operand1.getClass();
 									
 									if(ctx.primitiveOperand2().size() > 2) {
 										operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+										actualOperandTypes[2] = operand1.getClass();
 									}
 								}
 							}
 							
-							instructions.add(new Instruction(opcode, operand1, operand2, operand3));
-							if(!Instruction.doesReturn(opcode)) {
-								instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+							if(Arrays.equals(expectedOperandTypes, actualOperandTypes)) {
+								instructions.add(new Instruction(opcode, operand1, operand2, operand3));
+								if(!Instruction.doesReturn(opcode)) {
+									instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+								}
+							} else {
+								appendError(
+									ctx, 
+									"Operand type sequence " + literalTypesToString(actualOperandTypes) + 
+									" was given where the sequence " +  literalTypesToString(expectedOperandTypes) + " was expected.");
 							}
 						} else {
 							String was1 = ctx.primitiveOperand2().size() == 1 ? "operand was" : "operands where";
-							String was2 = operandTypes.length == 1 ? "operand was" : "operands where";
-							appendError(ctx, ctx.primitiveOperand2().size() + " " + was1 + " given when " + operandTypes.length + " " + was2 + " expected.");
+							String was2 = expectedOperandTypes.length == 1 ? "operand was" : "operands where";
+							appendError(ctx, ctx.primitiveOperand2().size() + " " + was1 + " given when " + expectedOperandTypes.length + " " + was2 + " expected.");
 						}
 					} else {
 						appendError(ctx, "Opcode not compatible with expressions: " + opcodeId);
@@ -955,6 +969,12 @@ public class Compiler {
 				} else {
 					appendError(ctx, "Invalid opcode: " + opcodeId);
 				}
+			}
+			
+			private String literalTypesToString(Class<?>[] literalTypes) {
+				return Arrays.asList(literalTypes).stream().map(x -> {
+					return x.getSimpleName();
+				}).collect(Collectors.joining(", "));
 			}
 			
 			@Override
