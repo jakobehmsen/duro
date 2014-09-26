@@ -100,6 +100,22 @@ import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
 public class Compiler {
+	private static class ErrorInfo {
+		public final ParserRuleContext ctx;
+		public final String message;
+		
+		public ErrorInfo(ParserRuleContext ctx, String message) {
+			this.ctx = ctx;
+			this.message = message;
+		}
+	}
+	
+	private ArrayList<ErrorInfo> errors = new ArrayList<ErrorInfo>();
+	
+	private void appendError(ParserRuleContext ctx, String message) {
+		errors.add(new ErrorInfo(ctx, message));
+	}
+	
 	public CustomProcess compile(InputStream sourceCode) throws IOException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
