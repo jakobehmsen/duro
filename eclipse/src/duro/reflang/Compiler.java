@@ -455,6 +455,7 @@ public class Compiler {
 						
 						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
 						instructions.add(new Instruction(Instruction.OPCODE_POP));
+						
 					}
 				}
 			}
@@ -920,25 +921,33 @@ public class Compiler {
 				
 				if(opcode != null) {
 					if(Instruction.isExpressionCompatible(opcode)) {
-						Object operand1 = null;
-						Object operand2 = null;
-						Object operand3 = null;
+						Class<?>[] operandTypes = Instruction.getOperandTypes(opcode);
 						
-						if(ctx.primitiveOperand2().size() > 0) {
-							operand1 = getLiteral(ctx.primitiveOperand2().get(0));
-		
-							if(ctx.primitiveOperand2().size() > 1) {
-								operand2 = getLiteral(ctx.primitiveOperand2().get(1));
-								
-								if(ctx.primitiveOperand2().size() > 2) {
-									operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+						if(operandTypes.length == ctx.primitiveOperand2().size()) {
+							Object operand1 = null;
+							Object operand2 = null;
+							Object operand3 = null;
+							
+							if(ctx.primitiveOperand2().size() > 0) {
+								operand1 = getLiteral(ctx.primitiveOperand2().get(0));
+			
+								if(ctx.primitiveOperand2().size() > 1) {
+									operand2 = getLiteral(ctx.primitiveOperand2().get(1));
+									
+									if(ctx.primitiveOperand2().size() > 2) {
+										operand3 = getLiteral(ctx.primitiveOperand2().get(2));
+									}
 								}
 							}
-						}
-						
-						instructions.add(new Instruction(opcode, operand1, operand2, operand3));
-						if(!Instruction.doesReturn(opcode)) {
-							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+							
+							instructions.add(new Instruction(opcode, operand1, operand2, operand3));
+							if(!Instruction.doesReturn(opcode)) {
+								instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+							}
+						} else {
+							String was1 = ctx.primitiveOperand2().size() == 1 ? "operand was" : "operands where";
+							String was2 = operandTypes.length == 1 ? "operand was" : "operands where";
+							appendError(ctx, ctx.primitiveOperand2().size() + " " + was1 + " given when " + operandTypes.length + " " + was2 + " expected.");
 						}
 					} else {
 						appendError(ctx, "Opcode not compatible with expressions: " + opcodeId);
