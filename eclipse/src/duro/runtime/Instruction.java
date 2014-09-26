@@ -188,7 +188,7 @@ public class Instruction implements Serializable {
 		}
 	}
 
-	public static int getOpcodeFromId(String opcodeId) {
+	public static Integer getOpcodeFromId(String opcodeId) {
 		ensureMapCreated();
 		
 		return idToOpcodeMap.get(opcodeId);
