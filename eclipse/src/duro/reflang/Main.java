@@ -20,7 +20,8 @@ public class Main {
 		FileInputStream inputStream;
 		try {
 			inputStream = new FileInputStream(sourceCodePath);
-			CustomProcess process = duro.reflang.Compiler.compile(inputStream);
+			duro.reflang.Compiler compiler = new Compiler();
+			CustomProcess process = compiler.compile(inputStream);
 			
 			try (ObjectOutput oo = new ObjectOutputStream(new FileOutputStream(objectCodePath))) {
 		        oo.writeObject(process);

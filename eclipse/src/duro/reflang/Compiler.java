@@ -100,7 +100,7 @@ import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
 public class Compiler {
-	public static CustomProcess compile(InputStream sourceCode) throws IOException {
+	public CustomProcess compile(InputStream sourceCode) throws IOException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -160,7 +160,7 @@ public class Compiler {
 		}
 	}
 	
-	private static DuroListener createBodyListener(
+	private DuroListener createBodyListener(
 			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMapArg, 
 			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
 		return new DuroBaseListener() {
@@ -1408,7 +1408,7 @@ public class Compiler {
 			.replace("\\t", "\t");
 	}
 	
-	private static BodyInfo getBodyInfo(
+	private BodyInfo getBodyInfo(
 			OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree) {
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
