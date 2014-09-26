@@ -8,6 +8,6 @@ import java.lang.annotation.ElementType;;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ExpressionCompatible {
-	int operandCount() default 0;
 	int popCount() default 0;
+	Class<?>[] operandTypes() default {};
 }

@@ -31,8 +31,11 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_IF_TRUE = 18;
 	public static final int OPCODE_IF_FALSE = 19;
 	public static final int OPCODE_JUMP = 20;
+	@ExpressionCompatible(operandTypes = {String.class})
 	public static final int OPCODE_SET = 21;
+	@ExpressionCompatible(operandTypes = {String.class})
 	public static final int OPCODE_SET_PROTO = 22;
+	@ExpressionCompatible(operandTypes = {String.class})
 	public static final int OPCODE_GET = 23;
 	@ExpressionCompatible
 	public static final int OPCODE_SLOTS_SET = 24;
@@ -220,5 +223,11 @@ public class Instruction implements Serializable {
 		ensureMapCreated();
 		
 		return opcodeToIdMap.get(opcode).doesReturn != null;
+	}
+
+	public static Class<?>[] getOperandTypes(int opcode) {
+		ensureMapCreated();
+
+		return opcodeToIdMap.get(opcode).expressionCompatible.operandTypes();
 	}
 }
