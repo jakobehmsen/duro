@@ -5,11 +5,7 @@ A console application that ?.
 */
 
 function load(path) {
-	# {
-		load_arg 0;
-		sp_load;
-		ret 1;
-	}
+	return §sp_load(path);
 }
 
 load("std");
@@ -68,7 +64,7 @@ while(true) {
 		    writeln(person);
 	    }
 		$PrintPersonCount
-	    writeln("Printed " + persons.size + " person(s).");
+	    writeln("All in all, " + persons.size + " person(s).");
 	} else {
 		$PrintValidCommands
 		writeln("Valid commands are 'new', 'get', 'list' or 'pause'.");
