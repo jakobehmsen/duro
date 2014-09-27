@@ -69,6 +69,7 @@ import duro.reflang.antlr4.DuroParser.FrameContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
+import duro.reflang.antlr4.DuroParser.GroupingContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
 import duro.reflang.antlr4.DuroParser.IndexAccessContext;
@@ -79,11 +80,13 @@ import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
+import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -714,9 +717,16 @@ public class Compiler {
 				}
 			}
 			
+			private int getMessageExchangeArgumentCount(MessageExchangeContext ctx) {
+				if(ctx.messageExchangeArguments1() != null)
+					return ctx.messageExchangeArguments1().expression().size();
+				else
+					return ctx.messageExchangeArguments2().literal().size();
+			}
+			
 			@Override
 			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
-				int argumentCount = ctx.messageExchange().expression().size();
+				int argumentCount = getMessageExchangeArgumentCount(ctx.messageExchange());
 				
 				String id = ctx.messageExchange().messageId().getText();
 				if(idToParameterOrdinalMap.isDeclared(id)) {
@@ -808,12 +818,16 @@ public class Compiler {
 			@Override
 			public void exitClosureBody(ClosureBodyContext ctx) {
 				if(instructions.size() > 0) {
-					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
-						// Replace pop with return
-						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET));
-					} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
-						// If the last program elements isn't an expression, e.g. a for statement
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
+//						// Replace pop with return
+//						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET));
+//					} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+//						// If the last program elements isn't an expression, e.g. a for statement
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//						instructions.add(new Instruction(Instruction.OPCODE_RET));
+//					}
+					
+					if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 						instructions.add(new Instruction(Instruction.OPCODE_RET));
 					}
 				} else {
@@ -1423,7 +1437,7 @@ public class Compiler {
 			
 			@Override
 			public void exitExplicitMessageExchange(ExplicitMessageExchangeContext ctx) {
-				int argumentCount = ctx.messageExchange().expression().size();
+				int argumentCount = getMessageExchangeArgumentCount(ctx.messageExchange());
 				String id = ctx.messageExchange().messageId().getText();
 				appendMessageExchange(id, argumentCount);
 			}
@@ -1537,6 +1551,17 @@ public class Compiler {
 			private Stack<Integer> programElementIndexStack = new Stack<Integer>();
 			
 			@Override
+			public void enterProgramElements(ProgramElementsContext ctx) {
+				programElementCountStack.push(null);
+				programElementIndexStack.push(null);
+			}
+			
+			public void exitProgramElements(ProgramElementsContext ctx) {
+				programElementCountStack.pop();
+				programElementIndexStack.pop();
+			}
+			
+			@Override
 			public void enterBehaviorElements(BehaviorElementsContext ctx) {
 				programElementCountStack.push(ctx.behaviorElement().size());
 				programElementIndexStack.push(0);
@@ -1569,11 +1594,16 @@ public class Compiler {
 			public void exitTopExpression(TopExpressionContext ctx) {
 				if(programElementCountStack.size() > 0) {
 					// Is within behavior elements
-					int programElementCount = programElementCountStack.peek();
-					int programElementIndex = programElementIndexStack.peek();
+					Integer programElementCount = programElementCountStack.peek();
+					Integer programElementIndex = programElementIndexStack.peek();
 					
-					if(programElementIndex + 1 < programElementCount)
+					if(programElementCount != null && programElementIndex != null) {
+						if(programElementIndex + 1 < programElementCount)
+							instructions.add(new Instruction(Instruction.OPCODE_POP));
+					} else {
+						// Always pop
 						instructions.add(new Instruction(Instruction.OPCODE_POP));
+					}
 				} else {
 					// Is at root
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
