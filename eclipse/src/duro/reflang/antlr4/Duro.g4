@@ -201,9 +201,11 @@ ifStatement:
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;
 ifStatementCondition: expression;
-ifStatementOnTrue: OPEN_BRA programElements CLOSE_BRA | programElement;
+ifStatementOnTrue: 
+    OPEN_BRA behaviorElements CLOSE_BRA | behaviorElementsSingle;
 elseStatement: (KW_ELSE ifStatementOnFalse)?;
-ifStatementOnFalse: (OPEN_BRA programElements CLOSE_BRA) | programElement;
+ifStatementOnFalse: 
+    OPEN_BRA behaviorElements CLOSE_BRA | behaviorElementsSingle;
 whileStatement: 
     KW_WHILE OPEN_PAR whileStatementCondition CLOSE_PAR whileStatementBody;
 whileStatementCondition: expression;

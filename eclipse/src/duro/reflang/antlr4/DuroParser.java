@@ -4963,11 +4963,11 @@ public class DuroParser extends Parser {
 	}
 
 	public static class IfStatementOnTrueContext extends ParserRuleContext {
-		public ProgramElementContext programElement() {
-			return getRuleContext(ProgramElementContext.class,0);
+		public BehaviorElementsSingleContext behaviorElementsSingle() {
+			return getRuleContext(BehaviorElementsSingleContext.class,0);
 		}
-		public ProgramElementsContext programElements() {
-			return getRuleContext(ProgramElementsContext.class,0);
+		public BehaviorElementsContext behaviorElements() {
+			return getRuleContext(BehaviorElementsContext.class,0);
 		}
 		public TerminalNode CLOSE_BRA() { return getToken(DuroParser.CLOSE_BRA, 0); }
 		public TerminalNode OPEN_BRA() { return getToken(DuroParser.OPEN_BRA, 0); }
@@ -5000,7 +5000,7 @@ public class DuroParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(629); match(OPEN_BRA);
-				setState(630); programElements();
+				setState(630); behaviorElements();
 				setState(631); match(CLOSE_BRA);
 				}
 				break;
@@ -5008,7 +5008,7 @@ public class DuroParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(633); programElement();
+				setState(633); behaviorElementsSingle();
 				}
 				break;
 			}
@@ -5077,11 +5077,11 @@ public class DuroParser extends Parser {
 	}
 
 	public static class IfStatementOnFalseContext extends ParserRuleContext {
-		public ProgramElementContext programElement() {
-			return getRuleContext(ProgramElementContext.class,0);
+		public BehaviorElementsSingleContext behaviorElementsSingle() {
+			return getRuleContext(BehaviorElementsSingleContext.class,0);
 		}
-		public ProgramElementsContext programElements() {
-			return getRuleContext(ProgramElementsContext.class,0);
+		public BehaviorElementsContext behaviorElements() {
+			return getRuleContext(BehaviorElementsContext.class,0);
 		}
 		public TerminalNode CLOSE_BRA() { return getToken(DuroParser.CLOSE_BRA, 0); }
 		public TerminalNode OPEN_BRA() { return getToken(DuroParser.OPEN_BRA, 0); }
@@ -5113,18 +5113,16 @@ public class DuroParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				{
 				setState(640); match(OPEN_BRA);
-				setState(641); programElements();
+				setState(641); behaviorElements();
 				setState(642); match(CLOSE_BRA);
-				}
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(644); programElement();
+				setState(644); behaviorElementsSingle();
 				}
 				break;
 			}
@@ -6097,12 +6095,12 @@ public class DuroParser extends Parser {
 		"\2\2\u026c\u026d\5\n\6\2\u026d\u00a7\3\2\2\2\u026e\u026f\7\61\2\2\u026f"+
 		"\u0270\7\22\2\2\u0270\u0271\5\u00aaV\2\u0271\u0272\7\23\2\2\u0272\u0273"+
 		"\5\u00acW\2\u0273\u0274\5\u00aeX\2\u0274\u00a9\3\2\2\2\u0275\u0276\5\24"+
-		"\13\2\u0276\u00ab\3\2\2\2\u0277\u0278\7\20\2\2\u0278\u0279\5\4\3\2\u0279"+
-		"\u027a\7\21\2\2\u027a\u027d\3\2\2\2\u027b\u027d\5\b\5\2\u027c\u0277\3"+
+		"\13\2\u0276\u00ab\3\2\2\2\u0277\u0278\7\20\2\2\u0278\u0279\5\n\6\2\u0279"+
+		"\u027a\7\21\2\2\u027a\u027d\3\2\2\2\u027b\u027d\5\16\b\2\u027c\u0277\3"+
 		"\2\2\2\u027c\u027b\3\2\2\2\u027d\u00ad\3\2\2\2\u027e\u027f\7\62\2\2\u027f"+
 		"\u0281\5\u00b0Y\2\u0280\u027e\3\2\2\2\u0280\u0281\3\2\2\2\u0281\u00af"+
-		"\3\2\2\2\u0282\u0283\7\20\2\2\u0283\u0284\5\4\3\2\u0284\u0285\7\21\2\2"+
-		"\u0285\u0288\3\2\2\2\u0286\u0288\5\b\5\2\u0287\u0282\3\2\2\2\u0287\u0286"+
+		"\3\2\2\2\u0282\u0283\7\20\2\2\u0283\u0284\5\n\6\2\u0284\u0285\7\21\2\2"+
+		"\u0285\u0288\3\2\2\2\u0286\u0288\5\16\b\2\u0287\u0282\3\2\2\2\u0287\u0286"+
 		"\3\2\2\2\u0288\u00b1\3\2\2\2\u0289\u028a\7\66\2\2\u028a\u028b\7\22\2\2"+
 		"\u028b\u028c\5\u00b4[\2\u028c\u028d\7\23\2\2\u028d\u028e\5\u00b6\\\2\u028e"+
 		"\u00b3\3\2\2\2\u028f\u0290\5\24\13\2\u0290\u00b5\3\2\2\2\u0291\u0292\7"+
