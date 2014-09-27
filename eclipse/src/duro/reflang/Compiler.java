@@ -35,6 +35,7 @@ import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.ArrayOperandContext;
 import duro.reflang.antlr4.DuroParser.BehaviorElementContext;
 import duro.reflang.antlr4.DuroParser.BehaviorElementsContext;
+import duro.reflang.antlr4.DuroParser.BehaviorElementsSingleContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityApplicationContext;
@@ -1398,6 +1399,7 @@ public class Compiler {
 			
 			@Override
 			public void enterInterfaceId(InterfaceIdContext ctx) {
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 				String interfaceId = ctx.ID().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
 			}
@@ -1405,6 +1407,7 @@ public class Compiler {
 			@Override
 			public void exitInterfaceId(InterfaceIdContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
+				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 			}
 			
 			@Override
@@ -1546,6 +1549,18 @@ public class Compiler {
 			
 			@Override
 			public void exitBehaviorElements(BehaviorElementsContext ctx) {
+				programElementCountStack.pop();
+				programElementIndexStack.pop();
+			}
+			
+			@Override
+			public void enterBehaviorElementsSingle(BehaviorElementsSingleContext ctx) {
+				programElementCountStack.push(1);
+				programElementIndexStack.push(0);
+			}
+			
+			@Override
+			public void exitBehaviorElementsSingle(BehaviorElementsSingleContext ctx) {
 				programElementCountStack.pop();
 				programElementIndexStack.pop();
 			}
