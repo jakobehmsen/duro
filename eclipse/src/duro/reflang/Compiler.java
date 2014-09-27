@@ -119,7 +119,7 @@ public class Compiler {
 	}
 	
 	private void appendErrors(MessageCollector errors) {
-		errors.appendMessages(errors);
+		this.errors.appendMessages(errors);
 	}
 	
 	public boolean hasErrors() {
@@ -909,64 +909,90 @@ public class Compiler {
 			
 			@Override
 			public void exitPrimitive(PrimitiveContext ctx) {
+				MessageCollector errors = new MessageCollector();
+				
 				String opcodeId = ctx.ID().getText();
 
 				Integer opcode = Instruction.getOpcodeFromId(opcodeId);
+				
+				Object[] operands = new Object[Math.max(ctx.primitiveOperand2().size(), 3)];
 				
 				if(opcode != null) {
 					if(Instruction.isExpressionCompatible(opcode)) {
 						Class<?>[] expectedOperandTypes = Instruction.getOperandTypes(opcode);
 						
-						if(expectedOperandTypes.length == ctx.primitiveOperand2().size()) {
-							Object operand1 = null;
-							Object operand2 = null;
-							Object operand3 = null;
-							
-							Class<?>[] actualOperandTypes = new Class<?>[expectedOperandTypes.length];
-							
-							if(ctx.primitiveOperand2().size() > 0) {
-								operand1 = getLiteral(ctx.primitiveOperand2().get(0));
-								actualOperandTypes[0] = operand1.getClass();
-			
-								if(ctx.primitiveOperand2().size() > 1) {
-									operand2 = getLiteral(ctx.primitiveOperand2().get(1));
-									actualOperandTypes[1] = operand1.getClass();
-									
-									if(ctx.primitiveOperand2().size() > 2) {
-										operand3 = getLiteral(ctx.primitiveOperand2().get(2));
-										actualOperandTypes[2] = operand1.getClass();
-									}
-								}
-							}
-							
-							if(Arrays.equals(expectedOperandTypes, actualOperandTypes)) {
-								instructions.add(new Instruction(opcode, operand1, operand2, operand3));
-								if(!Instruction.doesReturn(opcode)) {
-									instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-								}
-							} else {
-								appendError(
-									ctx, 
-									"Operand type sequence " + literalTypesToString(actualOperandTypes) + 
-									" was given where the sequence " +  literalTypesToString(expectedOperandTypes) + " was expected.");
-							}
-						} else {
-							String was1 = ctx.primitiveOperand2().size() == 1 ? "operand was" : "operands where";
-							String was2 = expectedOperandTypes.length == 1 ? "operand was" : "operands where";
-							appendError(ctx, ctx.primitiveOperand2().size() + " " + was1 + " given when " + expectedOperandTypes.length + " " + was2 + " expected.");
+						Class<?>[] actualOperandTypes = new Class<?>[ctx.primitiveOperand2().size()];
+						
+						for(int i = 0; i < ctx.primitiveOperand2().size(); i++) {
+							operands[i] = getLiteral(ctx.primitiveOperand2().get(i));
+							actualOperandTypes[i] = operands[i].getClass();
+						}
+						
+						if(!Arrays.equals(expectedOperandTypes, actualOperandTypes)) {
+							int givenOperandCount = ctx.primitiveOperand2().size();	
+							String givenOperandsStr = givenOperandCount > 0 
+								? noun(givenOperandCount, "Operand")  + " " + operandsToString(operands, givenOperandCount)
+								: "No operands";
+							String expectedOperandsStr = expectedOperandTypes.length > 0 
+									? "operand sequence " + literalTypesToString(expectedOperandTypes) + " was"
+									: "no operands where";
+							errors.appendMessage(ctx, 
+								givenOperandsStr + " " + wasWhere(givenOperandCount) + 
+								" given when " + expectedOperandsStr + " expected for opcode '" + opcodeId + "'.");
+						}
+						
+						if(ctx.primitiveArgument().size() != Instruction.getPopCount(opcode)) {
+							String was1 = nounWasWhere(ctx.primitiveArgument().size(), "argument");
+							String was2 = nounWasWhere(Instruction.getPopCount(opcode), "argument");
+							errors.appendMessage(ctx, 
+								ctx.primitiveArgument().size() + " " + was1 + " given when " + 
+								Instruction.getPopCount(opcode) + " " + was2 +
+								" expected for opcode '" + opcodeId + "'.");
 						}
 					} else {
-						appendError(ctx, "Opcode not compatible with expressions: " + opcodeId);
+						errors.appendMessage(ctx, "Opcode '" + opcodeId + "' not compatible with expressions");
 					}
 				} else {
-					appendError(ctx, "Invalid opcode: " + opcodeId);
+					errors.appendMessage(ctx, "Invalid opcode '" + opcodeId + "'.");
 				}
+				
+				if(!errors.hasMessages()) {
+					instructions.add(new Instruction(opcode, operands[0], operands[1], operands[2]));
+					if(!Instruction.doesReturn(opcode)) {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					}
+				}
+				appendErrors(errors);
+			}
+			
+			private String nounWasWhere(int count, String noun) {
+				return count == 1 ? noun + " was" : noun + "s where";
+			}
+			
+			private String noun(int count, String noun) {
+				return count == 1 ? noun : noun + "s";
+			}
+			
+			private String wasWhere(int count) {
+				return count == 1 ? "was" : "where";
+			}
+			
+			private String operandsToString(Object[] operands, int count) {
+				if(operands.length > 0) {
+					return Arrays.asList(operands).stream().limit(count).map(x -> {
+						return x.getClass().getSimpleName() + "(" + x + ")";
+					}).collect(Collectors.joining(", "));
+				}
+				return "no";
 			}
 			
 			private String literalTypesToString(Class<?>[] literalTypes) {
-				return Arrays.asList(literalTypes).stream().map(x -> {
-					return x.getSimpleName();
-				}).collect(Collectors.joining(", "));
+				if(literalTypes.length > 0) {
+					return Arrays.asList(literalTypes).stream().map(x -> {
+						return x.getSimpleName();
+					}).collect(Collectors.joining(", ", "(", ")"));
+				}
+				return "no";
 			}
 			
 			@Override
