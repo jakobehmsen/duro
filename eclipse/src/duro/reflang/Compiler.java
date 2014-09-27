@@ -33,6 +33,8 @@ import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.ArgumentParameterContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.ArrayOperandContext;
+import duro.reflang.antlr4.DuroParser.BehaviorElementContext;
+import duro.reflang.antlr4.DuroParser.BehaviorElementsContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic1ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionArithmetic2ApplicationContext;
 import duro.reflang.antlr4.DuroParser.BinaryExpressionEqualityApplicationContext;
@@ -81,9 +83,6 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
-import duro.reflang.antlr4.DuroParser.ProgramElementContext;
-import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
-import duro.reflang.antlr4.DuroParser.ProgramElementsPartContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -1245,9 +1244,6 @@ public class Compiler {
 			
 			@Override
 			public void exitWhileStatementBody(WhileStatementBodyContext ctx) {
-				// Add pop because last top expression within programElements or programElement isn't popped
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
-				
 				int jumpIndex = whileJumpIndexStack.pop();
 				int whileBodyEndIndex = instructions.size();
 				int jump = jumpIndex - whileBodyEndIndex;
@@ -1294,12 +1290,6 @@ public class Compiler {
 				int conditionalJumpIndex = instructions.size();
 				forConditionalJumpIndexStack.push(conditionalJumpIndex);
 				instructions.add(null);
-			}
-			
-			@Override
-			public void exitForStatementBody(ForStatementBodyContext ctx) {
-				// Add pop because last top expression within programElements or programElement isn't popped
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
 			@Override
@@ -1375,9 +1365,6 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
-				// Add pop because last top expression within programElements or programElement isn't popped
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
-				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
@@ -1537,34 +1524,18 @@ public class Compiler {
 			private Stack<Integer> programElementIndexStack = new Stack<Integer>();
 			
 			@Override
-			public void enterProgramElements(ProgramElementsContext ctx) {
-				programElementCountStack.push(ctx.programElementsPart().size());
+			public void enterBehaviorElements(BehaviorElementsContext ctx) {
+				programElementCountStack.push(ctx.behaviorElement().size());
 				programElementIndexStack.push(0);
 			}
 			
 			@Override
-			public void enterProgramElementsPart(ProgramElementsPartContext ctx) {
-			}
-			
-			@Override
-			public void exitProgramElementsPart(ProgramElementsPartContext ctx) {
+			public void exitBehaviorElement(BehaviorElementContext ctx) {
 				programElementIndexStack.set(programElementIndexStack.size() - 1, programElementIndexStack.peek() + 1);
 			}
 			
 			@Override
-			public void exitProgramElements(ProgramElementsContext ctx) {
-				programElementCountStack.pop();
-				programElementIndexStack.pop();
-			}
-			
-			@Override
-			public void enterProgramElement(ProgramElementContext ctx) {
-				programElementCountStack.push(1);
-				programElementIndexStack.push(0);
-			}
-			
-			@Override
-			public void exitProgramElement(ProgramElementContext ctx) {
+			public void exitBehaviorElements(BehaviorElementsContext ctx) {
 				programElementCountStack.pop();
 				programElementIndexStack.pop();
 			}
@@ -1572,13 +1543,16 @@ public class Compiler {
 			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
 				if(programElementCountStack.size() > 0) {
+					// Is within behavior elements
 					int programElementCount = programElementCountStack.peek();
 					int programElementIndex = programElementIndexStack.peek();
 					
 					if(programElementIndex + 1 < programElementCount)
 						instructions.add(new Instruction(Instruction.OPCODE_POP));
-				} else
+				} else {
+					// Is at root
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
+				}
 			}
 		};
 	}
