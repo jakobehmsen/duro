@@ -240,6 +240,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryExpressionLogicalOrApplication(@NotNull DuroParser.BinaryExpressionLogicalOrApplicationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#programElementContent}.
+	 * @param ctx the parse tree
+	 */
+	void enterProgramElementContent(@NotNull DuroParser.ProgramElementContentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#programElementContent}.
+	 * @param ctx the parse tree
+	 */
+	void exitProgramElementContent(@NotNull DuroParser.ProgramElementContentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryExpressionArithmetic2}.
 	 * @param ctx the parse tree
 	 */

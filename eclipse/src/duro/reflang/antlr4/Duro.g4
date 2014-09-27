@@ -4,7 +4,8 @@ program: programElements;
 programElements: programElementsPart*;
 programElementsPart:
     topExpression SEMICOLON?;
-programElement: topExpression SEMICOLON?;
+programElement: programElementContent SEMICOLON?;
+programElementContent: topExpression;
 
 behaviorElements: behaviorElement+;
 behaviorElement: topExpression SEMICOLON?;
@@ -214,9 +215,9 @@ forStatement:
     CLOSE_PAR 
     forStatementBody
     ;
-forStatementInitialization: expression?;
+forStatementInitialization: programElementContent?;
 forStatementCondition: expression?;
-forStatementUpdate: expression?;
+forStatementUpdate: programElementContent?;
 forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 forInStatement: 
