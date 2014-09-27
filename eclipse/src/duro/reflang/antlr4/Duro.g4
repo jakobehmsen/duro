@@ -10,7 +10,7 @@ programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
 delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: 
-    variableAssignment | functionDefinition | ifStatement |
+    variableAssignment | functionDefinition | ifStatement | whileStatement |
     conditionalExpression;
 
 /*
@@ -178,7 +178,7 @@ yieldStatement:
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
 undelimitedStatement: 
-    /*functionDefinition | ifStatement | */whileStatement |
+    /*functionDefinition | ifStatement | whileStatement |*/
     forStatement | forInStatement | interfaceId;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
