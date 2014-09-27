@@ -85,6 +85,7 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementContentContext;
 import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
@@ -1242,7 +1243,7 @@ public class Compiler {
 			public void exitForStatement(ForStatementContext ctx) {
 				ConditionalTreeWalker walker = new ConditionalTreeWalker();
 
-				ParseTree updateElement = ctx.forStatementUpdate().delimitedProgramElement();
+				ParseTree updateElement = ctx.forStatementUpdate().programElementContent();
 				walker.walk(
 					createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions, yieldStatements), 
 					updateElement
@@ -1478,6 +1479,18 @@ public class Compiler {
 			}
 			
 			public void exitProgramElements(ProgramElementsContext ctx) {
+				programElementCountStack.pop();
+				programElementIndexStack.pop();
+			}
+			
+			@Override
+			public void enterProgramElementContent(ProgramElementContentContext ctx) {
+				programElementCountStack.push(null);
+				programElementIndexStack.push(null);
+			}
+			
+			@Override
+			public void exitProgramElementContent(ProgramElementContentContext ctx) {
 				programElementCountStack.pop();
 				programElementIndexStack.pop();
 			}
