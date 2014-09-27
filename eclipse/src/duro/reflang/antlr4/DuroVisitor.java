@@ -138,13 +138,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIndexAssignmentValue(@NotNull DuroParser.IndexAssignmentValueContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#closureLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -234,13 +227,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveBodyPart}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveBodyPart(@NotNull DuroParser.PrimitiveBodyPartContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry}.
@@ -565,13 +551,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveLabel}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#frame}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -626,13 +605,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitProgramElement(@NotNull DuroParser.ProgramElementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#array}.
@@ -710,13 +682,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionTrue}.

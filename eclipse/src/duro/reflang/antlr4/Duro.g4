@@ -176,18 +176,18 @@ yieldStatement:
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
 undelimitedStatement: 
-    functionDefinition | primitiveBody | ifStatement | 
-    whileStatement | forStatement | forInStatement | interfaceId;
+    functionDefinition | ifStatement | whileStatement |
+    forStatement | forInStatement | interfaceId;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: programElements;
-primitiveBody: HASH OPEN_BRA primitiveBodyPart* CLOSE_BRA;
+/*primitiveBody: HASH OPEN_BRA primitiveBodyPart* CLOSE_BRA;
 primitiveBodyPart: primitiveCall | primitiveLabel;
 primitiveCall: ID primitiveOperand* SEMICOLON;
 primitiveOperand: (literal | ID);
-primitiveLabel: ID COLON;
+primitiveLabel: ID COLON;*/
 ifStatement: 
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;

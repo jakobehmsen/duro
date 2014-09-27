@@ -251,19 +251,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveBody(@NotNull DuroParser.PrimitiveBodyContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -427,19 +414,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitBinaryExpressionGreaterLess(@NotNull DuroParser.BinaryExpressionGreaterLessContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPrimitiveBodyPart(@NotNull DuroParser.PrimitiveBodyPartContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveBodyPart(@NotNull DuroParser.PrimitiveBodyPartContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1044,19 +1018,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveLabel(@NotNull DuroParser.PrimitiveLabelContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterFrame(@NotNull DuroParser.FrameContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1155,19 +1116,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitProgramElement(@NotNull DuroParser.ProgramElementContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1311,19 +1259,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitWhileStatement(@NotNull DuroParser.WhileStatementContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveCall(@NotNull DuroParser.PrimitiveCallContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
