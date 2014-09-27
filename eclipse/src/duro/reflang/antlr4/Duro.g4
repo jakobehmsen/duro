@@ -16,7 +16,7 @@ topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
     forStatement | forInStatement | pause | variableStatement | 
-    breakStatement | conditionalExpression;
+    breakStatement | yieldStatement | conditionalExpression;
 
 /*
 binaryExpression: 
@@ -169,8 +169,8 @@ indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
 delimitedStatement: 
-    /*pause | variableStatement | */returnStatement | 
-    /*breakStatement | */yieldStatement;
+    /*pause | variableStatement | */returnStatement
+    /*breakStatement | yieldStatement*/;
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
