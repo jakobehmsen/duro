@@ -3,14 +3,13 @@ grammar Duro;
 program: programElements;
 programElements: programElementsPart*;
 programElementsPart:
-    delimitedProgramElement SEMICOLON?;
-programElement: delimitedProgramElement SEMICOLON?;
+    topExpression SEMICOLON?;
+programElement: topExpression SEMICOLON?;
 
 behaviorElements: behaviorElement+;
-behaviorElement: programElement;
+behaviorElement: topExpression SEMICOLON?;
 behaviorElementsSingle: behaviorElement;
 
-delimitedProgramElement: topExpression;
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
@@ -142,7 +141,7 @@ closureLiteral:
     OPEN_BRA closureParameters closureBody CLOSE_BRA;
 closureParameters: (SINGLE_PIPE (ID (COMMA ID)*)? SINGLE_PIPE)?;
 closureBody: behaviorElements;
-array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
+array: HASH OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
 nil: KW_NULL;
@@ -194,11 +193,6 @@ functionDefinition:
     OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
 functionBody: behaviorElements;
-/*primitiveBody: HASH OPEN_BRA primitiveBodyPart* CLOSE_BRA;
-primitiveBodyPart: primitiveCall | primitiveLabel;
-primitiveCall: ID primitiveOperand* SEMICOLON;
-primitiveOperand: (literal | ID);
-primitiveLabel: ID COLON;*/
 ifStatement: 
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;
@@ -220,9 +214,9 @@ forStatement:
     CLOSE_PAR 
     forStatementBody
     ;
-forStatementInitialization: delimitedProgramElement?;
+forStatementInitialization: expression?;
 forStatementCondition: expression?;
-forStatementUpdate: delimitedProgramElement?;
+forStatementUpdate: expression?;
 forStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 
 forInStatement: 

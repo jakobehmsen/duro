@@ -1018,19 +1018,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterBehaviorElementsSingle(@NotNull DuroParser.BehaviorElementsSingleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1077,19 +1064,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitString(@NotNull DuroParser.StringContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -856,17 +856,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#undelimitedStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#undelimitedStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#behaviorElementsSingle}.
 	 * @param ctx the parse tree
 	 */
@@ -909,17 +898,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitString(@NotNull DuroParser.StringContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#delimitedProgramElement}.
-	 * @param ctx the parse tree
-	 */
-	void enterDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#delimitedProgramElement}.
-	 * @param ctx the parse tree
-	 */
-	void exitDelimitedProgramElement(@NotNull DuroParser.DelimitedProgramElementContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionNot}.
