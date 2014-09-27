@@ -996,6 +996,7 @@ public class Compiler {
 			@Override
 			public void enterPause(PauseContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_PAUSE));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			@Override
