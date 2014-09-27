@@ -5,11 +5,13 @@ programElements: programElementsPart*;
 programElementsPart: 
     //delimitedProgramElement SEMICOLON | undelimitedStatement;
     //delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
-    (delimitedProgramElement SEMICOLON?)+ | undelimitedStatement;
+    delimitedProgramElement SEMICOLON? | undelimitedStatement;
 programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
 delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
-expression: variableAssignment | functionDefinition | conditionalExpression;
+expression: 
+    variableAssignment | functionDefinition | ifStatement |
+    conditionalExpression;
 
 /*
 binaryExpression: 
@@ -176,7 +178,7 @@ yieldStatement:
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
 undelimitedStatement: 
-    /*functionDefinition | */ifStatement | whileStatement |
+    /*functionDefinition | ifStatement | */whileStatement |
     forStatement | forInStatement | interfaceId;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
