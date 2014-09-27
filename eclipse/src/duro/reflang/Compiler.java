@@ -1293,6 +1293,11 @@ public class Compiler {
 			}
 			
 			@Override
+			public void exitForStatementBody(ForStatementBodyContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
+			}
+			
+			@Override
 			public void exitForStatement(ForStatementContext ctx) {
 				ConditionalTreeWalker walker = new ConditionalTreeWalker();
 
@@ -1312,6 +1317,8 @@ public class Compiler {
 
 				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			
@@ -1554,10 +1561,13 @@ public class Compiler {
 			
 			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
-				int programElementCount = programElementCountStack.peek();
-				int programElementIndex = programElementIndexStack.peek();
-				
-				if(programElementIndex + 1 < programElementCount)
+				if(programElementCountStack.size() > 0) {
+					int programElementCount = programElementCountStack.peek();
+					int programElementIndex = programElementIndexStack.peek();
+					
+					if(programElementIndex + 1 < programElementCount)
+						instructions.add(new Instruction(Instruction.OPCODE_POP));
+				} else
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 		};
