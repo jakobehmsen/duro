@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -79,11 +78,7 @@ import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
-import duro.reflang.antlr4.DuroParser.PrimitiveBodyContext;
-import duro.reflang.antlr4.DuroParser.PrimitiveBodyPartContext;
-import duro.reflang.antlr4.DuroParser.PrimitiveCallContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
-import duro.reflang.antlr4.DuroParser.PrimitiveLabelContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
@@ -1097,73 +1092,73 @@ public class Compiler {
 				}
 			}
 			
-			@Override
-			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
-				walker.suspendWalkWithin(ctx);
-			}
-			
-			@Override
-			public void exitPrimitiveBody(PrimitiveBodyContext ctx) {
-				final Hashtable<String, Integer> labelDefinitionsToIndexMap = new Hashtable<String, Integer>();
-				ArrayList<Runnable> labelUsageLinkers = new ArrayList<Runnable>();
-				
-				for(PrimitiveBodyPartContext primitiveBodyPartCtx: ctx.primitiveBodyPart()) {
-					ParserRuleContext part = (ParserRuleContext)primitiveBodyPartCtx.getChild(0);
-					switch(part.getRuleIndex()) {
-					case DuroParser.RULE_primitiveLabel:
-						PrimitiveLabelContext primitiveLabelCtx = (PrimitiveLabelContext)part;
-						String label = primitiveLabelCtx.ID().getText();
-						int index = instructions.size();
-						labelDefinitionsToIndexMap.put(label, index);
-						break;
-					case DuroParser.RULE_primitiveCall:
-						Instruction instruction;
-						
-						PrimitiveCallContext primitiveCallCtx = (PrimitiveCallContext)part;
-						String opcodeId = primitiveCallCtx.ID().getText();
-
-						int opcode = Instruction.getOpcodeFromId(opcodeId);
-						
-						switch(opcode) {
-						case Instruction.OPCODE_IF_TRUE:
-						case Instruction.OPCODE_IF_FALSE:
-							instruction = null;
-							final int indexUsage = instructions.size();
-							final String jumpLabel = primitiveCallCtx.primitiveOperand().get(0).getText();
-							labelUsageLinkers.add(() -> { 
-								int indexDefinition = labelDefinitionsToIndexMap.get(jumpLabel);
-								int jump = indexDefinition - indexUsage; 
-								instructions.set(indexUsage, new Instruction(opcode, jump));
-							});
-							break;
-						default:
-							Object operand1 = null;
-							Object operand2 = null;
-							Object operand3 = null;
-							
-							if(primitiveCallCtx.primitiveOperand().size() > 0) {
-								operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
-		
-								if(primitiveCallCtx.primitiveOperand().size() > 1) {
-									operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
-									
-									if(primitiveCallCtx.primitiveOperand().size() > 2) {
-										operand3 = getLiteral(primitiveCallCtx.primitiveOperand().get(2));
-									}
-								}
-							}
-							
-							instruction = new Instruction(opcode, operand1, operand2, operand3);
-						}
-						
-						instructions.add(instruction);
-						break;
-					}
-				}
-				
-				for(Runnable labelUsageLinker: labelUsageLinkers)
-					labelUsageLinker.run();
-			}
+//			@Override
+//			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+//			}
+//			
+//			@Override
+//			public void exitPrimitiveBody(PrimitiveBodyContext ctx) {
+//				final Hashtable<String, Integer> labelDefinitionsToIndexMap = new Hashtable<String, Integer>();
+//				ArrayList<Runnable> labelUsageLinkers = new ArrayList<Runnable>();
+//				
+//				for(PrimitiveBodyPartContext primitiveBodyPartCtx: ctx.primitiveBodyPart()) {
+//					ParserRuleContext part = (ParserRuleContext)primitiveBodyPartCtx.getChild(0);
+//					switch(part.getRuleIndex()) {
+//					case DuroParser.RULE_primitiveLabel:
+//						PrimitiveLabelContext primitiveLabelCtx = (PrimitiveLabelContext)part;
+//						String label = primitiveLabelCtx.ID().getText();
+//						int index = instructions.size();
+//						labelDefinitionsToIndexMap.put(label, index);
+//						break;
+//					case DuroParser.RULE_primitiveCall:
+//						Instruction instruction;
+//						
+//						PrimitiveCallContext primitiveCallCtx = (PrimitiveCallContext)part;
+//						String opcodeId = primitiveCallCtx.ID().getText();
+//
+//						int opcode = Instruction.getOpcodeFromId(opcodeId);
+//						
+//						switch(opcode) {
+//						case Instruction.OPCODE_IF_TRUE:
+//						case Instruction.OPCODE_IF_FALSE:
+//							instruction = null;
+//							final int indexUsage = instructions.size();
+//							final String jumpLabel = primitiveCallCtx.primitiveOperand().get(0).getText();
+//							labelUsageLinkers.add(() -> { 
+//								int indexDefinition = labelDefinitionsToIndexMap.get(jumpLabel);
+//								int jump = indexDefinition - indexUsage; 
+//								instructions.set(indexUsage, new Instruction(opcode, jump));
+//							});
+//							break;
+//						default:
+//							Object operand1 = null;
+//							Object operand2 = null;
+//							Object operand3 = null;
+//							
+//							if(primitiveCallCtx.primitiveOperand().size() > 0) {
+//								operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
+//		
+//								if(primitiveCallCtx.primitiveOperand().size() > 1) {
+//									operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
+//									
+//									if(primitiveCallCtx.primitiveOperand().size() > 2) {
+//										operand3 = getLiteral(primitiveCallCtx.primitiveOperand().get(2));
+//									}
+//								}
+//							}
+//							
+//							instruction = new Instruction(opcode, operand1, operand2, operand3);
+//						}
+//						
+//						instructions.add(instruction);
+//						break;
+//					}
+//				}
+//				
+//				for(Runnable labelUsageLinker: labelUsageLinkers)
+//					labelUsageLinker.run();
+//			}
 			
 			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
 			private Stack<Integer> ifJumpIndexStack = new Stack<Integer>();
