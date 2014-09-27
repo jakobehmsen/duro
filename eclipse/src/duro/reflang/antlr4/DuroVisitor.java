@@ -649,6 +649,20 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBreakStatement(@NotNull DuroParser.BreakStatementContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#behaviorElements}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBehaviorElements(@NotNull DuroParser.BehaviorElementsContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#behaviorElement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBehaviorElement(@NotNull DuroParser.BehaviorElementContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

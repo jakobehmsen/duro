@@ -7,6 +7,10 @@ programElementsPart:
     //delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
     delimitedProgramElement SEMICOLON? | undelimitedStatement;
 programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
+
+behaviorElements: behaviorElement+;
+behaviorElement: programElement;
+
 delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: 
@@ -126,7 +130,7 @@ closureLiteral:
     //OPEN_BRA closureBody CLOSE_BRA;
     OPEN_BRA closureParameters closureBody CLOSE_BRA;
 closureParameters: (SINGLE_PIPE (ID (COMMA ID)*)? SINGLE_PIPE)?;
-closureBody: programElements;
+closureBody: behaviorElements;
 array: OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
 arrayOperand: expression;
 self: KW_THIS;
@@ -184,7 +188,7 @@ functionDefinition:
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 functionParameters: (ID (COMMA ID)*)?;
-functionBody: programElements;
+functionBody: behaviorElements;
 /*primitiveBody: HASH OPEN_BRA primitiveBodyPart* CLOSE_BRA;
 primitiveBodyPart: primitiveCall | primitiveLabel;
 primitiveCall: ID primitiveOperand* SEMICOLON;

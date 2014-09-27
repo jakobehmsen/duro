@@ -1200,6 +1200,32 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBehaviorElements(@NotNull DuroParser.BehaviorElementsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBehaviorElements(@NotNull DuroParser.BehaviorElementsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBehaviorElement(@NotNull DuroParser.BehaviorElementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBehaviorElement(@NotNull DuroParser.BehaviorElementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterConditionalExpressionCondition(@NotNull DuroParser.ConditionalExpressionConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}

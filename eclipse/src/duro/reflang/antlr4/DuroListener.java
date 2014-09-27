@@ -1010,6 +1010,28 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBreakStatement(@NotNull DuroParser.BreakStatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#behaviorElements}.
+	 * @param ctx the parse tree
+	 */
+	void enterBehaviorElements(@NotNull DuroParser.BehaviorElementsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#behaviorElements}.
+	 * @param ctx the parse tree
+	 */
+	void exitBehaviorElements(@NotNull DuroParser.BehaviorElementsContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#behaviorElement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBehaviorElement(@NotNull DuroParser.BehaviorElementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#behaviorElement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBehaviorElement(@NotNull DuroParser.BehaviorElementContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#conditionalExpressionCondition}.
 	 * @param ctx the parse tree
 	 */
