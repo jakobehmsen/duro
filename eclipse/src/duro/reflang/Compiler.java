@@ -809,19 +809,19 @@ public class Compiler {
 				if(instructions.size() > 0) {
 					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
 						// Replace pop with return
-						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET, 1));
+						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET));
 					} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 						// If the last program elements isn't an expression, e.g. a for statement
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+						instructions.add(new Instruction(Instruction.OPCODE_RET));
 					}
 				} else {
 					if(yieldStatements.size() > 0) {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+						instructions.add(new Instruction(Instruction.OPCODE_RET));
 					} else {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-						instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+						instructions.add(new Instruction(Instruction.OPCODE_RET));
 					}
 				}
 			}
@@ -1023,8 +1023,9 @@ public class Compiler {
 			
 			@Override
 			public void exitReturnStatement(ReturnStatementContext ctx) {
-				int returnCount = ctx.expression().size();
-				instructions.add(new Instruction(Instruction.OPCODE_RET, returnCount));
+				if(ctx.expression() == null)
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+				instructions.add(new Instruction(Instruction.OPCODE_RET));
 			}
 			
 			private Stack<ArrayList<Integer>> breakIndexesStack = new Stack<ArrayList<Integer>>();
@@ -1102,12 +1103,12 @@ public class Compiler {
 			public void exitFunctionBody(FunctionBodyContext ctx) {
 				if(yieldStatements.size() > 0) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				} else if(instructions.size() == 0/* || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)*/) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
-					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				}
 			}
 			
@@ -1614,7 +1615,7 @@ public class Compiler {
 			// Generatable, Closure
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
 			// a generatable
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_RET));
 			
 			return new BodyInfo(variableCount, generatorInstructions);
 		} else
