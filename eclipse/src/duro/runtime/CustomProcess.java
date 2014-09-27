@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 import duro.debugging.Debug;
 
@@ -34,6 +33,43 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			public FrameProcess value;
 		}
 		
+		private static class InterfaceIdPart implements Serializable {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public final InterfaceIdPart parent;
+			
+			private final String id;
+			private String composedId;
+			
+			public InterfaceIdPart(String id) {
+				this.parent = null;
+				this.id = id;
+			}
+			
+			public InterfaceIdPart(InterfaceIdPart parent, String id) {
+				this.parent = parent;
+				this.id = id;
+			}
+			
+			public InterfaceIdPart extend(String id) {
+				return new InterfaceIdPart(this, id);
+			}
+			
+			public String build() {
+				if(composedId == null) {
+					if(parent != null)
+						composedId = parent.build() + ";" + id;
+					else
+						composedId = id;
+				}
+				
+				return composedId;
+			}
+		}
+		
 		/**
 		 * 
 		 */
@@ -46,28 +82,26 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		public int instructionPointer;
 		public Stack<Process> stack = new Stack<Process>();
 		public Handle reificationHandle;
-		public Stack<String> interfaceIdStack;
+		public InterfaceIdPart interfaceId;
 		
-		public Frame(Frame sender, Process self, Process[] arguments, int variableCount, Instruction[] instructions, Stack<String> interfaceIdStack) {
+		public Frame(Frame sender, Process self, Process[] arguments, int variableCount, Instruction[] instructions, InterfaceIdPart interfaceId) {
 			this.sender = sender;
 			this.self = self;
 			this.arguments = arguments;
 			variables = new Process[variableCount];
 			this.instructions = instructions;
 			reificationHandle = new Handle();
-			this.interfaceIdStack = new Stack<String>();
-			this.interfaceIdStack.addAll(interfaceIdStack);
+			this.interfaceId = interfaceId;
 		}
 		
-		public Frame(Frame sender, Process self, Process[] arguments, Process[] variables, Instruction[] instructions, Stack<String> interfaceIdStack) {
+		public Frame(Frame sender, Process self, Process[] arguments, Process[] variables, Instruction[] instructions, InterfaceIdPart interfaceId) {
 			this.sender = sender;
 			this.self = self;
 			this.arguments = arguments;
 			this.variables = variables;
 			this.instructions = instructions;
 			reificationHandle = new Handle();
-			this.interfaceIdStack = new Stack<String>();
-			this.interfaceIdStack.addAll(interfaceIdStack);
+			this.interfaceId = interfaceId;
 		}
 		
 		public final FrameProcess getReifiedFrame(Process any) {
@@ -80,15 +114,16 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 		
 		public void extendInterfaceId(String id) {
-			interfaceIdStack.push(id);
+			interfaceId = interfaceId.extend(id);
 		}
 		
 		public void shrinkInterfaceId() {
-			interfaceIdStack.pop();
+			interfaceId = interfaceId.parent;
 		}
 		
 		public String getInterfaceId() {
-			return interfaceIdStack.stream().collect(Collectors.joining(";"));
+//			return interfaceIdStack.stream().collect(Collectors.joining(";"));
+			return interfaceId.build();
 		}
 	}
 	
@@ -123,7 +158,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		// Add Closure prototype
 		any.defineShared("Closure", any.clone());
 		
-		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions, new Stack<String>());
+		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
 		
 	}
 
@@ -261,7 +296,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
 				Process[] arguments = new Process[argumentCount];
 				
@@ -271,7 +306,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				Process process = (Process)callable;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + key + "'.");
 			}
@@ -299,7 +334,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, currentFrame.self, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, currentFrame.self, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else {
 				Process[] arguments = new Process[argumentCount];
 				
@@ -309,7 +344,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				Process process = (Process)callable;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			}
 			
 			break;
@@ -328,11 +363,11 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				} else
 					callArguments = arguments;
 
-				currentFrame = new Frame(currentFrame, currentFrame.self, callArguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, currentFrame.self, callArguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else {
 				Process process = (Process)callable;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceIdStack);
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			}
 			break;
 		} case Instruction.OPCODE_RET: {
@@ -473,7 +508,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 //					frame.frame.arguments[ordinal] = argument;
 //				}
 			}
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceIdStack);
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		}
@@ -789,7 +824,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
 				currentFrame = new Frame(
-					currentFrame, any, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceIdStack);
+					currentFrame, any, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
