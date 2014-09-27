@@ -4,8 +4,9 @@ program: programElements;
 programElements: programElementsPart*;
 programElementsPart: 
     //delimitedProgramElement SEMICOLON | undelimitedStatement;
-    delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
-programElement: delimitedProgramElement SEMICOLON | undelimitedStatement;
+    //delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
+    (delimitedProgramElement SEMICOLON?)+ | undelimitedStatement;
+programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
 delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: variableAssignment | conditionalExpression;
