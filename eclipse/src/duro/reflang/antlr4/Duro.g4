@@ -15,7 +15,8 @@ delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
-    forStatement | forInStatement | pause | conditionalExpression;
+    forStatement | forInStatement | pause | variableStatement | 
+    conditionalExpression;
 
 /*
 binaryExpression: 
@@ -168,7 +169,7 @@ indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
 delimitedStatement: 
-    /*pause | */variableStatement | returnStatement | 
+    /*pause | variableStatement | */returnStatement | 
     breakStatement | yieldStatement;
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
