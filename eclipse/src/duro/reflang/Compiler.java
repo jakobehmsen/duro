@@ -817,15 +817,6 @@ public class Compiler {
 			@Override
 			public void exitClosureBody(ClosureBodyContext ctx) {
 				if(instructions.size() > 0) {
-//					if(instructions.get(instructions.size() - 1).opcode == Instruction.OPCODE_POP) {
-//						// Replace pop with return
-//						instructions.set(instructions.size() - 1, new Instruction(Instruction.OPCODE_RET));
-//					} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
-//						// If the last program elements isn't an expression, e.g. a for statement
-//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-//						instructions.add(new Instruction(Instruction.OPCODE_RET));
-//					}
-					
 					if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 						instructions.add(new Instruction(Instruction.OPCODE_RET));
 					}
@@ -849,7 +840,6 @@ public class Compiler {
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
-//				int[] ordinals = newIdToParameterOrdinalMap.getOrdinals();
 				int parameterCount = newIdToParameterOrdinalMap.size();
 				int closureParameterOffset = newIdToParameterOrdinalMap.getLocalParameterOffset();
 				int closureParameterCount = newIdToParameterOrdinalMap.getLocalParameterCount();
@@ -1125,74 +1115,6 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				}
 			}
-			
-//			@Override
-//			public void enterPrimitiveBody(PrimitiveBodyContext ctx) {
-//				walker.suspendWalkWithin(ctx);
-//			}
-//			
-//			@Override
-//			public void exitPrimitiveBody(PrimitiveBodyContext ctx) {
-//				final Hashtable<String, Integer> labelDefinitionsToIndexMap = new Hashtable<String, Integer>();
-//				ArrayList<Runnable> labelUsageLinkers = new ArrayList<Runnable>();
-//				
-//				for(PrimitiveBodyPartContext primitiveBodyPartCtx: ctx.primitiveBodyPart()) {
-//					ParserRuleContext part = (ParserRuleContext)primitiveBodyPartCtx.getChild(0);
-//					switch(part.getRuleIndex()) {
-//					case DuroParser.RULE_primitiveLabel:
-//						PrimitiveLabelContext primitiveLabelCtx = (PrimitiveLabelContext)part;
-//						String label = primitiveLabelCtx.ID().getText();
-//						int index = instructions.size();
-//						labelDefinitionsToIndexMap.put(label, index);
-//						break;
-//					case DuroParser.RULE_primitiveCall:
-//						Instruction instruction;
-//						
-//						PrimitiveCallContext primitiveCallCtx = (PrimitiveCallContext)part;
-//						String opcodeId = primitiveCallCtx.ID().getText();
-//
-//						int opcode = Instruction.getOpcodeFromId(opcodeId);
-//						
-//						switch(opcode) {
-//						case Instruction.OPCODE_IF_TRUE:
-//						case Instruction.OPCODE_IF_FALSE:
-//							instruction = null;
-//							final int indexUsage = instructions.size();
-//							final String jumpLabel = primitiveCallCtx.primitiveOperand().get(0).getText();
-//							labelUsageLinkers.add(() -> { 
-//								int indexDefinition = labelDefinitionsToIndexMap.get(jumpLabel);
-//								int jump = indexDefinition - indexUsage; 
-//								instructions.set(indexUsage, new Instruction(opcode, jump));
-//							});
-//							break;
-//						default:
-//							Object operand1 = null;
-//							Object operand2 = null;
-//							Object operand3 = null;
-//							
-//							if(primitiveCallCtx.primitiveOperand().size() > 0) {
-//								operand1 = getLiteral(primitiveCallCtx.primitiveOperand().get(0));
-//		
-//								if(primitiveCallCtx.primitiveOperand().size() > 1) {
-//									operand2 = getLiteral(primitiveCallCtx.primitiveOperand().get(1));
-//									
-//									if(primitiveCallCtx.primitiveOperand().size() > 2) {
-//										operand3 = getLiteral(primitiveCallCtx.primitiveOperand().get(2));
-//									}
-//								}
-//							}
-//							
-//							instruction = new Instruction(opcode, operand1, operand2, operand3);
-//						}
-//						
-//						instructions.add(instruction);
-//						break;
-//					}
-//				}
-//				
-//				for(Runnable labelUsageLinker: labelUsageLinkers)
-//					labelUsageLinker.run();
-//			}
 			
 			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
 			private Stack<Integer> ifJumpIndexStack = new Stack<Integer>();
@@ -1642,7 +1564,6 @@ public class Compiler {
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-//			int[] ordinals = new int[] {idToParameterOrdinalMap.ordinalFor("generator")};
 			int argumentOffset = idToParameterOrdinalMap.ordinalFor("generator");
 			int parameterCount = idToParameterOrdinalMap.size();
 			int closureParameterCount = 1;

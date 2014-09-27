@@ -2,17 +2,15 @@ grammar Duro;
 
 program: programElements;
 programElements: programElementsPart*;
-programElementsPart: 
-    //delimitedProgramElement SEMICOLON | undelimitedStatement;
-    //delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
-    delimitedProgramElement SEMICOLON?/* | undelimitedStatement*/;
-programElement: delimitedProgramElement SEMICOLON?/* | undelimitedStatement*/;
+programElementsPart:
+    delimitedProgramElement SEMICOLON?;
+programElement: delimitedProgramElement SEMICOLON?;
 
 behaviorElements: behaviorElement+;
 behaviorElement: programElement;
 behaviorElementsSingle: behaviorElement;
 
-delimitedProgramElement: (topExpression/* | delimitedStatement*/);
+delimitedProgramElement: topExpression;
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
@@ -180,9 +178,6 @@ indexAssignment:
 indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
-/*delimitedStatement: 
-    pause | variableStatement | returnStatement |
-    breakStatement | yieldStatement;*/
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
@@ -194,9 +189,6 @@ breakStatement: KW_BREAK;
 yieldStatement: 
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
-undelimitedStatement: 
-    /*functionDefinition | ifStatement | whileStatement |
-    forStatement | forInStatement | interfaceId*/;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
