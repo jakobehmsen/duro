@@ -81,6 +81,9 @@ import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
+import duro.reflang.antlr4.DuroParser.ProgramElementsPartContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -1091,8 +1094,10 @@ public class Compiler {
 				if(yieldStatements.size() > 0) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
-				} else if(instructions.size() == 0 || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+				} else if(instructions.size() == 0/* || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)*/) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
+				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_RET, 1));
 				}
 			}
@@ -1202,6 +1207,9 @@ public class Compiler {
 			@Override
 			public void enterElseStatement(ElseStatementContext ctx) {
 				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				
+				if(ctx.ifStatementOnFalse() == null)
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			@Override
@@ -1506,11 +1514,49 @@ public class Compiler {
 				}
 			}
 			
+			private Stack<Integer> programElementCountStack = new Stack<Integer>();
+			private Stack<Integer> programElementIndexStack = new Stack<Integer>();
 			
+			@Override
+			public void enterProgramElements(ProgramElementsContext ctx) {
+				programElementCountStack.push(ctx.programElementsPart().size());
+				programElementIndexStack.push(0);
+			}
+			
+			@Override
+			public void enterProgramElementsPart(ProgramElementsPartContext ctx) {
+			}
+			
+			@Override
+			public void exitProgramElementsPart(ProgramElementsPartContext ctx) {
+				programElementIndexStack.set(programElementIndexStack.size() - 1, programElementIndexStack.peek() + 1);
+			}
+			
+			@Override
+			public void exitProgramElements(ProgramElementsContext ctx) {
+				programElementCountStack.pop();
+				programElementIndexStack.pop();
+			}
+			
+			@Override
+			public void enterProgramElement(ProgramElementContext ctx) {
+				programElementCountStack.push(1);
+				programElementIndexStack.push(0);
+			}
+			
+			@Override
+			public void exitProgramElement(ProgramElementContext ctx) {
+				programElementCountStack.pop();
+				programElementIndexStack.pop();
+			}
 			
 			@Override
 			public void exitTopExpression(TopExpressionContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				int programElementCount = programElementCountStack.peek();
+				int programElementIndex = programElementIndexStack.peek();
+				
+				if(programElementIndex + 1 < programElementCount)
+					instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 		};
 	}
