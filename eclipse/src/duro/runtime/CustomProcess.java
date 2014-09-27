@@ -336,10 +336,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			}
 			break;
 		} case Instruction.OPCODE_RET: {
-			int returnCount = (int)instruction.operand1;
 			Frame returnFrame = currentFrame.sender;
-			for(int i = 0; i < returnCount; i++)
-				returnFrame.stack.push(currentFrame.stack.pop());
+			returnFrame.stack.push(currentFrame.stack.peek());
 			currentFrame = returnFrame;
 			currentFrame.instructionPointer++;
 			
