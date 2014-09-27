@@ -94,7 +94,7 @@ unaryExpressionPostIncDecOperand:
     )
     operationChain* operationEnd?;
 
-grouping: OPEN_PAR expression CLOSE_PAR;
+grouping: OPEN_PAR behaviorElements CLOSE_PAR;
 // TODO: Multiple assignments should be possible
 variableAssignment: 
     ID (COMMA ID)*
@@ -105,7 +105,17 @@ variableAssignment:
 lookup: ID;
 argumentParameter: COLON ID;
 thisMessageExchange: messageExchange;
-messageExchange: messageId OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR;
+messageExchange: 
+    messageId 
+    (
+        messageExchangeArguments1
+        |
+        messageExchangeArguments2
+    );
+messageExchangeArguments1:
+    (OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR);
+messageExchangeArguments2:
+    literal (COMMA literal)*;
 messageId: (ID | operator);
 operator:
     EQUALS | 

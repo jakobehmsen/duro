@@ -636,6 +636,28 @@ public interface DuroListener extends ParseTreeListener {
 	void exitIndexAssignmentKey(@NotNull DuroParser.IndexAssignmentKeyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageExchangeArguments1}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageExchangeArguments1}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageExchangeArguments2}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageExchangeArguments2}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#operationChain}.
 	 * @param ctx the parse tree
 	 */

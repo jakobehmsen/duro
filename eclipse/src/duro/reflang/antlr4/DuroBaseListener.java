@@ -758,6 +758,32 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterOperationChain(@NotNull DuroParser.OperationChainContext ctx) { }
 	/**
 	 * {@inheritDoc}
