@@ -11,4 +11,9 @@ public class BooleanProcess extends DictionaryProcess {
 	public BooleanProcess(boolean value) {
 		this.value = value;
 	}
+	
+	@Override
+	public String toString() {
+		return Boolean.toString(value);
+	}
 }

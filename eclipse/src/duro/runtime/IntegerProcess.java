@@ -15,4 +15,9 @@ public class IntegerProcess extends DictionaryProcess {
 	public DictionaryProcess newBase() {
 		return new IntegerProcess(intValue);
 	}
+	
+	@Override
+	public String toString() {
+		return "" + intValue;
+	}
 }
