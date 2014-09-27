@@ -1003,6 +1003,7 @@ public class Compiler {
 				for(TerminalNode idNode: ctx.ID()) {
 					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText()) && !idToParameterOrdinalMap.isDeclared(idNode.getText())) {
 						int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
 						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					} else {
 						appendError(ctx, "Variable '" + idNode.getText() + "' is already declared in this scope.");
@@ -1014,6 +1015,7 @@ public class Compiler {
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
 				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.ID().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.ID().getText())) {
 					idToVariableOrdinalMap.declare(ctx.ID().getText());
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 				} else {
 					appendError(ctx, "Variable '" + ctx.ID().getText() + "' is already declared in this scope.");
 				}
