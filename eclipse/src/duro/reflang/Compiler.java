@@ -1047,22 +1047,6 @@ public class Compiler {
 			}
 			
 			@Override
-			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
-				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
-			}
-			
-			@Override
-			public void exitYieldStatementExpression(YieldStatementExpressionContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "put", 1));
-			}
-			
-			@Override
-			public void exitYieldStatement(YieldStatementContext ctx) {
-				yieldStatements.add(ctx);
-			}
-			
-			@Override
 			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
 				String id = ctx.messageId().getText();
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
@@ -1077,8 +1061,29 @@ public class Compiler {
 				int parameterCount = newIdToParameterOrdinalMap.size();
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				// this
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				// this, behavior
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+				// behavior, this, behavior
 				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				// behavior
+			}
+			
+			@Override
+			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
+				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+			}
+			
+			@Override
+			public void exitYieldStatementExpression(YieldStatementExpressionContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "put", 1));
+			}
+			
+			@Override
+			public void exitYieldStatement(YieldStatementContext ctx) {
+				yieldStatements.add(ctx);
 			}
 			
 			@Override
