@@ -1244,6 +1244,7 @@ public class Compiler {
 			
 			@Override
 			public void exitWhileStatementBody(WhileStatementBodyContext ctx) {
+				// Add pop because last top expression within programElements or programElement isn't popped
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 				
 				int jumpIndex = whileJumpIndexStack.pop();
@@ -1296,6 +1297,7 @@ public class Compiler {
 			
 			@Override
 			public void exitForStatementBody(ForStatementBodyContext ctx) {
+				// Add pop because last top expression within programElements or programElement isn't popped
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
@@ -1372,6 +1374,9 @@ public class Compiler {
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
+				// Add pop because last top expression within programElements or programElement isn't popped
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				
 				int jumpIndex = forInJumpIndexStack.pop();
 				int jump = jumpIndex - instructions.size();
 				instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
@@ -1389,6 +1394,8 @@ public class Compiler {
 			public void exitForInStatement(ForInStatementContext ctx) {
 				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
+
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			@Override
