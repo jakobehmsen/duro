@@ -1244,6 +1244,8 @@ public class Compiler {
 			
 			@Override
 			public void exitWhileStatementBody(WhileStatementBodyContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				
 				int jumpIndex = whileJumpIndexStack.pop();
 				int whileBodyEndIndex = instructions.size();
 				int jump = jumpIndex - whileBodyEndIndex;
@@ -1256,11 +1258,11 @@ public class Compiler {
 				int conditionalJumpIndex = whileConditionalJumpIndexStack.pop();
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
-				
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 
 				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
 			
