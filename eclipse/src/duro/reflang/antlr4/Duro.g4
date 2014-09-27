@@ -11,7 +11,7 @@ delimitedProgramElement: (topExpression | delimitedStatement);
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
-    conditionalExpression;
+    forStatement | conditionalExpression;
 
 /*
 binaryExpression: 
@@ -178,8 +178,8 @@ yieldStatement:
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
 undelimitedStatement: 
-    /*functionDefinition | ifStatement | whileStatement |*/
-    forStatement | forInStatement | interfaceId;
+    /*functionDefinition | ifStatement | whileStatement |
+    forStatement | */forInStatement | interfaceId;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
