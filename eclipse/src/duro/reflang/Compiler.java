@@ -108,34 +108,26 @@ import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
 public class Compiler {
-	private static class ErrorInfo {
-		public final int line;
-		public final int charPositionInLine;
-		public final String message;
-		
-		public ErrorInfo(int line, int charPositionInLine, String message) {
-			this.line = line;
-			this.charPositionInLine = charPositionInLine;
-			this.message = message;
-		}
-	}
-	
-	private ArrayList<ErrorInfo> errors = new ArrayList<ErrorInfo>();
+	private MessageCollector errors = new MessageCollector();
 	
 	private void appendError(ParserRuleContext ctx, String message) {
-		errors.add(new ErrorInfo(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message));
+		errors.appendMessage(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message);
 	}
 	
 	private void appendError(int line, int charPositionInLine, String message) {
-		errors.add(new ErrorInfo(line, charPositionInLine, message));
+		errors.appendMessage(line, charPositionInLine, message);
+	}
+	
+	private void appendErrors(MessageCollector errors) {
+		errors.appendMessages(errors);
 	}
 	
 	public boolean hasErrors() {
-		return errors.size() > 0;
+		return errors.hasMessages();
 	}
 	
 	public void printErrors() {
-		errors.forEach(x -> System.err.println("@" + x.line + "," + (x.charPositionInLine + 1) + ": " + x.message));
+		errors.printMessages();
 	}
 	
 	public CustomProcess compile(InputStream sourceCode) throws IOException {
