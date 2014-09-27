@@ -1256,6 +1256,8 @@ public class Compiler {
 				int conditionalJumpIndex = whileConditionalJumpIndexStack.pop();
 				int conditionalJump = whileEndIndex - conditionalJumpIndex;
 				instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 
 				idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 				endBreakable();
