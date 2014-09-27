@@ -145,13 +145,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitClosureLiteral(@NotNull DuroParser.ClosureLiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#delimitedStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDelimitedStatement(@NotNull DuroParser.DelimitedStatementContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#argumentParameter}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -549,6 +542,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUndelimitedStatement(@NotNull DuroParser.UndelimitedStatementContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#behaviorElementsSingle}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBehaviorElementsSingle(@NotNull DuroParser.BehaviorElementsSingleContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#frame}.

@@ -5,18 +5,20 @@ programElements: programElementsPart*;
 programElementsPart: 
     //delimitedProgramElement SEMICOLON | undelimitedStatement;
     //delimitedProgramElement (SEMICOLON delimitedProgramElement?)* | undelimitedStatement;
-    delimitedProgramElement SEMICOLON? | undelimitedStatement;
-programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
+    delimitedProgramElement SEMICOLON?/* | undelimitedStatement*/;
+programElement: delimitedProgramElement SEMICOLON?/* | undelimitedStatement*/;
 
 behaviorElements: behaviorElement+;
 behaviorElement: programElement;
+behaviorElementsSingle: behaviorElement;
 
 delimitedProgramElement: (topExpression/* | delimitedStatement*/);
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
     forStatement | forInStatement | pause | variableStatement | 
-    breakStatement | yieldStatement | returnStatement | conditionalExpression;
+    breakStatement | yieldStatement | returnStatement | interfaceId |
+    conditionalExpression;
 
 /*
 binaryExpression: 
@@ -168,9 +170,9 @@ indexAssignment:
 indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
-delimitedStatement: 
-    /*pause | variableStatement | returnStatement |
-    breakStatement | yieldStatement*/;
+/*delimitedStatement: 
+    pause | variableStatement | returnStatement |
+    breakStatement | yieldStatement;*/
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
@@ -184,7 +186,7 @@ yieldStatement:
 yieldStatementExpression: expression;
 undelimitedStatement: 
     /*functionDefinition | ifStatement | whileStatement |
-    forStatement | forInStatement | */interfaceId;
+    forStatement | forInStatement | interfaceId*/;
 functionDefinition: 
     KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
@@ -225,7 +227,7 @@ forInStatement:
 forInStatementVar: KW_VAR? ID;
 forInStatementBody: OPEN_BRA programElements CLOSE_BRA | programElement;
 interfaceId: DOLLAR ID interfaceIdBody;
-interfaceIdBody: OPEN_BRA programElements CLOSE_BRA | programElement;
+interfaceIdBody: OPEN_BRA behaviorElements CLOSE_BRA | behaviorElementsSingle;
 
 // STRING_LITERAL deprived and adjusted from:
 // https://github.com/antlr/grammars-v4/blob/master/ecmascript/ECMAScript.g4
