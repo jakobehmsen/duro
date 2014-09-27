@@ -1079,11 +1079,18 @@ public class Compiler {
 			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
 				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+				// generator
 			}
 			
 			@Override
 			public void exitYieldStatementExpression(YieldStatementExpressionContext ctx) {
+				// generator, value
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+				// value, generator, value
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, "put", 1));
+				// value, <resume value>
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				// value
 			}
 			
 			@Override
