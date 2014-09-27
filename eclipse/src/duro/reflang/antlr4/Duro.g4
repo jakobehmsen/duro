@@ -11,12 +11,12 @@ programElement: delimitedProgramElement SEMICOLON? | undelimitedStatement;
 behaviorElements: behaviorElement+;
 behaviorElement: programElement;
 
-delimitedProgramElement: (topExpression | delimitedStatement);
+delimitedProgramElement: (topExpression/* | delimitedStatement*/);
 topExpression: expression;
 expression: 
     variableAssignment | functionDefinition | ifStatement | whileStatement |
     forStatement | forInStatement | pause | variableStatement | 
-    breakStatement | yieldStatement | conditionalExpression;
+    breakStatement | yieldStatement | returnStatement | conditionalExpression;
 
 /*
 binaryExpression: 
@@ -169,15 +169,15 @@ indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
 delimitedStatement: 
-    /*pause | variableStatement | */returnStatement
-    /*breakStatement | yieldStatement*/;
+    /*pause | variableStatement | returnStatement |
+    breakStatement | yieldStatement*/;
 pause: KW_PAUSE;
 // TODO: Multiple assignments and declarations should be possible and should be
 // possible to mix and match
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
-returnStatement: KW_RETURN (expression (COMMA expression)*)?;
+returnStatement: KW_RETURN expression?;
 breakStatement: KW_BREAK;
 yieldStatement: 
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
