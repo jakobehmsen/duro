@@ -166,6 +166,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_FINISH: {
+			if(currentFrame.stack.size() > 0)
+				Debug.println(Debug.LEVEL_LOW, "stack isn't empty: " + currentFrame.stack);
+			
 			stopRequested = true;
 			currentFrame = null;
 			
