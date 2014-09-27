@@ -16,18 +16,15 @@ var persons = List.clone();
 while(true) {
 	$PrintWhatToDo
 	writeln("What do you want to do?");
-	$ReadWhatToDo
-	var command = readln();
+	var command = $ReadWhatToDo readln();
 	
 	if(command == "new") {
 		$PrintEnterNewName
 		writeln("Enter name: ");
-		$PrintReadNewName
-		var name = readln();
+		var name = $PrintReadNewName readln();
 		$PrintEnterNewDoB
 		writeln("Enter dob: ");
-		$ReadEnterNewDoB
-		var dob = readln();
+		var dob = $ReadEnterNewDoB readln();
 		
 		var newPerson = {
 			name: name,
@@ -44,8 +41,7 @@ while(true) {
 	} else if(command == "get") {
 		$PrintEnterNameToSearchFor
 		writeln("Enter name to search for: ");
-		$ReadNameToSearchFor
-		var name = readln();
+		var name = $ReadNameToSearchFor readln();
 		
 		for(person in persons.where({:x.name == name})) {
 			$PrintPersonMatched
