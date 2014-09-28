@@ -760,6 +760,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				System.out.print(value.str);
 				interactionHistory.append(currentFrame.getInterfaceId(), instruction, instruction);
 			} else {
+				currentFrame.stack.pop();
 			}
 			currentFrame.instructionPointer++;
 			
