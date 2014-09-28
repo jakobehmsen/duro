@@ -93,9 +93,8 @@ unaryExpressionPostIncDecOperand:
     operationChain* operationEnd?;
 
 grouping: OPEN_PAR behaviorElements CLOSE_PAR;
-// TODO: Multiple assignments should be possible
 variableAssignment: 
-    ID (COMMA ID)*
+    ID
     op=(
         ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
     )
