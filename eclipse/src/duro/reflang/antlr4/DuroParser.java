@@ -54,26 +54,27 @@ public class DuroParser extends Parser {
 		RULE_unaryExpressionPostIncDecApplicationIndexAccess = 32, RULE_unaryExpressionPostIncDecApplicationIndexAccessReceiver = 33, 
 		RULE_unaryExpressionPostIncDecOperand = 34, RULE_grouping = 35, RULE_variableAssignment = 36, 
 		RULE_lookup = 37, RULE_argumentParameter = 38, RULE_thisMessageExchange = 39, 
-		RULE_messageExchange = 40, RULE_messageExchangeArguments1 = 41, RULE_messageExchangeArguments2 = 42, 
-		RULE_messageId = 43, RULE_operator = 44, RULE_literal = 45, RULE_integer = 46, 
-		RULE_bool = 47, RULE_string = 48, RULE_dictProcess = 49, RULE_dictProcessEntry = 50, 
-		RULE_functionLiteral = 51, RULE_closureLiteral = 52, RULE_closureParameters = 53, 
-		RULE_closureBody = 54, RULE_array = 55, RULE_arrayOperand = 56, RULE_self = 57, 
-		RULE_nil = 58, RULE_frame = 59, RULE_primitive = 60, RULE_primitiveArgument = 61, 
-		RULE_primitiveOperand2 = 62, RULE_operationChain = 63, RULE_explicitMessageExchange = 64, 
-		RULE_memberAccess = 65, RULE_indexAccess = 66, RULE_operationEnd = 67, 
-		RULE_memberAssignment = 68, RULE_memberAssignmentValue = 69, RULE_indexAssignment = 70, 
-		RULE_indexAssignmentKey = 71, RULE_indexAssignmentValue = 72, RULE_pause = 73, 
-		RULE_variableStatement = 74, RULE_variableDeclarationAndAssignment = 75, 
-		RULE_variableDeclaration = 76, RULE_returnStatement = 77, RULE_breakStatement = 78, 
-		RULE_yieldStatement = 79, RULE_yieldStatementExpression = 80, RULE_functionDefinition = 81, 
-		RULE_functionParameters = 82, RULE_functionBody = 83, RULE_ifStatement = 84, 
-		RULE_ifStatementCondition = 85, RULE_ifStatementOnTrue = 86, RULE_elseStatement = 87, 
-		RULE_ifStatementOnFalse = 88, RULE_whileStatement = 89, RULE_whileStatementCondition = 90, 
-		RULE_whileStatementBody = 91, RULE_forStatement = 92, RULE_forStatementInitialization = 93, 
-		RULE_forStatementCondition = 94, RULE_forStatementUpdate = 95, RULE_forStatementBody = 96, 
-		RULE_forInStatement = 97, RULE_forInStatementVar = 98, RULE_forInStatementBody = 99, 
-		RULE_interfaceId = 100, RULE_interfaceIdBody = 101;
+		RULE_messageExchange = 40, RULE_messageExchangeExpressionArguments = 41, 
+		RULE_messageExchangeLiteralArguments = 42, RULE_messageId = 43, RULE_operator = 44, 
+		RULE_literal = 45, RULE_integer = 46, RULE_bool = 47, RULE_string = 48, 
+		RULE_dictProcess = 49, RULE_dictProcessEntry = 50, RULE_functionLiteral = 51, 
+		RULE_closureLiteral = 52, RULE_closureParameters = 53, RULE_closureBody = 54, 
+		RULE_array = 55, RULE_arrayOperand = 56, RULE_self = 57, RULE_nil = 58, 
+		RULE_frame = 59, RULE_primitive = 60, RULE_primitiveArgument = 61, RULE_primitiveOperand2 = 62, 
+		RULE_operationChain = 63, RULE_explicitMessageExchange = 64, RULE_memberAccess = 65, 
+		RULE_indexAccess = 66, RULE_operationEnd = 67, RULE_memberAssignment = 68, 
+		RULE_memberAssignmentValue = 69, RULE_indexAssignment = 70, RULE_indexAssignmentKey = 71, 
+		RULE_indexAssignmentValue = 72, RULE_pause = 73, RULE_variableStatement = 74, 
+		RULE_variableDeclarationAndAssignment = 75, RULE_variableDeclaration = 76, 
+		RULE_returnStatement = 77, RULE_breakStatement = 78, RULE_yieldStatement = 79, 
+		RULE_yieldStatementExpression = 80, RULE_functionDefinition = 81, RULE_functionParameters = 82, 
+		RULE_functionBody = 83, RULE_ifStatement = 84, RULE_ifStatementCondition = 85, 
+		RULE_ifStatementOnTrue = 86, RULE_elseStatement = 87, RULE_ifStatementOnFalse = 88, 
+		RULE_whileStatement = 89, RULE_whileStatementCondition = 90, RULE_whileStatementBody = 91, 
+		RULE_forStatement = 92, RULE_forStatementInitialization = 93, RULE_forStatementCondition = 94, 
+		RULE_forStatementUpdate = 95, RULE_forStatementBody = 96, RULE_forInStatement = 97, 
+		RULE_forInStatementVar = 98, RULE_forInStatementBody = 99, RULE_interfaceId = 100, 
+		RULE_interfaceIdBody = 101;
 	public static final String[] ruleNames = {
 		"program", "programElements", "programElementsPart", "programElement", 
 		"programElementContent", "behaviorElements", "behaviorElement", "behaviorElementsSingle", 
@@ -89,7 +90,7 @@ public class DuroParser extends Parser {
 		"unaryExpressionPostIncDecApplicationMemberAccess", "unaryExpressionPostIncDecApplicationIndexAccess", 
 		"unaryExpressionPostIncDecApplicationIndexAccessReceiver", "unaryExpressionPostIncDecOperand", 
 		"grouping", "variableAssignment", "lookup", "argumentParameter", "thisMessageExchange", 
-		"messageExchange", "messageExchangeArguments1", "messageExchangeArguments2", 
+		"messageExchange", "messageExchangeExpressionArguments", "messageExchangeLiteralArguments", 
 		"messageId", "operator", "literal", "integer", "bool", "string", "dictProcess", 
 		"dictProcessEntry", "functionLiteral", "closureLiteral", "closureParameters", 
 		"closureBody", "array", "arrayOperand", "self", "nil", "frame", "primitive", 
@@ -2471,14 +2472,14 @@ public class DuroParser extends Parser {
 	}
 
 	public static class MessageExchangeContext extends ParserRuleContext {
+		public MessageExchangeExpressionArgumentsContext messageExchangeExpressionArguments() {
+			return getRuleContext(MessageExchangeExpressionArgumentsContext.class,0);
+		}
+		public MessageExchangeLiteralArgumentsContext messageExchangeLiteralArguments() {
+			return getRuleContext(MessageExchangeLiteralArgumentsContext.class,0);
+		}
 		public MessageIdContext messageId() {
 			return getRuleContext(MessageIdContext.class,0);
-		}
-		public MessageExchangeArguments2Context messageExchangeArguments2() {
-			return getRuleContext(MessageExchangeArguments2Context.class,0);
-		}
-		public MessageExchangeArguments1Context messageExchangeArguments1() {
-			return getRuleContext(MessageExchangeArguments1Context.class,0);
 		}
 		public MessageExchangeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2510,7 +2511,7 @@ public class DuroParser extends Parser {
 			switch (_input.LA(1)) {
 			case OPEN_PAR:
 				{
-				setState(399); messageExchangeArguments1();
+				setState(399); messageExchangeExpressionArguments();
 				}
 				break;
 			case STRING_LITERAL:
@@ -2521,7 +2522,7 @@ public class DuroParser extends Parser {
 			case KW_TRUE:
 			case KW_FALSE:
 				{
-				setState(400); messageExchangeArguments2();
+				setState(400); messageExchangeLiteralArguments();
 				}
 				break;
 			default:
@@ -2540,7 +2541,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MessageExchangeArguments1Context extends ParserRuleContext {
+	public static class MessageExchangeExpressionArgumentsContext extends ParserRuleContext {
 		public List<TerminalNode> COMMA() { return getTokens(DuroParser.COMMA); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
@@ -2553,28 +2554,28 @@ public class DuroParser extends Parser {
 		public TerminalNode COMMA(int i) {
 			return getToken(DuroParser.COMMA, i);
 		}
-		public MessageExchangeArguments1Context(ParserRuleContext parent, int invokingState) {
+		public MessageExchangeExpressionArgumentsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_messageExchangeArguments1; }
+		@Override public int getRuleIndex() { return RULE_messageExchangeExpressionArguments; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterMessageExchangeArguments1(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterMessageExchangeExpressionArguments(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitMessageExchangeArguments1(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitMessageExchangeExpressionArguments(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitMessageExchangeArguments1(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitMessageExchangeExpressionArguments(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final MessageExchangeArguments1Context messageExchangeArguments1() throws RecognitionException {
-		MessageExchangeArguments1Context _localctx = new MessageExchangeArguments1Context(_ctx, getState());
-		enterRule(_localctx, 82, RULE_messageExchangeArguments1);
+	public final MessageExchangeExpressionArgumentsContext messageExchangeExpressionArguments() throws RecognitionException {
+		MessageExchangeExpressionArgumentsContext _localctx = new MessageExchangeExpressionArgumentsContext(_ctx, getState());
+		enterRule(_localctx, 82, RULE_messageExchangeExpressionArguments);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -2618,7 +2619,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MessageExchangeArguments2Context extends ParserRuleContext {
+	public static class MessageExchangeLiteralArgumentsContext extends ParserRuleContext {
 		public LiteralContext literal(int i) {
 			return getRuleContext(LiteralContext.class,i);
 		}
@@ -2629,28 +2630,28 @@ public class DuroParser extends Parser {
 		public TerminalNode COMMA(int i) {
 			return getToken(DuroParser.COMMA, i);
 		}
-		public MessageExchangeArguments2Context(ParserRuleContext parent, int invokingState) {
+		public MessageExchangeLiteralArgumentsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_messageExchangeArguments2; }
+		@Override public int getRuleIndex() { return RULE_messageExchangeLiteralArguments; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterMessageExchangeArguments2(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterMessageExchangeLiteralArguments(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitMessageExchangeArguments2(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitMessageExchangeLiteralArguments(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitMessageExchangeArguments2(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitMessageExchangeLiteralArguments(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final MessageExchangeArguments2Context messageExchangeArguments2() throws RecognitionException {
-		MessageExchangeArguments2Context _localctx = new MessageExchangeArguments2Context(_ctx, getState());
-		enterRule(_localctx, 84, RULE_messageExchangeArguments2);
+	public final MessageExchangeLiteralArgumentsContext messageExchangeLiteralArguments() throws RecognitionException {
+		MessageExchangeLiteralArgumentsContext _localctx = new MessageExchangeLiteralArgumentsContext(_ctx, getState());
+		enterRule(_localctx, 84, RULE_messageExchangeLiteralArguments);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);

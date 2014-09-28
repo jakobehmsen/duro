@@ -106,13 +106,13 @@ thisMessageExchange: messageExchange;
 messageExchange: 
     messageId 
     (
-        messageExchangeArguments1
+        messageExchangeExpressionArguments
         |
-        messageExchangeArguments2
+        messageExchangeLiteralArguments
     );
-messageExchangeArguments1:
+messageExchangeExpressionArguments:
     (OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR);
-messageExchangeArguments2:
+messageExchangeLiteralArguments:
     literal (COMMA literal)*;
 messageId: (ID | operator);
 operator:

@@ -53,6 +53,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageExchangeExpressionArguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageExchangeExpressionArguments(@NotNull DuroParser.MessageExchangeExpressionArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageExchangeExpressionArguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageExchangeExpressionArguments(@NotNull DuroParser.MessageExchangeExpressionArgumentsContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 */
@@ -603,6 +614,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#messageExchangeLiteralArguments}.
+	 * @param ctx the parse tree
+	 */
+	void enterMessageExchangeLiteralArguments(@NotNull DuroParser.MessageExchangeLiteralArgumentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#messageExchangeLiteralArguments}.
+	 * @param ctx the parse tree
+	 */
+	void exitMessageExchangeLiteralArguments(@NotNull DuroParser.MessageExchangeLiteralArgumentsContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionPostIncDec}.
 	 * @param ctx the parse tree
 	 */
@@ -645,28 +667,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndexAssignmentKey(@NotNull DuroParser.IndexAssignmentKeyContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#messageExchangeArguments1}.
-	 * @param ctx the parse tree
-	 */
-	void enterMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#messageExchangeArguments1}.
-	 * @param ctx the parse tree
-	 */
-	void exitMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#messageExchangeArguments2}.
-	 * @param ctx the parse tree
-	 */
-	void enterMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#messageExchangeArguments2}.
-	 * @param ctx the parse tree
-	 */
-	void exitMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#operationChain}.

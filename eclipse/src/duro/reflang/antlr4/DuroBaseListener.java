@@ -69,6 +69,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMessageExchangeExpressionArguments(@NotNull DuroParser.MessageExchangeExpressionArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageExchangeExpressionArguments(@NotNull DuroParser.MessageExchangeExpressionArgumentsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterProgram(@NotNull DuroParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -719,6 +732,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMessageExchangeLiteralArguments(@NotNull DuroParser.MessageExchangeLiteralArgumentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageExchangeLiteralArguments(@NotNull DuroParser.MessageExchangeLiteralArgumentsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterUnaryExpressionPostIncDec(@NotNull DuroParser.UnaryExpressionPostIncDecContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -765,32 +791,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIndexAssignmentKey(@NotNull DuroParser.IndexAssignmentKeyContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -718,10 +718,10 @@ public class Compiler {
 			}
 			
 			private int getMessageExchangeArgumentCount(MessageExchangeContext ctx) {
-				if(ctx.messageExchangeArguments1() != null)
-					return ctx.messageExchangeArguments1().expression().size();
+				if(ctx.messageExchangeExpressionArguments() != null)
+					return ctx.messageExchangeExpressionArguments().expression().size();
 				else
-					return ctx.messageExchangeArguments2().literal().size();
+					return ctx.messageExchangeLiteralArguments().literal().size();
 			}
 			
 			@Override

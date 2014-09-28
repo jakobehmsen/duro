@@ -40,6 +40,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitForStatementInitialization(@NotNull DuroParser.ForStatementInitializationContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageExchangeExpressionArguments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageExchangeExpressionArguments(@NotNull DuroParser.MessageExchangeExpressionArgumentsContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -390,6 +397,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageExchangeLiteralArguments}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageExchangeLiteralArguments(@NotNull DuroParser.MessageExchangeLiteralArgumentsContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionPostIncDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -416,20 +430,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIndexAssignmentKey(@NotNull DuroParser.IndexAssignmentKeyContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#messageExchangeArguments1}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMessageExchangeArguments1(@NotNull DuroParser.MessageExchangeArguments1Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#messageExchangeArguments2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMessageExchangeArguments2(@NotNull DuroParser.MessageExchangeArguments2Context ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#operationChain}.
