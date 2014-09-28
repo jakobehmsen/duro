@@ -31,11 +31,11 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_IF_TRUE = 18;
 	public static final int OPCODE_IF_FALSE = 19;
 	public static final int OPCODE_JUMP = 20;
-	@ExpressionCompatible(operandTypes = {String.class}, popCount = 2)
+	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 2)
 	public static final int OPCODE_SET = 21;
-	@ExpressionCompatible(operandTypes = {String.class}, popCount = 2)
+	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 2)
 	public static final int OPCODE_SET_PROTO = 22;
-	@ExpressionCompatible(operandTypes = {String.class}, popCount = 1)
+	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 1)
 	public static final int OPCODE_GET = 23;
 	@ExpressionCompatible(popCount = 3)
 	public static final int OPCODE_SLOTS_SET = 24;
