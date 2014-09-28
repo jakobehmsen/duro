@@ -538,7 +538,7 @@ public class Compiler {
 				// receiver
 				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 				// receiver, receiver
-				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 				// receiver, value
 				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 				// value, receiver, value
@@ -546,7 +546,7 @@ public class Compiler {
 				// value, receiver, value, 1
 				appendIncDec(ctx.op);
 				// value, receiver, value'
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 				// value
 			}
 			
@@ -585,7 +585,7 @@ public class Compiler {
 						break;
 					} default: {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						instructions.add(new Instruction(Instruction.OPCODE_GET, firstId));
+						instructions.add(new Instruction(Instruction.OPCODE_GET, firstId, 0));
 						// oldValue
 						break;
 					}
@@ -634,7 +634,7 @@ public class Compiler {
 							String id = ctx.ID(i).getText();
 							instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 							instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-							instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+							instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 						}
 						
 						break;
@@ -650,7 +650,7 @@ public class Compiler {
 						// newValue, newValue, receiver
 						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
 						// newValue, receiver, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId));
+						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
 						// newValue
 						break;
 					}
@@ -698,7 +698,7 @@ public class Compiler {
 				
 				// Get member
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 			}
 			
 			@Override
@@ -791,7 +791,7 @@ public class Compiler {
 			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
 				String id = ctx.messageId().getText();
 				
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 			}
 			
 			
@@ -810,14 +810,14 @@ public class Compiler {
 			public void exitDictProcessEntryRegularAssignment(DictProcessEntryRegularAssignmentContext ctx) {
 				String id = ctx.messageId().getText();
 				
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 			}
 			
 			@Override
 			public void exitDictProcessEntryPrototypeAssignment(DictProcessEntryPrototypeAssignmentContext ctx) {
 				String id = ctx.messageId().getText();
 				
-				instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
 			}
 			
 			@Override
@@ -849,7 +849,7 @@ public class Compiler {
 
 				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
 			}
 			
 			
@@ -1142,7 +1142,7 @@ public class Compiler {
 				// this, behavior
 				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 				// behavior, this, behavior
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
 				// behavior
 			}
 			
@@ -1414,7 +1414,7 @@ public class Compiler {
 			@Override
 			public void exitMemberAccess(MemberAccessContext ctx) {
 				String id = ctx.messageId().getText();
-				instructions.add(new Instruction(Instruction.OPCODE_GET, id));
+				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 			}
 			
 			@Override
@@ -1441,7 +1441,7 @@ public class Compiler {
 					// For computed value +=, -=, ...
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
-					instructions.add(new Instruction(Instruction.OPCODE_GET, id));
+					instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 					// receiver, oldValue
 					break;
 				}
@@ -1456,14 +1456,14 @@ public class Compiler {
 					// receiver, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// value, receiver, value
-					instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+					instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 					// value
 					break;
 				case DuroLexer.PROTO_ASSIGN:
 					// receiver, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// value, receiver, value
-					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id));
+					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
 					// value
 					break;
 				default:
@@ -1474,7 +1474,7 @@ public class Compiler {
 					// newValue, receiver, newValue
 					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
 					// newValue, receiver, id, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+					instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 					// newValue
 					break;
 				}
@@ -1650,7 +1650,7 @@ public class Compiler {
 
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS, 1));
 			// This
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET, "Generatable"));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET, "Generatable", 0));
 			// Generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
 			// Generatable, Behavior
