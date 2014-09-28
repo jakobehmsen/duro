@@ -11,8 +11,6 @@ public class DictionaryProcess extends Process {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Hashtable<Object, Process> protos = new Hashtable<Object, Process>();
-
 	@Override
 	public void resume(List<InteractionHistory.Interaction> playedInstructions) {
 		// Does is make sense to have this method here?
@@ -31,18 +29,19 @@ public class DictionaryProcess extends Process {
 			this.value = value;
 		}
 	}
-	
-	private Hashtable<Object, Member> properties = new Hashtable<Object, Member>();
+
+	private Hashtable<Selector, Process> protos = new Hashtable<Selector, Process>();
+	private Hashtable<Selector, Member> properties = new Hashtable<Selector, Member>();
 	
 	@Override
-	public Object getCallable(ProcessFactory factory, Object key) {
-		Member callableMember = properties.get(key);
+	public Object getCallable(ProcessFactory factory, Selector selector) {
+		Member callableMember = properties.get(selector);
 		
 		if(callableMember != null)
 			return callableMember.value;
 		
 		for(Object proto: protos.values()) {
-			Object callable = ((Process)proto).getCallable(factory, key);
+			Object callable = ((Process)proto).getCallable(factory, selector);
 			if(callable != null)
 				return callable;
 		}
@@ -51,14 +50,14 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public Process lookup(Object key) {
-		Member valueMember = properties.get(key);
+	public Process lookup(Selector selector) {
+		Member valueMember = properties.get(selector);
 		
 		if(valueMember != null)
 			return valueMember.value;
 		
 		for(Process proto: protos.values()) {
-			Process value = proto.lookup(key);
+			Process value = proto.lookup(selector);
 			if(value != null)
 				return value;
 		}
@@ -73,20 +72,20 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public void defineProto(Object key, Process value) {
-		properties.put(key, new Member(true, value));
-		protos.put(key, value);
+	public void defineProto(Selector selector, Process value) {
+		properties.put(selector, new Member(true, value));
+		protos.put(selector, value);
 	}
 	
-	public void defineShared(Object key, Process value) {
-		properties.put(key, new Member(true, value));
-		protos.remove(key);
+	public void defineShared(Selector selector, Process value) {
+		properties.put(selector, new Member(true, value));
+		protos.remove(selector);
 	}
 	
 	@Override
-	public void define(Object key, Process value) {
-		properties.put(key, new Member(false, value));
-		protos.remove(key);
+	public void define(Selector selector, Process value) {
+		properties.put(selector, new Member(false, value));
+		protos.remove(selector);
 	}
 	
 	@Override
@@ -106,7 +105,7 @@ public class DictionaryProcess extends Process {
 		DictionaryProcess clone = newBase();
 		cachedClones.put(this, clone);
 		
-		for(Map.Entry<Object, Member> entry: this.properties.entrySet()) {
+		for(Map.Entry<Selector, Member> entry: this.properties.entrySet()) {
 			if(!entry.getValue().isShared) {
 				Process clonedValue = entry.getValue().value;
 				if(clonedValue instanceof DictionaryProcess)
@@ -115,7 +114,7 @@ public class DictionaryProcess extends Process {
 			}
 		}
 		
-		clone.defineProto("parent", this);
+		clone.defineProto(Selector.get("parent"), this);
 		
 		return clone;
 	}
