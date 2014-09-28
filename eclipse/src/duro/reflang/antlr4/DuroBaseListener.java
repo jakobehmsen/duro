@@ -667,6 +667,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterDictProcessEntryPrototypeAssignment(@NotNull DuroParser.DictProcessEntryPrototypeAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcessEntryPrototypeAssignment(@NotNull DuroParser.DictProcessEntryPrototypeAssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -700,6 +713,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -979,6 +1005,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterDictProcessEntryQuotedAssignmentValue(@NotNull DuroParser.DictProcessEntryQuotedAssignmentValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcessEntryQuotedAssignmentValue(@NotNull DuroParser.DictProcessEntryQuotedAssignmentValueContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterElseStatement(@NotNull DuroParser.ElseStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1025,6 +1064,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterDictProcessEntryQuotedAssignment(@NotNull DuroParser.DictProcessEntryQuotedAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcessEntryQuotedAssignment(@NotNull DuroParser.DictProcessEntryQuotedAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1317,6 +1369,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterDictProcess2(@NotNull DuroParser.DictProcess2Context ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1324,6 +1389,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterDictProcessEntryRegularAssignment(@NotNull DuroParser.DictProcessEntryRegularAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitDictProcessEntryRegularAssignment(@NotNull DuroParser.DictProcessEntryRegularAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

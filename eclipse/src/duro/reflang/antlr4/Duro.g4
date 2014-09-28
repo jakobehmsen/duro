@@ -126,13 +126,24 @@ operator:
     BIN_OP2
 ;
 literal: 
-    integer | bool | string | dictProcess
+    integer | bool | string | dictProcess | dictProcess2 |
     functionLiteral | closureLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
 dictProcess: OPEN_BRA (dictProcessEntry (COMMA dictProcessEntry)*)? CLOSE_BRA;
 dictProcessEntry: messageId COLON expression;
+dictProcess2: HASH OPEN_SQ (dictProcessEntry2 COMMA?)* CLOSE_SQ;
+dictProcessEntry2:
+    dictProcessEntryRegularAssignment |
+    dictProcessEntryPrototypeAssignment |
+    dictProcessEntryQuotedAssignment;
+dictProcessEntryRegularAssignment: ID ASSIGN INT;
+dictProcessEntryPrototypeAssignment: messageId PROTO_ASSIGN expression;
+dictProcessEntryQuotedAssignment: 
+    messageId QUOTED_ASSIGN dictProcessEntryQuotedAssignmentValue;
+dictProcessEntryQuotedAssignmentValue:
+    (OPEN_BRA behaviorElements CLOSE_BRA) | behaviorElementsSingle;
 functionLiteral: 
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;

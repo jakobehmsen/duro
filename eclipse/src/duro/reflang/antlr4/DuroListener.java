@@ -559,6 +559,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryPrototypeAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntryPrototypeAssignment(@NotNull DuroParser.DictProcessEntryPrototypeAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntryPrototypeAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntryPrototypeAssignment(@NotNull DuroParser.DictProcessEntryPrototypeAssignmentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#interfaceId}.
 	 * @param ctx the parse tree
 	 */
@@ -590,6 +601,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntry2}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntry2}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#integer}.
@@ -823,6 +845,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionPostIncDecApplicationMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntryQuotedAssignmentValue(@NotNull DuroParser.DictProcessEntryQuotedAssignmentValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntryQuotedAssignmentValue(@NotNull DuroParser.DictProcessEntryQuotedAssignmentValueContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#elseStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -865,6 +898,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntryQuotedAssignment(@NotNull DuroParser.DictProcessEntryQuotedAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntryQuotedAssignment(@NotNull DuroParser.DictProcessEntryQuotedAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#behaviorElementsSingle}.
@@ -1109,6 +1153,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcess2}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcess2}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionBody}.
 	 * @param ctx the parse tree
 	 */
@@ -1118,6 +1173,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryRegularAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterDictProcessEntryRegularAssignment(@NotNull DuroParser.DictProcessEntryRegularAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntryRegularAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitDictProcessEntryRegularAssignment(@NotNull DuroParser.DictProcessEntryRegularAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#indexAssignment}.

@@ -362,6 +362,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionPostIncDecOperand(@NotNull DuroParser.UnaryExpressionPostIncDecOperandContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryPrototypeAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntryPrototypeAssignment(@NotNull DuroParser.DictProcessEntryPrototypeAssignmentContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#interfaceId}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -381,6 +388,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#integer}.
@@ -530,6 +544,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionPostIncDecApplicationMemberAccess(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationMemberAccessContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntryQuotedAssignmentValue(@NotNull DuroParser.DictProcessEntryQuotedAssignmentValueContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#elseStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -556,6 +577,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntryQuotedAssignment(@NotNull DuroParser.DictProcessEntryQuotedAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#behaviorElementsSingle}.
@@ -712,11 +740,25 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcess2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryRegularAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDictProcessEntryRegularAssignment(@NotNull DuroParser.DictProcessEntryRegularAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexAssignment}.
