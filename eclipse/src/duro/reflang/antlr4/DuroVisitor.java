@@ -663,6 +663,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#memberQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#closureParameters}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -724,6 +731,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#memberQuotedAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMemberQuotedAssignment(@NotNull DuroParser.MemberQuotedAssignmentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#whileStatement}.

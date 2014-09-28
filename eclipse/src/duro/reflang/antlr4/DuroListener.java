@@ -1032,6 +1032,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitWhileStatementCondition(@NotNull DuroParser.WhileStatementConditionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#memberQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#memberQuotedAssignmentValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#closureParameters}.
 	 * @param ctx the parse tree
 	 */
@@ -1129,6 +1140,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStatementCondition(@NotNull DuroParser.ForStatementConditionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#memberQuotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterMemberQuotedAssignment(@NotNull DuroParser.MemberQuotedAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#memberQuotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitMemberQuotedAssignment(@NotNull DuroParser.MemberQuotedAssignmentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#whileStatement}.

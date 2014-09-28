@@ -167,9 +167,7 @@ explicitMessageExchange: DOT messageExchange;
 memberAccess: DOT messageId;
 indexAccess: OPEN_SQ expression CLOSE_SQ;
 
-// TODO: Multiple assignments and declarations should be possible and should be
-// possible to mix and match
-operationEnd: memberAssignment | indexAssignment;
+operationEnd: memberAssignment | memberQuotedAssignment | indexAssignment;
 memberAssignment: 
     DOT messageId 
     op=(
@@ -178,6 +176,9 @@ memberAssignment:
     ) 
     memberAssignmentValue;
 memberAssignmentValue: expression;
+memberQuotedAssignment: 
+    DOT messageId QUOTED_ASSIGN memberQuotedAssignmentValue;
+memberQuotedAssignmentValue: dictProcessEntryQuotedAssignmentValue;
 indexAssignment: 
     OPEN_SQ indexAssignmentKey CLOSE_SQ 
     op=(
@@ -189,8 +190,6 @@ indexAssignmentKey: expression;
 indexAssignmentValue: expression;
 
 pause: KW_PAUSE;
-// TODO: Multiple assignments and declarations should be possible and should be
-// possible to mix and match
 variableStatement: variableDeclarationAndAssignment | variableDeclaration;
 variableDeclarationAndAssignment: KW_VAR ID (COMMA ID)* ASSIGN expression;
 variableDeclaration: KW_VAR ID;
