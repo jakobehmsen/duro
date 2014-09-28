@@ -3329,9 +3329,13 @@ public class DuroParser extends Parser {
 	}
 
 	public static class DictProcessEntryRegularAssignmentContext extends ParserRuleContext {
-		public TerminalNode ID() { return getToken(DuroParser.ID, 0); }
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
-		public TerminalNode INT() { return getToken(DuroParser.INT, 0); }
+		public MessageIdContext messageId() {
+			return getRuleContext(MessageIdContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
 		public DictProcessEntryRegularAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -3357,9 +3361,9 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(493); match(ID);
+			setState(493); messageId();
 			setState(494); match(ASSIGN);
-			setState(495); match(INT);
+			setState(495); expression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -6530,17 +6534,17 @@ public class DuroParser extends Parser {
 		"\u01e7\3\2\2\2\u01e5\u01e3\3\2\2\2\u01e5\u01e6\3\2\2\2\u01e6\u01e8\3\2"+
 		"\2\2\u01e7\u01e5\3\2\2\2\u01e8\u01e9\7\17\2\2\u01e9i\3\2\2\2\u01ea\u01ee"+
 		"\5l\67\2\u01eb\u01ee\5n8\2\u01ec\u01ee\5p9\2\u01ed\u01ea\3\2\2\2\u01ed"+
-		"\u01eb\3\2\2\2\u01ed\u01ec\3\2\2\2\u01eek\3\2\2\2\u01ef\u01f0\7:\2\2\u01f0"+
-		"\u01f1\7\24\2\2\u01f1\u01f2\7$\2\2\u01f2m\3\2\2\2\u01f3\u01f4\5X-\2\u01f4"+
-		"\u01f5\7\25\2\2\u01f5\u01f6\5\24\13\2\u01f6o\3\2\2\2\u01f7\u01f8\5X-\2"+
-		"\u01f8\u01f9\7\26\2\2\u01f9\u01fa\5r:\2\u01faq\3\2\2\2\u01fb\u01fc\7\20"+
-		"\2\2\u01fc\u01fd\5\f\7\2\u01fd\u01fe\7\21\2\2\u01fe\u0201\3\2\2\2\u01ff"+
-		"\u0201\5\20\t\2\u0200\u01fb\3\2\2\2\u0200\u01ff\3\2\2\2\u0201s\3\2\2\2"+
-		"\u0202\u0203\7,\2\2\u0203\u0204\7\22\2\2\u0204\u0205\5\u00b2Z\2\u0205"+
-		"\u0206\7\23\2\2\u0206\u0207\7\20\2\2\u0207\u0208\5\u00b4[\2\u0208\u0209"+
-		"\7\21\2\2\u0209u\3\2\2\2\u020a\u020b\7\20\2\2\u020b\u020c\5x=\2\u020c"+
-		"\u020d\5z>\2\u020d\u020e\7\21\2\2\u020ew\3\2\2\2\u020f\u0218\7\13\2\2"+
-		"\u0210\u0215\7:\2\2\u0211\u0212\7&\2\2\u0212\u0214\7:\2\2\u0213\u0211"+
+		"\u01eb\3\2\2\2\u01ed\u01ec\3\2\2\2\u01eek\3\2\2\2\u01ef\u01f0\5X-\2\u01f0"+
+		"\u01f1\7\24\2\2\u01f1\u01f2\5\24\13\2\u01f2m\3\2\2\2\u01f3\u01f4\5X-\2"+
+		"\u01f4\u01f5\7\25\2\2\u01f5\u01f6\5\24\13\2\u01f6o\3\2\2\2\u01f7\u01f8"+
+		"\5X-\2\u01f8\u01f9\7\26\2\2\u01f9\u01fa\5r:\2\u01faq\3\2\2\2\u01fb\u01fc"+
+		"\7\20\2\2\u01fc\u01fd\5\f\7\2\u01fd\u01fe\7\21\2\2\u01fe\u0201\3\2\2\2"+
+		"\u01ff\u0201\5\20\t\2\u0200\u01fb\3\2\2\2\u0200\u01ff\3\2\2\2\u0201s\3"+
+		"\2\2\2\u0202\u0203\7,\2\2\u0203\u0204\7\22\2\2\u0204\u0205\5\u00b2Z\2"+
+		"\u0205\u0206\7\23\2\2\u0206\u0207\7\20\2\2\u0207\u0208\5\u00b4[\2\u0208"+
+		"\u0209\7\21\2\2\u0209u\3\2\2\2\u020a\u020b\7\20\2\2\u020b\u020c\5x=\2"+
+		"\u020c\u020d\5z>\2\u020d\u020e\7\21\2\2\u020ew\3\2\2\2\u020f\u0218\7\13"+
+		"\2\2\u0210\u0215\7:\2\2\u0211\u0212\7&\2\2\u0212\u0214\7:\2\2\u0213\u0211"+
 		"\3\2\2\2\u0214\u0217\3\2\2\2\u0215\u0213\3\2\2\2\u0215\u0216\3\2\2\2\u0216"+
 		"\u0219\3\2\2\2\u0217\u0215\3\2\2\2\u0218\u0210\3\2\2\2\u0218\u0219\3\2"+
 		"\2\2\u0219\u021a\3\2\2\2\u021a\u021c\7\13\2\2\u021b\u020f\3\2\2\2\u021b"+

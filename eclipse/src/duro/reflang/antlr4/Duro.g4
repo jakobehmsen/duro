@@ -138,7 +138,7 @@ dictProcessEntry2:
     dictProcessEntryRegularAssignment |
     dictProcessEntryPrototypeAssignment |
     dictProcessEntryQuotedAssignment;
-dictProcessEntryRegularAssignment: ID ASSIGN INT;
+dictProcessEntryRegularAssignment: messageId ASSIGN expression;
 dictProcessEntryPrototypeAssignment: messageId PROTO_ASSIGN expression;
 dictProcessEntryQuotedAssignment: 
     messageId QUOTED_ASSIGN dictProcessEntryQuotedAssignmentValue;
