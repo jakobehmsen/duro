@@ -54,8 +54,14 @@ import duro.reflang.antlr4.DuroParser.ConditionalExpressionConditionContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionFalseContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionTrueContext;
+import duro.reflang.antlr4.DuroParser.DictProcess2Context;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntry2Context;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntryPrototypeAssignmentContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntryQuotedAssignmentContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntryQuotedAssignmentValueContext;
+import duro.reflang.antlr4.DuroParser.DictProcessEntryRegularAssignmentContext;
 import duro.reflang.antlr4.DuroParser.ElseStatementContext;
 import duro.reflang.antlr4.DuroParser.ExplicitMessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.ForInStatementBodyContext;
@@ -787,6 +793,65 @@ public class Compiler {
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
 			}
+			
+			
+			
+			@Override
+			public void enterDictProcess2(DictProcess2Context ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+			}
+			
+			@Override
+			public void enterDictProcessEntry2(DictProcessEntry2Context ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+			}
+			
+			@Override
+			public void exitDictProcessEntryRegularAssignment(DictProcessEntryRegularAssignmentContext ctx) {
+				String id = ctx.messageId().getText();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+			}
+			
+			@Override
+			public void exitDictProcessEntryPrototypeAssignment(DictProcessEntryPrototypeAssignmentContext ctx) {
+				String id = ctx.messageId().getText();
+				
+				instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id));
+			}
+			
+			@Override
+			public void enterDictProcessEntryQuotedAssignment(DictProcessEntryQuotedAssignmentContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitDictProcessEntryQuotedAssignmentValue(DictProcessEntryQuotedAssignmentValueContext ctx) {
+				if(yieldStatements.size() > 0) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				} else if(instructions.size() == 0) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				}
+			}
+			
+			@Override
+			public void exitDictProcessEntryQuotedAssignment(DictProcessEntryQuotedAssignmentContext ctx) {
+				String id = ctx.messageId().getText();
+				
+				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
+				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.dictProcessEntryQuotedAssignmentValue());
+				int parameterCount = newIdToParameterOrdinalMap.size();
+
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id));
+			}
+			
 			
 			@Override
 			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
