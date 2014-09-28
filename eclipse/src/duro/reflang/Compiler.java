@@ -85,6 +85,8 @@ import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4.DuroParser.LookupContext;
 import duro.reflang.antlr4.DuroParser.MemberAccessContext;
 import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
+import duro.reflang.antlr4.DuroParser.MemberQuotedAssignmentContext;
+import duro.reflang.antlr4.DuroParser.MemberQuotedAssignmentValueContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
@@ -1496,6 +1498,38 @@ public class Compiler {
 				}
 			}
 			
+			@Override
+			public void enterMemberQuotedAssignment(MemberQuotedAssignmentContext ctx) {
+				walker.suspendWalkWithin(ctx);
+			}
+			
+			@Override
+			public void exitMemberQuotedAssignmentValue(MemberQuotedAssignmentValueContext ctx) {
+				if(yieldStatements.size() > 0) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				} else if(instructions.size() == 0) {
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+					instructions.add(new Instruction(Instruction.OPCODE_RET));
+				}
+			}
+			
+			@Override
+			public void exitMemberQuotedAssignment(MemberQuotedAssignmentContext ctx) {
+				String id = ctx.messageId().getText();
+				
+				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
+				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.memberQuotedAssignmentValue());
+				int parameterCount = newIdToParameterOrdinalMap.size();
+
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
+			}
 			
 			
 			@Override
