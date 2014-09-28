@@ -107,7 +107,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		public final FrameProcess getReifiedFrame(Process any) {
 			if(reificationHandle.value == null) {
 				reificationHandle.value = new FrameProcess(this);
-				reificationHandle.value.defineProto("prototype", any.lookup("Frame"));
+				reificationHandle.value.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Frame")));
 			}
 			
 			return reificationHandle.value;
@@ -135,28 +135,28 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		// Should CustomProcess not be a process at all? Should CustomProcess hold any and push it instead this?  - Also at other locations, e.g. when loading.
 		// Add Any prototype
 		any = new DictionaryProcess();
-		any.defineShared("Any", any);
+		any.defineShared(Selector.get("Any"), any);
 		// Add Null singleton
-		any.defineShared("Null", any.clone());
+		any.defineShared(Selector.get("Null"), any.clone());
 		// Add boolean True singleton
 		BooleanProcess t = new BooleanProcess(true);
-		t.defineShared("prototype", any);
-		any.defineShared("True", t);
+		t.defineShared(Selector.get("prototype"), any);
+		any.defineShared(Selector.get("True"), t);
 		// Add boolean False singleton
 		BooleanProcess f = new BooleanProcess(false);
-		f.defineShared("prototype", any);
-		any.defineShared("False", f);
-		any.defineShared("Array", any.clone());
+		f.defineShared(Selector.get("prototype"), any);
+		any.defineShared(Selector.get("False"), f);
+		any.defineShared(Selector.get("Array"), any.clone());
 		// Add String prototype
-		any.defineShared("String", any.clone());
+		any.defineShared(Selector.get("String"), any.clone());
 		// Add Integer prototype
-		any.defineShared("Integer", any.clone());
+		any.defineShared(Selector.get("Integer"), any.clone());
 		// Add Frame prototype
-		any.defineShared("Frame", any.clone());
+		any.defineShared(Selector.get("Frame"), any.clone());
 		// Add Behavior prototype
-		any.defineShared("Behavior", any.clone());
+		any.defineShared(Selector.get("Behavior"), any.clone());
 		// Add Closure prototype
-		any.defineShared("Closure", any.clone());
+		any.defineShared(Selector.get("Closure"), any.clone());
 		
 		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
 		
@@ -277,7 +277,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
 			
-			Object callable = receiver.getCallable(this, key);
+			Object callable = receiver.getCallable(this, Selector.get(key, argumentCount));
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -288,7 +288,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = any.lookup("Null");
+						arguments[i] = any.lookup(Selector.get("Null"));
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -326,7 +326,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = any.lookup("Null");
+						arguments[i] = any.lookup(Selector.get("Null"));
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -352,7 +352,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			Process[] arguments = currentFrame.arguments;
 			Process proxyCallable = currentFrame.self;
 			
-			Object callable = proxyCallable.getCallable(this, "call");
+			Object callable = proxyCallable.getCallable(this, Selector.get("call"));
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -417,23 +417,26 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SET: {
 			Process value = currentFrame.stack.pop();
 			String key = (String)instruction.operand1; // Assumed to be string only
+			int parameterCount = (int)instruction.operand2;
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.define(key, value);
+			receiver.define(Selector.get(key, parameterCount), value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SET_PROTO: {
 			Process value = currentFrame.stack.pop();
 			String key = (String)instruction.operand1; // Assumed to be string only
+			int parameterCount = (int)instruction.operand2;
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.defineProto(key, value);
+			receiver.defineProto(Selector.get(key, parameterCount), value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_GET: {
 			String key = (String)instruction.operand1; // Assumed to be string only
+			int parameterCount = (int)instruction.operand2;
 			Process receiver = (Process)currentFrame.stack.pop();
-			Process value = receiver.lookup(key);
+			Process value = receiver.lookup(Selector.get(key, parameterCount));
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
@@ -442,7 +445,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			Process value = currentFrame.stack.pop();
 			StringProcess key = (StringProcess)currentFrame.stack.pop();
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.define(key.str, value);
+			receiver.define(Selector.get(key.str), value);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -450,14 +453,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			Process value = currentFrame.stack.pop();
 			StringProcess key = (StringProcess)currentFrame.stack.pop();
 			Process receiver = (Process)currentFrame.stack.pop();
-			receiver.defineProto(key.str, value);
+			receiver.defineProto(Selector.get(key.str), value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_GET: {
 			StringProcess key = (StringProcess)currentFrame.stack.pop();
 			Process receiver = (Process)currentFrame.stack.pop();
-			Process value = receiver.lookup(key.str);
+			Process value = receiver.lookup(Selector.get(key.str));
 			currentFrame.stack.push(value);
 			currentFrame.instructionPointer++;
 			
@@ -465,7 +468,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SLOTS_IS_DEFINED: {
 			StringProcess key = (StringProcess)currentFrame.stack.pop();
 			Process receiver = (Process)currentFrame.stack.pop();
-			Process value = receiver.lookup(key.str);
+			Process value = receiver.lookup(Selector.get(key.str));
 			currentFrame.stack.push(getBoolean(value != null));
 			currentFrame.instructionPointer++;
 			
@@ -477,7 +480,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			for(int i = 0; i < names.length; i++)
 				names[i] = createString(rawNames[i]);
 			ArrayProcess namesArray = new ArrayProcess(names);
-			namesArray.defineProto("prototype", any.lookup("Array"));
+			namesArray.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Array")));
 			currentFrame.stack.push(namesArray);
 			currentFrame.instructionPointer++;
 			
@@ -532,7 +535,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_NULL: {
-			Process nil = any.lookup("Null");
+			Process nil = any.lookup(Selector.get("Null"));
 			currentFrame.stack.push(nil);
 			currentFrame.instructionPointer++;
 			
@@ -554,7 +557,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_LOAD_INT: {
 			int intValue = (int)instruction.operand1;
 			IntegerProcess integer = new IntegerProcess(intValue);
-			integer.defineProto("prototype", any.lookup("Integer"));
+			integer.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(integer);
 			currentFrame.instructionPointer++;
 			
@@ -650,7 +653,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue + rhs.intValue);
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -659,7 +662,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue - rhs.intValue);
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -668,7 +671,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue * rhs.intValue);
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -677,7 +680,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue / rhs.intValue);
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -686,7 +689,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(lhs.intValue % rhs.intValue);
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -787,15 +790,15 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
-			newDict.defineProto("prototype", any);
+			newDict.defineProto(Selector.get("prototype"), any);
 			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			IntegerProcess length = (IntegerProcess)currentFrame.stack.pop();
-			ArrayProcess newArray = new ArrayProcess(length.intValue, any.lookup("Null"));
-			newArray.defineProto("prototype", any.lookup("Array"));
+			ArrayProcess newArray = new ArrayProcess(length.intValue, any.lookup(Selector.get("Null")));
+			newArray.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Array")));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
@@ -803,7 +806,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_ARRAY_LENGTH: {
 			ArrayProcess newArray = (ArrayProcess)currentFrame.stack.pop();
 			IntegerProcess result = new IntegerProcess(newArray.length());
-			result.defineProto("prototype", any.lookup("Integer"));
+			result.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Integer")));
 			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
@@ -835,7 +838,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior, argumentOffset, parameterCount);
-			closure.defineProto("prototype", any.lookup("Closure"));
+			closure.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Closure")));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
 			
@@ -845,7 +848,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int variableCount = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
 			BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-			behavior.defineProto("prototype", any.lookup("Behavior"));
+			behavior.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Behavior")));
 			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
 			
@@ -890,22 +893,22 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	}
 	
 	@Override
-	public Object getCallable(ProcessFactory factory, Object key) {
+	public Object getCallable(ProcessFactory factory, Selector selector) {
 		return null;
 	}
 	
 	@Override
-	public void define(Object key, Process value) {
+	public void define(Selector selector, Process value) {
 
 	}
 	
 	@Override
-	public void defineProto(Object key, Process value) {
+	public void defineProto(Selector selector, Process value) {
 
 	}
 
 	@Override
-	public Process lookup(Object key) {
+	public Process lookup(Selector selector) {
 		return null;
 	}
 
@@ -917,7 +920,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	@Override
 	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
 		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-		behavior.defineProto("prototype", any.lookup("Behavior"));
+		behavior.defineProto(Selector.get("prototype"), any.lookup(Selector.get("Behavior")));
 		return behavior;
 	}
 	
@@ -926,16 +929,16 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	}
 	
 	public BooleanProcess getTrue() {
-		return (BooleanProcess)any.lookup("True");
+		return (BooleanProcess)any.lookup(Selector.get("True"));
 	}
 	
 	public BooleanProcess getFalse() {
-		return (BooleanProcess)any.lookup("False");
+		return (BooleanProcess)any.lookup(Selector.get("False"));
 	}
 
 	public StringProcess createString(String str) {
 		StringProcess string = new StringProcess(str);
-		string.defineProto("prototype", any.lookup("String"));
+		string.defineProto(Selector.get("prototype"), any.lookup(Selector.get("String")));
 		return string;
 	}
 
