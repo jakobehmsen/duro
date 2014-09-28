@@ -126,7 +126,7 @@ operator:
     BIN_OP2
 ;
 literal: 
-    integer | bool | string | dictProcess | 
+    integer | bool | string | dictProcess
     functionLiteral | closureLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
@@ -142,7 +142,7 @@ closureLiteral:
     OPEN_BRA closureParameters closureBody CLOSE_BRA;
 closureParameters: (SINGLE_PIPE (ID (COMMA ID)*)? SINGLE_PIPE)?;
 closureBody: behaviorElements;
-array: HASH OPEN_SQ (arrayOperand (COMMA arrayOperand)*)? CLOSE_SQ;
+array: HASH OPEN_PAR (arrayOperand (COMMA arrayOperand)*)? CLOSE_PAR;
 arrayOperand: expression;
 self: KW_THIS;
 nil: KW_NULL;
@@ -292,6 +292,7 @@ OPEN_PAR: '(';
 CLOSE_PAR: ')';
 ASSIGN: '=';
 PROTO_ASSIGN: '^=';
+QUOTED_ASSIGN: '=>';
 ASSIGN_ADD: '+=';
 ASSIGN_SUB: '-=';
 ASSIGN_MULT: '*=';
