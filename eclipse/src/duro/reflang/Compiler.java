@@ -563,7 +563,7 @@ public class Compiler {
 			
 			@Override
 			public void enterVariableAssignment(VariableAssignmentContext ctx) {
-				String firstId = ctx.ID(0).getText();
+				String firstId = ctx.ID().getText();
 				
 				if(idToVariableOrdinalMap.isDeclared(firstId)) {
 					// Variable assignment
@@ -595,20 +595,26 @@ public class Compiler {
 			
 			@Override
 			public void exitVariableAssignment(VariableAssignmentContext ctx) {
-				String firstId = ctx.ID(0).getText();
+				String firstId = ctx.ID().getText();
 
 				if(idToVariableOrdinalMap.isDeclared(firstId)) {
 					int firstOrdinal = idToVariableOrdinalMap.ordinalFor(firstId);
 					// Variable assignment
 					switch(ctx.op.getType()) {
 					case DuroLexer.ASSIGN: {
-						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+//						
+//						for(int i = 0; i < ctx.ID().size(); i++) {
+//							String id = ctx.ID(i).getText();
+//							int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//							instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//						}
 						
-						for(int i = 0; i < ctx.ID().size(); i++) {
-							String id = ctx.ID(i).getText();
-							int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-							instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-						}
+						// newValue
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// newValue, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+						// newValue
 						
 						break;
 					} default: {
@@ -628,14 +634,24 @@ public class Compiler {
 					// Member assignment for this
 					switch(ctx.op.getType()) {
 					case DuroLexer.ASSIGN: {
-						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP_ANY, 0, ctx.ID().size() - 1));
+//						
+//						for(int i = 0; i < ctx.ID().size(); i++) {
+//							String id = ctx.ID(i).getText();
+//							instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//							instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//							instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+//						}
 						
-						for(int i = 0; i < ctx.ID().size(); i++) {
-							String id = ctx.ID(i).getText();
-							instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-							instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-							instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
-						}
+						// newValue
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						// newValue, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// newValue, newValue, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						// newValue, receiver, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
+						// newValue
 						
 						break;
 					} default: {
