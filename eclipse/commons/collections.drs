@@ -2,8 +2,13 @@
 Collections library
 */
 
+/*
 Iterable = { };
+*/
 
+Iterable = #[]
+
+/*
 Generator = {
 	on: function(block) {
 		var generator = {
@@ -17,6 +22,8 @@ Generator = {
 				producer.resume(null);
 			},
 			atEnd: function() {
+				 // TODO: Change this, because this elimits support for yielding nulls
+				 // - Could be replaced by having an extra putLastTime slot?
 				return current == null;
 			},
 			put: function(item) {
@@ -35,7 +42,42 @@ Generator = {
 		return generator;
 	}
 };
+*/
 
+Generator = #[
+	on => |block| (
+		var generator = #[
+			current = null
+			producer = null
+			mover = null
+			moveNext => (
+				current = null
+				mover = frame
+				producer.setSender(mover)
+				producer.resume(null)
+			)
+		 	// TODO: Change this, because this limits support for yielding nulls
+			// - Could be replaced by having an extra putLastTime slot?
+			atEnd => current == null
+			put => (
+				current = :item
+				producer = frame.sender()
+				mover.resume(null)
+			)
+			next => (
+				var previous = current
+				moveNext()
+				return previous
+			)
+		]
+		generator.mover = frame
+		block(generator)
+		//:block(generator) // Not possible to invoke arguments this way (currently)
+		return generator
+	)
+]
+
+/*
 Generatable = {
 	on: function(block) {
 		var generatable = Iterable.clone();
@@ -48,7 +90,18 @@ Generatable = {
 		return generatable;
 	}
 };
+*/
 
+Generatable = #[
+	on => #[
+		prototype ^= Iterable
+		block = :block
+		iterator => Generator.on(block)
+	]
+]
+
+
+/*
 function newArray(length) {
 	return §sp_new_array(length);
 }
@@ -71,6 +124,38 @@ Array.iterator = function() {
 		}
 	});
 };
+*/
+
+newArray => §sp_new_array(:length)
+
+Array.prototype ^= Iterable
+Array.set => §sp_array_set(this, :index, :value)
+Array.get => §sp_array_get(this, :index)
+Array.length => §sp_array_length(this)
+Array.iterator => Generator.on{
+	for(var i = 0; i < length(); i++) {
+		var item = this[i];
+		:generator.put(item);
+	}
+}
+
+
+/*
+Array.extend #[
+	prototype ^= Iterable
+	[::] => §sp_array_set(this, :index, :value)
+	[:] => §sp_array_get(this, :index)
+	length => §sp_array_length(this)
+	iterator => Generator.on{
+		for(var i = 0; i < length(); i++) {
+			var item = this[i];
+			:generator.put(item);
+		}
+	}
+]
+
+var array = #(1 2 3 4);
+*/
 
 /*
 // Implicit inheritance based on protocol?
@@ -85,6 +170,7 @@ Iterable.where = function(predicate) {
 }
 */
 
+/*
 Iterable.where = function(predicate) {
 	return Generatable.on({
 		for(var x in this) {
@@ -97,7 +183,20 @@ Iterable.each = function(block) {
 	for(var x in this)
 		block(x);
 };
+*/
 
+Iterable.where => |predicate| Generatable.on{
+	for(var x in this) {
+		if(predicate(x))
+			:generator.put(x)
+	}
+};
+Iterable.each => |block|
+	for(var x in this)
+		block(x)
+
+
+/*
 List = Iterable.clone();
 List.items = newArray(12);
 List.capacity = 12;
@@ -120,3 +219,46 @@ List.set = function(index, value) {
 List.get = function(index) {
 	return items[index];
 };
+*/
+
+List = #[
+	prototype ^= Iterable
+	items = newArray(12)
+	capacity = 12
+	size = 0
+	add => (
+		items[size] = :item
+		size++
+	)
+	iterator => (
+		Generator.on{
+			for(var i = 0; i < size; i++) {
+				var item = items[i];
+				:generator.put(item);
+			}
+		}
+	)
+	get => items[:index] = :value
+	set => items[:index]
+]
+
+/*
+List = #[
+	prototype ^= Iterable
+	items = newArray(12)
+	capacity = 12
+	size = 0
+	add => (
+		items[size] = item
+		size++
+	)
+	iterator => Generator.on{
+		for(var i = 0; i < size; i++) {
+			var item = items[i];
+			:generator.put(item);
+		}
+	}
+	[] => items[:index] = :value // Index behavior with two arguments
+	[] => items[:index]          // Index behavior with one arguments
+]
+*/
