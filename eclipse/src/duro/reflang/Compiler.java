@@ -84,6 +84,7 @@ import duro.reflang.antlr4.DuroParser.MemberAssignmentContext;
 import duro.reflang.antlr4.DuroParser.MemberQuotedAssignmentContext;
 import duro.reflang.antlr4.DuroParser.MemberQuotedAssignmentValueContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
+import duro.reflang.antlr4.DuroParser.MessageIdContext;
 import duro.reflang.antlr4.DuroParser.NilContext;
 import duro.reflang.antlr4.DuroParser.PauseContext;
 import duro.reflang.antlr4.DuroParser.PrimitiveContext;
@@ -523,7 +524,7 @@ public class Compiler {
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
 					// receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value,
@@ -531,7 +532,7 @@ public class Compiler {
 					// value, receiver, id, value, 1
 					appendIncDec(ctx.op);
 					// value, receiver, id, value'
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					break;
 				}
@@ -749,7 +750,7 @@ public class Compiler {
 			
 			@Override
 			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
-				String id = ctx.messageExchange().messageId().getText();
+				String id = getMessageIdText(ctx.messageExchange().messageId());
 				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
 					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
@@ -772,7 +773,7 @@ public class Compiler {
 			public void exitThisMessageExchange(ThisMessageExchangeContext ctx) {
 				int argumentCount = getMessageExchangeArgumentCount(ctx.messageExchange());
 				
-				String id = ctx.messageExchange().messageId().getText();
+				String id = getMessageIdText(ctx.messageExchange().messageId());
 				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
 					instructions.add(new Instruction(Instruction.OPCODE_CALL, argumentCount));
@@ -827,14 +828,14 @@ public class Compiler {
 			
 			@Override
 			public void exitDictProcessEntryRegularAssignment(DictProcessEntryRegularAssignmentContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
 			}
 			
 			@Override
 			public void exitDictProcessEntryPrototypeAssignment(DictProcessEntryPrototypeAssignmentContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				
 				instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
 			}
@@ -860,7 +861,7 @@ public class Compiler {
 			
 			@Override
 			public void exitDictProcessEntryQuotedAssignment(DictProcessEntryQuotedAssignmentContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
@@ -881,8 +882,6 @@ public class Compiler {
 				});
 				instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 			}
-
-			
 			
 			@Override
 			public void enterClosureLiteral(ClosureLiteralContext ctx) {
@@ -956,7 +955,7 @@ public class Compiler {
 			
 			@Override
 			public void exitArrayOperand(ArrayOperandContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
 			
@@ -1394,19 +1393,19 @@ public class Compiler {
 			
 			@Override
 			public void exitMemberAccess(MemberAccessContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 			}
 			
 			@Override
 			public void exitIndexAccess(IndexAccessContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
 			}
 			
 			@Override
 			public void exitExplicitMessageExchange(ExplicitMessageExchangeContext ctx) {
 				int argumentCount = getMessageExchangeArgumentCount(ctx.messageExchange());
-				String id = ctx.messageExchange().messageId().getText();
+				String id = getMessageIdText(ctx.messageExchange().messageId());
 				appendMessageExchange(id, argumentCount);
 			}
 			
@@ -1418,7 +1417,7 @@ public class Compiler {
 				case DuroLexer.PROTO_ASSIGN:
 					break;
 				default:
-					String id = ctx.messageId().getText();
+					String id = getMessageIdText(ctx.messageId());
 					// For computed value +=, -=, ...
 					instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 					// receiver, receiver
@@ -1430,7 +1429,7 @@ public class Compiler {
 			
 			@Override
 			public void exitMemberAssignment(MemberAssignmentContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN:
@@ -1481,7 +1480,7 @@ public class Compiler {
 			
 			@Override
 			public void exitMemberQuotedAssignment(MemberQuotedAssignmentContext ctx) {
-				String id = ctx.messageId().getText();
+				String id = getMessageIdText(ctx.messageId());
 				
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
@@ -1522,7 +1521,7 @@ public class Compiler {
 					// receiver, receiver, id
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					// receiver, id, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "get", 1));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
 					// receiver, id, oldValue
 				}
 			}
@@ -1542,7 +1541,7 @@ public class Compiler {
 					// receiver, id, value
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// value, receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					break;
 				default:
@@ -1551,7 +1550,7 @@ public class Compiler {
 					// receiver, id, newValue
 					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
 					// newValue, receiver, id, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "set", 2));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
 					// newValue
 					break;
@@ -1635,6 +1634,10 @@ public class Compiler {
 			
 			private void onEnd(Supplier<Instruction> instructionSup) {
 				Compiler.this.onEnd(instructions, instructionSup);
+			}
+			
+			private String getMessageIdText(MessageIdContext ctx) {
+				return ctx.getText();
 			}
 		};
 	}
