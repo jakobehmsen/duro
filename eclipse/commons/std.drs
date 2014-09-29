@@ -85,7 +85,7 @@ Any.slots = function() {
 */
 
 Any.clone => §sp_clone(this)
-Any.== => other.equalsAny(this)
+Any.== => :other.equalsAny(this)
 Any.equalsAny => §sp_ref_equal(:lhs, this)
 Any.equalsInt => |other| false
 Any.equalsString => |other| false
@@ -249,7 +249,7 @@ Frame.resume = function(x) {
 
 Frame.sender => §sp_frame_sender(this)
 Frame.setSender => §sp_frame_set_sender(this, :newSender)
-Frame.resume => §sp_frame_resume(this, x)
+Frame.resume => §sp_frame_resume(this, :x)
 
 
 /*
