@@ -129,8 +129,8 @@ Array.iterator = function() {
 newArray => §sp_new_array(:length)
 
 Array.prototype ^= Iterable
-Array.set => §sp_array_set(this, :index, :value)
-Array.get => §sp_array_get(this, :index)
+Array.[] => §sp_array_set(this, :index, :value)
+Array.[] => §sp_array_get(this, :index)
 Array.length => §sp_array_length(this)
 Array.iterator => Generator.on{
 	for(var i = 0; i < length(); i++) {
@@ -160,6 +160,7 @@ var array = #(1 2 3 4);
 Integer.to =>
 	for(var i = this; i < :end; i++)
 		yield i
+Integer.through => to(:end + 1)
 
 /*
 // Implicit inheritance based on protocol?
@@ -194,10 +195,13 @@ Iterable.where => |predicate| Generatable.on{
 		if(predicate(x))
 			:generator.put(x)
 	}
-};
+}
 Iterable.each => |block|
 	for(var x in this)
 		block(x)
+Iterable.map => |block|
+	for(var x in this)
+		yield block(x)
 
 
 /*
@@ -242,27 +246,6 @@ List = #[
 			}
 		}
 	)
-	get => items[:index] = :value
-	set => items[:index]
+	[] => items[:index] = :value
+	[] => items[:index]
 ]
-
-/*
-List = #[
-	prototype ^= Iterable
-	items = newArray(12)
-	capacity = 12
-	size = 0
-	add => (
-		items[size] = item
-		size++
-	)
-	iterator => Generator.on{
-		for(var i = 0; i < size; i++) {
-			var item = items[i];
-			:generator.put(item);
-		}
-	}
-	[] => items[:index] = :value // Index behavior with two arguments
-	[] => items[:index]          // Index behavior with one arguments
-]
-*/
