@@ -160,19 +160,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterIfStatementOnFalse(@NotNull DuroParser.IfStatementOnFalseContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -531,19 +518,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitDictProcess(@NotNull DuroParser.DictProcessContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1376,19 +1350,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

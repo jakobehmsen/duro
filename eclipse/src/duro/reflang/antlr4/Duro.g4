@@ -13,7 +13,7 @@ behaviorElementsSingle: behaviorElement;
 
 topExpression: expression;
 expression: 
-    variableAssignment | quotedAssignment | functionDefinition | ifStatement | whileStatement |
+    variableAssignment | quotedAssignment | ifStatement | whileStatement |
     forStatement | forInStatement | pause | variableStatement | 
     breakStatement | yieldStatement | returnStatement | interfaceId |
     conditionalExpression;
@@ -197,11 +197,6 @@ breakStatement: KW_BREAK;
 yieldStatement: 
     KW_YIELD yieldStatementExpression (COMMA yieldStatementExpression)*;
 yieldStatementExpression: expression;
-functionDefinition: 
-    KW_FUNCTION messageId OPEN_PAR functionParameters CLOSE_PAR 
-    OPEN_BRA functionBody CLOSE_BRA;
-functionParameters: (ID (COMMA ID)*)?;
-functionBody: behaviorElements;
 ifStatement: 
     KW_IF OPEN_PAR ifStatementCondition CLOSE_PAR ifStatementOnTrue
     elseStatement;

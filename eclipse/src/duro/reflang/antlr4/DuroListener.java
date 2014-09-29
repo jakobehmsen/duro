@@ -130,17 +130,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#functionParameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#functionParameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
 	 * @param ctx the parse tree
 	 */
@@ -447,17 +436,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#functionDefinition}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#functionDefinition}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#forStatement}.
@@ -1162,17 +1140,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#functionBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#functionBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryRegularAssignment}.

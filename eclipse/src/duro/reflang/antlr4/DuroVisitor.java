@@ -89,13 +89,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMemberAssignmentValue(@NotNull DuroParser.MemberAssignmentValueContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionParameters}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionParameters(@NotNull DuroParser.FunctionParametersContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#ifStatementOnFalse}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -290,13 +283,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDictProcess(@NotNull DuroParser.DictProcessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionDefinition}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionDefinition(@NotNull DuroParser.FunctionDefinitionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#forStatement}.
@@ -745,13 +731,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionBody(@NotNull DuroParser.FunctionBodyContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryRegularAssignment}.
