@@ -719,19 +719,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterInteger(@NotNull DuroParser.IntegerContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1402,19 +1389,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterDictProcess2(@NotNull DuroParser.DictProcess2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx) { }
 
 	/**
 	 * {@inheritDoc}

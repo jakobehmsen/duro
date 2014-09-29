@@ -390,13 +390,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntry2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#integer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -759,13 +752,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#dictProcess2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#functionBody}.

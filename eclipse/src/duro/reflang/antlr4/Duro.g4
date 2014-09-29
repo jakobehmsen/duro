@@ -127,15 +127,13 @@ operator:
     BIN_OP2
 ;
 literal: 
-    integer | bool | string | dictProcess | dictProcess2 |
+    integer | bool | string | dictProcess |
     functionLiteral | closureLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
-dictProcess: OPEN_BRA (dictProcessEntry (COMMA dictProcessEntry)*)? CLOSE_BRA;
-dictProcessEntry: messageId COLON expression;
-dictProcess2: HASH OPEN_SQ (dictProcessEntry2 COMMA?)* CLOSE_SQ;
-dictProcessEntry2:
+dictProcess: HASH OPEN_SQ (dictProcessEntry COMMA?)* CLOSE_SQ;
+dictProcessEntry:
     dictProcessEntryRegularAssignment |
     dictProcessEntryPrototypeAssignment |
     dictProcessEntryQuotedAssignment;

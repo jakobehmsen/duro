@@ -603,17 +603,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionNotApplication(@NotNull DuroParser.UnaryExpressionNotApplicationContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntry2}.
-	 * @param ctx the parse tree
-	 */
-	void enterDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#dictProcessEntry2}.
-	 * @param ctx the parse tree
-	 */
-	void exitDictProcessEntry2(@NotNull DuroParser.DictProcessEntry2Context ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#integer}.
 	 * @param ctx the parse tree
 	 */
@@ -1184,17 +1173,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConditionalExpressionTrue(@NotNull DuroParser.ConditionalExpressionTrueContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#dictProcess2}.
-	 * @param ctx the parse tree
-	 */
-	void enterDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#dictProcess2}.
-	 * @param ctx the parse tree
-	 */
-	void exitDictProcess2(@NotNull DuroParser.DictProcess2Context ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#functionBody}.
