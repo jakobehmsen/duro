@@ -221,9 +221,18 @@ public class Compiler {
 		}
 	}
 	
+	private static class YieldStatement {
+		public final YieldStatementContext ctx;
+		public final ArrayList<Integer> indexes = new ArrayList<Integer>();
+		
+		public YieldStatement(YieldStatementContext ctx) {
+			this.ctx = ctx;
+		}
+	}
+	
 	private DuroListener createBodyListener(
 			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMapArg, 
-			final ArrayList<Instruction> instructions, final ArrayList<YieldStatementContext> yieldStatements) {
+			final ArrayList<Instruction> instructions, final ArrayList<YieldStatement> yieldStatements) {
 		return new DuroBaseListener() {
 			OrdinalAllocator idToVariableOrdinalMap = idToVariableOrdinalMapArg;
 			
@@ -712,15 +721,6 @@ public class Compiler {
 				// behavior
 			}
 			
-			private void onEnd(Supplier<Instruction> instructionSup) {
-				int index = instructions.size();
-				instructions.add(null);
-				endHandlers.add(() -> {
-					Instruction instruction = instructionSup.get();
-					instructions.set(index, instruction);
-				});
-			}
-			
 			@Override
 			public void enterLookup(LookupContext ctx) {
 				String id = ctx.ID().getText();
@@ -1132,9 +1132,18 @@ public class Compiler {
 				instructions.add(null);
 			}
 			
+			private Stack<YieldStatement> yieldStatementStack = new Stack<YieldStatement>();
+			
+			@Override
+			public void enterYieldStatement(YieldStatementContext ctx) {
+				yieldStatementStack.push(new YieldStatement(ctx));
+			}
+			
 			@Override
 			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
-				idToParameterOrdinalMap.declare("generator", instructions, generatableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+//				idToParameterOrdinalMap.declare("generator", instructions, generatableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+				yieldStatementStack.peek().indexes.add(instructions.size());
+				instructions.add(null); // Allocate space for loading generator
 				// generator
 			}
 			
@@ -1151,7 +1160,8 @@ public class Compiler {
 			
 			@Override
 			public void exitYieldStatement(YieldStatementContext ctx) {
-				yieldStatements.add(ctx);
+				YieldStatement yieldStatement = yieldStatementStack.pop();
+				yieldStatements.add(yieldStatement);
 			}
 			
 			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
@@ -1622,7 +1632,20 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_POP));
 				}
 			}
+			
+			private void onEnd(Supplier<Instruction> instructionSup) {
+				Compiler.this.onEnd(instructions, instructionSup);
+			}
 		};
+	}
+	
+	private void onEnd(ArrayList<Instruction> instructions, Supplier<Instruction> instructionSup) {
+		int index = instructions.size();
+		instructions.add(null);
+		endHandlers.add(() -> {
+			Instruction instruction = instructionSup.get();
+			instructions.set(index, instruction);
+		});
 	}
 	
 	private static String extractStringLiteral(String rawString) {
@@ -1635,7 +1658,9 @@ public class Compiler {
 	private BodyInfo getBodyInfo(
 			OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree) {
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-		ArrayList<YieldStatementContext> yieldStatements = new ArrayList<YieldStatementContext>();
+		ArrayList<YieldStatement> yieldStatements = new ArrayList<YieldStatement>();
+//		OrdinalAllocator idToParameterOrdinalMap = idToParameterOrdinalMapOuter.newInnerStart();
+//		OrdinalAllocator idToVariableOrdinalMap = idToVariableOrdinalMapOuter.newInnerStart();
 		
 		ConditionalTreeWalker walker = new ConditionalTreeWalker();
 		walker.walk(
@@ -1646,28 +1671,38 @@ public class Compiler {
 		int variableCount = idToVariableOrdinalMap.size();
 		
 		if(yieldStatements.size() > 0) {
+			OrdinalAllocator idToParameterOrdinalMapIterator = idToParameterOrdinalMap.newInnerEnd();
+			
 			// Generatable/generator
 			// Function returns iterables
-			
-			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.yieldStatementExpression().size()).distinct().count();
+			int distinctYieldCount = (int)yieldStatements.stream().map(i -> i.ctx.yieldStatementExpression().size()).distinct().count();
 			if(distinctYieldCount > 1)
 				throw new RuntimeException("Multiple distinct yield counts.");
 			
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-			int parameterCount = idToParameterOrdinalMap.size();
+			for(YieldStatement yieldStatement: yieldStatements) {
+				for(int index: yieldStatement.indexes) {
+					idToParameterOrdinalMapIterator.declare("generator", generatorOrdinal -> 
+						iteratorInstructions.set(index, new Instruction(Instruction.OPCODE_LOAD_ARG, generatorOrdinal)));
+				}
+			}
+			
+			int parameterCount = idToParameterOrdinalMapIterator.size();
 			int closureParameterCount = 1;
 
-			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
-
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS, 1));
+			generatorInstructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			// This
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_GET, "Generatable", 0));
 			// Generatable
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
+			onEnd(generatorInstructions, () -> {
+				Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
+				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
+			});
 			// Generatable, Behavior
-			idToParameterOrdinalMap.ordinalFor("generator", instructions, argumentOffset -> new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, argumentOffset, closureParameterCount));
+			idToParameterOrdinalMapIterator.getLocalParameterOffset(generatorInstructions, closureParameterOffset -> 
+				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 			// Generatable, Closure
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
 			// a generatable
