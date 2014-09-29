@@ -199,6 +199,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterIndex(@NotNull DuroParser.IndexContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIndex(@NotNull DuroParser.IndexContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMemberAssignment(@NotNull DuroParser.MemberAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}

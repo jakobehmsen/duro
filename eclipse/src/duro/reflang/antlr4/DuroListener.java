@@ -163,6 +163,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitExplicitMessageExchange(@NotNull DuroParser.ExplicitMessageExchangeContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#index}.
+	 * @param ctx the parse tree
+	 */
+	void enterIndex(@NotNull DuroParser.IndexContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#index}.
+	 * @param ctx the parse tree
+	 */
+	void exitIndex(@NotNull DuroParser.IndexContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#memberAssignment}.
 	 * @param ctx the parse tree
 	 */

@@ -115,7 +115,7 @@ messageExchangeExpressionArguments:
     (OPEN_PAR (expression (COMMA expression)*)? CLOSE_PAR);
 messageExchangeLiteralArguments:
     literal (COMMA literal)*;
-messageId: (ID | operator);
+messageId: (ID | operator | index);
 operator:
     EQUALS | 
     NOT_EQUALS |
@@ -126,6 +126,7 @@ operator:
     BIN_OP1 |
     BIN_OP2
 ;
+index: OPEN_SQ CLOSE_SQ;
 literal: 
     integer | bool | string | dictProcess | closureLiteral | array;
 integer: INT;
