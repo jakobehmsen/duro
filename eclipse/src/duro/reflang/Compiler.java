@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -119,6 +120,7 @@ import duro.runtime.Instruction;
 
 public class Compiler {
 	private MessageCollector errors = new MessageCollector();
+	private ArrayList<Runnable> endHandlers = new ArrayList<Runnable>();
 	
 	private void appendError(ParserRuleContext ctx, String message) {
 		errors.appendMessage(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message);
@@ -190,6 +192,10 @@ public class Compiler {
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
 		Debug.println(Debug.LEVEL_HIGH, "Generating program...");
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
+		idToParameterOrdinalMap.generate();
+		idToVariableOrdinalMap.generate();
+		for(Runnable handler: endHandlers)
+			handler.run();
 		Debug.println(Debug.LEVEL_HIGH, "Generated program.");
 		
 		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
@@ -529,12 +535,14 @@ public class Compiler {
 			
 			private void appendUnaryExpressionPostIncDecApplicationVariable(UnaryExpressionPostIncDecApplicationContext ctx, ParserRuleContext targetCtx) {
 				String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
-				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+//				int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
 				appendIncDec(ctx.op);
-				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//				instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 			}
 			
 			private void appendUnaryExpressionPostIncDecApplicationMemberAccess(UnaryExpressionPostIncDecApplicationContext ctx, String id) {
@@ -570,13 +578,14 @@ public class Compiler {
 				
 				if(idToVariableOrdinalMap.isDeclared(firstId)) {
 					// Variable assignment
-					int firstOrdinal = idToVariableOrdinalMap.ordinalFor(firstId);
+//					int firstOrdinal = idToVariableOrdinalMap.ordinalFor(firstId);
 					
 					switch(ctx.op.getType()) {
 					case DuroLexer.ASSIGN: {
 						break;
 					} default: {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
+						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
 						// oldValue
 						break;
 					}
@@ -601,7 +610,7 @@ public class Compiler {
 				String firstId = ctx.ID().getText();
 
 				if(idToVariableOrdinalMap.isDeclared(firstId)) {
-					int firstOrdinal = idToVariableOrdinalMap.ordinalFor(firstId);
+//					int firstOrdinal = idToVariableOrdinalMap.ordinalFor(firstId);
 					// Variable assignment
 					switch(ctx.op.getType()) {
 					case DuroLexer.ASSIGN: {
@@ -616,7 +625,8 @@ public class Compiler {
 						// newValue
 						instructions.add(new Instruction(Instruction.OPCODE_DUP));
 						// newValue, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 						// newValue
 						
 						break;
@@ -628,7 +638,8 @@ public class Compiler {
 						// newValue
 						instructions.add(new Instruction(Instruction.OPCODE_DUP));
 						// newValue, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 						// newValue
 						break;
 					}
@@ -718,35 +729,53 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.memberQuotedAssignmentValue());
 				int parameterCount = newIdToParameterOrdinalMap.size();
+				int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
+				
+				newIdToParameterOrdinalMap.generate();
+				newIdToVariableOrdinalMap.generate();
 
-				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+//				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 				
 				// receiver
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				
+				onEnd(() -> {
+					Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+					return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+				});
 				// receiver, behavior
 				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 				// behavior, receiver, behavior
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 				// behavior
 			}
 			
-			
+			private void onEnd(Supplier<Instruction> instructionSup) {
+				int index = instructions.size();
+				instructions.add(null);
+				endHandlers.add(() -> {
+					Instruction instruction = instructionSup.get();
+					instructions.set(index, instruction);
+				});
+			}
 			
 			@Override
 			public void enterLookup(LookupContext ctx) {
 				String id = ctx.ID().getText();
 				
-				Integer parameterOrdinal = idToParameterOrdinalMap.ordinalFor(id);
-				if(parameterOrdinal != null) {
+//				Integer parameterOrdinal = idToParameterOrdinalMap.ordinalFor(id);
+				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Load argument
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 					return;
 				}
 				
-				Integer variableOrdinal = idToVariableOrdinalMap.ordinalFor(id);
-				if(variableOrdinal != null) {
+//				Integer variableOrdinal = idToVariableOrdinalMap.ordinalFor(id);
+				if(idToVariableOrdinalMap.isDeclared(id)) {
 					// Load variable
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
 					return;
 				}
 				
@@ -757,8 +786,9 @@ public class Compiler {
 			
 			@Override
 			public void enterArgumentParameter(ArgumentParameterContext ctx) {
-				int parameterOrdinal = idToParameterOrdinalMap.declare(ctx.ID().getText());
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//				int parameterOrdinal = idToParameterOrdinalMap.declare(ctx.ID().getText());
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+				idToParameterOrdinalMap.declare(ctx.ID().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 			}
 			
 			@Override
@@ -766,12 +796,14 @@ public class Compiler {
 				String id = ctx.messageExchange().messageId().getText();
 				if(idToParameterOrdinalMap.isDeclared(id)) {
 					// Call argument
-					int ordinal = idToParameterOrdinalMap.ordinalFor(id);
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
+//					int ordinal = idToParameterOrdinalMap.ordinalFor(id);
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, ordinal));
+					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 				} else if(idToVariableOrdinalMap.isDeclared(id)) {
 					// Call variable
-					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+//					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
 				} else {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				}
@@ -904,10 +936,18 @@ public class Compiler {
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.dictProcessEntryQuotedAssignmentValue());
 				int parameterCount = newIdToParameterOrdinalMap.size();
+				int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
 
-				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
+				newIdToParameterOrdinalMap.generate();
+				newIdToVariableOrdinalMap.generate();
+				
+//				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				onEnd(() -> {
+					Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+					return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+				});
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 			}
 			
 			
@@ -936,6 +976,10 @@ public class Compiler {
 				// TODO: Instead of this, there could be a stack of instructions, where it is the top instructions that are manipulated
 				// In exit body, the instructions stack can be popped
 				walker.suspendWalkWithin(ctx);
+				
+				// Somehow, register a distinct collection of ordinal allocators for closures
+				// Each of these ordinal allocators are isolated pr. closure
+				// An ordinal allocator should be addable to other ordinal allocators, where ordinals are offset appropriately
 			}
 
 			@Override
@@ -957,21 +1001,27 @@ public class Compiler {
 			
 			@Override
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
-				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
-				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInner();
+				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
+				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
 				for(TerminalNode parameterIdNode: ctx.behaviorParameters().ID()) {
 					String parameterId = parameterIdNode.getText();
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
 				int parameterCount = newIdToParameterOrdinalMap.size();
-				int closureParameterOffset = newIdToParameterOrdinalMap.getLocalParameterOffset();
-				int closureParameterCount = newIdToParameterOrdinalMap.getLocalParameterCount();
+//				int closureParameterOffset = newIdToParameterOrdinalMap.getLocalParameterOffset();
+				int closureParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
 				
-				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-				
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
+//				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+//				
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions));
+				onEnd(() -> {
+					Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+					return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+				});
+				newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
+					new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
+//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 				// [closure]
 			}
 			
@@ -1130,9 +1180,10 @@ public class Compiler {
 			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
 				for(TerminalNode idNode: ctx.ID()) {
 					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText()) && !idToParameterOrdinalMap.isDeclared(idNode.getText())) {
-						int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
+//						int ordinal = idToVariableOrdinalMap.declare(idNode.getText());
 						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//						instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+						idToVariableOrdinalMap.declare(idNode.getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
 					} else {
 						appendError(ctx, "Variable '" + idNode.getText() + "' is already declared in this scope.");
 					}
@@ -1206,8 +1257,9 @@ public class Compiler {
 			
 			@Override
 			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
-				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+//				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
+				idToParameterOrdinalMap.declare("generator", instructions, generatableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
 				// generator
 			}
 			
@@ -1254,7 +1306,7 @@ public class Compiler {
 			
 			@Override
 			public void enterIfStatementOnTrue(IfStatementOnTrueContext ctx) {
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 			}
 			
 			@Override
@@ -1276,7 +1328,7 @@ public class Compiler {
 			
 			@Override
 			public void enterElseStatement(ElseStatementContext ctx) {
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 				
 				if(ctx.ifStatementOnFalse() == null)
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
@@ -1299,7 +1351,7 @@ public class Compiler {
 			@Override
 			public void enterWhileStatement(WhileStatementContext ctx) {
 				startBreakable();
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 				
 				int jumpIndex = instructions.size();
 				whileJumpIndexStack.push(jumpIndex);
@@ -1341,7 +1393,7 @@ public class Compiler {
 			@Override
 			public void enterForStatement(ForStatementContext ctx) {
 				startBreakable();
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 			}
 			
 			@Override
@@ -1394,7 +1446,7 @@ public class Compiler {
 			@Override
 			public void enterForInStatement(ForInStatementContext ctx) {
 				startBreakable();
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 
 				for(ForInStatementVarContext varCtx: ctx.forInStatementVar())
 					idToVariableOrdinalMap.declare(varCtx.ID().getText());
@@ -1425,8 +1477,9 @@ public class Compiler {
 					instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
 					// iterator, next
 					String id = varCtx.ID().getText();
-					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
-					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//					int ordinal = idToVariableOrdinalMap.ordinalFor(id);
+//					instructions.add(new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+					idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
 					// iterator
 				}
 				
@@ -1458,7 +1511,7 @@ public class Compiler {
 			
 			@Override
 			public void enterInterfaceId(InterfaceIdContext ctx) {
-				idToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
+				idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 				String interfaceId = ctx.ID().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
 			}
@@ -1732,9 +1785,15 @@ public class Compiler {
 			ArrayList<Instruction> iteratorInstructions = instructions;
 			ArrayList<Instruction> generatorInstructions = new ArrayList<Instruction>();
 			
-			int argumentOffset = idToParameterOrdinalMap.ordinalFor("generator");
+//			int[] argumentOffsetHolder = new int[]{-1};
+//			int argumentOffset = idToParameterOrdinalMap.ordinalFor("generator");
+//			idToParameterOrdinalMap.ordinalFor("generator", generatorOrdinal -> argumentOffsetHolder[0] = generatorOrdinal);
+			
+			
+			
 			int parameterCount = idToParameterOrdinalMap.size();
 			int closureParameterCount = 1;
+//			int argumentOffset = argumentOffsetHolder[0];
 
 			Instruction[] bodyInstructions = iteratorInstructions.toArray(new Instruction[iteratorInstructions.size()]);
 
@@ -1744,7 +1803,8 @@ public class Compiler {
 			// Generatable
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions));
 			// Generatable, Behavior
-			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, argumentOffset, closureParameterCount));
+//			generatorInstructions.add(new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, argumentOffset, closureParameterCount));
+			idToParameterOrdinalMap.ordinalFor("generator", instructions, argumentOffset -> new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, argumentOffset, closureParameterCount));
 			// Generatable, Closure
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
 			// a generatable
