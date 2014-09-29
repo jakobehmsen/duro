@@ -712,6 +712,10 @@ public class Compiler {
 				
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				for(TerminalNode parameterIdNode: ctx.memberQuotedAssignmentValue().dictProcessEntryQuotedAssignmentValue().behaviorParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
+				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.memberQuotedAssignmentValue());
 				int parameterCount = newIdToParameterOrdinalMap.size();
 
@@ -894,6 +898,10 @@ public class Compiler {
 				
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				for(TerminalNode parameterIdNode: ctx.dictProcessEntryQuotedAssignmentValue().behaviorParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
+				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.dictProcessEntryQuotedAssignmentValue());
 				int parameterCount = newIdToParameterOrdinalMap.size();
 
@@ -951,7 +959,7 @@ public class Compiler {
 			public void exitClosureLiteral(ClosureLiteralContext ctx) {
 				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInner();
 				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInner();
-				for(TerminalNode parameterIdNode: ctx.closureParameters().ID()) {
+				for(TerminalNode parameterIdNode: ctx.behaviorParameters().ID()) {
 					String parameterId = parameterIdNode.getText();
 					newIdToParameterOrdinalMap.declare(parameterId);
 				}
