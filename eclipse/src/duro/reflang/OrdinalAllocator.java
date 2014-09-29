@@ -18,28 +18,16 @@ public class OrdinalAllocator {
 		}
 	}
 	
-//	private static class Allocation {
-//		private int nextBlockId;
-////		private Hashtable<Integer, Integer> blockIdToOrdinalMap = new Hashtable<Integer, Integer>();
-//		private ArrayList<AllocationInfo> blockIdToOrdinalMap = new ArrayList<AllocationInfo>();
-//	}
-	
-//	private Allocation allocation;
 	private ArrayList<AllocationInfo> allocation = new ArrayList<AllocationInfo>();
 	private OrdinalAllocator outer;
 	private ArrayList<OrdinalAllocator> childrenStart = new ArrayList<OrdinalAllocator>();
 	private ArrayList<OrdinalAllocator> childrenEnd = new ArrayList<OrdinalAllocator>();
 	private ArrayList<Consumer<Integer>> offsetHandlers = new ArrayList<Consumer<Integer>>();
-//	private Hashtable<String, Integer> localIdToBlockIdMap = new Hashtable<String, Integer>();
-//	private int offset;
 	
-	public OrdinalAllocator() {
-//		allocation = new Allocation();
-	}
+	public OrdinalAllocator() { }
 	
 	private OrdinalAllocator(OrdinalAllocator outer) {
 		this.outer = outer;
-//		offset = allocation.blockIdToOrdinalMap.size();
 	}
 	
 	public OrdinalAllocator newInnerStart() {
@@ -52,11 +40,6 @@ public class OrdinalAllocator {
 		OrdinalAllocator child = new OrdinalAllocator(this);
 		childrenEnd.add(child);
 		return child;
-	}
-
-	public void moveToEnd(OrdinalAllocator child) {
-		childrenStart.remove(child);
-		childrenEnd.add(child);
 	}
 	
 	public OrdinalAllocator getOuter() {
@@ -73,20 +56,11 @@ public class OrdinalAllocator {
 	
 	public void declare(String id, Consumer<Integer> handler) {
 		AllocationInfo allocationInfo = getAllocationInfo(id);
-		
-//		Integer blockId = localIdToBlockIdMap.get(id);
-		
-		
+
 		if(allocationInfo == null) {
-//			blockId = allocation.nextBlockId++;
-//			int ordinal = allocation.blockIdToOrdinalMap.size();
-//			localIdToBlockIdMap.put(id, blockId);
-//			allocation.blockIdToOrdinalMap.put(blockId, ordinal);
 			allocationInfo = new AllocationInfo(id);
 			allocation.add(allocationInfo);
-		} 
-		
-//		return allocation.blockIdToOrdinalMap.get(blockId);
+		}
 		
 		allocationInfo.ordinalHandlers.add(handler);
 	}
@@ -99,13 +73,9 @@ public class OrdinalAllocator {
 		AllocationInfo allocationInfo = getAllocationInfo(id);
 		if(allocationInfo != null)
 			allocationInfo.ordinalHandlers.add(handler);
-//			return allocation.blockIdToOrdinalMap.get(blockId);
 		
 		if(outer != null)
 			outer.ordinalFor(id, handler);
-//			return outer.ordinalFor(id);
-
-//		return null;
 	}
 	
 	public Consumer<Integer> instructionsConsumer(ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
@@ -137,25 +107,15 @@ public class OrdinalAllocator {
 			return outer.isDeclared(id);
 		
 		return false;
-		
-//		return ordinalFor(id) != null;
 	}
 
 	public int size() {
 		return allocation.size() + 
 			childrenStart.stream().mapToInt(a -> a.size()).sum() +
 			childrenEnd.stream().mapToInt(a -> a.size()).sum();
-		
-//		return allocation.blockIdToOrdinalMap.size();
 	}
 
-//	public int[] getOrdinals() {
-//		return localIdToBlockIdMap.values().stream().mapToInt(x -> (int)x).sorted().toArray();
-//	}
-
 	public int sizeExceptEnd() {
-//		return localIdToBlockIdMap.size();
-//		return allocation.blockIdToOrdinalMap.size() - offset;
 		return allocation.size() + 
 			childrenStart.stream().mapToInt(a -> a.sizeExceptEnd()).sum();
 	}
@@ -166,15 +126,9 @@ public class OrdinalAllocator {
 
 	public void getLocalParameterOffset(Consumer<Integer> handler) {
 		offsetHandlers.add(handler);
-//		return offset;
 	}
 
-//	public int getSelectorParameterCount() {
-//		return offset;
-//	}
-
 	public boolean isDeclaredLocally(String id) {
-//		return localIdToBlockIdMap.get(id) != null;
 		return getAllocationInfo(id) != null;
 	}
 	
