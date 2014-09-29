@@ -73,7 +73,6 @@ import duro.reflang.antlr4.DuroParser.ForStatementUpdateContext;
 import duro.reflang.antlr4.DuroParser.FrameContext;
 import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
 import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
-import duro.reflang.antlr4.DuroParser.FunctionLiteralContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
 import duro.reflang.antlr4.DuroParser.IndexAccessContext;
@@ -922,27 +921,8 @@ public class Compiler {
 				});
 				instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 			}
-			
-			
-			@Override
-			public void enterFunctionLiteral(FunctionLiteralContext ctx) {
-				walker.suspendWalkWithin(ctx);
-			}
-			
-			@Override
-			public void exitFunctionLiteral(FunctionLiteralContext ctx) {
-				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
-				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
-				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
-					String parameterId = parameterIdNode.getText();
-					newIdToParameterOrdinalMap.declare(parameterId);
-				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
-				int parameterCount = newIdToParameterOrdinalMap.size();
 
-				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-			}
+			
 			
 			@Override
 			public void enterClosureLiteral(ClosureLiteralContext ctx) {
