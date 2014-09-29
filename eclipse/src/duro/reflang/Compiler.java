@@ -71,8 +71,6 @@ import duro.reflang.antlr4.DuroParser.ForStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.ForStatementContext;
 import duro.reflang.antlr4.DuroParser.ForStatementUpdateContext;
 import duro.reflang.antlr4.DuroParser.FrameContext;
-import duro.reflang.antlr4.DuroParser.FunctionBodyContext;
-import duro.reflang.antlr4.DuroParser.FunctionDefinitionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementConditionContext;
 import duro.reflang.antlr4.DuroParser.IfStatementOnTrueContext;
 import duro.reflang.antlr4.DuroParser.IndexAccessContext;
@@ -1180,35 +1178,6 @@ public class Compiler {
 			}
 			
 			@Override
-			public void enterFunctionDefinition(FunctionDefinitionContext ctx) {
-				walker.suspendWalkWithin(ctx);
-			}
-			
-			@Override
-			public void exitFunctionDefinition(FunctionDefinitionContext ctx) {
-				String id = ctx.messageId().getText();
-				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
-				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
-				for(TerminalNode parameterIdNode: ctx.functionParameters().ID()) {
-					String parameterId = parameterIdNode.getText();
-					newIdToParameterOrdinalMap.declare(parameterId);
-				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.functionBody());
-			
-				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-				int parameterCount = newIdToParameterOrdinalMap.size();
-				
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				// this
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-				// this, behavior
-				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-				// behavior, this, behavior
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
-				// behavior
-			}
-			
-			@Override
 			public void enterYieldStatementExpression(YieldStatementExpressionContext ctx) {
 //				int generatableOrdinal = idToParameterOrdinalMap.declare("generator");
 //				instructions.add(new Instruction(Instruction.OPCODE_LOAD_ARG, generatableOrdinal));
@@ -1230,19 +1199,6 @@ public class Compiler {
 			@Override
 			public void exitYieldStatement(YieldStatementContext ctx) {
 				yieldStatements.add(ctx);
-			}
-			
-			@Override
-			public void exitFunctionBody(FunctionBodyContext ctx) {
-				if(yieldStatements.size() > 0) {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET));
-				} else if(instructions.size() == 0/* || !Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)*/) {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					instructions.add(new Instruction(Instruction.OPCODE_RET));
-				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
-					instructions.add(new Instruction(Instruction.OPCODE_RET));
-				}
 			}
 			
 			private Stack<Integer> ifConditionalJumpIndexStack = new Stack<Integer>();
