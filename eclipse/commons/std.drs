@@ -2,6 +2,7 @@
 Standard library
 */
 
+/*
 function write(x) {
 	§sp_write(x.toString());
 }
@@ -13,6 +14,12 @@ function writeln(x) {
 function readln() {
 	return §sp_next_line();
 }
+*/
+
+write => §sp_write(:x.toString())
+writeln => write("" + :x + "\n")
+readln => §sp_next_line()
+
 /*
 // Implicit inheritance based on protocol?
 Any = extend([]);
@@ -35,6 +42,7 @@ Any.callFunc = inline(args, function) {
 }
 */
 
+/*
 Any.clone = function() {
 	return §sp_clone(this);
 };
@@ -73,18 +81,27 @@ Any.slots = function() {
 			return §slots_names(target);
 		}
 	}
-
-
-/*
-	return new {
-		set: {§slots_set(this, :name, :value)},
-		setProto: {§slots_set_proto(this, :name, :value)},
-		get: {§slots_get(this, :name)},
-		isDefined: {§slots_is_defined(this, :name)},
-		names: {§slots_names(this)}
-	}
-*/
 };
+*/
+
+Any.clone => §sp_clone(this)
+Any.== => other.equalsAny(this)
+Any.equalsAny => §sp_ref_equal(:lhs, this)
+Any.equalsInt => |other| false
+Any.equalsString => |other| false
+Any.!= => !(this == :other)
+Any.slots => (
+	return #[
+		target = this
+		set => §slots_set(target, :name, :value)
+		setProto => §slots_set_proto(target, :name, :value)
+		get => §slots_get(target, :name)
+		isDefined => §slots_is_defined(target, :name)
+		names => §slots_names(target)
+	]
+)
+
+
 
 /*
 What about associating each definition with a particular number of arguments?
@@ -112,6 +129,7 @@ this.+(:) = x; // One argument
 this.+(::) = x; // Two arguments
 */
 
+/*
 String.+ = function(other) {
 	return §sp_string_concat(this, other.toString());
 };
@@ -124,7 +142,14 @@ String.== = function(other) {
 String.equalsString = function(lhs) {
 	return §sp_string_equal(lhs, this);
 };
+*/
 
+String.+ => §sp_string_concat(this, :other.toString())
+String.toString => this
+String.== => :other.equalsString(this)
+String.equalsString => §sp_string_equal(:lhs, this)
+
+/*
 Integer.+ = function(other) {
 	// Should do double dispatching
 	return §sp_int_add(this, other);
@@ -148,11 +173,20 @@ Integer.% = function(other) {
 Integer.toString = function() {
 	return §sp_int_to_string(this);
 };
+*/
+
+Integer.+ => §sp_int_add(this, :other)
+Integer.- => §sp_int_sub(this, :other)
+Integer.* => §sp_int_mult(this, :other)
+Integer./ => §sp_int_div(this, :other)
+Integer.% => §sp_int_rem(this, :other)
+Integer.toString => §sp_int_to_string(this)
 
 /*
 Add definition of greater/less operator here for Integer prototype
 */
 
+/*
 Integer.> = function(other) {
 	// Should do double dispatching
 	return §sp_int_greater(this, other);
@@ -179,7 +213,29 @@ Integer.== = function(other) {
 Integer.equalsInt = function(lhs) {
 	return §sp_int_equal(lhs, this);
 };
+*/
 
+// Should do double dispatching
+Integer.> => §sp_int_greater(this, :other)
+// Should do double dispatching
+Integer.>= => (
+	if(§sp_int_greater(this, other))
+		return true
+	return §sp_int_equal(this, other)
+)
+// Should do double dispatching
+Integer.< => §sp_int_less(this, :other)
+// Should do double dispatching
+Integer.<= => (
+	if(§sp_int_less(this, other))
+		return true
+	return §sp_int_equal(this, other)
+)
+Integer.== => :other.equalsInt(this)
+Integer.equalsInt => §sp_int_equal(:lhs, this)
+
+
+/*
 Frame.sender = function() {
 	return §sp_frame_sender(this);
 };
@@ -189,7 +245,17 @@ Frame.setSender = function(newSender) {
 Frame.resume = function(x) {
 	return §sp_frame_resume(this, x);
 };
+*/
 
+Frame.sender => §sp_frame_sender(this)
+Frame.setSender => §sp_frame_set_sender(this, :newSender)
+Frame.resume => §sp_frame_resume(this, x)
+
+
+/*
 Closure.call = function() {
 	return §call_closure(this);
 };
+*/
+
+Closure.call => §call_closure(this)
