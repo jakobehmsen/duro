@@ -157,6 +157,10 @@ Array.extend #[
 var array = #(1 2 3 4);
 */
 
+Integer.to =>
+	for(var i = this; i < :end; i++)
+		yield i
+
 /*
 // Implicit inheritance based on protocol?
 
