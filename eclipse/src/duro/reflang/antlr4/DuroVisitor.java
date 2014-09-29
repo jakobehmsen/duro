@@ -572,13 +572,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitThisMessageExchange(@NotNull DuroParser.ThisMessageExchangeContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#functionLiteral}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

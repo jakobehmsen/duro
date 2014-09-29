@@ -127,8 +127,7 @@ operator:
     BIN_OP2
 ;
 literal: 
-    integer | bool | string | dictProcess |
-    functionLiteral | closureLiteral | array;
+    integer | bool | string | dictProcess | closureLiteral | array;
 integer: INT;
 bool: KW_TRUE | KW_FALSE;
 string: STRING_LITERAL;
@@ -146,9 +145,6 @@ dictProcessEntryQuotedAssignmentValue:
     (
         (OPEN_BRA behaviorElements CLOSE_BRA) | behaviorElementsSingle
     );
-functionLiteral: 
-    KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
-    OPEN_BRA functionBody CLOSE_BRA;
 closureLiteral: 
     //KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
     //OPEN_BRA closureBody CLOSE_BRA;

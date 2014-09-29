@@ -889,17 +889,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitThisMessageExchange(@NotNull DuroParser.ThisMessageExchangeContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#functionLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#functionLiteral}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionLiteral(@NotNull DuroParser.FunctionLiteralContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#dictProcessEntryQuotedAssignment}.
 	 * @param ctx the parse tree
 	 */
