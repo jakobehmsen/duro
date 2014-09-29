@@ -614,6 +614,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#quotedAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQuotedAssignment(@NotNull DuroParser.QuotedAssignmentContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryExpressionNot}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

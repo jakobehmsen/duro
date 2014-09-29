@@ -13,7 +13,7 @@ behaviorElementsSingle: behaviorElement;
 
 topExpression: expression;
 expression: 
-    variableAssignment | functionDefinition | ifStatement | whileStatement |
+    variableAssignment | quotedAssignment | functionDefinition | ifStatement | whileStatement |
     forStatement | forInStatement | pause | variableStatement | 
     breakStatement | yieldStatement | returnStatement | interfaceId |
     conditionalExpression;
@@ -99,6 +99,8 @@ variableAssignment:
         ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MULT | ASSIGN_DIV | ASSIGN_REM | ASSIGN
     )
     expression;
+quotedAssignment:
+    ID QUOTED_ASSIGN memberQuotedAssignmentValue;
 lookup: ID;
 argumentParameter: COLON ID;
 thisMessageExchange: messageExchange;

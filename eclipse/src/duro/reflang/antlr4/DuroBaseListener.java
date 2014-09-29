@@ -1135,6 +1135,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterQuotedAssignment(@NotNull DuroParser.QuotedAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitQuotedAssignment(@NotNull DuroParser.QuotedAssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterUnaryExpressionNot(@NotNull DuroParser.UnaryExpressionNotContext ctx) { }
 	/**
 	 * {@inheritDoc}

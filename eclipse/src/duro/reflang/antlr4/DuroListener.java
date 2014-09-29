@@ -955,6 +955,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#quotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterQuotedAssignment(@NotNull DuroParser.QuotedAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#quotedAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitQuotedAssignment(@NotNull DuroParser.QuotedAssignmentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryExpressionNot}.
 	 * @param ctx the parse tree
 	 */
