@@ -53,6 +53,11 @@ public class OrdinalAllocator {
 		childrenEnd.add(child);
 		return child;
 	}
+
+	public void moveToEnd(OrdinalAllocator child) {
+		childrenStart.remove(child);
+		childrenEnd.add(child);
+	}
 	
 	public OrdinalAllocator getOuter() {
 		return outer;
@@ -152,7 +157,7 @@ public class OrdinalAllocator {
 //		return localIdToBlockIdMap.size();
 //		return allocation.blockIdToOrdinalMap.size() - offset;
 		return allocation.size() + 
-			childrenStart.stream().mapToInt(a -> a.size()).sum();
+			childrenStart.stream().mapToInt(a -> a.sizeExceptEnd()).sum();
 	}
 	
 	public void getLocalParameterOffset(ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
