@@ -713,6 +713,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryExpressionPostIncDecApplicationVariable(@NotNull DuroParser.UnaryExpressionPostIncDecApplicationVariableContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#behaviorParameters}.
+	 * @param ctx the parse tree
+	 */
+	void enterBehaviorParameters(@NotNull DuroParser.BehaviorParametersContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#behaviorParameters}.
+	 * @param ctx the parse tree
+	 */
+	void exitBehaviorParameters(@NotNull DuroParser.BehaviorParametersContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#yieldStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -1052,17 +1063,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#closureParameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#closureParameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#conditionalExpression}.

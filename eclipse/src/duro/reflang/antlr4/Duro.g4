@@ -144,15 +144,18 @@ dictProcessEntryPrototypeAssignment: messageId PROTO_ASSIGN expression;
 dictProcessEntryQuotedAssignment: 
     messageId QUOTED_ASSIGN dictProcessEntryQuotedAssignmentValue;
 dictProcessEntryQuotedAssignmentValue:
-    (OPEN_BRA behaviorElements CLOSE_BRA) | behaviorElementsSingle;
+    behaviorParameters
+    (
+        (OPEN_BRA behaviorElements CLOSE_BRA) | behaviorElementsSingle
+    );
 functionLiteral: 
     KW_FUNCTION OPEN_PAR functionParameters CLOSE_PAR 
     OPEN_BRA functionBody CLOSE_BRA;
 closureLiteral: 
     //KW_CLOSURE OPEN_PAR functionParameters CLOSE_PAR 
     //OPEN_BRA closureBody CLOSE_BRA;
-    OPEN_BRA closureParameters closureBody CLOSE_BRA;
-closureParameters: (SINGLE_PIPE (ID (COMMA ID)*)? SINGLE_PIPE)?;
+    OPEN_BRA behaviorParameters closureBody CLOSE_BRA;
+behaviorParameters: (SINGLE_PIPE ID* SINGLE_PIPE)?;
 closureBody: behaviorElements;
 array: HASH OPEN_PAR (arrayOperand (COMMA arrayOperand)*)? CLOSE_PAR;
 arrayOperand: expression;

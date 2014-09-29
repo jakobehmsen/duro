@@ -849,6 +849,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBehaviorParameters(@NotNull DuroParser.BehaviorParametersContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBehaviorParameters(@NotNull DuroParser.BehaviorParametersContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterYieldStatement(@NotNull DuroParser.YieldStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1246,19 +1259,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

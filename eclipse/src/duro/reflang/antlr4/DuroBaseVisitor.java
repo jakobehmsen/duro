@@ -530,6 +530,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitBehaviorParameters(@NotNull DuroParser.BehaviorParametersContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitYieldStatement(@NotNull DuroParser.YieldStatementContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -771,14 +779,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitMemberQuotedAssignmentValue(@NotNull DuroParser.MemberQuotedAssignmentValueContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitClosureParameters(@NotNull DuroParser.ClosureParametersContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
