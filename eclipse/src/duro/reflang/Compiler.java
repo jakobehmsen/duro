@@ -95,6 +95,7 @@ import duro.reflang.antlr4.DuroParser.PrimitiveOperand2Context;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.ProgramElementContentContext;
 import duro.reflang.antlr4.DuroParser.ProgramElementsContext;
+import duro.reflang.antlr4.DuroParser.QuotedAssignmentContext;
 import duro.reflang.antlr4.DuroParser.ReturnStatementContext;
 import duro.reflang.antlr4.DuroParser.SelfContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -695,6 +696,37 @@ public class Compiler {
 					break;
 				}
 			}
+			
+			
+			@Override
+			public void enterQuotedAssignment(QuotedAssignmentContext ctx) {
+				walker.suspendWalkWithin(ctx);
+
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				// this
+			}
+			
+			@Override
+			public void exitQuotedAssignment(QuotedAssignmentContext ctx) {
+				String id = ctx.ID().getText();
+				
+				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
+				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.memberQuotedAssignmentValue());
+				int parameterCount = newIdToParameterOrdinalMap.size();
+
+				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+				
+				// receiver
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
+				// receiver, behavior
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+				// behavior, receiver, behavior
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
+				// behavior
+			}
+			
+			
 			
 			@Override
 			public void enterLookup(LookupContext ctx) {
