@@ -55,9 +55,7 @@ import duro.reflang.antlr4.DuroParser.ConditionalExpressionConditionContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionFalseContext;
 import duro.reflang.antlr4.DuroParser.ConditionalExpressionTrueContext;
-import duro.reflang.antlr4.DuroParser.DictProcess2Context;
 import duro.reflang.antlr4.DuroParser.DictProcessContext;
-import duro.reflang.antlr4.DuroParser.DictProcessEntry2Context;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryPrototypeAssignmentContext;
 import duro.reflang.antlr4.DuroParser.DictProcessEntryQuotedAssignmentContext;
@@ -865,25 +863,6 @@ public class Compiler {
 			
 			@Override
 			public void enterDictProcessEntry(DictProcessEntryContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-			}
-			
-			@Override
-			public void exitDictProcessEntry(DictProcessEntryContext ctx) {
-				String id = ctx.messageId().getText();
-				
-				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
-			}
-			
-			
-			
-			@Override
-			public void enterDictProcess2(DictProcess2Context ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
-			}
-			
-			@Override
-			public void enterDictProcessEntry2(DictProcessEntry2Context ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 			}
 			
