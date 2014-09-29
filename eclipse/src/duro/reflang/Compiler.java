@@ -914,7 +914,8 @@ public class Compiler {
 				} else if(instructions.size() == 0) {
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					instructions.add(new Instruction(Instruction.OPCODE_RET));
-				} else if(!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
+				} else if(instructions.get(instructions.size() - 1) == null /*Assumed that instruction cannot be ret if null*/ || 
+						!Instruction.isReturn(instructions.get(instructions.size() - 1).opcode)) {
 					instructions.add(new Instruction(Instruction.OPCODE_RET));
 				}
 			}
@@ -1608,13 +1609,11 @@ public class Compiler {
 				
 				OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
 				OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+				for(TerminalNode parameterIdNode: ctx.memberQuotedAssignmentValue().dictProcessEntryQuotedAssignmentValue().behaviorParameters().ID()) {
+					String parameterId = parameterIdNode.getText();
+					newIdToParameterOrdinalMap.declare(parameterId);
+				}
 				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.memberQuotedAssignmentValue());
-//				int parameterCount = newIdToParameterOrdinalMap.size();
-//
-//				Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-//				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions)); // Should this create a function process?
-//				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-//				instructions.add(new Instruction(Instruction.OPCODE_SET, id, parameterCount));
 				
 				int parameterCount = newIdToParameterOrdinalMap.size();
 				int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
