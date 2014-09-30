@@ -166,6 +166,7 @@ public class Compiler {
 			}
 		});
 		
+		long startParse = System.currentTimeMillis();
 		Debug.println(Debug.LEVEL_HIGH, "Parsing program...");
 		ProgramContext programCtx;
 		
@@ -182,17 +183,22 @@ public class Compiler {
 		    // if we parse ok, it's LL not SLL
 		}
 		
-		Debug.println(Debug.LEVEL_HIGH, "Parsed program.");
-		
+		Debug.println(Debug.LEVEL_MEDIUM, "Parsed program.");
+		long endParse = System.currentTimeMillis();
+		Debug.println(Debug.LEVEL_MEDIUM, "Parse time: " + (endParse - startParse));
+
+		long startGen = System.currentTimeMillis();
 		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
-		Debug.println(Debug.LEVEL_HIGH, "Generating program...");
+		Debug.println(Debug.LEVEL_MEDIUM, "Generating program...");
 		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
 		idToParameterOrdinalMap.generate();
 		idToVariableOrdinalMap.generate();
 		for(Runnable handler: endHandlers)
 			handler.run();
-		Debug.println(Debug.LEVEL_HIGH, "Generated program.");
+		Debug.println(Debug.LEVEL_MEDIUM, "Generated program.");
+		long endGen = System.currentTimeMillis();
+		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
 		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
