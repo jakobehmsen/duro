@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/antlr-runtime-4.4.jar"/>
+	<classpathentry kind="lib" path="libs/antlr-3.5.2-complete.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
