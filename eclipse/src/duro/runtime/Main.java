@@ -11,7 +11,7 @@ import duro.transcriber.Journal;
 public class Main {
 	public static void main(String[] args) {
 		if(args.length < 1) {
-			System.out.println("Please supply path of journal.");
+			System.out.println("Please supply path of object code.");
 			return;
 		}
 		
