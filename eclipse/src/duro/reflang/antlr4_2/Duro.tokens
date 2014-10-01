@@ -1,0 +1,14 @@
+ADD=5
+Number=1
+LEFT=7
+RIGHT=8
+MULTIPLY=3
+WS=2
+SUBTRACT=6
+DIVIDE=4
+'-'=6
+'+'=5
+'*'=3
+')'=8
+'('=7
+'/'=4
