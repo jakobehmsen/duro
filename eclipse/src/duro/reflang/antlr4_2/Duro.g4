@@ -38,8 +38,9 @@ slotAssignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-literal: integer | dict | closure | pseudoVar;
+literal: integer | string | dict | closure | pseudoVar;
 integer: INT;
+string: STRING;
 dict: HASH SQ_OP dictEntry* SQ_CL;
 dictEntry: selector
     (
@@ -91,3 +92,9 @@ ASSIGN_QUOTED: '=>';
 WS: [ \t\u000C\r\n]+ -> skip;
 SINGLELINE_COMMENT: '//' ~('\r' | '\n')* -> skip;
 MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
+
+STRING: '"' (EscapeSequence | ~[\\"])* '"';
+fragment HexDigit: [0-9a-fA-F];
+fragment EscapeSequence: '\\' [btnfr"'\\] | UnicodeEscape | OctalEscape;
+fragment OctalEscape: '\\' [0-3] [0-7] [0-7] | '\\' [0-7] [0-7] | '\\' [0-7];
+fragment UnicodeEscape: '\\' 'u' HexDigit HexDigit HexDigit HexDigit;

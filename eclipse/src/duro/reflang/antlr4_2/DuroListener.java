@@ -53,6 +53,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void enterString(@NotNull DuroParser.StringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void exitString(@NotNull DuroParser.StringContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 */
