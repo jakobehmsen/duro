@@ -25,7 +25,7 @@ nonBinaryMessage: DOT multiArgMessage | slotAccess | indexAccess;
 multiArgMessage: ID_UNCAP multiArgMessageArgs (ID_CAP multiArgMessageArgs)*;
 multiArgMessageArgs:
     multiArgMessageArg (COMMA multiArgMessageArg)*;
-multiArgMessageArg: grouping | literal;
+multiArgMessageArg: PAR_OP (expression (COMMA expression)*)? PAR_CL | literal;
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
@@ -49,7 +49,7 @@ primitive:
     PARAGRAPH ID_UNCAP primitiveOperand* 
     PAR_OP (primitiveArgument (COMMA primitiveArgument)*)? PAR_CL;
 primitiveArgument: expression;
-primitiveOperand: (literal | ID);
+primitiveOperand: literal;
 selector: id | binaryOperator | indexOperator;
 binaryOperator: BIN_OP;
 indexOperator: SQ_OP SQ_CL;
