@@ -16,17 +16,16 @@ variableAssignment:
 messageExchange: atom message* indexAssign?;
 variableDeclaration: VAR id (ASSIGN expression)?;
 returnExpr: RETURN expression;
-atom: selfMessageExchange | access | grouping | literal | parArg;
+atom: selfMessageExchange | access | grouping | literal | parArg | primitive;
 selfMessageExchange: multiArgMessage;
 access: id;
 grouping: PAR_OP topExpressions PAR_CL;
 message: nonBinaryMessage | binaryMessage;
 nonBinaryMessage: DOT multiArgMessage | slotAccess | indexAccess;
 multiArgMessage: ID_UNCAP multiArgMessageArgs (ID_CAP multiArgMessageArgs)*;
-multiArgMessageArgs: 
-    (PAR_OP (expression (COMMA expression)*)? PAR_CL)
-    |
-    literal (COMMA literal)*;
+multiArgMessageArgs:
+    multiArgMessageArg (COMMA multiArgMessageArg)*;
+multiArgMessageArg: grouping | literal;
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
@@ -46,6 +45,11 @@ behaviorParams: (PIPE id+ PIPE)?;
 pseudoVar: PSEUDO_VAR;
 parArg: COLON id;
 id: ID_CAP | ID_UNCAP;
+primitive: 
+    PARAGRAPH ID_UNCAP primitiveOperand* 
+    PAR_OP (primitiveArgument (COMMA primitiveArgument)*)? PAR_CL;
+primitiveArgument: expression;
+primitiveOperand: (literal | ID);
 selector: id | binaryOperator | indexOperator;
 binaryOperator: BIN_OP;
 indexOperator: SQ_OP SQ_CL;
@@ -62,6 +66,7 @@ fragment LETTER: (LETTER_LOWER|LETTER_UPPER);
 ID_CAP: LETTER_UPPER (LETTER | DIGIT | '_')*;
 ID_UNCAP: LETTER_LOWER (LETTER | DIGIT | '_')*;
 
+PARAGRAPH: '§';
 PIPE: '|';
 HASH: '#';
 DOT: '.';
