@@ -53,17 +53,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#primitive}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#primitive}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 */
@@ -150,17 +139,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#primitiveOperand}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#primitiveOperand}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgs}.
@@ -273,6 +251,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#slotAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#slotAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#returnExpr}.
 	 * @param ctx the parse tree
 	 */
@@ -381,17 +370,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndexAccess(@NotNull DuroParser.IndexAccessContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#primitiveArgument}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#primitiveArgument}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryOperator}.

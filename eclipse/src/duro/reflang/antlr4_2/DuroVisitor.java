@@ -40,13 +40,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitive}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitive(@NotNull DuroParser.PrimitiveContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -101,13 +94,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveOperand}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgs}.
@@ -180,6 +166,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#slotAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#returnExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -248,13 +241,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIndexAccess(@NotNull DuroParser.IndexAccessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#primitiveArgument}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#binaryOperator}.

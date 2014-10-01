@@ -69,19 +69,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPrimitive(@NotNull DuroParser.PrimitiveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitive(@NotNull DuroParser.PrimitiveContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterProgram(@NotNull DuroParser.ProgramContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -180,19 +167,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveOperand(@NotNull DuroParser.PrimitiveOperandContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -329,6 +303,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterReturnExpr(@NotNull DuroParser.ReturnExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -453,19 +440,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIndexAccess(@NotNull DuroParser.IndexAccessContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPrimitiveArgument(@NotNull DuroParser.PrimitiveArgumentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

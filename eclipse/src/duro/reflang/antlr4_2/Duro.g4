@@ -13,10 +13,10 @@ variableAssignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-messageExchange: atom message* indexAssign?;
+messageExchange: atom message* (indexAssign | slotAssignment)?;
 variableDeclaration: VAR id (ASSIGN expression)?;
 returnExpr: RETURN expression;
-atom: selfMessageExchange | access | grouping | literal | parArg | primitive;
+atom: selfMessageExchange | access | grouping | literal | parArg;
 selfMessageExchange: multiArgMessage;
 access: id;
 grouping: PAR_OP topExpressions PAR_CL;
@@ -31,6 +31,13 @@ indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
 binaryMessageOperand: atom nonBinaryMessage* indexAssign?;
 indexAssign: SQ_OP expression SQ_CL ASSIGN expression;
+slotAssignment: 
+    DOT id
+    (
+        (op=(ASSIGN | ASSIGN_PROTO) expression)
+        |
+        op=ASSIGN_QUOTED behaviorParams expression
+    );
 literal: integer | dict | closure | pseudoVar;
 integer: INT;
 dict: HASH SQ_OP dictEntry* SQ_CL;
@@ -45,18 +52,13 @@ behaviorParams: (PIPE id+ PIPE)?;
 pseudoVar: PSEUDO_VAR;
 parArg: COLON id;
 id: ID_CAP | ID_UNCAP;
-primitive: 
-    PARAGRAPH ID_UNCAP primitiveOperand* 
-    PAR_OP (primitiveArgument (COMMA primitiveArgument)*)? PAR_CL;
-primitiveArgument: expression;
-primitiveOperand: literal;
 selector: id | binaryOperator | indexOperator;
 binaryOperator: BIN_OP;
 indexOperator: SQ_OP SQ_CL;
 
 RETURN: 'return';
 VAR: 'var';
-PSEUDO_VAR: 'this' | 'null' | 'true' | 'false';
+PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame';
 INT: DIGIT+;
 
 fragment DIGIT: ('0'..'9');
