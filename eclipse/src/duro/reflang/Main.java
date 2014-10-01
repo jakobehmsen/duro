@@ -11,7 +11,7 @@ import duro.runtime.CustomProcess;
 public class Main {
 	public static void main(String[] args) {
 		if(args.length < 2) {
-			System.out.println("Please supply path of source code and then path (folder) to output journal to.");
+			System.out.println("Please supply path of source code and then path to output object code to.");
 			return;
 		}
 		
