@@ -26,6 +26,7 @@ import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
 import duro.reflang.antlr4_2.DuroParser;
+import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
@@ -148,6 +149,11 @@ public class Compiler_NEW {
 			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, 
 			final ArrayList<Instruction> instructions) {
 		return new DuroBaseListener() {
+			@Override
+			public void enterInteger(IntegerContext ctx) {
+				int value = Integer.parseInt(ctx.INT().getText());
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+			}
 		};
 	}
 	
