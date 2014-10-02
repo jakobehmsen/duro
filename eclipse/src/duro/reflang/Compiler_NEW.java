@@ -21,14 +21,17 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import duro.debugging.Debug;
 import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
 import duro.reflang.antlr4_2.DuroParser;
+import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
+import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
@@ -148,6 +151,76 @@ public class Compiler_NEW {
 			}
 			
 			@Override
+			public void enterAssignment(AssignmentContext ctx) {
+				String id = ctx.id().getText();
+				
+				if(ctx.op.getType() == DuroLexer.ASSIGN && idToVariableOrdinalMap.isDeclared(id))
+					return;
+
+				// Member assignment for this
+				if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
+					walker.suspendWalkWithin(ctx); // Rhs is quoted
+					
+					OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
+					OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+					for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
+						String parameterId = parameterIdNode.getText();
+						newIdToParameterOrdinalMap.declare(parameterId);
+					}
+					BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.expression());
+					int parameterCount = newIdToParameterOrdinalMap.size();
+					int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
+					
+					newIdToParameterOrdinalMap.generate();
+					newIdToVariableOrdinalMap.generate();
+
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					onEnd(() -> {
+						Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+						return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+					});
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
+				}
+			}
+			
+			@Override
+			public void exitAssignment(AssignmentContext ctx) {
+				String id = ctx.id().getText();
+				
+				// newValue
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN: {
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					if(idToVariableOrdinalMap.isDeclared(id)) {
+						// Variable assignment
+						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+					} else {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// newValue, newValue, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						// newValue, receiver, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+					}
+					break;
+				} case DuroLexer.ASSIGN_PROTO: {
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					// newValue, newValue, receiver
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					// newValue, receiver, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
+					break;
+				}
+				}
+				
+				// newValue
+			}
+			
+			@Override
 			public void exitBinaryMessage(BinaryMessageContext ctx) {
 				String id = ctx.BIN_OP().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
@@ -191,6 +264,10 @@ public class Compiler_NEW {
 				String string = extractStringLiteral(rawString);
 				
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
+			}
+			
+			private void onEnd(Supplier<Instruction> instructionSup) {
+				Compiler_NEW.this.onEnd(instructions, instructionSup);
 			}
 		};
 	}
