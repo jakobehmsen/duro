@@ -26,6 +26,8 @@ import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
 import duro.reflang.antlr4_2.DuroParser;
+import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
+import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.RootExpressionContext;
@@ -158,6 +160,12 @@ public class Compiler_NEW {
 			@Override
 			public void exitRootExpression(RootExpressionContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
+			}
+			
+			@Override
+			public void exitBinaryMessage(BinaryMessageContext ctx) {
+				String id = ctx.BIN_OP().getText();
+				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
 			}
 			
 			@Override
