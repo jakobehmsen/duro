@@ -151,6 +151,11 @@ public class Compiler_NEW {
 			final ArrayList<Instruction> instructions) {
 		return new DuroBaseListener() {
 			@Override
+			public void exitProgram(ProgramContext ctx) {
+				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
+			}
+			
+			@Override
 			public void exitRootExpression(RootExpressionContext ctx) {
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 			}
