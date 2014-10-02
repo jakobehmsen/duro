@@ -3,7 +3,11 @@ package duro.reflang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Stack;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -17,9 +21,6 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.RuleNode;
 
 import duro.debugging.Debug;
 import duro.reflang.antlr4_2.DuroBaseListener;
@@ -29,15 +30,23 @@ import duro.reflang.antlr4_2.DuroParser;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.RootExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
+import duro.runtime.Selector;
 
 public class Compiler_NEW {
+	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
 	private MessageCollector errors = new MessageCollector();
 	private ArrayList<Runnable> endHandlers = new ArrayList<Runnable>();
+	
+	public Compiler_NEW() {
+		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
+	}
 	
 	private void appendError(ParserRuleContext ctx, String message) {
 		errors.appendMessage(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message);
@@ -124,31 +133,6 @@ public class Compiler_NEW {
 		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
 	
-	private static class ConditionalTreeWalker extends ParseTreeWalker {
-		private boolean suspendWalk;
-		private RuleNode ruleSuspendedAt;
-		
-		@Override
-		protected void enterRule(ParseTreeListener listener, RuleNode r) {
-			if(!suspendWalk)
-				super.enterRule(listener, r);
-		}
-		
-		@Override
-		protected void exitRule(ParseTreeListener listener, RuleNode r) {
-			if(ruleSuspendedAt == r)
-				suspendWalk = false;
-			
-			if(!suspendWalk)
-				super.exitRule(listener, r);
-		}
-		
-		public void suspendWalkWithin(RuleNode r) {
-			suspendWalk = true;
-			ruleSuspendedAt = r;
-		}
-	}
-	
 	private DuroListener createBodyListener(
 			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, 
 			final ArrayList<Instruction> instructions) {
@@ -167,6 +151,30 @@ public class Compiler_NEW {
 			public void exitBinaryMessage(BinaryMessageContext ctx) {
 				String id = ctx.BIN_OP().getText();
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
+			}
+			
+			private Stack<PrimitiveGenerator> primitiveGeneratorStack = new Stack<PrimitiveGenerator>();
+			
+			@Override
+			public void enterMultiArgMessage(MultiArgMessageContext ctx) {
+				String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
+				int parameterCount = ctx.multiArgMessageArgs().size();
+				PrimitiveGeneratorFactory primitiveGeneratorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+				
+				if(primitiveGeneratorFactory != null) {
+					PrimitiveGenerator primitiveGenerator = primitiveGeneratorFactory.create(ctx);
+					primitiveGenerator.enterPrimitive(instructions);
+					primitiveGeneratorStack.push(primitiveGenerator);
+				} else
+					primitiveGeneratorStack.push(null);
+			}
+			
+			@Override
+			public void exitMultiArgMessage(MultiArgMessageContext ctx) {
+				PrimitiveGenerator primitiveGenerator = primitiveGeneratorStack.pop();
+				
+				if(primitiveGenerator != null)
+					primitiveGenerator.exitPrimitive(instructions);
 			}
 			
 			@Override
