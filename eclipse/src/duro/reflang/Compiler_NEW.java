@@ -38,6 +38,7 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.RootExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
+import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
@@ -218,6 +219,24 @@ public class Compiler_NEW {
 				}
 				
 				// newValue
+			}
+			
+			@Override
+			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
+				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.id().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.id().getText())) {
+					idToVariableOrdinalMap.declare(ctx.id().getText());
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+				} else {
+					appendError(ctx, "Variable '" + ctx.id().getText() + "' is already declared in this scope.");
+				}
+			}
+			
+			@Override
+			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
+				if(ctx.expression() != null) {
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
+				}
 			}
 			
 			@Override
