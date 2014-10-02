@@ -21,9 +21,7 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import duro.debugging.Debug;
@@ -201,31 +199,6 @@ public class Compiler {
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
 		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
-	}
-	
-	private static class ConditionalTreeWalker extends ParseTreeWalker {
-		private boolean suspendWalk;
-		private RuleNode ruleSuspendedAt;
-		
-		@Override
-		protected void enterRule(ParseTreeListener listener, RuleNode r) {
-			if(!suspendWalk)
-				super.enterRule(listener, r);
-		}
-		
-		@Override
-		protected void exitRule(ParseTreeListener listener, RuleNode r) {
-			if(ruleSuspendedAt == r)
-				suspendWalk = false;
-			
-			if(!suspendWalk)
-				super.exitRule(listener, r);
-		}
-		
-		public void suspendWalkWithin(RuleNode r) {
-			suspendWalk = true;
-			ruleSuspendedAt = r;
-		}
 	}
 	
 	private static class YieldStatement {
