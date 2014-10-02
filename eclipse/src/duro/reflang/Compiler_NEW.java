@@ -148,8 +148,8 @@ public class Compiler_NEW {
 			public void enterProgram(ProgramContext ctx) {
 				walker.suspendWalkWithin(ctx);
 				
-				for(int i = 0; i < ctx.expression().size() - 0; i++)
-					append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(0), instructions);
+				for(int i = 0; i < ctx.expression().size() ; i++)
+					append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(i), instructions);
 
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
@@ -160,9 +160,9 @@ public class Compiler_NEW {
 
 				if(ctx.topExpression().size() > 0) {
 					for(int i = 0; i < ctx.topExpression().size() - 1; i++)
-						append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(0), instructions);
+						append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(i), instructions);
 					
-					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(0), instructions);
+					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(ctx.topExpression().size() - 1), instructions);
 				}
 			}
 			
@@ -179,30 +179,38 @@ public class Compiler_NEW {
 				
 				switch(ctx.op.getType()) {
 				case DuroLexer.ASSIGN: {
-					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
-					if(mustBeExpression)
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
 					// newValue, newValue
 					if(idToVariableOrdinalMap.isDeclared(id)) {
+						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+						if(mustBeExpression)
+							instructions.add(new Instruction(Instruction.OPCODE_DUP));
 						// Variable assignment
 						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 					} else {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-						// newValue, receiver, newValue
+						// receiver
+						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+						// receiver, newValue
+						if(mustBeExpression)
+							instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+							// newValue, receiver, newValue
 						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+						// newValue | e
 					}
 					break;
 				} case DuroLexer.ASSIGN_PROTO: {
+					if(!mustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
 					if(mustBeExpression)
 						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					// newValue, newValue, receiver
-					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-					// newValue, receiver, newValue
+						// newValue, newValue
+					if(mustBeExpression) {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// newValue, newValue, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						// newValue, receiver, newValue
+					}
 					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
 					break;
 				}
