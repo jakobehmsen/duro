@@ -26,11 +26,12 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import com.sun.xml.internal.ws.assembler.jaxws.MustUnderstandTubeFactory;
 
 import duro.debugging.Debug;
-import duro.reflang.antlr4_2.DuroParser.TopExpressionContext;
+//import duro.reflang.antlr4_2.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
 import duro.reflang.antlr4_2.DuroParser;
+import duro.reflang.antlr4_2.DuroParser.AccessContext;
 import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
@@ -40,19 +41,19 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
-import duro.reflang.antlr4_2.DuroParser.TopExpressionsContext;
+//import duro.reflang.antlr4_2.DuroParser.TopExpressionsContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public class Compiler_NEW {
-	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
+//	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
 	private MessageCollector errors = new MessageCollector();
 	private ArrayList<Runnable> endHandlers = new ArrayList<Runnable>();
 	
 	public Compiler_NEW() {
-		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
+//		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
 	}
 	
 	private void appendError(ParserRuleContext ctx, String message) {
@@ -128,7 +129,16 @@ public class Compiler_NEW {
 		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generating program...");
-		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
+//		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
+//		idToParameterOrdinalMap.generate();
+//		idToVariableOrdinalMap.generate();
+		Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap = new Hashtable<Selector, PrimitiveVisitorFactory>();
+		primitiveMap.put(Selector.get("write", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
+		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+//		Walker walker = new Walker();
+//		walker.walk(programInterceptor, programCtx);
+		programCtx.accept(programVisitor);
 		idToParameterOrdinalMap.generate();
 		idToVariableOrdinalMap.generate();
 		for(Runnable handler: endHandlers)
@@ -137,7 +147,8 @@ public class Compiler_NEW {
 		long endGen = System.currentTimeMillis();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
-		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
+//		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
+		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), instructions.toArray(new Instruction[instructions.size()]));
 	}
 	
 	private DuroListener createBodyListener(
@@ -154,17 +165,17 @@ public class Compiler_NEW {
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
 			
-			@Override
-			public void enterTopExpressions(TopExpressionsContext ctx) {
-				walker.suspendWalkWithin(ctx);
-
-				if(ctx.topExpression().size() > 0) {
-					for(int i = 0; i < ctx.topExpression().size() - 1; i++)
-						append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(i), instructions);
-					
-					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(ctx.topExpression().size() - 1), instructions);
-				}
-			}
+//			@Override
+//			public void enterTopExpressions(TopExpressionsContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+//
+//				if(ctx.topExpression().size() > 0) {
+//					for(int i = 0; i < ctx.topExpression().size() - 1; i++)
+//						append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(i), instructions);
+//					
+//					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(ctx.topExpression().size() - 1), instructions);
+//				}
+//			}
 			
 			@Override
 			public void enterAssignment(AssignmentContext ctx) {
@@ -307,28 +318,66 @@ public class Compiler_NEW {
 				instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
 			}
 			
-			private Stack<PrimitiveGenerator> primitiveGeneratorStack = new Stack<PrimitiveGenerator>();
+//			private Stack<PrimitiveGenerator> primitiveGeneratorStack = new Stack<PrimitiveGenerator>();
 			
 			@Override
 			public void enterMultiArgMessage(MultiArgMessageContext ctx) {
+				walker.suspendWalkWithin(ctx);
+				// For each argument of a message, mustBeExpresion should be true
+				
+				// Should be for self message exchange only?
 				String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
 				int parameterCount = ctx.multiArgMessageArgs().size();
-				PrimitiveGeneratorFactory primitiveGeneratorFactory = primitiveMap.get(Selector.get(id, parameterCount));
-				
-				if(primitiveGeneratorFactory != null) {
-					PrimitiveGenerator primitiveGenerator = primitiveGeneratorFactory.create(ctx);
-					primitiveGenerator.enterPrimitive(instructions);
-					primitiveGeneratorStack.push(primitiveGenerator);
-				} else
-					primitiveGeneratorStack.push(null);
+//				PrimitiveGeneratorFactory primitiveGeneratorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+//				
+//				if(primitiveGeneratorFactory != null) {
+//					// What about "mustBeExpression"?
+//					PrimitiveGenerator primitiveGenerator = primitiveGeneratorFactory.create(ctx);
+//					primitiveGenerator.enterPrimitive(instructions);
+//					primitiveGeneratorStack.push(primitiveGenerator);
+//				} else {
+//					primitiveGeneratorStack.push(null);
+//				}
+			}
+			
+			@Override
+			public void enterMultiArgMessageArg(MultiArgMessageArgContext ctx) {
+//				if(primitiveGeneratorStack.pop() == null) {
+//					walker.suspendWalkWithin(ctx);
+//					for(int i = 0; i < ctx.expression().size(); i++)
+//						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(i), instructions);
+//				}
 			}
 			
 			@Override
 			public void exitMultiArgMessage(MultiArgMessageContext ctx) {
-				PrimitiveGenerator primitiveGenerator = primitiveGeneratorStack.pop();
-				
-				if(primitiveGenerator != null)
-					primitiveGenerator.exitPrimitive(instructions);
+//				PrimitiveGenerator primitiveGenerator = primitiveGeneratorStack.pop();
+//				
+//				if(primitiveGenerator != null)
+//					primitiveGenerator.exitPrimitive(instructions);
+			}
+			
+			@Override
+			public void enterAccess(AccessContext ctx) {
+				if(mustBeExpression) {
+					String id = ctx.id().getText();
+					
+					if(idToParameterOrdinalMap.isDeclared(id)) {
+						// Load argument
+						idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+						return;
+					}
+					
+					if(idToVariableOrdinalMap.isDeclared(id)) {
+						// Load variable
+						idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+						return;
+					}
+					
+					// Get member
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+				}
 			}
 			
 			@Override

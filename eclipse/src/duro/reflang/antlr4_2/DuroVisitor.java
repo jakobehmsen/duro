@@ -54,13 +54,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#topExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#dictEntry}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -143,13 +136,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParArg(@NotNull DuroParser.ParArgContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#topExpressions}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTopExpressions(@NotNull DuroParser.TopExpressionsContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#expression}.

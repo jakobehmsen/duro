@@ -1,8 +1,6 @@
 grammar Duro;
 
 program: expression*;
-topExpressions: topExpression*; // Pop all except last
-topExpression: expression;
 expression: 
     assignment | variableDeclaration | messageExchange;
 assignment: 
@@ -17,7 +15,7 @@ variableDeclaration: VAR id (ASSIGN expression)?;
 atom: selfMessageExchange | access | grouping | literal | parArg;
 selfMessageExchange: multiArgMessage;
 access: id;
-grouping: PAR_OP topExpressions PAR_CL;
+grouping: PAR_OP expression+ PAR_CL;
 message: nonBinaryMessage | binaryMessage;
 nonBinaryMessage: DOT multiArgMessage | slotAccess | indexAccess;
 multiArgMessage: ID_UNCAP multiArgMessageArgs (ID_CAP multiArgMessageArgs)*;
@@ -46,7 +44,7 @@ dictEntry: selector
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-closure: BRA_OP behaviorParams topExpressions BAR_CL;
+closure: BRA_OP behaviorParams expression* BAR_CL;
 behaviorParams: (PIPE id+ PIPE)?;
 pseudoVar: PSEUDO_VAR;
 parArg: COLON id;

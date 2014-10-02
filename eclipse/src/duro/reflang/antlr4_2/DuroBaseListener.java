@@ -95,19 +95,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterTopExpression(@NotNull DuroParser.TopExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterDictEntry(@NotNull DuroParser.DictEntryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -258,19 +245,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitParArg(@NotNull DuroParser.ParArgContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterTopExpressions(@NotNull DuroParser.TopExpressionsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitTopExpressions(@NotNull DuroParser.TopExpressionsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

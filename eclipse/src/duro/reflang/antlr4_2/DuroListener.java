@@ -75,17 +75,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#topExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#topExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitTopExpression(@NotNull DuroParser.TopExpressionContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#dictEntry}.
 	 * @param ctx the parse tree
 	 */
@@ -216,17 +205,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParArg(@NotNull DuroParser.ParArgContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#topExpressions}.
-	 * @param ctx the parse tree
-	 */
-	void enterTopExpressions(@NotNull DuroParser.TopExpressionsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#topExpressions}.
-	 * @param ctx the parse tree
-	 */
-	void exitTopExpressions(@NotNull DuroParser.TopExpressionsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#expression}.
