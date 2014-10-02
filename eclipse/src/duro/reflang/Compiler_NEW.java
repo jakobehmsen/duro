@@ -31,6 +31,7 @@ import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.RootExpressionContext;
+import duro.reflang.antlr4_2.DuroParser.StringContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 
@@ -172,6 +173,16 @@ public class Compiler_NEW {
 			public void enterInteger(IntegerContext ctx) {
 				int value = Integer.parseInt(ctx.INT().getText());
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+			}
+			
+			@Override
+			public void enterString(StringContext ctx) {
+				String rawString = ctx.getText();
+				// Should the string enter properly prepared?
+				// - i.e., no need for filtering the string.
+				String string = extractStringLiteral(rawString);
+				
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 			}
 		};
 	}
