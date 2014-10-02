@@ -147,19 +147,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterRootExpression(@NotNull DuroParser.RootExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitRootExpression(@NotNull DuroParser.RootExpressionContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx) { }
 	/**
 	 * {@inheritDoc}

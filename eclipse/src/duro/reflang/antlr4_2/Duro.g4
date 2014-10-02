@@ -1,7 +1,6 @@
 grammar Duro;
 
-program: rootExpression*;
-rootExpression: expression; // Always pop
+program: expression*;
 topExpressions: topExpression*; // Pop all except last
 topExpression: expression;
 expression: 

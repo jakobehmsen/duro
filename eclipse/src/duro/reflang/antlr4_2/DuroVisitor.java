@@ -82,13 +82,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMultiArgMessageArg(@NotNull DuroParser.MultiArgMessageArgContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#rootExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRootExpression(@NotNull DuroParser.RootExpressionContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiArgMessage}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
