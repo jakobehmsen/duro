@@ -20,17 +20,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitPseudoVar(@NotNull DuroParser.PseudoVarContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#variableAssignment}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#variableAssignment}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#access}.
 	 * @param ctx the parse tree
 	 */
@@ -262,6 +251,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignment(@NotNull DuroParser.AssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#assignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignment(@NotNull DuroParser.AssignmentContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#slotAssignment}.
 	 * @param ctx the parse tree
 	 */
@@ -271,17 +271,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#returnExpr}.
-	 * @param ctx the parse tree
-	 */
-	void enterReturnExpr(@NotNull DuroParser.ReturnExprContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#returnExpr}.
-	 * @param ctx the parse tree
-	 */
-	void exitReturnExpr(@NotNull DuroParser.ReturnExprContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#behaviorParams}.

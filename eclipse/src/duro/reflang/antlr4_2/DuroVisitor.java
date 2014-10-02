@@ -19,13 +19,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPseudoVar(@NotNull DuroParser.PseudoVarContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#variableAssignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#access}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -173,18 +166,18 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(@NotNull DuroParser.AssignmentContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#slotAssignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#returnExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitReturnExpr(@NotNull DuroParser.ReturnExprContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#behaviorParams}.

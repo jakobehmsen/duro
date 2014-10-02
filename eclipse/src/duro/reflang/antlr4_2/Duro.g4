@@ -5,8 +5,8 @@ rootExpression: expression; // Always pop
 topExpressions: topExpression*; // Pop all except last
 topExpression: expression;
 expression: 
-    variableAssignment | variableDeclaration | returnExpr | messageExchange;
-variableAssignment: 
+    assignment | variableDeclaration | messageExchange;
+assignment: 
     id
     (
         (op=(ASSIGN | ASSIGN_PROTO) expression)
@@ -15,7 +15,6 @@ variableAssignment:
     );
 messageExchange: atom message* (indexAssign | slotAssignment)?;
 variableDeclaration: VAR id (ASSIGN expression)?;
-returnExpr: RETURN expression;
 atom: selfMessageExchange | access | grouping | literal | parArg;
 selfMessageExchange: multiArgMessage;
 access: id;

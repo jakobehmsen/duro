@@ -30,19 +30,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitVariableAssignment(@NotNull DuroParser.VariableAssignmentContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterAccess(@NotNull DuroParser.AccessContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,6 +303,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterAssignment(@NotNull DuroParser.AssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitAssignment(@NotNull DuroParser.AssignmentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -323,19 +323,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterReturnExpr(@NotNull DuroParser.ReturnExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitReturnExpr(@NotNull DuroParser.ReturnExprContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
