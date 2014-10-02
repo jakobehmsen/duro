@@ -23,7 +23,10 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import com.sun.xml.internal.ws.assembler.jaxws.MustUnderstandTubeFactory;
+
 import duro.debugging.Debug;
+import duro.reflang.antlr4_2.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
@@ -36,8 +39,8 @@ import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
-import duro.reflang.antlr4_2.DuroParser.RootExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
+import duro.reflang.antlr4_2.DuroParser.TopExpressionsContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
@@ -138,25 +141,72 @@ public class Compiler_NEW {
 	}
 	
 	private DuroListener createBodyListener(
-			final ConditionalTreeWalker walker, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, 
-			final ArrayList<Instruction> instructions) {
+			final ConditionalTreeWalker walker, boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap, 
+			OrdinalAllocator idToVariableOrdinalMap, final ArrayList<Instruction> instructions) {
 		return new DuroBaseListener() {
 			@Override
-			public void exitProgram(ProgramContext ctx) {
+			public void enterProgram(ProgramContext ctx) {
+				walker.suspendWalkWithin(ctx);
+				
+				for(int i = 0; i < ctx.expression().size() - 0; i++)
+					append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(0), instructions);
+
 				instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 			}
 			
 			@Override
-			public void exitRootExpression(RootExpressionContext ctx) {
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
+			public void enterTopExpressions(TopExpressionsContext ctx) {
+				walker.suspendWalkWithin(ctx);
+
+				if(ctx.topExpression().size() > 0) {
+					for(int i = 0; i < ctx.topExpression().size() - 1; i++)
+						append(false, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(0), instructions);
+					
+					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.topExpression(0), instructions);
+				}
 			}
 			
 			@Override
 			public void enterAssignment(AssignmentContext ctx) {
+				walker.suspendWalkWithin(ctx);
+				
 				String id = ctx.id().getText();
 				
-				if(ctx.op.getType() == DuroLexer.ASSIGN && idToVariableOrdinalMap.isDeclared(id))
-					return;
+//				if(ctx.op.getType() == DuroLexer.ASSIGN && idToVariableOrdinalMap.isDeclared(id))
+//					return;
+				
+				
+				
+				switch(ctx.op.getType()) {
+				case DuroLexer.ASSIGN: {
+					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+					if(mustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					if(idToVariableOrdinalMap.isDeclared(id)) {
+						// Variable assignment
+						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+					} else {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						// newValue, newValue, receiver
+						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+						// newValue, receiver, newValue
+						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+					}
+					break;
+				} case DuroLexer.ASSIGN_PROTO: {
+					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+					if(mustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					// newValue, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					// newValue, newValue, receiver
+					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+					// newValue, receiver, newValue
+					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
+					break;
+				}
+				}
 
 				// Member assignment for this
 				if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
@@ -180,62 +230,66 @@ public class Compiler_NEW {
 						Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
 						return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
 					});
-					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					if(mustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 					instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 				}
 			}
 			
 			@Override
 			public void exitAssignment(AssignmentContext ctx) {
-				String id = ctx.id().getText();
-				
-				// newValue
-				
-				switch(ctx.op.getType()) {
-				case DuroLexer.ASSIGN: {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// newValue, newValue
-					if(idToVariableOrdinalMap.isDeclared(id)) {
-						// Variable assignment
-						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
-					} else {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-						// newValue, receiver, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
-					}
-					break;
-				} case DuroLexer.ASSIGN_PROTO: {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// newValue, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					// newValue, newValue, receiver
-					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-					// newValue, receiver, newValue
-					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
-					break;
-				}
-				}
-				
-				// newValue
+//				String id = ctx.id().getText();
+//				
+//				// newValue
+//				
+//				switch(ctx.op.getType()) {
+//				case DuroLexer.ASSIGN: {
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					// newValue, newValue
+//					if(idToVariableOrdinalMap.isDeclared(id)) {
+//						// Variable assignment
+//						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//					} else {
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// newValue, newValue, receiver
+//						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//						// newValue, receiver, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+//					}
+//					break;
+//				} case DuroLexer.ASSIGN_PROTO: {
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					// newValue, newValue
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//					// newValue, newValue, receiver
+//					instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//					// newValue, receiver, newValue
+//					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
+//					break;
+//				}
+//				}
+//				
+//				// newValue
 			}
 			
 			@Override
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
+				walker.suspendWalkWithin(ctx);
+				
 				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.id().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.id().getText())) {
 					idToVariableOrdinalMap.declare(ctx.id().getText());
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+
+					if(ctx.expression() == null) { 
+						if(mustBeExpression)
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					} else {
+						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+						if(mustBeExpression)
+							instructions.add(new Instruction(Instruction.OPCODE_DUP));
+						idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
+					}
 				} else {
 					appendError(ctx, "Variable '" + ctx.id().getText() + "' is already declared in this scope.");
-				}
-			}
-			
-			@Override
-			public void exitVariableDeclaration(VariableDeclarationContext ctx) {
-				if(ctx.expression() != null) {
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
 				}
 			}
 			
@@ -271,18 +325,22 @@ public class Compiler_NEW {
 			
 			@Override
 			public void enterInteger(IntegerContext ctx) {
-				int value = Integer.parseInt(ctx.INT().getText());
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+				if(mustBeExpression) {
+					int value = Integer.parseInt(ctx.INT().getText());
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+				}
 			}
 			
 			@Override
 			public void enterString(StringContext ctx) {
-				String rawString = ctx.getText();
-				// Should the string enter properly prepared?
-				// - i.e., no need for filtering the string.
-				String string = extractStringLiteral(rawString);
-				
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
+				if(mustBeExpression) {
+					String rawString = ctx.getText();
+					// Should the string enter properly prepared?
+					// - i.e., no need for filtering the string.
+					String string = extractStringLiteral(rawString);
+					
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
+				}
 			}
 			
 			private void onEnd(Supplier<Instruction> instructionSup) {
@@ -310,15 +368,19 @@ public class Compiler_NEW {
 	private BodyInfo getBodyInfo(OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree) {
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		
-		ConditionalTreeWalker walker = new ConditionalTreeWalker();
-		walker.walk(
-			createBodyListener(walker, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), 
-			tree
-		);
+		append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, tree, instructions);
 		
 		int variableCount = idToVariableOrdinalMap.size();
 
 		return new BodyInfo(variableCount, instructions);
+	}
+	
+	private void append(boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, ParseTree tree, ArrayList<Instruction> instructions) {
+		ConditionalTreeWalker walker = new ConditionalTreeWalker();
+		walker.walk(
+			createBodyListener(walker, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, instructions), 
+			tree
+		);
 	}
 	
 	private static class BodyInfo {
