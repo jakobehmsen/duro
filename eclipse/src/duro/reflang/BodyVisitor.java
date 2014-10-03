@@ -14,6 +14,7 @@ import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
+import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
@@ -142,6 +143,18 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 				}
 			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitGrouping(GroupingContext ctx) {
+		BodyVisitor expressionVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap);
+		// Only last expression have a pop instruction appended
+		for(int i = 0; i < ctx.expression().size(); i++) {
+			expressionVisitor.mustBeExpression = i == ctx.expression().size() - 1; // If last
+			ctx.expression(i).accept(expressionVisitor);
 		}
 		
 		return null;
