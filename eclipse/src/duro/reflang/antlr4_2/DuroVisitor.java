@@ -40,6 +40,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgsWithPar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiArgMessageArgsWithPar(@NotNull DuroParser.MultiArgMessageArgsWithParContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -68,25 +75,32 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArg}.
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageNoPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiArgMessageArg(@NotNull DuroParser.MultiArgMessageArgContext ctx);
+	T visitMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#multiArgMessage}.
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgWithPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx);
+	T visitMultiArgMessageArgWithPar(@NotNull DuroParser.MultiArgMessageArgWithParContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgs}.
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgNoPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMultiArgMessageArgs(@NotNull DuroParser.MultiArgMessageArgsContext ctx);
+	T visitMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageWithPar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#dict}.
@@ -94,6 +108,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDict(@NotNull DuroParser.DictContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryMessageOperandChain}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#selector}.
@@ -110,11 +131,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitId(@NotNull DuroParser.IdContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#nonBinaryMessage}.
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParChain}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNonBinaryMessage(@NotNull DuroParser.NonBinaryMessageContext ctx);
+	T visitMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#slotAccess}.
@@ -145,6 +166,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpression(@NotNull DuroParser.ExpressionContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#receiver}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReceiver(@NotNull DuroParser.ReceiverContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#assignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -166,13 +194,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#message}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMessage(@NotNull DuroParser.MessageContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -185,13 +206,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitGrouping(@NotNull DuroParser.GroupingContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#selfMessageExchange}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSelfMessageExchange(@NotNull DuroParser.SelfMessageExchangeContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexAssign}.
@@ -236,9 +250,16 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitMessageExchange(@NotNull DuroParser.MessageExchangeContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#atom}.
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgsNoPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAtom(@NotNull DuroParser.AtomContext ctx);
+	T visitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageChain}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageChain(@NotNull DuroParser.MessageChainContext ctx);
 }

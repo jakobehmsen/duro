@@ -15,9 +15,12 @@ import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
@@ -176,21 +179,37 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
-	public Object visitMultiArgMessage(MultiArgMessageContext ctx) {
-		// For each argument of a message, mustBeExpresion should be true
-		
-		// Should be for self message exchange only?
+	public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		int parameterCount = ctx.multiArgMessageArgs().size();
+		int parameterCount = ctx.multiArgMessageArgsNoPar().size();
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
-			// What about "mustBeExpression"?
 			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
 			ctx.accept(primitiveInterceptor);
 		} else {
-			for(MultiArgMessageArgsContext argsCtx: ctx.multiArgMessageArgs()) {
-				for(MultiArgMessageArgContext argCtx: argsCtx.multiArgMessageArg()) {
+			for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
+				for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
+					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
+		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
+		int parameterCount = ctx.multiArgMessageArgsWithPar().size();
+		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+		
+		if(primitiveVisitorFactory != null) {
+			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			ctx.accept(primitiveInterceptor);
+		} else {
+			for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
+				for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
 					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 				}
 			}

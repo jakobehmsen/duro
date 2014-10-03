@@ -2,7 +2,10 @@ grammar Duro;
 
 program: expression*;
 expression: 
-    assignment | variableDeclaration | messageExchange;
+    assignment | 
+    variableDeclaration | 
+    multiArgMessageNoPar |
+    messageExchange;
 assignment: 
     id
     (
@@ -10,24 +13,50 @@ assignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-messageExchange: atom message* (indexAssign | slotAssignment)?;
+
+messageExchange: receiver messageChain?;
+messageChain:
+    DOT multiArgMessageNoPar |
+    (DOT multiArgMessageWithPar | slotAccess | indexAccess) messageChain? |
+    slotAssignment | 
+    indexAssign |
+    binaryMessage+
+    ;
+                
+receiver:
+    multiArgMessageWithPar | access | grouping | literal | parArg;
+
 variableDeclaration: VAR id (ASSIGN expression)?;
-atom: selfMessageExchange | access | grouping | literal | parArg;
-selfMessageExchange: multiArgMessage;
 access: id;
 grouping: PAR_OP expression+ PAR_CL;
-message: nonBinaryMessage | binaryMessage;
-nonBinaryMessage: DOT multiArgMessage | slotAccess | indexAccess;
-multiArgMessage: ID_UNCAP multiArgMessageArgs (ID_CAP multiArgMessageArgs)*;
-multiArgMessageArgs:
-    multiArgMessageArg (COMMA multiArgMessageArg)*;
-multiArgMessageArg: 
-    PAR_OP (expression (COMMA expression)*)? PAR_CL | 
-    access | literal | parArg;
+
+multiArgMessageNoPar: 
+    ID_UNCAP multiArgMessageArgsNoPar (ID_CAP multiArgMessageArgsNoPar)*;
+multiArgMessageArgsNoPar:
+    multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*;
+multiArgMessageArgNoPar: receiver multiArgMessageArgNoParChain?;
+multiArgMessageArgNoParChain:
+    (DOT multiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    slotAssignment | 
+    indexAssign |
+    binaryMessage+
+    ;
+
+multiArgMessageWithPar: 
+    ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
+multiArgMessageArgsWithPar:
+    multiArgMessageArgWithPar (COMMA multiArgMessageArgWithPar)*;
+multiArgMessageArgWithPar: PAR_OP (expression (COMMA expression)*)? PAR_CL;
+
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
-binaryMessageOperand: atom nonBinaryMessage* indexAssign?;
+binaryMessageOperand: receiver binaryMessageOperandChain?;
+binaryMessageOperandChain:
+    (DOT multiArgMessageWithPar | slotAccess | indexAccess)  binaryMessageOperandChain? |
+    slotAssignment | 
+    indexAssign
+    ;
 indexAssign: SQ_OP expression SQ_CL ASSIGN expression;
 slotAssignment: 
     DOT id
@@ -55,7 +84,6 @@ selector: id | binaryOperator | indexOperator;
 binaryOperator: BIN_OP;
 indexOperator: SQ_OP SQ_CL;
 
-RETURN: 'return';
 VAR: 'var';
 PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame';
 INT: DIGIT+;

@@ -37,8 +37,8 @@ import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
+//import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
+//import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
 //import duro.reflang.antlr4_2.DuroParser.TopExpressionsContext;
@@ -320,42 +320,42 @@ public class Compiler_NEW {
 			
 //			private Stack<PrimitiveGenerator> primitiveGeneratorStack = new Stack<PrimitiveGenerator>();
 			
-			@Override
-			public void enterMultiArgMessage(MultiArgMessageContext ctx) {
-				walker.suspendWalkWithin(ctx);
-				// For each argument of a message, mustBeExpresion should be true
-				
-				// Should be for self message exchange only?
-				String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-				int parameterCount = ctx.multiArgMessageArgs().size();
-//				PrimitiveGeneratorFactory primitiveGeneratorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+//			@Override
+//			public void enterMultiArgMessage(MultiArgMessageContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+//				// For each argument of a message, mustBeExpresion should be true
 //				
-//				if(primitiveGeneratorFactory != null) {
-//					// What about "mustBeExpression"?
-//					PrimitiveGenerator primitiveGenerator = primitiveGeneratorFactory.create(ctx);
-//					primitiveGenerator.enterPrimitive(instructions);
-//					primitiveGeneratorStack.push(primitiveGenerator);
-//				} else {
-//					primitiveGeneratorStack.push(null);
-//				}
-			}
+//				// Should be for self message exchange only?
+//				String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
+//				int parameterCount = ctx.multiArgMessageArgs().size();
+////				PrimitiveGeneratorFactory primitiveGeneratorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+////				
+////				if(primitiveGeneratorFactory != null) {
+////					// What about "mustBeExpression"?
+////					PrimitiveGenerator primitiveGenerator = primitiveGeneratorFactory.create(ctx);
+////					primitiveGenerator.enterPrimitive(instructions);
+////					primitiveGeneratorStack.push(primitiveGenerator);
+////				} else {
+////					primitiveGeneratorStack.push(null);
+////				}
+//			}
 			
-			@Override
-			public void enterMultiArgMessageArg(MultiArgMessageArgContext ctx) {
-//				if(primitiveGeneratorStack.pop() == null) {
-//					walker.suspendWalkWithin(ctx);
-//					for(int i = 0; i < ctx.expression().size(); i++)
-//						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(i), instructions);
-//				}
-			}
+//			@Override
+//			public void enterMultiArgMessageArg(MultiArgMessageArgContext ctx) {
+////				if(primitiveGeneratorStack.pop() == null) {
+////					walker.suspendWalkWithin(ctx);
+////					for(int i = 0; i < ctx.expression().size(); i++)
+////						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(i), instructions);
+////				}
+//			}
 			
-			@Override
-			public void exitMultiArgMessage(MultiArgMessageContext ctx) {
-//				PrimitiveGenerator primitiveGenerator = primitiveGeneratorStack.pop();
-//				
-//				if(primitiveGenerator != null)
-//					primitiveGenerator.exitPrimitive(instructions);
-			}
+//			@Override
+//			public void exitMultiArgMessage(MultiArgMessageContext ctx) {
+////				PrimitiveGenerator primitiveGenerator = primitiveGeneratorStack.pop();
+////				
+////				if(primitiveGenerator != null)
+////					primitiveGenerator.exitPrimitive(instructions);
+//			}
 			
 			@Override
 			public void enterAccess(AccessContext ctx) {

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -34,9 +34,9 @@ public interface PrimitiveVisitorFactory {
 				OrdinalAllocator idToVariableOrdinalMap) {
 			return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap) {
 				@Override
-				public Object visitMultiArgMessage(MultiArgMessageContext ctx) {
-					for(MultiArgMessageArgsContext argsCtx: ctx.multiArgMessageArgs()) {
-						for(MultiArgMessageArgContext argCtx: argsCtx.multiArgMessageArg()) {
+				public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
+					for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
+						for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
 							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 						}
 					}

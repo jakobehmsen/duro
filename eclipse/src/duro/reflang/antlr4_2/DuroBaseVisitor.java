@@ -50,6 +50,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitMultiArgMessageArgsWithPar(@NotNull DuroParser.MultiArgMessageArgsWithParContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitProgram(@NotNull DuroParser.ProgramContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -82,7 +90,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitMultiArgMessageArg(@NotNull DuroParser.MultiArgMessageArgContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -90,7 +98,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitMultiArgMessage(@NotNull DuroParser.MultiArgMessageContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultiArgMessageArgWithPar(@NotNull DuroParser.MultiArgMessageArgWithParContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -98,7 +106,15 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitMultiArgMessageArgs(@NotNull DuroParser.MultiArgMessageArgsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -107,6 +123,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitDict(@NotNull DuroParser.DictContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -130,7 +154,7 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitNonBinaryMessage(@NotNull DuroParser.NonBinaryMessageContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -170,6 +194,14 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitReceiver(@NotNull DuroParser.ReceiverContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitAssignment(@NotNull DuroParser.AssignmentContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -194,14 +226,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitMessage(@NotNull DuroParser.MessageContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
 	@Override public T visitIndexOperator(@NotNull DuroParser.IndexOperatorContext ctx) { return visitChildren(ctx); }
 
 	/**
@@ -211,14 +235,6 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
 	@Override public T visitGrouping(@NotNull DuroParser.GroupingContext ctx) { return visitChildren(ctx); }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.
-	 */
-	@Override public T visitSelfMessageExchange(@NotNull DuroParser.SelfMessageExchangeContext ctx) { return visitChildren(ctx); }
 
 	/**
 	 * {@inheritDoc}
@@ -274,5 +290,13 @@ public class DuroBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements D
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
-	@Override public T visitAtom(@NotNull DuroParser.AtomContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
+	@Override public T visitMessageChain(@NotNull DuroParser.MessageChainContext ctx) { return visitChildren(ctx); }
 }
