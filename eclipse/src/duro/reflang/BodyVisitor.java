@@ -14,6 +14,8 @@ import duro.reflang.antlr4_2.DuroParser.AccessContext;
 import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
+import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandChainContext;
+import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandContext;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
@@ -21,6 +23,7 @@ import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.MessageChainContext;
 import duro.reflang.antlr4_2.DuroParser.MessageExchangeContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParChainContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
@@ -90,10 +93,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				MessageChainContext chain = ctx.messageChain();
 				
 				while(chain != null) {
-					MessageChainContext nextChain = chain.messageChain();
-					messageExchangeVisitor.mustBeExpression = nextChain != null;
+					messageExchangeVisitor.mustBeExpression = chain.messageChain() != null;
 					chain.accept(messageExchangeVisitor);
-					chain = nextChain;
+					chain = chain.messageChain();
 				}
 
 			} else {
@@ -101,6 +103,56 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			}
 		} else {
 			super.visitMessageExchange(ctx);
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public Object visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
+		if(!mustBeExpression) {
+			if(ctx.binaryMessageOperandChain() != null) {
+				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				ctx.receiver().accept(messageExchangeVisitor);
+				
+				BinaryMessageOperandChainContext chain = ctx.binaryMessageOperandChain();
+				
+				while(chain != null) {
+					messageExchangeVisitor.mustBeExpression = chain.binaryMessageOperandChain() != null;
+					chain.accept(messageExchangeVisitor);
+					chain = chain.binaryMessageOperandChain();
+				}
+
+			} else {
+				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			}
+		} else {
+			super.visitBinaryMessageOperand(ctx);
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public Object visitMultiArgMessageArgNoPar(MultiArgMessageArgNoParContext ctx) {
+		if(!mustBeExpression) {
+			if(ctx.multiArgMessageArgNoParChain() != null) {
+				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				ctx.receiver().accept(messageExchangeVisitor);
+				
+				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
+				
+				while(chain != null) {
+					messageExchangeVisitor.mustBeExpression = chain.multiArgMessageArgNoParChain() != null;
+					chain.accept(messageExchangeVisitor);
+					chain = chain.multiArgMessageArgNoParChain();
+				}
+
+			} else {
+				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			}
+		} else {
+			super.visitMultiArgMessageArgNoPar(ctx);
 		}
 		
 		return false;
