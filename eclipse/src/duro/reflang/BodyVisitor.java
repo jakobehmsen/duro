@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
 import duro.reflang.antlr4_2.DuroLexer;
@@ -18,6 +19,8 @@ import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
+import duro.reflang.antlr4_2.DuroParser.MessageChainContext;
+import duro.reflang.antlr4_2.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
@@ -75,6 +78,32 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return null;
+	}
+	
+	@Override
+	public Object visitMessageExchange(MessageExchangeContext ctx) {
+		if(!mustBeExpression) {
+			if(ctx.messageChain() != null) {
+				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				ctx.receiver().accept(messageExchangeVisitor);
+				
+				MessageChainContext chain = ctx.messageChain();
+				
+				while(chain != null) {
+					MessageChainContext nextChain = chain.messageChain();
+					messageExchangeVisitor.mustBeExpression = nextChain != null;
+					chain.accept(messageExchangeVisitor);
+					chain = nextChain;
+				}
+
+			} else {
+				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			}
+		} else {
+			super.visitMessageExchange(ctx);
+		}
+		
+		return false;
 	}
 	
 	@Override
@@ -206,6 +235,24 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			break;
 		}
 		}
+		
+		return null;
+	}
+	
+	public Object visitIndexAssignment(duro.reflang.antlr4_2.DuroParser.IndexAssignmentContext ctx) {
+		// receiver
+		ExpressionContext indexCtx = ctx.expression(0);
+		indexCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		// receiver, index
+		ExpressionContext valueCtx = ctx.expression(1);
+		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		// receiver, index, value
+		if(mustBeExpression) {
+			instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+			// value, receiver, index, value
+		}
+		instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
+		// value | e
 		
 		return null;
 	}
