@@ -4,7 +4,7 @@ program: expression*;
 expression: 
     assignment | 
     variableDeclaration | 
-    multiArgMessageNoPar |
+    selfMultiArgMessageNoPar |
     messageExchange;
 assignment: 
     id
@@ -16,15 +16,17 @@ assignment:
 
 messageExchange: receiver messageChain?;
 messageChain:
-    DOT multiArgMessageNoPar |
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess) messageChain? |
+    DOT selfMultiArgMessageNoPar |
+    (DOT selfMultiArgMessageWithPar | slotAccess | indexAccess) messageChain? |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
     ;
                 
 receiver:
-    multiArgMessageWithPar | access | grouping | literal | parArg;
+    selfMultiArgMessageWithPar | access | grouping | literal | parArg;
+selfMultiArgMessageNoPar: multiArgMessageNoPar;
+selfMultiArgMessageWithPar: multiArgMessageWithPar;
 
 variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
@@ -36,7 +38,7 @@ multiArgMessageArgsNoPar:
     multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*;
 multiArgMessageArgNoPar: receiver multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    (DOT selfMultiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
@@ -53,7 +55,7 @@ indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
 binaryMessageOperand: receiver binaryMessageOperandChain?;
 binaryMessageOperandChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess)  binaryMessageOperandChain? |
+    (DOT selfMultiArgMessageWithPar | slotAccess | indexAccess)  binaryMessageOperandChain? |
     slotAssignment | 
     indexAssignment
     ;

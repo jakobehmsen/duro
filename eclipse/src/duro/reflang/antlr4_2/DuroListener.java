@@ -108,6 +108,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelfMultiArgMessageWithPar(@NotNull DuroParser.SelfMultiArgMessageWithParContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelfMultiArgMessageWithPar(@NotNull DuroParser.SelfMultiArgMessageWithParContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoPar}.
 	 * @param ctx the parse tree
 	 */
@@ -260,6 +271,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitReceiver(@NotNull DuroParser.ReceiverContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#selfMultiArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#assignment}.
