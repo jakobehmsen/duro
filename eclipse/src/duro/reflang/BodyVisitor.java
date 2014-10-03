@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
 import duro.reflang.antlr4_2.DuroLexer;
@@ -32,6 +33,8 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
+import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageNoParContext;
+import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
@@ -193,49 +196,89 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
+	public Object visitSelfMultiArgMessageNoPar(SelfMultiArgMessageNoParContext ctx) {
+		appendMultiArgMessageNoPar(ctx.multiArgMessageNoPar(), true);
+		
+		return null;
+	}
+	
+	@Override
 	public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
+		appendMultiArgMessageNoPar(ctx, false);
+		
+		return null;
+	}
+
+	private void appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		int parameterCount = ctx.multiArgMessageArgsNoPar().size();
+		int parameterCount = 0;
+		ArrayList<MultiArgMessageArgNoParContext> args = new ArrayList<MultiArgMessageArgNoParContext>();
+		for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
+			for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
+				args.add(argCtx);
+				parameterCount++;
+			}
+		}
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
 			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
 			ctx.accept(primitiveInterceptor);
 		} else {
-			for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
-				for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
-					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-				}
-			}
+			if(isForSelf)
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			for(MultiArgMessageArgNoParContext argCtx: args)
+				argCtx.accept(argsVisitor);
+			
+			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
 			
 			if(!mustBeExpression)
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 		}
+	}
+	
+	@Override
+	public Object visitSelfMultiArgMessageWithPar(SelfMultiArgMessageWithParContext ctx) {
+		appendMultiArgMessageWithPart(ctx.multiArgMessageWithPar(), true);
 		
 		return null;
 	}
 	
 	@Override
 	public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
+		appendMultiArgMessageWithPart(ctx, false);
+		
+		return null;
+	}
+
+	private void appendMultiArgMessageWithPart(MultiArgMessageWithParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		int parameterCount = ctx.multiArgMessageArgsWithPar().size();
+		int parameterCount = 0;
+		ArrayList<MultiArgMessageArgWithParContext> args = new ArrayList<MultiArgMessageArgWithParContext>();
+		for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
+			for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
+				args.add(argCtx);
+				parameterCount += argCtx.expression().size();
+			}
+		}
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
 			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
 			ctx.accept(primitiveInterceptor);
 		} else {
-			for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-				for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
-					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-				}
-			}
+			if(isForSelf)
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			for(MultiArgMessageArgWithParContext argCtx: args)
+				argCtx.accept(argsVisitor);
+			
+			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
 			
 			if(!mustBeExpression)
 				instructions.add(new Instruction(Instruction.OPCODE_POP));
 		}
-		
-		return null;
 	}
 	
 	@Override
@@ -351,6 +394,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
 		}
 		valueCtx.accept(functionBodyInterceptor);
+		functionBodyInterceptor.instructions.add(new Instruction(Instruction.OPCODE_RET));
 		int parameterCount = functionBodyInterceptor.idToParameterOrdinalMap.size();
 		int selectorParameterCount = functionBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
 		int variableCount = functionBodyInterceptor.idToVariableOrdinalMap.size();
