@@ -33,17 +33,17 @@ public class DuroParser extends Parser {
 		RULE_multiArgMessageWithPar = 13, RULE_multiArgMessageArgsWithPar = 14, 
 		RULE_multiArgMessageArgWithPar = 15, RULE_slotAccess = 16, RULE_indexAccess = 17, 
 		RULE_binaryMessage = 18, RULE_binaryMessageOperand = 19, RULE_binaryMessageOperandChain = 20, 
-		RULE_indexAssign = 21, RULE_slotAssignment = 22, RULE_literal = 23, RULE_integer = 24, 
-		RULE_string = 25, RULE_dict = 26, RULE_dictEntry = 27, RULE_closure = 28, 
-		RULE_behaviorParams = 29, RULE_pseudoVar = 30, RULE_parArg = 31, RULE_id = 32, 
-		RULE_selector = 33, RULE_binaryOperator = 34, RULE_indexOperator = 35;
+		RULE_indexAssignment = 21, RULE_slotAssignment = 22, RULE_literal = 23, 
+		RULE_integer = 24, RULE_string = 25, RULE_dict = 26, RULE_dictEntry = 27, 
+		RULE_closure = 28, RULE_behaviorParams = 29, RULE_pseudoVar = 30, RULE_parArg = 31, 
+		RULE_id = 32, RULE_selector = 33, RULE_binaryOperator = 34, RULE_indexOperator = 35;
 	public static final String[] ruleNames = {
 		"program", "expression", "assignment", "messageExchange", "messageChain", 
 		"receiver", "variableDeclaration", "access", "grouping", "multiArgMessageNoPar", 
 		"multiArgMessageArgsNoPar", "multiArgMessageArgNoPar", "multiArgMessageArgNoParChain", 
 		"multiArgMessageWithPar", "multiArgMessageArgsWithPar", "multiArgMessageArgWithPar", 
 		"slotAccess", "indexAccess", "binaryMessage", "binaryMessageOperand", 
-		"binaryMessageOperandChain", "indexAssign", "slotAssignment", "literal", 
+		"binaryMessageOperandChain", "indexAssignment", "slotAssignment", "literal", 
 		"integer", "string", "dict", "dictEntry", "closure", "behaviorParams", 
 		"pseudoVar", "parArg", "id", "selector", "binaryOperator", "indexOperator"
 	};
@@ -350,6 +350,9 @@ public class DuroParser extends Parser {
 		public MultiArgMessageNoParContext multiArgMessageNoPar() {
 			return getRuleContext(MultiArgMessageNoParContext.class,0);
 		}
+		public IndexAssignmentContext indexAssignment() {
+			return getRuleContext(IndexAssignmentContext.class,0);
+		}
 		public SlotAssignmentContext slotAssignment() {
 			return getRuleContext(SlotAssignmentContext.class,0);
 		}
@@ -358,9 +361,6 @@ public class DuroParser extends Parser {
 		}
 		public IndexAccessContext indexAccess() {
 			return getRuleContext(IndexAccessContext.class,0);
-		}
-		public IndexAssignContext indexAssign() {
-			return getRuleContext(IndexAssignContext.class,0);
 		}
 		public List<BinaryMessageContext> binaryMessage() {
 			return getRuleContexts(BinaryMessageContext.class);
@@ -444,7 +444,7 @@ public class DuroParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(109); indexAssign();
+				setState(109); indexAssignment();
 				}
 				break;
 
@@ -939,6 +939,9 @@ public class DuroParser extends Parser {
 		public MultiArgMessageArgNoParChainContext multiArgMessageArgNoParChain() {
 			return getRuleContext(MultiArgMessageArgNoParChainContext.class,0);
 		}
+		public IndexAssignmentContext indexAssignment() {
+			return getRuleContext(IndexAssignmentContext.class,0);
+		}
 		public SlotAssignmentContext slotAssignment() {
 			return getRuleContext(SlotAssignmentContext.class,0);
 		}
@@ -947,9 +950,6 @@ public class DuroParser extends Parser {
 		}
 		public IndexAccessContext indexAccess() {
 			return getRuleContext(IndexAccessContext.class,0);
-		}
-		public IndexAssignContext indexAssign() {
-			return getRuleContext(IndexAssignContext.class,0);
 		}
 		public List<BinaryMessageContext> binaryMessage() {
 			return getRuleContexts(BinaryMessageContext.class);
@@ -1025,7 +1025,7 @@ public class DuroParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(171); indexAssign();
+				setState(171); indexAssignment();
 				}
 				break;
 
@@ -1474,6 +1474,9 @@ public class DuroParser extends Parser {
 			return getRuleContext(SlotAccessContext.class,0);
 		}
 		public TerminalNode DOT() { return getToken(DuroParser.DOT, 0); }
+		public IndexAssignmentContext indexAssignment() {
+			return getRuleContext(IndexAssignmentContext.class,0);
+		}
 		public SlotAssignmentContext slotAssignment() {
 			return getRuleContext(SlotAssignmentContext.class,0);
 		}
@@ -1485,9 +1488,6 @@ public class DuroParser extends Parser {
 		}
 		public BinaryMessageOperandChainContext binaryMessageOperandChain() {
 			return getRuleContext(BinaryMessageOperandChainContext.class,0);
-		}
-		public IndexAssignContext indexAssign() {
-			return getRuleContext(IndexAssignContext.class,0);
 		}
 		public BinaryMessageOperandChainContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1559,7 +1559,7 @@ public class DuroParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(233); indexAssign();
+				setState(233); indexAssignment();
 				}
 				break;
 			}
@@ -1575,7 +1575,7 @@ public class DuroParser extends Parser {
 		return _localctx;
 	}
 
-	public static class IndexAssignContext extends ParserRuleContext {
+	public static class IndexAssignmentContext extends ParserRuleContext {
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
@@ -1585,28 +1585,28 @@ public class DuroParser extends Parser {
 			return getRuleContexts(ExpressionContext.class);
 		}
 		public TerminalNode SQ_CL() { return getToken(DuroParser.SQ_CL, 0); }
-		public IndexAssignContext(ParserRuleContext parent, int invokingState) {
+		public IndexAssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_indexAssign; }
+		@Override public int getRuleIndex() { return RULE_indexAssignment; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAssign(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterIndexAssignment(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAssign(this);
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitIndexAssignment(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAssign(this);
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitIndexAssignment(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final IndexAssignContext indexAssign() throws RecognitionException {
-		IndexAssignContext _localctx = new IndexAssignContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_indexAssign);
+	public final IndexAssignmentContext indexAssignment() throws RecognitionException {
+		IndexAssignmentContext _localctx = new IndexAssignmentContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_indexAssignment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

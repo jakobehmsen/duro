@@ -317,17 +317,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitGrouping(@NotNull DuroParser.GroupingContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#indexAssign}.
-	 * @param ctx the parse tree
-	 */
-	void enterIndexAssign(@NotNull DuroParser.IndexAssignContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#indexAssign}.
-	 * @param ctx the parse tree
-	 */
-	void exitIndexAssign(@NotNull DuroParser.IndexAssignContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -403,4 +392,15 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMessageChain(@NotNull DuroParser.MessageChainContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#indexAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterIndexAssignment(@NotNull DuroParser.IndexAssignmentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#indexAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitIndexAssignment(@NotNull DuroParser.IndexAssignmentContext ctx);
 }

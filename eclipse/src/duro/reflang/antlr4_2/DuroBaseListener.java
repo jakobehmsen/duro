@@ -381,19 +381,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterIndexAssign(@NotNull DuroParser.IndexAssignContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitIndexAssign(@NotNull DuroParser.IndexAssignContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterVariableDeclaration(@NotNull DuroParser.VariableDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -479,6 +466,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMessageChain(@NotNull DuroParser.MessageChainContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterIndexAssignment(@NotNull DuroParser.IndexAssignmentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitIndexAssignment(@NotNull DuroParser.IndexAssignmentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

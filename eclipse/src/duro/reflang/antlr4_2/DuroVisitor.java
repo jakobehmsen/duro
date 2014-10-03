@@ -208,13 +208,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitGrouping(@NotNull DuroParser.GroupingContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#indexAssign}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIndexAssign(@NotNull DuroParser.IndexAssignContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#variableDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -262,4 +255,11 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMessageChain(@NotNull DuroParser.MessageChainContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#indexAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIndexAssignment(@NotNull DuroParser.IndexAssignmentContext ctx);
 }

@@ -19,7 +19,7 @@ messageChain:
     DOT multiArgMessageNoPar |
     (DOT multiArgMessageWithPar | slotAccess | indexAccess) messageChain? |
     slotAssignment | 
-    indexAssign |
+    indexAssignment |
     binaryMessage+
     ;
                 
@@ -38,7 +38,7 @@ multiArgMessageArgNoPar: receiver multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParChain:
     (DOT multiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     slotAssignment | 
-    indexAssign |
+    indexAssignment |
     binaryMessage+
     ;
 
@@ -55,9 +55,9 @@ binaryMessageOperand: receiver binaryMessageOperandChain?;
 binaryMessageOperandChain:
     (DOT multiArgMessageWithPar | slotAccess | indexAccess)  binaryMessageOperandChain? |
     slotAssignment | 
-    indexAssign
+    indexAssignment
     ;
-indexAssign: SQ_OP expression SQ_CL ASSIGN expression;
+indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
 slotAssignment: 
     DOT id
     (
