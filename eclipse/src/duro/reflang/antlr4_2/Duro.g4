@@ -21,7 +21,9 @@ nonBinaryMessage: DOT multiArgMessage | slotAccess | indexAccess;
 multiArgMessage: ID_UNCAP multiArgMessageArgs (ID_CAP multiArgMessageArgs)*;
 multiArgMessageArgs:
     multiArgMessageArg (COMMA multiArgMessageArg)*;
-multiArgMessageArg: PAR_OP (expression (COMMA expression)*)? PAR_CL | literal;
+multiArgMessageArg: 
+    PAR_OP (expression (COMMA expression)*)? PAR_CL | 
+    access | literal | parArg;
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
