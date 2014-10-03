@@ -24,6 +24,7 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
+import duro.reflang.antlr4_2.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.Instruction;
@@ -82,7 +83,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			// newValue, newValue
 			if(idToVariableOrdinalMap.isDeclared(id)) {
 				ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-//				append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
 				if(mustBeExpression)
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				// Variable assignment
@@ -91,7 +91,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				// receiver
 				ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-//				append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
 				// receiver, newValue
 				if(mustBeExpression)
 					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
@@ -104,7 +103,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			if(!mustBeExpression)
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-//			append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
 			if(mustBeExpression)
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				// newValue, newValue
@@ -119,7 +117,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		}
 
-		// Member assignment for this
+		// Quoted member assignment for this
 		if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
 			BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers);
 			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
@@ -213,6 +211,75 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 				}
 			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitSlotAssignment(SlotAssignmentContext ctx) {
+		String id = ctx.id().getText();				
+		
+		switch(ctx.op.getType()) {
+		case DuroLexer.ASSIGN: {
+			// newValue, newValue
+			if(idToVariableOrdinalMap.isDeclared(id)) {
+				ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				if(mustBeExpression)
+					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				// Variable assignment
+				idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+			} else {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				// receiver
+				ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				// receiver, newValue
+				if(mustBeExpression)
+					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+					// newValue, receiver, newValue
+				instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+				// newValue | e
+			}
+			break;
+		} case DuroLexer.ASSIGN_PROTO: {
+			if(!mustBeExpression)
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			if(mustBeExpression)
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				// newValue, newValue
+			if(mustBeExpression) {
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				// newValue, newValue, receiver
+				instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+				// newValue, receiver, newValue
+			}
+			instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
+			break;
+		} case DuroLexer.ASSIGN_QUOTED: {
+			BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers);
+			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
+				String parameterId = parameterIdNode.getText();
+				functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
+			}
+			ctx.expression().accept(functionBodyInterceptor);
+			int parameterCount = functionBodyInterceptor.idToParameterOrdinalMap.size();
+			int selectorParameterCount = functionBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
+			int variableCount = functionBodyInterceptor.idToVariableOrdinalMap.size();
+			
+			functionBodyInterceptor.idToParameterOrdinalMap.generate();
+			functionBodyInterceptor.idToVariableOrdinalMap.generate();
+
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			onEnd(() -> {
+				Instruction[] bodyInstructions = functionBodyInterceptor.instructions.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
+				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
+			});
+			if(mustBeExpression)
+				instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+			instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
+			break;
+		}
 		}
 		
 		return null;
