@@ -134,6 +134,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		String id = ctx.BIN_OP().getText();
 		instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
 		
+		if(!mustBeExpression)
+			instructions.add(new Instruction(Instruction.OPCODE_POP));
+		
 		return null;
 	}
 	
@@ -152,6 +155,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 				}
 			}
+			
+			if(!mustBeExpression)
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 		}
 		
 		return null;
@@ -172,6 +178,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 					argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 				}
 			}
+			
+			if(!mustBeExpression)
+				instructions.add(new Instruction(Instruction.OPCODE_POP));
 		}
 		
 		return null;
@@ -247,12 +256,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		ExpressionContext valueCtx = ctx.expression(1);
 		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 		// receiver, index, value
-		if(mustBeExpression) {
-			instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-			// value, receiver, index, value
-		}
 		instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
-		// value | e
+		// result
+		
+		if(!mustBeExpression)
+			instructions.add(new Instruction(Instruction.OPCODE_POP));
 		
 		return null;
 	}
