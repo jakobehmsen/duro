@@ -13,11 +13,14 @@ import duro.reflang.antlr4_2.DuroParser.AccessContext;
 import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
+import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
+import duro.reflang.antlr4_2.DuroParser.SelectorContext;
+import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.Instruction;
@@ -197,6 +200,26 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
+	public Object visitSlotAccess(SlotAccessContext ctx) {
+		if(mustBeExpression) {
+			String id = getSelectorId(ctx.selector());
+			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitIndexAccess(IndexAccessContext ctx) {
+		if(mustBeExpression) {
+			ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
+		}
+		
+		return null;
+	}
+	
+	@Override
 	public Object visitAccess(AccessContext ctx) {
 		if(mustBeExpression) {
 			String id = ctx.id().getText();
@@ -243,6 +266,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		
 		return null;
+	}
+	
+	private static String getSelectorId(SelectorContext ctx) {
+		return ctx.getText();
 	}
 	
 	private static String extractStringLiteral(String rawString) {
