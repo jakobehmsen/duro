@@ -343,11 +343,11 @@ public class DuroParser extends Parser {
 			return getRuleContext(SlotAccessContext.class,0);
 		}
 		public TerminalNode DOT() { return getToken(DuroParser.DOT, 0); }
-		public SelfMultiArgMessageNoParContext selfMultiArgMessageNoPar() {
-			return getRuleContext(SelfMultiArgMessageNoParContext.class,0);
-		}
 		public MessageChainContext messageChain() {
 			return getRuleContext(MessageChainContext.class,0);
+		}
+		public SelfMultiArgMessageNoParContext selfMultiArgMessageNoPar() {
+			return getRuleContext(SelfMultiArgMessageNoParContext.class,0);
 		}
 		public BinaryMessageContext binaryMessage(int i) {
 			return getRuleContext(BinaryMessageContext.class,i);
@@ -396,43 +396,43 @@ public class DuroParser extends Parser {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(101); match(DOT);
-				setState(102); selfMultiArgMessageNoPar();
+				setState(105);
+				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+				case 1:
+					{
+					setState(101); match(DOT);
+					setState(102); multiArgMessageWithPar();
+					}
+					break;
+
+				case 2:
+					{
+					setState(103); slotAccess();
+					}
+					break;
+
+				case 3:
+					{
+					setState(104); indexAccess();
+					}
+					break;
+				}
+				setState(108);
+				switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+				case 1:
+					{
+					setState(107); messageChain();
+					}
+					break;
+				}
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(107);
-				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
-				case 1:
-					{
-					setState(103); match(DOT);
-					setState(104); multiArgMessageWithPar();
-					}
-					break;
-
-				case 2:
-					{
-					setState(105); slotAccess();
-					}
-					break;
-
-				case 3:
-					{
-					setState(106); indexAccess();
-					}
-					break;
-				}
-				setState(110);
-				switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
-				case 1:
-					{
-					setState(109); messageChain();
-					}
-					break;
-				}
+				setState(110); match(DOT);
+				setState(111); selfMultiArgMessageNoPar();
 				}
 				break;
 
@@ -2547,7 +2547,7 @@ public class DuroParser extends Parser {
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
 		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\3\2\7\2P\n\2\f\2\16\2S\13"+
 		"\2\3\3\3\3\3\3\3\3\5\3Y\n\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4b\n\4\3\5\3"+
-		"\5\5\5f\n\5\3\6\3\6\3\6\3\6\3\6\3\6\5\6n\n\6\3\6\5\6q\n\6\3\6\3\6\3\6"+
+		"\5\5\5f\n\5\3\6\3\6\3\6\3\6\5\6l\n\6\3\6\5\6o\n\6\3\6\3\6\3\6\3\6\3\6"+
 		"\6\6v\n\6\r\6\16\6w\5\6z\n\6\3\7\3\7\3\7\3\7\3\7\5\7\u0081\n\7\3\b\3\b"+
 		"\3\t\3\t\3\n\3\n\3\n\3\n\5\n\u008b\n\n\3\13\3\13\3\f\3\f\6\f\u0091\n\f"+
 		"\r\f\16\f\u0092\3\f\3\f\3\r\3\r\3\r\3\r\7\r\u009b\n\r\f\r\16\r\u009e\13"+
@@ -2579,10 +2579,10 @@ public class DuroParser extends Parser {
 		"\n\2VY\5\16\b\2WY\5\b\5\2XT\3\2\2\2XU\3\2\2\2XV\3\2\2\2XW\3\2\2\2Y\5\3"+
 		"\2\2\2Za\5F$\2[\\\t\2\2\2\\b\5\4\3\2]^\7\27\2\2^_\5@!\2_`\5\4\3\2`b\3"+
 		"\2\2\2a[\3\2\2\2a]\3\2\2\2b\7\3\2\2\2ce\5\f\7\2df\5\n\6\2ed\3\2\2\2ef"+
-		"\3\2\2\2f\t\3\2\2\2gh\7\13\2\2hz\5\16\b\2ij\7\13\2\2jn\5 \21\2kn\5&\24"+
-		"\2ln\5(\25\2mi\3\2\2\2mk\3\2\2\2ml\3\2\2\2np\3\2\2\2oq\5\n\6\2po\3\2\2"+
-		"\2pq\3\2\2\2qz\3\2\2\2rz\5\62\32\2sz\5\60\31\2tv\5*\26\2ut\3\2\2\2vw\3"+
-		"\2\2\2wu\3\2\2\2wx\3\2\2\2xz\3\2\2\2yg\3\2\2\2ym\3\2\2\2yr\3\2\2\2ys\3"+
+		"\3\2\2\2f\t\3\2\2\2gh\7\13\2\2hl\5 \21\2il\5&\24\2jl\5(\25\2kg\3\2\2\2"+
+		"ki\3\2\2\2kj\3\2\2\2ln\3\2\2\2mo\5\n\6\2nm\3\2\2\2no\3\2\2\2oz\3\2\2\2"+
+		"pq\7\13\2\2qz\5\16\b\2rz\5\62\32\2sz\5\60\31\2tv\5*\26\2ut\3\2\2\2vw\3"+
+		"\2\2\2wu\3\2\2\2wx\3\2\2\2xz\3\2\2\2yk\3\2\2\2yp\3\2\2\2yr\3\2\2\2ys\3"+
 		"\2\2\2yu\3\2\2\2z\13\3\2\2\2{\u0081\5\20\t\2|\u0081\5\24\13\2}\u0081\5"+
 		"\26\f\2~\u0081\5\64\33\2\177\u0081\5D#\2\u0080{\3\2\2\2\u0080|\3\2\2\2"+
 		"\u0080}\3\2\2\2\u0080~\3\2\2\2\u0080\177\3\2\2\2\u0081\r\3\2\2\2\u0082"+
@@ -2649,7 +2649,7 @@ public class DuroParser extends Parser {
 		"E\3\2\2\2\u013d\u013e\t\3\2\2\u013eG\3\2\2\2\u013f\u0143\5F$\2\u0140\u0143"+
 		"\5J&\2\u0141\u0143\5L\'\2\u0142\u013f\3\2\2\2\u0142\u0140\3\2\2\2\u0142"+
 		"\u0141\3\2\2\2\u0143I\3\2\2\2\u0144\u0145\7\24\2\2\u0145K\3\2\2\2\u0146"+
-		"\u0147\7\20\2\2\u0147\u0148\7\21\2\2\u0148M\3\2\2\2$QXaempwy\u0080\u008a"+
+		"\u0147\7\20\2\2\u0147\u0148\7\21\2\2\u0148M\3\2\2\2$QXaeknwy\u0080\u008a"+
 		"\u0092\u009c\u00a4\u00a9\u00af\u00b2\u00b9\u00bb\u00c3\u00cb\u00d4\u00d7"+
 		"\u00e7\u00ed\u00f0\u00f4\u0104\u010b\u0116\u0122\u0129\u0132\u0136\u0142";
 	public static final ATN _ATN =

@@ -16,8 +16,8 @@ assignment:
 
 messageExchange: receiver messageChain?;
 messageChain:
-    DOT selfMultiArgMessageNoPar |
     (DOT multiArgMessageWithPar | slotAccess | indexAccess) messageChain? |
+    DOT selfMultiArgMessageNoPar |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
