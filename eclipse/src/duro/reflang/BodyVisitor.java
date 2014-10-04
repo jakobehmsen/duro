@@ -32,6 +32,7 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
+import duro.reflang.antlr4_2.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageWithParContext;
@@ -451,6 +452,29 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			// Get member
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitPseudoVar(PseudoVarContext ctx) {
+		switch(ctx.PSEUDO_VAR().getText()) {
+		case "this":
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			break;
+		case "null":
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+			break;
+		case "true":
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+			break;
+		case "false":
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+			break;
+		case "frame":
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_FRAME));
+			break;
 		}
 		
 		return null;
