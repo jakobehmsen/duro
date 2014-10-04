@@ -538,9 +538,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		// Only last expression have a pop instruction appended
 		for(int i = 0; i < group.size(); i++) {
 			if(lastMustBeExpression)
-				expressionVisitor.mustBeExpression = true;
-			else
 				expressionVisitor.mustBeExpression = i == group.size() - 1; // If last
+			else
+				expressionVisitor.mustBeExpression = false;
 			group.get(i).accept(expressionVisitor);
 		}
 	}
