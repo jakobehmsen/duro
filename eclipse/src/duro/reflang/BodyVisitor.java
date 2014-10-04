@@ -25,6 +25,7 @@ import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
+import duro.reflang.antlr4_2.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4_2.DuroParser.MessageChainContext;
 import duro.reflang.antlr4_2.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParChainContext;
@@ -87,6 +88,20 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			ctx.expression(i).accept(rootExpressionInterceptor);
 
 		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitInterfaceId(InterfaceIdContext ctx) {
+		idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+		String interfaceId = ctx.id().getText();
+		instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
+
+		ctx.expression().accept(this);
+		
+		instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
+		idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 		
 		return null;
 	}
