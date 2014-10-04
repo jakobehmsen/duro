@@ -162,6 +162,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		
 	}
 
+	@SuppressWarnings("unused")
 	public void replay(InteractionHistory interactionHistory) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
 		
@@ -169,8 +170,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			while(!stopRequested) {
 				Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
 				
-				Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
-				Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+				if(Debug.maxLevel >= Debug.LEVEL_HIGH) {
+					Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stack);
+					Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+				}
 				
 				next(instruction, interactionHistory);
 			}
