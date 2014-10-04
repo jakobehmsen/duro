@@ -134,6 +134,7 @@ public class Compiler_NEW {
 //		idToVariableOrdinalMap.generate();
 		Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap = new Hashtable<Selector, PrimitiveVisitorFactory>();
 		primitiveMap.put(Selector.get("write", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
+		primitiveMap.put(Selector.get("readln", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEXT_LINE), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_CALL_CLOSURE), true));
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
