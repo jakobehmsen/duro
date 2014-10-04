@@ -5,6 +5,7 @@ expression:
     assignment | 
     variableDeclaration | 
     selfMultiArgMessageNoPar |
+    interfaceId |
     messageExchange;
 assignment: 
     id
@@ -13,6 +14,7 @@ assignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
+interfaceId: DOLLAR id() expression;
 
 messageExchange: receiver messageChain?;
 messageChain:
@@ -104,6 +106,7 @@ HASH: '#';
 DOT: '.';
 COMMA: ',';
 COLON: ':';
+DOLLAR: '$';
 
 PAR_OP: '(';
 PAR_CL: ')';
