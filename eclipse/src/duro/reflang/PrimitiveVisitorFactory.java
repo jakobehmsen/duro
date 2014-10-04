@@ -5,8 +5,11 @@ import java.util.Hashtable;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -37,6 +40,21 @@ public interface PrimitiveVisitorFactory {
 				public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
 					for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
 						for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
+							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+						}
+					}
+					
+					instructions.add(instruction);
+					if(mustBeExpression && !doesReturn)
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					
+					return null;
+				}
+				
+				@Override
+				public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
+					for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
+						for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
 							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 						}
 					}
