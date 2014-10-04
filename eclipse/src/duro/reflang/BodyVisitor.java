@@ -33,6 +33,7 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
+import duro.reflang.antlr4_2.DuroParser.ParArgContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
@@ -456,6 +457,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
 		}
 		
+		return null;
+	}
+	
+	@Override
+	public Object visitParArg(ParArgContext ctx) {
+		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+
 		return null;
 	}
 	
