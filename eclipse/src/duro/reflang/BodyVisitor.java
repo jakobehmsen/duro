@@ -2,6 +2,7 @@ package duro.reflang;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import duro.reflang.antlr4_2.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandChainContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandContext;
+import duro.reflang.antlr4_2.DuroParser.ClosureContext;
 import duro.reflang.antlr4_2.DuroParser.DictContext;
 import duro.reflang.antlr4_2.DuroParser.DictEntryContext;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
@@ -286,12 +288,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitGrouping(GroupingContext ctx) {
-		BodyVisitor expressionVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap);
-		// Only last expression have a pop instruction appended
-		for(int i = 0; i < ctx.expression().size(); i++) {
-			expressionVisitor.mustBeExpression = i == ctx.expression().size() - 1; // If last
-			ctx.expression(i).accept(expressionVisitor);
-		}
+		BodyVisitor expressionVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+		appendGroup(ctx.expression(), mustBeExpression, expressionVisitor);
 		
 		return null;
 	}
@@ -489,6 +487,47 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public Object visitClosure(ClosureContext ctx) {
+		if(mustBeExpression) {
+			OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
+			OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
+			BodyVisitor closureBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, new ArrayList<Instruction>(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
+			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
+				String parameterId = parameterIdNode.getText();
+				closureBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
+			}
+			appendGroup(ctx.expression(), true, closureBodyInterceptor);
+			closureBodyInterceptor.instructions.add(new Instruction(Instruction.OPCODE_RET));
+			int parameterCount = closureBodyInterceptor.idToParameterOrdinalMap.size();
+			int closureParameterCount = closureBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
+			int variableCount = closureBodyInterceptor.idToVariableOrdinalMap.size();
+			
+			closureBodyInterceptor.idToParameterOrdinalMap.generate();
+			closureBodyInterceptor.idToVariableOrdinalMap.generate();
+
+			onEnd(() -> {
+				Instruction[] bodyInstructions = closureBodyInterceptor.instructions.toArray(new Instruction[closureBodyInterceptor.instructions.size()]);
+				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
+			});
+			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
+				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
+		}
+
+		return null;
+	}
+	
+	private void appendGroup(List<ExpressionContext> group, boolean lastMustBeExpression, BodyVisitor expressionVisitor) {
+		// Only last expression have a pop instruction appended
+		for(int i = 0; i < group.size(); i++) {
+			if(lastMustBeExpression)
+				expressionVisitor.mustBeExpression = true;
+			else
+				expressionVisitor.mustBeExpression = i == group.size() - 1; // If last
+			group.get(i).accept(expressionVisitor);
+		}
 	}
 	
 	@Override
