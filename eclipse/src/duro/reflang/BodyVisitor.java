@@ -17,6 +17,8 @@ import duro.reflang.antlr4_2.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandChainContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandContext;
+import duro.reflang.antlr4_2.DuroParser.DictContext;
+import duro.reflang.antlr4_2.DuroParser.DictEntryContext;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
@@ -305,12 +307,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				appendAssignVariable(ctx.expression(), id);
 			else {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				appendAssignSlot(ctx.expression(), id);
+				appendAssignSlot(ctx.expression(), id, mustBeExpression);
 			}
 			break;
 		} case DuroLexer.ASSIGN_PROTO: {
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			appendAssignProto(ctx.expression(), id);
+			appendAssignProto(ctx.expression(), id, mustBeExpression);
 			break;
 		}
 		}
@@ -318,7 +320,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		// Quoted member assignment for this
 		if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), id);
+			appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), id, mustBeExpression);
 		}
 		
 		return null;
@@ -330,13 +332,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		
 		switch(ctx.op.getType()) {
 		case DuroLexer.ASSIGN: {
-			appendAssignSlot(ctx.expression(), id);
+			appendAssignSlot(ctx.expression(), id, mustBeExpression);
 			break;
 		} case DuroLexer.ASSIGN_PROTO: {
-			appendAssignProto(ctx.expression(), id);
+			appendAssignProto(ctx.expression(), id, mustBeExpression);
 			break;
 		} case DuroLexer.ASSIGN_QUOTED: {
-			appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), id);
+			appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), id, mustBeExpression);
 			break;
 		}
 		}
@@ -369,26 +371,26 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 	}
 
-	private void appendAssignSlot(ExpressionContext valueCtx, String id) {
-		appendAssignSlot(valueCtx, id, Instruction.OPCODE_SET);
+	private void appendAssignSlot(ExpressionContext valueCtx, String id, boolean returnValue) {
+		appendAssignSlot(valueCtx, id, Instruction.OPCODE_SET, returnValue);
 	}
 
-	private void appendAssignProto(ExpressionContext valueCtx, String id) {
-		appendAssignSlot(valueCtx, id, Instruction.OPCODE_SET_PROTO);
+	private void appendAssignProto(ExpressionContext valueCtx, String id, boolean returnValue) {
+		appendAssignSlot(valueCtx, id, Instruction.OPCODE_SET_PROTO, returnValue);
 	}
 
-	private void appendAssignSlot(ExpressionContext valueCtx, String id, int opcodeAssign) {
+	private void appendAssignSlot(ExpressionContext valueCtx, String id, int opcodeAssign, boolean returnValue) {
 		// receiver
 		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 		// receiver, newValue
-		if(mustBeExpression)
+		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 			// newValue, receiver, newValue
 		instructions.add(new Instruction(opcodeAssign, id, 0));
 		// newValue | e
 	}
 
-	private void appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, String id) {
+	private void appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, String id, boolean returnValue) {
 		BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers);
 		for(IdContext parameterIdNode: paramsCtx.id()) {
 			String parameterId = parameterIdNode.getText();
@@ -407,7 +409,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			Instruction[] bodyInstructions = functionBodyInterceptor.instructions.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
 			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
 		});
-		if(mustBeExpression)
+		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 		instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 	}
@@ -452,6 +454,31 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			// Get member
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitDict(DictContext ctx) {
+		instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+		
+		for(DictEntryContext entryCtx: ctx.dictEntry()) {
+			instructions.add(new Instruction(Instruction.OPCODE_DUP));
+			
+			String id = getSelectorId(entryCtx.selector());
+			
+			switch(entryCtx.op.getType()) {
+			case DuroLexer.ASSIGN:
+				appendAssignSlot(entryCtx.expression(), id, false);
+				break;
+			case DuroLexer.ASSIGN_PROTO:
+				appendAssignProto(entryCtx.expression(), id, false);
+				break;
+			case DuroLexer.ASSIGN_QUOTED:
+				appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), id, false);
+				break;
+			}
 		}
 		
 		return null;
