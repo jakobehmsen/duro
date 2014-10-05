@@ -147,6 +147,13 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("frameSender", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SENDER), true));
 		primitiveMap.put(Selector.get("frameSetSender", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SET_SENDER), true));
 		primitiveMap.put(Selector.get("frameResume", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_RESUME), true));
+
+		primitiveMap.put(Selector.get("refEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_REF_EQUAL), true));
+		primitiveMap.put(Selector.get("newDict", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_DICT), true));
+		primitiveMap.put(Selector.get("newArray", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY), true));
+		primitiveMap.put(Selector.get("arrayLength", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_LENGTH), true));
+		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), true));
+		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 		
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
