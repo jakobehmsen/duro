@@ -62,7 +62,7 @@ binaryMessageOperandChain:
     ;
 indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
 slotAssignment: 
-    DOT id
+    DOT selector
     (
         (op=(ASSIGN | ASSIGN_PROTO) expression)
         |

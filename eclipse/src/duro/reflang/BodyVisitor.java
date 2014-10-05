@@ -325,7 +325,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitSlotAssignment(SlotAssignmentContext ctx) {
-		String id = ctx.id().getText();				
+		String id = getSelectorId(ctx.selector());
 		
 		switch(ctx.op.getType()) {
 		case DuroLexer.ASSIGN: {

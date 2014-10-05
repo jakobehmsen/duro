@@ -1715,10 +1715,10 @@ public class DuroParser extends Parser {
 			return getRuleContext(BehaviorParamsContext.class,0);
 		}
 		public TerminalNode ASSIGN() { return getToken(DuroParser.ASSIGN, 0); }
-		public TerminalNode ASSIGN_QUOTED() { return getToken(DuroParser.ASSIGN_QUOTED, 0); }
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
+		public SelectorContext selector() {
+			return getRuleContext(SelectorContext.class,0);
 		}
+		public TerminalNode ASSIGN_QUOTED() { return getToken(DuroParser.ASSIGN_QUOTED, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -1750,7 +1750,7 @@ public class DuroParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(247); match(DOT);
-			setState(248); id();
+			setState(248); selector();
 			setState(255);
 			switch (_input.LA(1)) {
 			case ASSIGN:
@@ -2618,7 +2618,7 @@ public class DuroParser extends Parser {
 		"\3\2\2\2\u00f1\u00ef\3\2\2\2\u00f1\u00f0\3\2\2\2\u00f2/\3\2\2\2\u00f3"+
 		"\u00f4\7\21\2\2\u00f4\u00f5\5\4\3\2\u00f5\u00f6\7\22\2\2\u00f6\u00f7\7"+
 		"\26\2\2\u00f7\u00f8\5\4\3\2\u00f8\61\3\2\2\2\u00f9\u00fa\7\13\2\2\u00fa"+
-		"\u0101\5F$\2\u00fb\u00fc\t\2\2\2\u00fc\u0102\5\4\3\2\u00fd\u00fe\7\30"+
+		"\u0101\5H%\2\u00fb\u00fc\t\2\2\2\u00fc\u0102\5\4\3\2\u00fd\u00fe\7\30"+
 		"\2\2\u00fe\u00ff\5@!\2\u00ff\u0100\5\4\3\2\u0100\u0102\3\2\2\2\u0101\u00fb"+
 		"\3\2\2\2\u0101\u00fd\3\2\2\2\u0102\63\3\2\2\2\u0103\u0109\5\66\34\2\u0104"+
 		"\u0109\58\35\2\u0105\u0109\5:\36\2\u0106\u0109\5> \2\u0107\u0109\5B\""+
