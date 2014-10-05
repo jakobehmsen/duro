@@ -230,31 +230,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 	private void appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		int parameterCount = 0;
-		ArrayList<MultiArgMessageArgNoParContext> args = new ArrayList<MultiArgMessageArgNoParContext>();
+		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
-			for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
+			for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar())
 				args.add(argCtx);
-				parameterCount++;
-			}
 		}
-		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
-		if(primitiveVisitorFactory != null) {
-			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
-			ctx.accept(primitiveInterceptor);
-		} else {
-			if(isForSelf)
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
-			for(MultiArgMessageArgNoParContext argCtx: args)
-				argCtx.accept(argsVisitor);
-			
-			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
-			
-			if(!mustBeExpression)
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
-		}
+		appendMultiArgMessage(id, args, isForSelf);
 	}
 	
 	@Override
@@ -273,24 +255,27 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 	private void appendMultiArgMessageWithPar(MultiArgMessageWithParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		int parameterCount = 0;
-		ArrayList<ExpressionContext> args = new ArrayList<ExpressionContext>();
+		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-			for(ExpressionContext argCtx: argsCtx.expression()) {
+			for(ExpressionContext argCtx: argsCtx.expression())
 				args.add(argCtx);
-				parameterCount++;
-			}
 		}
+		
+		appendMultiArgMessage(id, args, isForSelf);
+	}
+	
+	protected void appendMultiArgMessage(String id, List<ParserRuleContext> args, boolean isForSelf) {
+		int parameterCount = args.size();
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
-			DuroBaseVisitor<Object> primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
-			ctx.accept(primitiveInterceptor);
+			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			primitiveInterceptor.visitPrimitive(id, args);
 		} else {
 			if(isForSelf)
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
-			for(ExpressionContext argCtx: args)
+			for(ParserRuleContext argCtx: args)
 				argCtx.accept(argsVisitor);
 			
 			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
