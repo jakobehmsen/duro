@@ -2,6 +2,9 @@ package duro.reflang;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
@@ -14,7 +17,7 @@ import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public interface PrimitiveVisitorFactory {
-	DuroBaseVisitor<Object> create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
+	PrimitiveVisitor create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
 			ArrayList<Instruction> instructions,
 			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 			OrdinalAllocator idToVariableOrdinalMap);
@@ -29,41 +32,21 @@ public interface PrimitiveVisitorFactory {
 		}
 
 		@Override
-		public DuroBaseVisitor<Object> create(
+		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				ArrayList<Instruction> instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
-			return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap) {
+			return new PrimitiveVisitor() {
 				@Override
-				public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
-					for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
-						for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar()) {
-							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-						}
-					}
+				public void visitPrimitive(String id, List<ParserRuleContext> args) {
+					for(ParserRuleContext arg: args)
+						arg.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 					
 					instructions.add(instruction);
 					if(mustBeExpression && !doesReturn)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					
-					return null;
-				}
-				
-				@Override
-				public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
-					for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-						for(ExpressionContext argCtx: argsCtx.expression()) {
-							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
-						}
-					}
-					
-					instructions.add(instruction);
-					if(mustBeExpression && !doesReturn)
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					
-					return null;
 				}
 			};
 		}
