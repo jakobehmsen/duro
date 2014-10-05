@@ -41,8 +41,6 @@ import duro.reflang.antlr4_2.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageWithParContext;
-import duro.reflang.antlr4_2.DuroParser.SelfSingleArgMessageNoParContext;
-import duro.reflang.antlr4_2.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
@@ -163,7 +161,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(!mustBeExpression) {
 			if(ctx.multiArgMessageArgNoParChain() != null) {
 				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
-				ctx.multiArgMessageArgNoParReceiver().accept(messageExchangeVisitor);
+				ctx.receiver().accept(messageExchangeVisitor);
 				
 				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
 				
@@ -174,7 +172,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				}
 
 			} else {
-				ctx.multiArgMessageArgNoParReceiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
 			}
 		} else {
 			super.visitMultiArgMessageArgNoPar(ctx);
@@ -265,20 +263,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		
 		appendMultiArgMessage(id, args, isForSelf);
-	}
-	
-	@Override
-	public Object visitSelfSingleArgMessageNoPar(SelfSingleArgMessageNoParContext ctx) {
-		appendMultiArgMessage(ctx.singleArgMessageNoPar().ID_UNCAP().getText(), Arrays.asList(ctx.singleArgMessageNoPar().singleArgMessageArgsNoPar()), true);
-		
-		return null;
-	}
-	
-	@Override
-	public Object visitSingleArgMessageNoPar(SingleArgMessageNoParContext ctx) {
-		appendMultiArgMessage(ctx.ID_UNCAP().getText(), Arrays.asList(ctx .singleArgMessageArgsNoPar()), false);
-		
-		return null;
 	}
 	
 	protected void appendMultiArgMessage(String id, List<ParserRuleContext> args, boolean isForSelf) {
