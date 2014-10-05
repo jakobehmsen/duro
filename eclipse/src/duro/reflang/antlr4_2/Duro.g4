@@ -49,7 +49,12 @@ multiArgMessageArgNoParChain:
 
 multiArgMessageWithPar: 
     ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
-multiArgMessageArgsWithPar: PAR_OP expression* PAR_CL;
+multiArgMessageArgsWithPar: PAR_OP (multiArgMessageArgsWithParArg (COMMA multiArgMessageArgsWithParArg)*)? PAR_CL;
+multiArgMessageArgsWithParArg: 
+    assignment | 
+    variableDeclaration |
+    interfaceId |
+    messageExchange;
 
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;
