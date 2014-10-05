@@ -143,7 +143,10 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("intGreater", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_GREATER), true));
 		primitiveMap.put(Selector.get("intLess", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_LESS), true));
 		primitiveMap.put(Selector.get("intToString", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_TO_STRING), true));
-		
+
+		primitiveMap.put(Selector.get("frameSender", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SENDER), true));
+		primitiveMap.put(Selector.get("frameSetSender", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SET_SENDER), true));
+		primitiveMap.put(Selector.get("frameResume", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_RESUME), true));
 		
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
