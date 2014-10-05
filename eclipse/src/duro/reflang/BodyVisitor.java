@@ -42,7 +42,6 @@ import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.SelfSingleArgMessageNoParContext;
-import duro.reflang.antlr4_2.DuroParser.SingleArgMessageArgsNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAssignmentContext;

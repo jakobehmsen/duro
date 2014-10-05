@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Stack;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -21,12 +18,8 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import com.sun.xml.internal.ws.assembler.jaxws.MustUnderstandTubeFactory;
 
 import duro.debugging.Debug;
-//import duro.reflang.antlr4_2.DuroParser.TopExpressionContext;
 import duro.reflang.antlr4_2.DuroBaseListener;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroListener;
@@ -34,14 +27,10 @@ import duro.reflang.antlr4_2.DuroParser;
 import duro.reflang.antlr4_2.DuroParser.AccessContext;
 import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
-import duro.reflang.antlr4_2.DuroParser.BinaryOperatorContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
-//import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgContext;
-//import duro.reflang.antlr4_2.DuroParser.MultiArgMessageContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
-//import duro.reflang.antlr4_2.DuroParser.TopExpressionsContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
@@ -64,9 +53,9 @@ public class Compiler_NEW {
 		errors.appendMessage(line, charPositionInLine, message);
 	}
 	
-	private void appendErrors(MessageCollector errors) {
-		this.errors.appendMessages(errors);
-	}
+//	private void appendErrors(MessageCollector errors) {
+//		this.errors.appendMessages(errors);
+//	}
 	
 	public boolean hasErrors() {
 		return errors.hasMessages();
