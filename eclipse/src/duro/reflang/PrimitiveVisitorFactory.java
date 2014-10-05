@@ -66,7 +66,7 @@ public interface PrimitiveVisitorFactory {
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
 					ParserRuleContext condition = args.get(0);
 					ParserRuleContext trueBlock = args.get(1);
-					ParserRuleContext falseBlock = args.get(2);
+					ParserRuleContext falseBlock = args.size() > 2 ? args.get(2) : null;
 					
 					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 					
@@ -86,8 +86,13 @@ public interface PrimitiveVisitorFactory {
 					int ifJump = ifEndIndex - conditionalJumpIndex;
 					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, ifJump));
 
-					OrdinalAllocator falseBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
-					falseBlock.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, falseBlockIdToVariableOrdinalMap));
+					if(falseBlock != null) {
+						OrdinalAllocator falseBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+						falseBlock.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, falseBlockIdToVariableOrdinalMap));
+					} else {
+						if(mustBeExpression)
+							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					}
 
 					// Now, the spot allocated for a jump can be populated
 					int elseEndIndex = instructions.size();
