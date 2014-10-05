@@ -49,9 +49,7 @@ multiArgMessageArgNoParChain:
 
 multiArgMessageWithPar: 
     ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
-multiArgMessageArgsWithPar:
-    multiArgMessageArgWithPar (COMMA multiArgMessageArgWithPar)*;
-multiArgMessageArgWithPar: PAR_OP (expression (COMMA expression)*)? PAR_CL;
+multiArgMessageArgsWithPar: PAR_OP (expression (COMMA expression)*)? PAR_CL;
 
 slotAccess: DOT selector;
 indexAccess: SQ_OP expression SQ_CL;

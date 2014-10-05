@@ -130,17 +130,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgWithPar(@NotNull DuroParser.MultiArgMessageArgWithParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgWithPar(@NotNull DuroParser.MultiArgMessageArgWithParContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoPar}.
 	 * @param ctx the parse tree
 	 */

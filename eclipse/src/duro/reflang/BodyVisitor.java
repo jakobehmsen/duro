@@ -30,7 +30,6 @@ import duro.reflang.antlr4_2.DuroParser.MessageChainContext;
 import duro.reflang.antlr4_2.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParChainContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
@@ -260,26 +259,26 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitSelfMultiArgMessageWithPar(SelfMultiArgMessageWithParContext ctx) {
-		appendMultiArgMessageWithPart(ctx.multiArgMessageWithPar(), true);
+		appendMultiArgMessageWithPar(ctx.multiArgMessageWithPar(), true);
 		
 		return null;
 	}
 	
 	@Override
 	public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
-		appendMultiArgMessageWithPart(ctx, false);
+		appendMultiArgMessageWithPar(ctx, false);
 		
 		return null;
 	}
 
-	private void appendMultiArgMessageWithPart(MultiArgMessageWithParContext ctx, boolean isForSelf) {
+	private void appendMultiArgMessageWithPar(MultiArgMessageWithParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
 		int parameterCount = 0;
-		ArrayList<MultiArgMessageArgWithParContext> args = new ArrayList<MultiArgMessageArgWithParContext>();
+		ArrayList<ExpressionContext> args = new ArrayList<ExpressionContext>();
 		for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-			for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
+			for(ExpressionContext argCtx: argsCtx.expression()) {
 				args.add(argCtx);
-				parameterCount += argCtx.expression().size();
+				parameterCount++;
 			}
 		}
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
@@ -291,7 +290,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			if(isForSelf)
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
-			for(MultiArgMessageArgWithParContext argCtx: args)
+			for(ExpressionContext argCtx: args)
 				argCtx.accept(argsVisitor);
 			
 			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));

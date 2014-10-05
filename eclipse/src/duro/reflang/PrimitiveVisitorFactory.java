@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import duro.reflang.antlr4_2.DuroBaseVisitor;
+import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
-import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
@@ -54,7 +54,7 @@ public interface PrimitiveVisitorFactory {
 				@Override
 				public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
 					for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-						for(MultiArgMessageArgWithParContext argCtx: argsCtx.multiArgMessageArgWithPar()) {
+						for(ExpressionContext argCtx: argsCtx.expression()) {
 							argCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 						}
 					}
