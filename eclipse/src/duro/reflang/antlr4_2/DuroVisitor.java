@@ -40,13 +40,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgsWithPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -208,13 +201,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#singleArgMessageArgsNoPar}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSingleArgMessageArgsNoPar(@NotNull DuroParser.SingleArgMessageArgsNoParContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -243,13 +229,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryMessage(@NotNull DuroParser.BinaryMessageContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#singleArgMessageNoPar}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexAccess}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -276,13 +255,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParReceiver}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#interfaceId}.
