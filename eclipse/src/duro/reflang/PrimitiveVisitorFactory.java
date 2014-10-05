@@ -3,9 +3,13 @@ package duro.reflang;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
+import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
+import duro.reflang.antlr4.DuroParser.WhileStatementContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -90,6 +94,47 @@ public interface PrimitiveVisitorFactory {
 					int elseEndIndex = instructions.size();
 					int elseJump = elseEndIndex - jumpIndex;
 					instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, elseJump));
+				}
+			};
+		}
+	}
+	
+	public static class While implements PrimitiveVisitorFactory {
+
+		@Override
+		public PrimitiveVisitor create(
+				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
+				MessageCollector errors, ArrayList<Runnable> endHandlers,
+				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				OrdinalAllocator idToParameterOrdinalMap,
+				OrdinalAllocator idToVariableOrdinalMap) {
+			return new PrimitiveVisitor() {
+				@Override
+				public void visitPrimitive(String id, List<ParserRuleContext> args) {
+					ParserRuleContext condition = args.get(0);
+					ParserRuleContext body = args.get(1);
+					
+					int jumpIndex = instructions.size();
+					
+					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+					
+					int conditionalJumpIndex = instructions.size();
+					instructions.add(null);
+					
+					OrdinalAllocator bodyIdToParameterOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToParameterOrdinalMap));
+
+					int whileBodyEndIndex = instructions.size();
+					int jump = jumpIndex - whileBodyEndIndex;
+					instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+					
+					int whileEndIndex = instructions.size();
+					int conditionalJump = whileEndIndex - conditionalJumpIndex;
+					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					
+					if(mustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+
 				}
 			};
 		}
