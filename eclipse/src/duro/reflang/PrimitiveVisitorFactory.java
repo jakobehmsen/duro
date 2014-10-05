@@ -3,13 +3,9 @@ package duro.reflang;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Stack;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import duro.reflang.antlr4.DuroParser.WhileStatementBodyContext;
-import duro.reflang.antlr4.DuroParser.WhileStatementConditionContext;
-import duro.reflang.antlr4.DuroParser.WhileStatementContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -100,7 +96,6 @@ public interface PrimitiveVisitorFactory {
 	}
 	
 	public static class While implements PrimitiveVisitorFactory {
-
 		@Override
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
@@ -121,8 +116,8 @@ public interface PrimitiveVisitorFactory {
 					int conditionalJumpIndex = instructions.size();
 					instructions.add(null);
 					
-					OrdinalAllocator bodyIdToParameterOrdinalMap = idToVariableOrdinalMap.newInnerStart();
-					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToParameterOrdinalMap));
+					OrdinalAllocator bodyIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToVariableOrdinalMap));
 
 					int whileBodyEndIndex = instructions.size();
 					int jump = jumpIndex - whileBodyEndIndex;
@@ -135,6 +130,31 @@ public interface PrimitiveVisitorFactory {
 					if(mustBeExpression)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 
+				}
+			};
+		}
+	}
+	
+	public static class Eval implements PrimitiveVisitorFactory {
+		@Override
+		public PrimitiveVisitor create(
+				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
+				MessageCollector errors, ArrayList<Runnable> endHandlers,
+				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				OrdinalAllocator idToParameterOrdinalMap,
+				OrdinalAllocator idToVariableOrdinalMap) {
+			return new PrimitiveVisitor() {
+				@Override
+				public void visitPrimitive(String id, List<ParserRuleContext> args) {
+					BodyVisitor argVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+					
+					// Append eval arguments first
+					ParserRuleContext closureArg = args.get(0);
+					for(int i = 1; i < args.size(); i++)
+						args.get(i).accept(argVisitor);
+					// Then closure
+					closureArg.accept(argVisitor);
+					instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE));
 				}
 			};
 		}
