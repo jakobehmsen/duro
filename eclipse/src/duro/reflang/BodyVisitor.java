@@ -257,7 +257,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-			for(ExpressionContext argCtx: argsCtx.expression())
+			for(ParserRuleContext argCtx: argsCtx.multiArgMessageArgsWithParArg())
 				args.add(argCtx);
 		}
 		
