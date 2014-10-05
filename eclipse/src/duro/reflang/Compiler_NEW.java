@@ -138,6 +138,18 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("write", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
 		primitiveMap.put(Selector.get("readln", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEXT_LINE), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_CALL_CLOSURE), true));
+
+		primitiveMap.put(Selector.get("intAdd", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_ADD), true));
+		primitiveMap.put(Selector.get("intSub", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_SUB), true));
+		primitiveMap.put(Selector.get("intMult", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_MULT), true));
+		primitiveMap.put(Selector.get("intDiv", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_DIV), true));
+		primitiveMap.put(Selector.get("intRem", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_REM), true));
+		primitiveMap.put(Selector.get("intEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_EQUAL), true));
+		primitiveMap.put(Selector.get("intGreater", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_GREATER), true));
+		primitiveMap.put(Selector.get("intLess", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_LESS), true));
+		primitiveMap.put(Selector.get("intToString", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_TO_STRING), true));
+		
+		
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
 //		Walker walker = new Walker();
