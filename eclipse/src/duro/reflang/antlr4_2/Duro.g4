@@ -39,13 +39,19 @@ multiArgMessageNoPar:
     ID_UNCAP multiArgMessageArgsNoPar (ID_CAP multiArgMessageArgsNoPar)*;
 multiArgMessageArgsNoPar:
     multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*;
-multiArgMessageArgNoPar: receiver multiArgMessageArgNoParChain?;
+multiArgMessageArgNoPar: multiArgMessageArgNoParReceiver multiArgMessageArgNoParChain?;
+multiArgMessageArgNoParReceiver: selfSingleArgMessageNoPar | receiver;
 multiArgMessageArgNoParChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    (DOT multiArgMessageWithPar | DOT singleArgMessageNoPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
     ;
+
+selfSingleArgMessageNoPar: singleArgMessageNoPar;
+singleArgMessageNoPar: 
+    ID_UNCAP singleArgMessageArgsNoPar;
+singleArgMessageArgsNoPar: multiArgMessageArgNoPar;
 
 multiArgMessageWithPar: 
     ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
