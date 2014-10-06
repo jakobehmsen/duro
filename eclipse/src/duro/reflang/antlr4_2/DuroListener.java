@@ -229,6 +229,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitSlotAccess(@NotNull DuroParser.SlotAccessContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#ws}.
+	 * @param ctx the parse tree
+	 */
+	void enterWs(@NotNull DuroParser.WsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#ws}.
+	 * @param ctx the parse tree
+	 */
+	void exitWs(@NotNull DuroParser.WsContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#closure}.
 	 * @param ctx the parse tree
 	 */

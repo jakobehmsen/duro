@@ -588,6 +588,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_FRAME: {
+			// May be unused
 			FrameProcess frame = (FrameProcess)instruction.operand1;
 			currentFrame.stack.push(frame);
 			currentFrame.instructionPointer++;

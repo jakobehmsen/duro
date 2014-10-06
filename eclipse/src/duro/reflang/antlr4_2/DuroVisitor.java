@@ -152,6 +152,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSlotAccess(@NotNull DuroParser.SlotAccessContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#ws}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWs(@NotNull DuroParser.WsContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#closure}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

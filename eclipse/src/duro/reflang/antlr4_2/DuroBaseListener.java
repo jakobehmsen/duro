@@ -277,6 +277,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterWs(@NotNull DuroParser.WsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitWs(@NotNull DuroParser.WsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterClosure(@NotNull DuroParser.ClosureContext ctx) { }
 	/**
 	 * {@inheritDoc}

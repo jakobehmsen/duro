@@ -1,6 +1,6 @@
 grammar Duro;
 
-program: expression*;
+program: (ws expression)* ws;
 expression: 
     assignment | 
     variableDeclaration | 
@@ -8,22 +8,22 @@ expression:
     interfaceId |
     messageExchange;
 assignment: 
-    id
+    id ws
     (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
+        (op=(ASSIGN | ASSIGN_PROTO) ws expression)
         |
-        op=ASSIGN_QUOTED behaviorParams expression
+        op=ASSIGN_QUOTED ws behaviorParams ws expression
     );
-interfaceId: DOLLAR id() expression;
+interfaceId: DOLLAR ws id() ws expression;
 
-messageExchange: receiver messageChain?;
+messageExchange: receiver ws messageChain?;
 messageChain:
-    (DOT multiArgMessageWithPar | indexAccess) messageChain? |
-    DOT multiArgMessageNoPar |
+    (DOT ws multiArgMessageWithPar | indexAccess) (ws messageChain)? |
+    DOT ws multiArgMessageNoPar |
     slotAccess messageChain? |
     slotAssignment | 
     indexAssignment |
-    binaryMessage+
+    binaryMessage (ws binaryMessage)*
     ;
                 
 receiver:
@@ -31,66 +31,68 @@ receiver:
 selfMultiArgMessageNoPar: multiArgMessageNoPar;
 selfMultiArgMessageWithPar: multiArgMessageWithPar;
 
-variableDeclaration: VAR id (ASSIGN expression)?;
+variableDeclaration: VAR ws id (ws ASSIGN ws expression)?;
 access: id;
-grouping: PAR_OP expression+ PAR_CL;
+grouping: PAR_OP ws (expression ws)+ PAR_CL;
 
-multiArgMessageNoPar: 
-    ID_UNCAP multiArgMessageArgsNoPar (ID_CAP multiArgMessageArgsNoPar)*;
+multiArgMessageNoPar:
+    // New line between id and args fails test?
+    ID_UNCAP multiArgMessageArgsNoPar ws (ID_CAP multiArgMessageArgsNoPar)*;
 multiArgMessageArgsNoPar:
-    multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*;
-multiArgMessageArgNoPar: receiver multiArgMessageArgNoParChain?;
+    multiArgMessageArgNoPar (ws COMMA ws multiArgMessageArgNoPar)*;
+multiArgMessageArgNoPar: receiver ws multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    (DOT ws multiArgMessageWithPar | slotAccess | indexAccess) (ws multiArgMessageArgNoParChain)? |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
     ;
 
 multiArgMessageWithPar: 
-    ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
-multiArgMessageArgsWithPar: PAR_OP (multiArgMessageArgsWithParArg (COMMA multiArgMessageArgsWithParArg)*)? PAR_CL;
+    ID_UNCAP ws multiArgMessageArgsWithPar (ID_CAP ws multiArgMessageArgsWithPar)*;
+multiArgMessageArgsWithPar: PAR_OP ws (multiArgMessageArgsWithParArg (ws COMMA ws multiArgMessageArgsWithParArg)*)? ws PAR_CL;
 multiArgMessageArgsWithParArg: 
     assignment | 
     variableDeclaration |
     interfaceId |
     messageExchange;
 
-slotAccess: DOT selector;
-indexAccess: SQ_OP expression SQ_CL;
-binaryMessage: BIN_OP binaryMessageOperand;
-binaryMessageOperand: receiver binaryMessageOperandChain?;
+slotAccess: DOT ws selector;
+indexAccess: SQ_OP ws expression ws SQ_CL;
+binaryMessage: BIN_OP ws binaryMessageOperand;
+binaryMessageOperand: receiver (ws binaryMessageOperandChain)?;
 binaryMessageOperandChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess)  binaryMessageOperandChain? |
+    (DOT ws multiArgMessageWithPar | slotAccess | indexAccess) (ws binaryMessageOperandChain)? |
     slotAssignment | 
     indexAssignment
     ;
-indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
+indexAssignment: SQ_OP ws expression ws SQ_CL ws ASSIGN ws expression;
 slotAssignment: 
-    DOT selector
+    DOT ws selector ws
     (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
+        (op=(ASSIGN | ASSIGN_PROTO) ws expression)
         |
-        op=ASSIGN_QUOTED behaviorParams expression
+        op=ASSIGN_QUOTED ws behaviorParams ws expression
     );
 literal: integer | string | dict | closure | pseudoVar;
 integer: INT;
 string: STRING;
-dict: HASH SQ_OP dictEntry* SQ_CL;
-dictEntry: selector
+dict: HASH ws SQ_OP (ws dictEntry)* ws SQ_CL;
+dictEntry: selector ws
     (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
+        (op=(ASSIGN | ASSIGN_PROTO) ws expression)
         |
-        op=ASSIGN_QUOTED behaviorParams expression
+        op=ASSIGN_QUOTED ws behaviorParams ws expression
     );
-closure: BRA_OP behaviorParams expression* BAR_CL;
-behaviorParams: (PIPE id+ PIPE)?;
+closure: BRA_OP ws behaviorParams (ws expression*) ws BAR_CL;
+behaviorParams: (PIPE (ws id)+ ws PIPE)?;
 pseudoVar: PSEUDO_VAR;
-parArg: COLON id;
+parArg: COLON ws id;
 id: ID_CAP | ID_UNCAP;
 selector: id | binaryOperator | indexOperator;
 binaryOperator: BIN_OP;
-indexOperator: SQ_OP SQ_CL;
+indexOperator: SQ_OP ws SQ_CL;
+ws: WS_NL*;
 
 VAR: 'var';
 PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame';
@@ -124,7 +126,14 @@ ASSIGN: '=';
 ASSIGN_PROTO: '^=';
 ASSIGN_QUOTED: '=>';
 
-WS: [ \t\u000C\r\n]+ -> skip;
+//WS_NOT_NL: [ \t\u000C];
+//WS: [ \t\u000C\r\n];
+
+//WS: [ \t\u000C\r\n]+ -> skip;
+WS_NL: '\r\n';
+WS_NOT_NL: [ \t\u000C]+ -> skip;
+//SINGLELINE_COMMENT: '//' ~('\r' | '\n')*;
+//MULTI_LINE_COMMENT: '/*' .*? '*/';
 SINGLELINE_COMMENT: '//' ~('\r' | '\n')* -> skip;
 MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 

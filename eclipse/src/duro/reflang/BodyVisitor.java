@@ -230,6 +230,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 	private void appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
+		if(id.equals("current"))
+			new String();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
 			for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar())
@@ -545,7 +547,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
 			break;
 		case "frame":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_FRAME));
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS_FRAME));
 			break;
 		}
 		
