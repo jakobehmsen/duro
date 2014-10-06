@@ -39,7 +39,7 @@ multiArgMessageNoPar:
     // New line between id and args fails test?
     ID_UNCAP multiArgMessageArgsNoPar ws (ID_CAP multiArgMessageArgsNoPar)*;
 multiArgMessageArgsNoPar:
-    multiArgMessageArgNoPar (ws COMMA ws multiArgMessageArgNoPar)*;
+    (multiArgMessageArgNoPar (ws COMMA ws multiArgMessageArgNoPar)*)?;
 multiArgMessageArgNoPar: receiver ws multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParChain:
     (DOT ws multiArgMessageWithPar | slotAccess | indexAccess) (ws multiArgMessageArgNoParChain)? |
