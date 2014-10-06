@@ -57,7 +57,7 @@ multiArgMessageArgsWithParArg:
     interfaceId |
     messageExchange;
 
-slotAccess: DOT ws selector;
+slotAccess: AT ws selector;
 indexAccess: SQ_OP ws expression ws SQ_CL;
 binaryMessage: BIN_OP ws binaryMessageOperand;
 binaryMessageOperand: receiver (ws binaryMessageOperandChain)?;
@@ -68,7 +68,7 @@ binaryMessageOperandChain:
     ;
 indexAssignment: SQ_OP ws expression ws SQ_CL ws ASSIGN ws expression;
 slotAssignment: 
-    DOT ws selector ws
+    AT ws selector ws
     (
         (op=(ASSIGN | ASSIGN_PROTO) ws expression)
         |
@@ -108,6 +108,7 @@ ID_UNCAP: LETTER_LOWER (LETTER | DIGIT | '_')*;
 PARAGRAPH: '§';
 PIPE: '|';
 HASH: '#';
+AT: '@';
 DOT: '.';
 COMMA: ',';
 COLON: ':';
