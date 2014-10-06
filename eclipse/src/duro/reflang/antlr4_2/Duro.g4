@@ -33,20 +33,29 @@ selfMultiArgMessageWithPar: multiArgMessageWithPar;
 
 variableDeclaration: VAR ws id (ws ASSIGN ws expression)?;
 access: id;
+accessUnCap: ID_UNCAP;
 grouping: PAR_OP ws (expression ws)+ PAR_CL;
 
+// Difference between root msg and chained msg
+// root: must have () to indicate argless-ness
 multiArgMessageNoPar:
     // New line between id and args fails test?
     ID_UNCAP multiArgMessageArgsNoPar ws (ID_CAP multiArgMessageArgsNoPar)*;
 multiArgMessageArgsNoPar:
     (multiArgMessageArgNoPar (ws COMMA ws multiArgMessageArgNoPar)*)?;
-multiArgMessageArgNoPar: receiver ws multiArgMessageArgNoParChain?;
+multiArgMessageArgNoPar: 
+    singleArgMessageNoPar |
+    multiArgMessageArgNoParReceiver ws multiArgMessageArgNoParChain?;
+multiArgMessageArgNoParReceiver: 
+    accessUnCap | grouping | literal | parArg;
 multiArgMessageArgNoParChain:
-    (DOT ws multiArgMessageWithPar | slotAccess | indexAccess) (ws multiArgMessageArgNoParChain)? |
+    (DOT ws singleArgMessageNoPar | slotAccess | indexAccess) (ws multiArgMessageArgNoParChain)? |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
     ;
+
+singleArgMessageNoPar: ID_UNCAP multiArgMessageArgNoPar?;
 
 multiArgMessageWithPar: 
     ID_UNCAP ws multiArgMessageArgsWithPar (ID_CAP ws multiArgMessageArgsWithPar)*;

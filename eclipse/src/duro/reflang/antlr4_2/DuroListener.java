@@ -119,6 +119,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#accessUnCap}.
+	 * @param ctx the parse tree
+	 */
+	void enterAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#accessUnCap}.
+	 * @param ctx the parse tree
+	 */
+	void exitAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
 	 * @param ctx the parse tree
 	 */
@@ -372,6 +383,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryMessage(@NotNull DuroParser.BinaryMessageContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#singleArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#singleArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#indexAccess}.
 	 * @param ctx the parse tree
 	 */
@@ -414,6 +436,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoParReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#interfaceId}.
