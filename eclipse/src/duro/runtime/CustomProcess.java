@@ -130,10 +130,11 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	
 	private Frame currentFrame;
 	private DictionaryProcess protoAny;
-	private DictionaryProcess protoNull;
-	private DictionaryProcess protoInteger;
+	private DictionaryProcess nil;
 	private BooleanProcess booleanTrue;
 	private BooleanProcess booleanFalse;
+	private DictionaryProcess protoInteger;
+	private DictionaryProcess protoArray;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
@@ -142,8 +143,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		protoAny = new DictionaryProcess();
 		protoAny.defineShared(SymbolTable.Codes.Any, protoAny);
 		// Add Null singleton
-		protoNull = protoAny.clone();
-		protoAny.defineShared(SymbolTable.Codes.Null, protoNull);
+		nil = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Null, nil);
 		// Add boolean True singleton
 		booleanTrue = new BooleanProcess(true);
 		booleanTrue.defineProto(SymbolTable.Codes.prototype, protoAny);
@@ -152,7 +153,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		booleanFalse = new BooleanProcess(false);
 		booleanFalse.defineProto(SymbolTable.Codes.prototype, protoAny);
 		protoAny.defineShared(SymbolTable.Codes.False, booleanFalse);
-		protoAny.defineShared(SymbolTable.Codes.Array, protoAny.clone());
+		protoArray = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Array, protoArray);
 		// Add String prototype
 		protoAny.defineShared(SymbolTable.Codes.String, protoAny.clone());
 		// Add Integer prototype
@@ -309,7 +311,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = protoNull;
+						arguments[i] = nil;
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -347,7 +349,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = protoNull;
+						arguments[i] = nil;
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -523,7 +525,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			for(int i = 0; i < names.length; i++)
 				names[i] = createString(rawNames[i]);
 			ArrayProcess namesArray = new ArrayProcess(names);
-			namesArray.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Array));
+			namesArray.defineProto(SymbolTable.Codes.prototype, protoArray);
 			currentFrame.stack.push(namesArray);
 			currentFrame.instructionPointer++;
 			
@@ -578,7 +580,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_NULL: {
-			currentFrame.stack.push(protoNull);
+			currentFrame.stack.push(nil);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -829,8 +831,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			IntegerProcess length = (IntegerProcess)currentFrame.stack.pop();
-			ArrayProcess newArray = new ArrayProcess(length.intValue, protoNull);
-			newArray.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Array));
+			ArrayProcess newArray = new ArrayProcess(length.intValue, nil);
+			newArray.defineProto(SymbolTable.Codes.prototype, protoArray);
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
