@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import com.sun.java_cup.internal.runtime.Symbol;
-
 import duro.debugging.Debug;
 import duro.reflang.SymbolTable;
 
@@ -131,37 +129,41 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	}
 	
 	private Frame currentFrame;
-	private DictionaryProcess any;
+	private DictionaryProcess protoAny;
+	private DictionaryProcess protoInteger;
+	private BooleanProcess booleanTrue;
+	private BooleanProcess booleanFalse;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
 		// Should CustomProcess not be a process at all? Should CustomProcess hold any and push it instead this?  - Also at other locations, e.g. when loading.
 		// Add Any prototype
-		any = new DictionaryProcess();
-		any.defineShared(SymbolTable.Codes.Any, any);
+		protoAny = new DictionaryProcess();
+		protoAny.defineShared(SymbolTable.Codes.Any, protoAny);
 		// Add Null singleton
-		any.defineShared(SymbolTable.Codes.Null, any.clone());
+		protoAny.defineShared(SymbolTable.Codes.Null, protoAny.clone());
 		// Add boolean True singleton
-		BooleanProcess t = new BooleanProcess(true);
-		t.defineShared(SymbolTable.Codes.prototype, any);
-		any.defineShared(SymbolTable.Codes.True, t);
+		booleanTrue = new BooleanProcess(true);
+		booleanTrue.defineProto(SymbolTable.Codes.prototype, protoAny);
+		protoAny.defineShared(SymbolTable.Codes.True, booleanTrue);
 		// Add boolean False singleton
-		BooleanProcess f = new BooleanProcess(false);
-		f.defineShared(SymbolTable.Codes.prototype, any);
-		any.defineShared(SymbolTable.Codes.False, f);
-		any.defineShared(SymbolTable.Codes.Array, any.clone());
+		booleanFalse = new BooleanProcess(false);
+		booleanFalse.defineProto(SymbolTable.Codes.prototype, protoAny);
+		protoAny.defineShared(SymbolTable.Codes.False, booleanFalse);
+		protoAny.defineShared(SymbolTable.Codes.Array, protoAny.clone());
 		// Add String prototype
-		any.defineShared(SymbolTable.Codes.String, any.clone());
+		protoAny.defineShared(SymbolTable.Codes.String, protoAny.clone());
 		// Add Integer prototype
-		any.defineShared(SymbolTable.Codes.Integer, any.clone());
+		protoInteger = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Integer, protoInteger);
 		// Add Frame prototype
-		any.defineShared(SymbolTable.Codes.Frame, any.clone());
+		protoAny.defineShared(SymbolTable.Codes.Frame, protoAny.clone());
 		// Add Behavior prototype
-		any.defineShared(SymbolTable.Codes.Behavior, any.clone());
+		protoAny.defineShared(SymbolTable.Codes.Behavior, protoAny.clone());
 		// Add Closure prototype
-		any.defineShared(SymbolTable.Codes.Closure, any.clone());
+		protoAny.defineShared(SymbolTable.Codes.Closure, protoAny.clone());
 		
-		currentFrame = new Frame(null, any, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
+		currentFrame = new Frame(null, protoAny, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
 	}
 	
 	private SymbolTable symbolTable;
@@ -170,7 +172,6 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		this.symbolTable = symbolTable;
 	}
 
-	@SuppressWarnings("unused")
 	public void replay(InteractionHistory interactionHistory) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
 		
@@ -306,7 +307,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = any.lookup(SymbolTable.Codes.Null);
+						arguments[i] = protoAny.lookup(SymbolTable.Codes.Null);
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -344,7 +345,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 					for(int i = argumentCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
 					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = any.lookup(SymbolTable.Codes.Null);
+						arguments[i] = protoAny.lookup(SymbolTable.Codes.Null);
 				} else {
 					for(int i = behavior.parameterCount - 1; i >= 0; i--)
 						arguments[i] = currentFrame.stack.pop();
@@ -520,7 +521,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			for(int i = 0; i < names.length; i++)
 				names[i] = createString(rawNames[i]);
 			ArrayProcess namesArray = new ArrayProcess(names);
-			namesArray.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Array));
+			namesArray.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Array));
 			currentFrame.stack.push(namesArray);
 			currentFrame.instructionPointer++;
 			
@@ -575,7 +576,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_NULL: {
-			Process nil = any.lookup(SymbolTable.Codes.Null);
+			Process nil = protoAny.lookup(SymbolTable.Codes.Null);
 			currentFrame.stack.push(nil);
 			currentFrame.instructionPointer++;
 			
@@ -596,19 +597,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_LOAD_INT: {
 			int intValue = (int)instruction.operand1;
-			IntegerProcess integer = new IntegerProcess(intValue);
-			integer.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(integer);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_LOAD_TRUE: {
-			currentFrame.stack.push(getTrue());
+			currentFrame.stack.push(booleanTrue);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_LOAD_FALSE: {
-			currentFrame.stack.push(getFalse());
+			currentFrame.stack.push(booleanFalse);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -620,7 +619,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS_FRAME: {
-			currentFrame.stack.push(currentFrame.getReifiedFrame(any));
+			currentFrame.stack.push(currentFrame.getReifiedFrame(protoAny));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -693,45 +692,35 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SP_INT_ADD: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(lhs.intValue + rhs.intValue);
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		}case Instruction.OPCODE_SP_INT_SUB: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(lhs.intValue - rhs.intValue);
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, lhs.intValue - rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_MULT: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(lhs.intValue * rhs.intValue);
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, lhs.intValue * rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_DIV: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(lhs.intValue / rhs.intValue);
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, lhs.intValue / rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_REM: {
 			IntegerProcess rhs = (IntegerProcess)currentFrame.stack.pop();
 			IntegerProcess lhs = (IntegerProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(lhs.intValue % rhs.intValue);
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, lhs.intValue % rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -765,7 +754,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(frame.frame.sender.getReifiedFrame(any));
+			currentFrame.stack.push(frame.frame.sender.getReifiedFrame(protoAny));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -832,24 +821,22 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
-			newDict.defineProto(SymbolTable.Codes.prototype, any);
+			newDict.defineProto(SymbolTable.Codes.prototype, protoAny);
 			currentFrame.stack.push(newDict);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			IntegerProcess length = (IntegerProcess)currentFrame.stack.pop();
-			ArrayProcess newArray = new ArrayProcess(length.intValue, any.lookup(SymbolTable.Codes.Null));
-			newArray.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Array));
+			ArrayProcess newArray = new ArrayProcess(length.intValue, protoAny.lookup(SymbolTable.Codes.Null));
+			newArray.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Array));
 			currentFrame.stack.push(newArray);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_LENGTH: {
 			ArrayProcess newArray = (ArrayProcess)currentFrame.stack.pop();
-			IntegerProcess result = new IntegerProcess(newArray.length());
-			result.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Integer));
-			currentFrame.stack.push(result);
+			currentFrame.stack.push(new IntegerProcess(protoInteger, newArray.length()));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -869,7 +856,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
 				currentFrame = new Frame(
-					currentFrame, any, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
+					currentFrame, protoAny, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -879,8 +866,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int argumentOffset = (int)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(any), behavior, argumentOffset, parameterCount);
-			closure.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Closure));
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(protoAny), behavior, argumentOffset, parameterCount);
+			closure.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Closure));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
 			
@@ -890,7 +877,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int variableCount = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
 			BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-			behavior.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Behavior));
+			behavior.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Behavior));
 			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
 			
@@ -962,25 +949,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	@Override
 	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
 		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-		behavior.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Behavior));
+		behavior.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Behavior));
 		return behavior;
 	}
 	
-	public BooleanProcess getBoolean(boolean value) {
-		return value ? getTrue() : getFalse();
-	}
-	
-	public BooleanProcess getTrue() {
-		return (BooleanProcess)any.lookup(SymbolTable.Codes.True);
-	}
-	
-	public BooleanProcess getFalse() {
-		return (BooleanProcess)any.lookup(SymbolTable.Codes.False);
+	public final BooleanProcess getBoolean(boolean value) {
+		return value ? booleanTrue : booleanFalse;
 	}
 
-	public StringProcess createString(String str) {
+	public final StringProcess createString(String str) {
 		StringProcess string = new StringProcess(str);
-		string.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.String));
+		string.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.String));
 		return string;
 	}
 
