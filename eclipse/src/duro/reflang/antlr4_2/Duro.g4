@@ -41,11 +41,13 @@ multiArgMessageArgsNoPar:
     (multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*)?;
 multiArgMessageArgNoPar: 
     selfSingleArgMessageNoPar |
+    selfMultiArgMessageWithPar |
     multiArgMessageArgNoParReceiver multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParReceiver: 
     access | grouping | literal | parArg;
 multiArgMessageArgNoParChain:
-    (DOT (singleArgMessageNoPar | unaryMessage) | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    (DOT (multiArgMessageWithPar | unaryMessage) | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    DOT singleArgMessageNoPar |
     slotAssignment | 
     indexAssignment |
     binaryMessage+
