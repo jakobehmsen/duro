@@ -40,9 +40,12 @@ import duro.reflang.antlr4_2.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4_2.DuroParser.SelectorContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SelfMultiArgMessageWithParContext;
+import duro.reflang.antlr4_2.DuroParser.SelfSingleArgMessageNoParContext;
+import duro.reflang.antlr4_2.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4_2.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.StringContext;
+import duro.reflang.antlr4_2.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4_2.DuroParser.VariableDeclarationContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
@@ -158,20 +161,24 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	@Override
 	public Object visitMultiArgMessageArgNoPar(MultiArgMessageArgNoParContext ctx) {
 		if(!mustBeExpression) {
-			if(ctx.multiArgMessageArgNoParChain() != null) {
-				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
-				ctx.receiver().accept(messageExchangeVisitor);
-				
-				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
-				
-				while(chain != null) {
-					messageExchangeVisitor.mustBeExpression = chain.multiArgMessageArgNoParChain() != null;
-					chain.accept(messageExchangeVisitor);
-					chain = chain.multiArgMessageArgNoParChain();
-				}
-
+			if(ctx.selfSingleArgMessageNoPar() != null) {
+				ctx.selfSingleArgMessageNoPar().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
 			} else {
-				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				if(ctx.multiArgMessageArgNoParChain() != null) {
+					BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+					ctx.multiArgMessageArgNoParReceiver().accept(messageExchangeVisitor);
+					
+					MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
+					
+					while(chain != null) {
+						messageExchangeVisitor.mustBeExpression = chain.multiArgMessageArgNoParChain() != null;
+						chain.accept(messageExchangeVisitor);
+						chain = chain.multiArgMessageArgNoParChain();
+					}
+	
+				} else {
+					ctx.multiArgMessageArgNoParReceiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				}
 			}
 		} else {
 			super.visitMultiArgMessageArgNoPar(ctx);
@@ -264,6 +271,38 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		
 		appendMultiArgMessage(id, args, isForSelf);
+	}
+	
+	@Override
+	public Object visitSelfSingleArgMessageNoPar(SelfSingleArgMessageNoParContext ctx) {
+		appendSingleArgMessageNoPar(ctx.singleArgMessageNoPar(), true);
+		
+		return null;
+	}
+	
+	@Override
+	public Object visitSingleArgMessageNoPar(SingleArgMessageNoParContext ctx) {
+		appendSingleArgMessageNoPar(ctx, false);
+		
+		return null;
+	}
+
+	private void appendSingleArgMessageNoPar(SingleArgMessageNoParContext ctx, boolean isForSelf) {
+		String id = ctx.ID_UNCAP().getText();
+		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
+		args.add(ctx.multiArgMessageArgNoPar());
+		
+		appendMultiArgMessage(id, args, isForSelf);
+	}
+	
+	@Override
+	public Object visitUnaryMessage(UnaryMessageContext ctx) {
+		String id = ctx.ID_UNCAP().getText();
+		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();;
+		
+		appendMultiArgMessage(id, args, false);
+		
+		return null;
 	}
 	
 	protected void appendMultiArgMessage(String id, List<ParserRuleContext> args, boolean isForSelf) {
