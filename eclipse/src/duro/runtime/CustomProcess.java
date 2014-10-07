@@ -138,6 +138,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	private DictionaryProcess protoString;
 	private DictionaryProcess protoFrame;
 	private DictionaryProcess protoBehavior;
+	private DictionaryProcess closureBehavior;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
@@ -172,7 +173,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		protoBehavior = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Behavior, protoBehavior);
 		// Add Closure prototype
-		protoAny.defineShared(SymbolTable.Codes.Closure, protoAny.clone());
+		closureBehavior = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
 		
 		currentFrame = new Frame(null, protoAny, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
 	}
@@ -877,7 +879,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
 			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
-			closure.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Closure));
+			closure.defineProto(SymbolTable.Codes.prototype, closureBehavior);
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
 			
