@@ -32,20 +32,36 @@ public class DictionaryProcess extends Process {
 		}
 	}
 
-	private Hashtable<Integer, Process> protos = new Hashtable<Integer, Process>();
-	private Hashtable<Integer, Member> properties = new Hashtable<Integer, Member>();
+	private Hashtable<Integer, Process> protos;
+	private Hashtable<Integer, Member> properties;
+	
+	private final void ensurePropertiesInitialized() {
+		if(properties == null)
+			properties = new Hashtable<Integer, Member>();
+	}
+	
+	private final void ensureAllInitialized() {
+		if(properties == null) {
+			properties = new Hashtable<Integer, Member>();
+			protos = new Hashtable<Integer, Process>();
+		}
+	}
 	
 	@Override
 	public Object getCallable(ProcessFactory factory, int selectorCode) {
-		Member callableMember = properties.get(selectorCode);
+		if(properties != null) {
+			Member callableMember = properties.get(selectorCode);
+			
+			if(callableMember != null)
+				return callableMember.value;
+		}
 		
-		if(callableMember != null)
-			return callableMember.value;
-		
-		for(Object proto: protos.values()) {
-			Object callable = ((Process)proto).getCallable(factory, selectorCode);
-			if(callable != null)
-				return callable;
+		if(protos != null) {
+			for(Object proto: protos.values()) {
+				Object callable = ((Process)proto).getCallable(factory, selectorCode);
+				if(callable != null)
+					return callable;
+			}
 		}
 		
 		return null;
@@ -53,15 +69,19 @@ public class DictionaryProcess extends Process {
 
 	@Override
 	public Process lookup(int selectorCode) {
-		Member valueMember = properties.get(selectorCode);
+		if(properties != null) {
+			Member valueMember = properties.get(selectorCode);
+			
+			if(valueMember != null)
+				return valueMember.value;
+		}
 		
-		if(valueMember != null)
-			return valueMember.value;
-		
-		for(Process proto: protos.values()) {
-			Process value = proto.lookup(selectorCode);
-			if(value != null)
-				return value;
+		if(protos != null) {
+			for(Process proto: protos.values()) {
+				Process value = proto.lookup(selectorCode);
+				if(value != null)
+					return value;
+			}
 		}
 		
 		return null;
@@ -75,19 +95,24 @@ public class DictionaryProcess extends Process {
 
 	@Override
 	public void defineProto(int selectorCode, Process value) {
+		ensureAllInitialized();
 		properties.put(selectorCode, new Member(true, value));
 		protos.put(selectorCode, value);
 	}
 	
 	public void defineShared(int selectorCode, Process value) {
+		ensurePropertiesInitialized();
 		properties.put(selectorCode, new Member(true, value));
-		protos.remove(selectorCode);
+		if(protos != null)
+			protos.remove(selectorCode);
 	}
 	
 	@Override
 	public void define(int selectorCode, Process value) {
+		ensurePropertiesInitialized();
 		properties.put(selectorCode, new Member(false, value));
-		protos.remove(selectorCode);
+		if(protos != null)
+			protos.remove(selectorCode);
 	}
 	
 	@Override
@@ -107,12 +132,14 @@ public class DictionaryProcess extends Process {
 		DictionaryProcess clone = newBase();
 		cachedClones.put(this, clone);
 		
-		for(Map.Entry<Integer, Member> entry: this.properties.entrySet()) {
-			if(!entry.getValue().isShared) {
-				Process clonedValue = entry.getValue().value;
-				if(clonedValue instanceof DictionaryProcess)
-					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
-				clone.properties.put(entry.getKey(), new Member(false, clonedValue));
+		if(properties != null) {
+			for(Map.Entry<Integer, Member> entry: this.properties.entrySet()) {
+				if(!entry.getValue().isShared) {
+					Process clonedValue = entry.getValue().value;
+					if(clonedValue instanceof DictionaryProcess)
+						clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
+					clone.properties.put(entry.getKey(), new Member(false, clonedValue));
+				}
 			}
 		}
 		
