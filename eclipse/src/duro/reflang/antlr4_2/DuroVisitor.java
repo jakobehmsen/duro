@@ -40,6 +40,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgsWithParArg}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -68,6 +75,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#unaryMessage}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#dictEntry}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -80,13 +94,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#accessUnCap}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
@@ -157,13 +164,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSlotAccess(@NotNull DuroParser.SlotAccessContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link DuroParser#ws}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWs(@NotNull DuroParser.WsContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#closure}.

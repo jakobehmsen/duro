@@ -53,6 +53,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgsWithParArg}.
 	 * @param ctx the parse tree
 	 */
@@ -97,6 +108,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#unaryMessage}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#unaryMessage}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#dictEntry}.
 	 * @param ctx the parse tree
 	 */
@@ -117,17 +139,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#accessUnCap}.
-	 * @param ctx the parse tree
-	 */
-	void enterAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#accessUnCap}.
-	 * @param ctx the parse tree
-	 */
-	void exitAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
@@ -238,17 +249,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSlotAccess(@NotNull DuroParser.SlotAccessContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#ws}.
-	 * @param ctx the parse tree
-	 */
-	void enterWs(@NotNull DuroParser.WsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#ws}.
-	 * @param ctx the parse tree
-	 */
-	void exitWs(@NotNull DuroParser.WsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#closure}.

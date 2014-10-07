@@ -69,6 +69,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMultiArgMessageArgsWithParArg(@NotNull DuroParser.MultiArgMessageArgsWithParArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -121,6 +134,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterDictEntry(@NotNull DuroParser.DictEntryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -141,19 +167,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitLiteral(@NotNull DuroParser.LiteralContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitAccessUnCap(@NotNull DuroParser.AccessUnCapContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -284,19 +297,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSlotAccess(@NotNull DuroParser.SlotAccessContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterWs(@NotNull DuroParser.WsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitWs(@NotNull DuroParser.WsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
