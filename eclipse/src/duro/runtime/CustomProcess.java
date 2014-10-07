@@ -300,7 +300,24 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			String id = (String)instruction.operand1;
 			int argumentCount = (int)instruction.operand2;
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(id, argumentCount));
-			currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE, code, argumentCount);
+			
+			switch(argumentCount) {
+			case 0: 
+				currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE_0, code, argumentCount);
+				break;
+			case 1: 
+				currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE_1, code, argumentCount);
+				break;
+			case 2: 
+				currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE_2, code, argumentCount);
+				break;
+			case 3: 
+				currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE_3, code, argumentCount);
+				break;
+			default:
+				currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SEND_CODE, code, argumentCount);
+				break;
+			}
 			
 			break;
 		} case Instruction.OPCODE_SEND_CODE: {
@@ -315,16 +332,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
 				Process[] arguments = new Process[behavior.parameterCount];
-				
-				if(argumentCount < behavior.parameterCount) {
-					for(int i = argumentCount - 1; i >= 0; i--)
-						arguments[i] = currentFrame.stack.pop();
-					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = singletonNil;
-				} else {
-					for(int i = behavior.parameterCount - 1; i >= 0; i--)
-						arguments[i] = currentFrame.stack.pop();
-				}
+
+				for(int i = argumentCount - 1; i >= 0; i--)
+					arguments[i] = currentFrame.stack.pop();
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
@@ -334,6 +344,118 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				for(int i = argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				Process process = (Process)callable;
+				
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
+			}
+			
+			break;
+		} case Instruction.OPCODE_SEND_CODE_0: {
+			int code = (int)instruction.operand1;
+			
+			Process receiver = currentFrame.stack.pop();
+			
+			Object callable = receiver.getCallable(this, code);
+
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] arguments = new Process[behavior.parameterCount];
+				
+				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+			} else if(callable != null) {
+				Process[] arguments = new Process[1];
+				
+				Process process = (Process)callable;
+				
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
+			}
+			
+			break;
+		} case Instruction.OPCODE_SEND_CODE_1: {
+			int code = (int)instruction.operand1;
+			
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			
+			Object callable = receiver.getCallable(this, code);
+
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] arguments = new Process[behavior.parameterCount];
+				arguments[0] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+			} else if(callable != null) {
+				Process[] arguments = new Process[1];
+				arguments[0] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				Process process = (Process)callable;
+				
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
+			}
+			
+			break;
+		} case Instruction.OPCODE_SEND_CODE_2: {
+			int code = (int)instruction.operand1;
+			
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			
+			Object callable = receiver.getCallable(this, code);
+
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] arguments = new Process[behavior.parameterCount];
+				arguments[1] = currentFrame.stack.pop();
+				arguments[0] = currentFrame.stack.pop();
+				
+				currentFrame.stack.pop(); // Pop receiver
+				
+				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+			} else if(callable != null) {
+				Process[] arguments = new Process[1];
+				arguments[1] = currentFrame.stack.pop();
+				arguments[0] = currentFrame.stack.pop();
+				currentFrame.stack.pop(); // Pop receiver
+				
+				Process process = (Process)callable;
+				
+				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
+			}
+			
+			break;
+		} case Instruction.OPCODE_SEND_CODE_3: {
+			int code = (int)instruction.operand1;
+			
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			
+			Object callable = receiver.getCallable(this, code);
+
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] arguments = new Process[behavior.parameterCount];
+				arguments[2] = currentFrame.stack.pop();
+				arguments[1] = currentFrame.stack.pop();
+				arguments[0] = currentFrame.stack.pop();
+				
+				currentFrame.stack.pop(); // Pop receiver
+				
+				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+			} else if(callable != null) {
+				Process[] arguments = new Process[1];
+				arguments[2] = currentFrame.stack.pop();
+				arguments[1] = currentFrame.stack.pop();
+				arguments[0] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
@@ -546,25 +668,38 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			int argumentOffset = closure.argumentOffset;
-			int argumentCount = closure.parameterCount;
+			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, closure.parameterCount);
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
-			// Move forward arguments
-			if(currentFrame.arguments.length < argumentCount) {
-				System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, argumentOffset, currentFrame.arguments.length);
-//				for(int i = 0; i < currentFrame.arguments.length; i++) {
-//					int ordinal = ordinals[i];
-//					Process argument = currentFrame.arguments[i];
-//					frame.frame.arguments[ordinal] = argument;
-//				}
-			} else {
-				System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, argumentOffset, argumentCount);
-//				for(int i = 0; i < ordinals.length; i++) {
-//					int ordinal = ordinals[i];
-//					Process argument = currentFrame.arguments[i];
-//					frame.frame.arguments[ordinal] = argument;
-//				}
-			}
+			break;
+		} case Instruction.OPCODE_CALL_CLOSURE_0: {
+			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
+			BehaviorProcess behavior = closure.behavior;
+			FrameProcess frame = closure.frame;
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			
+			break;
+		} case Instruction.OPCODE_CALL_CLOSURE_1: {
+			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
+			BehaviorProcess behavior = closure.behavior;
+			FrameProcess frame = closure.frame;
+			frame.frame.arguments[closure.argumentOffset] = currentFrame.arguments[0];
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			
+			break;
+		} case Instruction.OPCODE_CALL_CLOSURE_2: {
+			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
+			BehaviorProcess behavior = closure.behavior;
+			FrameProcess frame = closure.frame;
+			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, 2);
+			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			
+			break;
+		} case Instruction.OPCODE_CALL_CLOSURE_3: {
+			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
+			BehaviorProcess behavior = closure.behavior;
+			FrameProcess frame = closure.frame;
+			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, 3);
 			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;

@@ -154,7 +154,26 @@ public interface PrimitiveVisitorFactory {
 						args.get(i).accept(argVisitor);
 					// Then closure
 					closureArg.accept(argVisitor);
-					instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE));
+					
+					int closureArgCount = args.size() - 1;
+					
+					switch(closureArgCount) {
+					case 0:
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
+						break;
+					case 1:
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_1));
+						break;
+					case 2:
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_2));
+						break;
+					case 3:
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_3));
+						break;
+					default:
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE));
+						break;
+					}
 				}
 			};
 		}
