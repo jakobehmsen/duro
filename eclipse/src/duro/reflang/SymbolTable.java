@@ -1,16 +1,62 @@
 package duro.reflang;
 
+import java.lang.reflect.Field;
 import java.util.Hashtable;
 
+import duro.runtime.Selector;
+
 public class SymbolTable {
-	private Hashtable<String, Integer> idToCodeMap = new Hashtable<String, Integer>();
-	private static Hashtable<Integer, String> codeToIdMap = new Hashtable<Integer, String>();
+	public static final class Codes {
+		public static final int parent = 0;
+		public static final int Any = 1;
+		public static final int Null = 2;
+		public static final int True = 3;
+		public static final int prototype = 4;
+		public static final int False = 5;
+		public static final int Array = 6;
+		public static final int String = 7;
+		public static final int Integer = 8;
+		public static final int Behavior = 9;
+		public static final int Closure = 10;
+		public static final int Frame = 11;
+		public static final int call = 12;
+	}
 	
-	public String getIdFromSymbolCode(int symbolCode) {
+	public static final SymbolTable ROOT = createRoot();
+	
+	
+	private static SymbolTable createRoot() {
+		SymbolTable symbolTable = new SymbolTable();
+
+		try {
+			for(Field codeField: Codes.class.getFields()) {
+				String id = codeField.getName();
+				int symbolCode = codeField.getInt(null);
+				
+				symbolTable.add(Selector.get(id), symbolCode);
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return symbolTable;
+	}
+	
+	private Hashtable<Selector, Integer> idToCodeMap = new Hashtable<Selector, Integer>();
+	private Hashtable<Integer, Selector> codeToIdMap = new Hashtable<Integer, Selector>();
+	
+	private SymbolTable() { }
+	
+	private void add(Selector id, int symbolCode) {
+		idToCodeMap.put(id, symbolCode);
+		codeToIdMap.put(symbolCode, id);
+	}
+	
+	public Selector getIdFromSymbolCode(int symbolCode) {
 		return codeToIdMap.get(symbolCode);
 	}
 	
-	public int getSymbolCodeFromId(String id) {
+	public int getSymbolCodeFromId(Selector id) {
 		Integer symbolCode = idToCodeMap.get(id);
 		
 		if(symbolCode == null) {

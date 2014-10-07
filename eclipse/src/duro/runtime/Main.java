@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 import duro.debugging.Debug;
+import duro.reflang.SymbolTable;
 import duro.transcriber.Journal;
 
 public class Main {
@@ -25,6 +26,8 @@ public class Main {
 			
 			try (ObjectInput oo = new ObjectInputStream(new FileInputStream(mainObjectCodePath))) {
 				mainProcess = (CustomProcess) oo.readObject();
+				SymbolTable symbolTable = SymbolTable.ROOT;
+				mainProcess.setSymbolTable(symbolTable);
 		    }
 			long endReadMainProcess = System.currentTimeMillis();
 			Debug.println(Debug.LEVEL_MEDIUM, "Read main process.");

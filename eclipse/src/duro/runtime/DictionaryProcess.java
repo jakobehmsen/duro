@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import duro.reflang.SymbolTable;
+
 public class DictionaryProcess extends Process {
 	/**
 	 * 
@@ -30,18 +32,18 @@ public class DictionaryProcess extends Process {
 		}
 	}
 
-	private Hashtable<Selector, Process> protos = new Hashtable<Selector, Process>();
-	private Hashtable<Selector, Member> properties = new Hashtable<Selector, Member>();
+	private Hashtable<Integer, Process> protos = new Hashtable<Integer, Process>();
+	private Hashtable<Integer, Member> properties = new Hashtable<Integer, Member>();
 	
 	@Override
-	public Object getCallable(ProcessFactory factory, Selector selector) {
-		Member callableMember = properties.get(selector);
+	public Object getCallable(ProcessFactory factory, int selectorCode) {
+		Member callableMember = properties.get(selectorCode);
 		
 		if(callableMember != null)
 			return callableMember.value;
 		
 		for(Object proto: protos.values()) {
-			Object callable = ((Process)proto).getCallable(factory, selector);
+			Object callable = ((Process)proto).getCallable(factory, selectorCode);
 			if(callable != null)
 				return callable;
 		}
@@ -50,14 +52,14 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public Process lookup(Selector selector) {
-		Member valueMember = properties.get(selector);
+	public Process lookup(int selectorCode) {
+		Member valueMember = properties.get(selectorCode);
 		
 		if(valueMember != null)
 			return valueMember.value;
 		
 		for(Process proto: protos.values()) {
-			Process value = proto.lookup(selector);
+			Process value = proto.lookup(selectorCode);
 			if(value != null)
 				return value;
 		}
@@ -72,20 +74,20 @@ public class DictionaryProcess extends Process {
 	}
 
 	@Override
-	public void defineProto(Selector selector, Process value) {
-		properties.put(selector, new Member(true, value));
-		protos.put(selector, value);
+	public void defineProto(int selectorCode, Process value) {
+		properties.put(selectorCode, new Member(true, value));
+		protos.put(selectorCode, value);
 	}
 	
-	public void defineShared(Selector selector, Process value) {
-		properties.put(selector, new Member(true, value));
-		protos.remove(selector);
+	public void defineShared(int selectorCode, Process value) {
+		properties.put(selectorCode, new Member(true, value));
+		protos.remove(selectorCode);
 	}
 	
 	@Override
-	public void define(Selector selector, Process value) {
-		properties.put(selector, new Member(false, value));
-		protos.remove(selector);
+	public void define(int selectorCode, Process value) {
+		properties.put(selectorCode, new Member(false, value));
+		protos.remove(selectorCode);
 	}
 	
 	@Override
@@ -105,7 +107,7 @@ public class DictionaryProcess extends Process {
 		DictionaryProcess clone = newBase();
 		cachedClones.put(this, clone);
 		
-		for(Map.Entry<Selector, Member> entry: this.properties.entrySet()) {
+		for(Map.Entry<Integer, Member> entry: this.properties.entrySet()) {
 			if(!entry.getValue().isShared) {
 				Process clonedValue = entry.getValue().value;
 				if(clonedValue instanceof DictionaryProcess)
@@ -114,7 +116,7 @@ public class DictionaryProcess extends Process {
 			}
 		}
 		
-		clone.defineProto(Selector.get("parent"), this);
+		clone.defineProto(SymbolTable.Codes.parent, this);
 		
 		return clone;
 	}
