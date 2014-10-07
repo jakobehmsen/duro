@@ -105,10 +105,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			this.interfaceId = interfaceId;
 		}
 		
-		public final FrameProcess getReifiedFrame(Process any) {
+		public final FrameProcess getReifiedFrame(Process protoFrame) {
 			if(reificationHandle.value == null) {
 				reificationHandle.value = new FrameProcess(this);
-				reificationHandle.value.defineProto(SymbolTable.Codes.prototype, any.lookup(SymbolTable.Codes.Frame));
+				reificationHandle.value.defineProto(SymbolTable.Codes.prototype, protoFrame);
 			}
 			
 			return reificationHandle.value;
@@ -136,6 +136,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	private DictionaryProcess protoInteger;
 	private DictionaryProcess protoArray;
 	private DictionaryProcess protoString;
+	private DictionaryProcess protoFrame;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
@@ -164,7 +165,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		protoInteger = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Integer, protoInteger);
 		// Add Frame prototype
-		protoAny.defineShared(SymbolTable.Codes.Frame, protoAny.clone());
+		protoFrame = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Frame, protoFrame);
 		// Add Behavior prototype
 		protoAny.defineShared(SymbolTable.Codes.Behavior, protoAny.clone());
 		// Add Closure prototype
@@ -625,7 +627,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_LOAD_THIS_FRAME: {
-			currentFrame.stack.push(currentFrame.getReifiedFrame(protoAny));
+			currentFrame.stack.push(currentFrame.getReifiedFrame(protoFrame));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -760,7 +762,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.stack.pop();
-			currentFrame.stack.push(frame.frame.sender.getReifiedFrame(protoAny));
+			currentFrame.stack.push(frame.frame.sender.getReifiedFrame(protoFrame));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -872,7 +874,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int argumentOffset = (int)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.stack.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(protoAny), behavior, argumentOffset, parameterCount);
+			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
 			closure.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Closure));
 			currentFrame.stack.push(closure);
 			currentFrame.instructionPointer++;
