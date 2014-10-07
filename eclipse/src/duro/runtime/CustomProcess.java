@@ -137,6 +137,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	private DictionaryProcess protoArray;
 	private DictionaryProcess protoString;
 	private DictionaryProcess protoFrame;
+	private DictionaryProcess protoBehavior;
 
 	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
@@ -168,7 +169,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		protoFrame = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Frame, protoFrame);
 		// Add Behavior prototype
-		protoAny.defineShared(SymbolTable.Codes.Behavior, protoAny.clone());
+		protoBehavior = protoAny.clone();
+		protoAny.defineShared(SymbolTable.Codes.Behavior, protoBehavior);
 		// Add Closure prototype
 		protoAny.defineShared(SymbolTable.Codes.Closure, protoAny.clone());
 		
@@ -885,7 +887,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			int variableCount = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
 			BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-			behavior.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Behavior));
+			behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
 			currentFrame.stack.push(behavior);
 			currentFrame.instructionPointer++;
 			
@@ -957,7 +959,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	@Override
 	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
 		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-		behavior.defineProto(SymbolTable.Codes.prototype, protoAny.lookup(SymbolTable.Codes.Behavior));
+		behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
 		return behavior;
 	}
 	
