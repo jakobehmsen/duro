@@ -141,7 +141,7 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("slotsNames", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_NAMES), true));
 
 		primitiveMap.put(Selector.get("arrayGet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_GET), true));
-		primitiveMap.put(Selector.get("arraySet", 3), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_SET), true));
+		primitiveMap.put(Selector.get("arraySet", 3), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_SET), false));
 		
 		primitiveMap.put(Selector.get("stringConcat", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_STRING_CONCAT), true));
 		primitiveMap.put(Selector.get("stringEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_STRING_EQUAL), true));
@@ -164,7 +164,7 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("newDict", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_DICT), true));
 		primitiveMap.put(Selector.get("newArray", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY), true));
 		primitiveMap.put(Selector.get("arrayLength", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_LENGTH), true));
-		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), true));
+		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), false));
 		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 		
 		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
