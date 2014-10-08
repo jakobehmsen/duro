@@ -23,12 +23,19 @@ public class DictionaryProcess extends Process {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		public final int code;
 		public final boolean isShared;
 		public final Process value;
 		
-		public Member(boolean isShared, Process value) {
+		public Member(int code, boolean isShared, Process value) {
+			this.code = code;
 			this.isShared = isShared;
 			this.value = value;
+		}
+		
+		@Override
+		public String toString() {
+			return SymbolTable.ROOT.getIdFromSymbolCode(code) + ": " + value;
 		}
 	}
 
@@ -75,18 +82,18 @@ public class DictionaryProcess extends Process {
 
 	@Override
 	public void defineProto(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(true, value));
+		properties.put(selectorCode, new Member(selectorCode, true, value));
 		protos.put(selectorCode, value);
 	}
 	
 	public void defineShared(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(true, value));
+		properties.put(selectorCode, new Member(selectorCode, true, value));
 		protos.remove(selectorCode);
 	}
 	
 	@Override
 	public void define(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(false, value));
+		properties.put(selectorCode, new Member(selectorCode, false, value));
 		protos.remove(selectorCode);
 	}
 	
@@ -112,7 +119,7 @@ public class DictionaryProcess extends Process {
 				Process clonedValue = entry.getValue().value;
 				if(clonedValue instanceof DictionaryProcess)
 					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
-				clone.properties.put(entry.getKey(), new Member(false, clonedValue));
+				clone.properties.put(entry.getKey(), new Member(entry.getValue().code, false, clonedValue));
 			}
 		}
 		
