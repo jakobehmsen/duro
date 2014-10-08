@@ -84,7 +84,7 @@ slotAssignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-literal: integer | string | dict | closure | pseudoVar;
+literal: integer | string | dict | closure | array | pseudoVar;
 integer: INT;
 string: STRING;
 dict: HASH SQ_OP (dictEntry)* SQ_CL;
@@ -96,6 +96,7 @@ dictEntry: selector
     );
 closure: BRA_OP behaviorParams (expression*) BAR_CL;
 behaviorParams: (PIPE (id)+ PIPE)?;
+array: HASH PAR_OP expression* PAR_CL;
 pseudoVar: PSEUDO_VAR;
 parArg: BACK_SLASH id;
 id: ID_CAP | ID_UNCAP;

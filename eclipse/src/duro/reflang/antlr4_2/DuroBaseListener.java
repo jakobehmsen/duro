@@ -173,6 +173,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterArray(@NotNull DuroParser.ArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitArray(@NotNull DuroParser.ArrayContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterSelfMultiArgMessageWithPar(@NotNull DuroParser.SelfMultiArgMessageWithParContext ctx) { }
 	/**
 	 * {@inheritDoc}

@@ -96,6 +96,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitLiteral(@NotNull DuroParser.LiteralContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#array}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray(@NotNull DuroParser.ArrayContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
