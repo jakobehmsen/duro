@@ -2,23 +2,7 @@
 Standard library
 */
 
-/*
-function write(x) {
-	§sp_write(x.toString());
-}
-
-function writeln(x) {
-	write("" + x + "\n");
-}
-
-function readln() {
-	return §sp_next_line();
-}
-*/
-
-write => §sp_write(:x.toString())
-writeln => write("" + :x + "\n")
-readln => §sp_next_line()
+writeln => write: \x + "\n"
 
 /*
 // Implicit inheritance based on protocol?
@@ -32,230 +16,52 @@ Any.clone = function() {
 }
 */
 
-/*
-// Inlines? How?
-Any.callFunc = inline(args, function) {
-	// stack: function, args
-	#{
-		sp_call;
-	}
-}
-*/
+Any@clone => clone: this
+Any@== => \other.equalsAny: this
+Any@equalsAny => refEqual: \lhs, this
+Any@equalsInt => |other| false
+Any@equalsString => |other| false
+Any@!= => not: this == \other
+Any@slots => #[
+	target = this
+	set => slotsSet: target, \name, \value
+	setProto => slotsSetProto: target, \name, \value
+	get => slotsGet: target, \name
+	isDefined => slotsIsDefined: target, \name
+	names => slotsNames: target
+]
 
-/*
-Any.clone = function() {
-	return §sp_clone(this);
-};
-Any.== = function(other) {
-	return other.equalsAny(this);
-};
-Any.equalsAny = function(lhs) {
-	return §sp_ref_equal(lhs, this);
-};
-Any.equalsInt = function(lhs) {
-	return false;
-};
-Any.equalsString = function(lhs) {
-	return false;
-};
-Any.!= = function(other) {
-	return !(this == other);
-};
-Any.slots = function() {
+String@+ => stringConcat: this, \other.toString
+String@toString => this
+String@== => \other.equalsString: this
+String@equalsString => stringEqual: \lhs, this
 
-	return {
-		target: this,
-		set: function(name, value) {
-			return §slots_set(target, name, value);
-		},
-		setProto: function(name, value) {
-			return §slots_set_proto(target, name, value);
-		},
-		get: function(name) {
-			return §slots_get(target, name);
-		},
-		isDefined: function(name) {
-			return §slots_is_defined(target, name);
-		},
-		names: function() {
-			return §slots_names(target);
-		}
-	}
-};
-*/
-
-Any.clone => §sp_clone(this)
-Any.== => :other.equalsAny(this)
-Any.equalsAny => §sp_ref_equal(:lhs, this)
-Any.equalsInt => |other| false
-Any.equalsString => |other| false
-Any.!= => !(this == :other)
-Any.slots => (
-	return #[
-		target = this
-		set => §slots_set(target, :name, :value)
-		setProto => §slots_set_proto(target, :name, :value)
-		get => §slots_get(target, :name)
-		isDefined => §slots_is_defined(target, :name)
-		names => §slots_names(target)
-	]
-)
-
-
-
-/*
-What about associating each definition with a particular number of arguments?
-
-E.g. binary and unary version of +
-function +(other) {
-	...
-}
-function +() {
-	...
-}
-
-Then how to solve the following case? How many arguments?
-
-var x = function(other) {
-	...
-};
-this.+ = x;
-
-Perhaps:
-
-this.+ = x; // No arguments
-this.+() = x; // No arguments
-this.+(:) = x; // One argument
-this.+(::) = x; // Two arguments
-*/
-
-/*
-String.+ = function(other) {
-	return §sp_string_concat(this, other.toString());
-};
-String.toString = function() {
-	return this;
-};
-String.== = function(other) {
-	return other.equalsString(this);
-};
-String.equalsString = function(lhs) {
-	return §sp_string_equal(lhs, this);
-};
-*/
-
-String.+ => §sp_string_concat(this, :other.toString())
-String.toString => this
-String.== => :other.equalsString(this)
-String.equalsString => §sp_string_equal(:lhs, this)
-
-/*
-Integer.+ = function(other) {
-	// Should do double dispatching
-	return §sp_int_add(this, other);
-};
-Integer.- = function(other) {
-	// Should do double dispatching
-	return §sp_int_sub(this, other);
-};
-Integer.* = function(other) {
-	// Should do double dispatching
-	return §sp_int_mult(this, other);
-};
-Integer./ = function(other) {
-	// Should do double dispatching
-	return §sp_int_div(this, other);
-};
-Integer.% = function(other) {
-	// Should do double dispatching
-	return §sp_int_rem(this, other);
-};
-Integer.toString = function() {
-	return §sp_int_to_string(this);
-};
-*/
-
-Integer.+ => §sp_int_add(this, :other)
-Integer.- => §sp_int_sub(this, :other)
-Integer.* => §sp_int_mult(this, :other)
-Integer./ => §sp_int_div(this, :other)
-Integer.% => §sp_int_rem(this, :other)
-Integer.toString => §sp_int_to_string(this)
+Integer@+ => intAdd: this, \other
+Integer@- => intSub: this, \other
+Integer@* => intMult: this, \other
+Integer@/ => intDiv: this, \other
+Integer@% => intRem: this, \other
+Integer@toString => intToString: this
 
 /*
 Add definition of greater/less operator here for Integer prototype
 */
 
-/*
-Integer.> = function(other) {
-	// Should do double dispatching
-	return §sp_int_greater(this, other);
-};
-Integer.>= = function(other) {
-	// Should do double dispatching
-	if(§sp_int_greater(this, other))
-		return true;
-	return §sp_int_equal(this, other);
-};
-Integer.< = function(other) {
-	// Should do double dispatching
-	return §sp_int_less(this, other);
-};
-Integer.<= = function(other) {
-	// Should do double dispatching
-	if(§sp_int_less(this, other))
-		return true;
-	return §sp_int_equal(this, other);
-};
-Integer.== = function(other) {
-	return other.equalsInt(this);
-};
-Integer.equalsInt = function(lhs) {
-	return §sp_int_equal(lhs, this);
-};
-*/
-
 // Should do double dispatching
-Integer.> => §sp_int_greater(this, :other)
+Integer@> => intGreater: this, \other
 // Should do double dispatching
-Integer.>= => (
-	if(§sp_int_greater(this, other))
-		return true
-	return §sp_int_equal(this, other)
-)
+Integer@>= => if: intGreater: this, \other, true Else: intEqual: this, \other
 // Should do double dispatching
-Integer.< => §sp_int_less(this, :other)
+Integer@< => intLess: this, \other
 // Should do double dispatching
-Integer.<= => (
-	if(§sp_int_less(this, other))
-		return true
-	return §sp_int_equal(this, other)
-)
-Integer.== => :other.equalsInt(this)
-Integer.equalsInt => §sp_int_equal(:lhs, this)
+Integer@<= => if: intLess: this, \other, true Else: intEqual: this, \other
+Integer@== => \other.equalsInt: this
+Integer@equalsInt => intEqual: \lhs, this
 
+Frame@sender => frameSender: this
+Frame@setSender => frameSetSender: this, \newSender
+Frame@resume => frameResume: this, \x
 
-/*
-Frame.sender = function() {
-	return §sp_frame_sender(this);
-};
-Frame.setSender = function(newSender) {
-	return §sp_frame_set_sender(this, newSender);
-};
-Frame.resume = function(x) {
-	return §sp_frame_resume(this, x);
-};
-*/
-
-Frame.sender => §sp_frame_sender(this)
-Frame.setSender => §sp_frame_set_sender(this, :newSender)
-Frame.resume => §sp_frame_resume(this, :x)
-
-
-/*
-Closure.call = function() {
-	return §call_closure(this);
-};
-*/
-
-Closure.call => §call_closure(this)
+Closure@call => eval: this
+Closure@call => eval: this With: \arg0
+Closure@call => eval: this With: \arg0 With: \arg1
