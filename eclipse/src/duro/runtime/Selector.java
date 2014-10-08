@@ -41,4 +41,12 @@ public class Selector implements Serializable {
 	public static Selector get(String id) {
 		return get(id, 0);
 	}
+
+	public String getId() {
+		return id;
+	}
+
+	public int getParameterCount() {
+		return parameterCount;
+	}
 }
