@@ -2,165 +2,90 @@
 Collections library
 */
 
-/*
-Iterable = { };
-*/
-
 Iterable = #[]
-
-/*
-Generator = {
-	on: function(block) {
-		var generator = {
-			current: null,
-			producer: null,
-			mover: null,
-			moveNext: function() {
-				current = null;
-				mover = frame;
-				producer.setSender(mover);
-				producer.resume(null);
-			},
-			atEnd: function() {
-				 // TODO: Change this, because this elimits support for yielding nulls
-				 // - Could be replaced by having an extra putLastTime slot?
-				return current == null;
-			},
-			put: function(item) {
-				current = item;
-				producer = frame.sender();
-				mover.resume(null);
-			},
-			next: function() {
-				var previous = current;
-				moveNext();
-				return previous;
-			}
-		};
-		generator.mover = frame;
-		block(generator);
-		return generator;
+Iterable@each => (
+	var iterator = iterator()
+	while: not: iterator.atEnd,
+		\block.call: iterator.next
+)
+Iterable@where => |predicate| Generatable.on {|generator|
+	each: {
+		if: predicate.call: \next, generator.put: \next
 	}
-};
-*/
+}
+Iterable@map => |block| Generatable.on {|generator|
+	each: {
+		var mapped = block.call: \next
+		generator.put: next
+	}
+}
 
 Generator = #[
-	on => |block| (
+	on => (
 		var generator = #[
 			current = null
 			producer = null
 			mover = null
+			gotNext = false
 			moveNext => (
-				current = null
+				gotNext = false
 				mover = frame
-				producer.setSender(mover)
-				producer.resume(null)
+				producer.setSender: mover
+				producer.resume: null
 			)
-		 	// TODO: Change this, because this limits support for yielding nulls
-			// - Could be replaced by having an extra putLastTime slot?
-			atEnd => current == null
+			atEnd => not: gotNext
 			put => (
-				current = :item
-				producer = frame.sender()
-				mover.resume(null)
+				current = \item
+				gotNext = true
+				producer = frame.sender
+				mover.resume: null
 			)
 			next => (
 				var previous = current
 				moveNext()
-				return previous
+				return: previous
 			)
 		]
-		generator.mover = frame
-		block(generator)
-		//:block(generator) // Not possible to invoke arguments this way (currently)
-		return generator
+		
+		generator@mover = frame
+		\block.call: generator
+		return: generator
 	)
 ]
-
-/*
-Generatable = {
-	on: function(block) {
-		var generatable = Iterable.clone();
-		
-		generatable.block = block;
-		generatable.iterator = function() {
-			return Generator.on(block);
-		};
-		
-		return generatable;
-	}
-};
-*/
 
 Generatable = #[
 	on => #[
 		prototype ^= Iterable
-		block = :block
-		iterator => Generator.on(block)
+		block = \block
+		iterator => Generator.on: block
 	]
 ]
 
+newArray => newArray: \length
 
-/*
-function newArray(length) {
-	return §sp_new_array(length);
-}
-
-Array.prototype ^= Iterable;
-Array.set = function(index, value) {
-	return §sp_array_set(this, index, value);
-};
-Array.get = function(index) {
-	return §sp_array_get(this, index);
-};
-Array.length = function() {
-	return §sp_array_length(this);
-};
-Array.iterator = function() {
-	return Generator.on({
-		for(var i = 0; i < length(); i++) {
-			var item = this[i];
-			:generator.put(item);
-		}
-	});
-};
-*/
-
-newArray => §sp_new_array(:length)
-
-Array.prototype ^= Iterable
-Array.[] => §sp_array_set(this, :index, :value)
-Array.[] => §sp_array_get(this, :index)
-Array.length => §sp_array_length(this)
-Array.iterator => Generator.on{
-	for(var i = 0; i < length(); i++) {
-		var item = this[i];
-		:generator.put(item);
-	}
+Array@prototype ^= Iterable
+Array@[] => arraySet: this, \index, \value
+Array@[] => arrayGet: this, \index
+Array@length => arrayLength: this
+Array@iterator => Generator.on: {
+	var i = 0
+	while: i < length(), (
+		var item = this[i]
+		\generator.put: item
+		i = i + 1
+	)
 }
 
 
-/*
-Array.extend #[
-	prototype ^= Iterable
-	[::] => §sp_array_set(this, :index, :value)
-	[:] => §sp_array_get(this, :index)
-	length => §sp_array_length(this)
-	iterator => Generator.on{
-		for(var i = 0; i < length(); i++) {
-			var item = this[i];
-			:generator.put(item);
-		}
-	}
-]
 
-var array = #(1 2 3 4);
-*/
-
-Integer.to =>
-	for(var i = this; i < :end; i++)
-		yield i
-Integer.through => to(:end + 1)
+Integer@to => |end| Generatable.on: {
+	var i = 0
+	while: i < end, (
+		\generator.put: i
+		i = i + 1
+	)
+}
+Integer@through => to: \end + 1
 
 /*
 // Implicit inheritance based on protocol?
@@ -175,77 +100,25 @@ Iterable.where = function(predicate) {
 }
 */
 
-/*
-Iterable.where = function(predicate) {
-	return Generatable.on({
-		for(var x in this) {
-			if(predicate(x))
-				:generator.put(x);
-		}
-	});
-};
-Iterable.each = function(block) {
-	for(var x in this)
-		block(x);
-};
-*/
-
-Iterable.where => |predicate| Generatable.on{
-	for(var x in this) {
-		if(predicate(x))
-			:generator.put(x)
-	}
-}
-Iterable.each => |block|
-	for(var x in this)
-		block(x)
-Iterable.map => |block|
-	for(var x in this)
-		yield block(x)
-
-
-/*
-List = Iterable.clone();
-List.items = newArray(12);
-List.capacity = 12;
-List.size = 0;
-List.add = function(item) {
-	this.items[this.size] = item;
-	this.size++;
-};
-List.iterator = function() {
-	return Generator.on({
-		for(var i = 0; i < size; i++) {
-			var item = items[i];
-			:generator.put(item);
-		}
-	});
-};
-List.set = function(index, value) {
-	items[index] = value;
-};
-List.get = function(index) {
-	return items[index];
-};
-*/
-
 List = #[
 	prototype ^= Iterable
-	items = newArray(12)
+	items = newArray: 12
 	capacity = 12
 	size = 0
 	add => (
-		items[size] = :item
-		size++
+		items[size] = \item
+		size = size + 1
 	)
 	iterator => (
-		Generator.on{
-			for(var i = 0; i < size; i++) {
-				var item = items[i];
-				:generator.put(item);
-			}
+		Generator.on: {
+			var i = 0
+			while: i < length(), (
+				var item = items[i]
+				\generator.put: item
+				i = i + 1
+			)
 		}
 	)
-	[] => items[:index] = :value
-	[] => items[:index]
+	[] => items[\index] = \value
+	[] => items[\index]
 ]
