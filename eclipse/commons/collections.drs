@@ -8,20 +8,20 @@ Iterable@each => (
 	while: not: iterator.atEnd,
 		\block.call: iterator.next
 )
-Iterable@where => |predicate| Generatable.on {|generator|
+Iterable@where => |predicate| Generatable.on: {|generator|
 	each: {
 		if: predicate.call: \next, generator.put: \next
 	}
 }
-Iterable@map => |block| Generatable.on {|generator|
+Iterable@map => |block| Generatable.on: {|generator|
 	each: {
 		var mapped = block.call: \next
-		generator.put: next
+		generator.put: mapped
 	}
 }
 
 Generator = #[
-	on => (
+	on => |block| (
 		var generator = #[
 			current = null
 			producer = null
@@ -30,8 +30,11 @@ Generator = #[
 			moveNext => (
 				gotNext = false
 				mover = frame
-				producer.setSender: mover
 				producer.resume: null
+			)
+			close => (
+				gotNext = false
+				mover.resume: null
 			)
 			atEnd => not: gotNext
 			put => (
@@ -48,7 +51,11 @@ Generator = #[
 		]
 		
 		generator@mover = frame
-		\block.call: generator
+		{
+			block.call: generator
+			generator.close
+		}.call
+
 		return: generator
 	)
 ]
