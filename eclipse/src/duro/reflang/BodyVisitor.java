@@ -12,6 +12,7 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 import duro.reflang.antlr4_2.DuroBaseVisitor;
 import duro.reflang.antlr4_2.DuroLexer;
 import duro.reflang.antlr4_2.DuroParser.AccessContext;
+import duro.reflang.antlr4_2.DuroParser.ArrayContext;
 import duro.reflang.antlr4_2.DuroParser.AssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4_2.DuroParser.BinaryMessageContext;
@@ -24,6 +25,7 @@ import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
 import duro.reflang.antlr4_2.DuroParser.IndexAccessContext;
+import duro.reflang.antlr4_2.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4_2.DuroParser.IntegerContext;
 import duro.reflang.antlr4_2.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4_2.DuroParser.MessageChainContext;
@@ -384,7 +386,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		return null;
 	}
 	
-	public Object visitIndexAssignment(duro.reflang.antlr4_2.DuroParser.IndexAssignmentContext ctx) {
+	public Object visitIndexAssignment(IndexAssignmentContext ctx) {
 		// receiver
 		ExpressionContext indexCtx = ctx.expression(0);
 		indexCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
@@ -534,28 +536,48 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(mustBeExpression) {
 			OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
 			OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
-			BodyVisitor closureBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, new ArrayList<Instruction>(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
+			BodyVisitor closureBodyVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, new ArrayList<Instruction>(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
 			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
 				String parameterId = parameterIdNode.getText();
-				closureBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
+				closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
 			}
-			appendGroup(ctx.expression(), true, closureBodyInterceptor);
-			closureBodyInterceptor.instructions.add(new Instruction(Instruction.OPCODE_RET));
-			int parameterCount = closureBodyInterceptor.idToParameterOrdinalMap.size();
-			int closureParameterCount = closureBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
-			int variableCount = closureBodyInterceptor.idToVariableOrdinalMap.size();
+			appendGroup(ctx.expression(), true, closureBodyVisitor);
+			closureBodyVisitor.instructions.add(new Instruction(Instruction.OPCODE_RET));
+			int parameterCount = closureBodyVisitor.idToParameterOrdinalMap.size();
+			int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
+			int variableCount = closureBodyVisitor.idToVariableOrdinalMap.size();
 			
-			closureBodyInterceptor.idToParameterOrdinalMap.generate();
-			closureBodyInterceptor.idToVariableOrdinalMap.generate();
+			closureBodyVisitor.idToParameterOrdinalMap.generate();
+			closureBodyVisitor.idToVariableOrdinalMap.generate();
 
 			onEnd(() -> {
-				Instruction[] bodyInstructions = closureBodyInterceptor.instructions.toArray(new Instruction[closureBodyInterceptor.instructions.size()]);
+				Instruction[] bodyInstructions = closureBodyVisitor.instructions.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
 				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
 			});
 			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
 				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 		}
 
+		return null;
+	}
+	
+	@Override
+	public Object visitArray(ArrayContext ctx) {
+		if(mustBeExpression) {
+			int length = ctx.expression().size();
+			instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, length));
+			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
+			BodyVisitor itemVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			
+			for(int i = 0; i < length; i++) {
+				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, i));
+				ExpressionContext item = ctx.expression(i);
+				item.accept(itemVisitor);
+				instructions.add(new Instruction(Instruction.OPCODE_SP_ARRAY_SET));
+			}
+		}
+		
 		return null;
 	}
 	
