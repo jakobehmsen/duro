@@ -380,7 +380,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SEND_CODE_1: {
 			int code = (int)instruction.operand1;
 			
-			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 2);
 			
 			Object callable = receiver.getCallable(this, code);
 
@@ -407,7 +407,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SEND_CODE_2: {
 			int code = (int)instruction.operand1;
 			
-			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 3);
 			
 			Object callable = receiver.getCallable(this, code);
 
@@ -437,7 +437,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} case Instruction.OPCODE_SEND_CODE_3: {
 			int code = (int)instruction.operand1;
 			
-			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 1 - 1);
+			Process receiver = (Process)currentFrame.stack.get(currentFrame.stack.size() - 4);
 			
 			Object callable = receiver.getCallable(this, code);
 
@@ -531,10 +531,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_RET_THIS: {
-			Process result = currentFrame.self;
+		} case Instruction.OPCODE_RET_NONE: {
+//			Process result = currentFrame.self;
 			currentFrame = currentFrame.sender;
-			currentFrame.stack.push(result);
+//			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1001,7 +1001,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			    }
 				
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
-				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_THIS);
+				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
 				currentFrame = new Frame(
 					currentFrame, protoAny, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
 			} catch (ClassNotFoundException | IOException e) {

@@ -31,7 +31,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_CALL = 18;
 	public static final int OPCODE_FORWARD_CALL = 19;
 	public static final int OPCODE_RET = 20;
-	public static final int OPCODE_RET_THIS = 21;
+	public static final int OPCODE_RET_NONE = 21;
 	public static final int OPCODE_RET_FORWARD = 22;
 	public static final int OPCODE_IF_TRUE = 23;
 	public static final int OPCODE_IF_FALSE = 24;
@@ -222,7 +222,7 @@ public class Instruction implements Serializable {
 	}
 
 	public static boolean isReturn(int opcode) {
-		return opcode == OPCODE_RET || opcode == OPCODE_RET_THIS || opcode == OPCODE_RET_FORWARD;
+		return opcode == OPCODE_RET || opcode == OPCODE_RET_NONE || opcode == OPCODE_RET_FORWARD;
 	}
 	
 	public static boolean isExpressionCompatible(int opcode) {
