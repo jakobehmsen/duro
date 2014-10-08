@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import duro.reflang.SymbolTable;
+
 public class Instruction implements Serializable {
 	/**
 	 * 
@@ -218,6 +220,21 @@ public class Instruction implements Serializable {
 			operands.add(operand2);
 		if(operand3 != null)
 			operands.add(operand3);
+		
+		switch(opcode) {
+		case Instruction.OPCODE_SEND_CODE:
+		case Instruction.OPCODE_SEND_CODE_0:
+		case Instruction.OPCODE_SEND_CODE_1:
+		case Instruction.OPCODE_SEND_CODE_2:
+		case Instruction.OPCODE_SEND_CODE_3:
+			operands.clear();
+			operands.add(0, SymbolTable.ROOT.getIdFromSymbolCode((int)operand1).getId());
+			break;
+		case Instruction.OPCODE_GET_CODE:
+			operands.clear();
+			operands.add(0, SymbolTable.ROOT.getIdFromSymbolCode((int)operand1));
+			break;
+		}
 		return getNameFromOpcode(opcode) + operands;
 	}
 
