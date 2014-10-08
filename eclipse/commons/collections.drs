@@ -109,16 +109,14 @@ List = #[
 		items[size] = \item
 		size = size + 1
 	)
-	iterator => (
-		Generator.on: {
-			var i = 0
-			while: i < length(), (
-				var item = items[i]
-				\generator.put: item
-				i = i + 1
-			)
-		}
-	)
+	iterator => Generator.on: {
+		var i = 0
+		while: i < size, (
+			var item = items[i]
+			\generator.put: item
+			i = i + 1
+		)
+	}
 	[] => items[\index] = \value
 	[] => items[\index]
 ]
