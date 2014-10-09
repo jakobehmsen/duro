@@ -2,7 +2,7 @@
 Standard library
 */
 
-writeln => write: \x + "\n"
+writeln => write: \x.toString + "\n"
 
 /*
 // Implicit inheritance based on protocol?
@@ -42,6 +42,7 @@ Integer@* => intMult: this, \other
 Integer@/ => intDiv: this, \other
 Integer@% => intRem: this, \other
 Integer@toString => intToString: this
+Integer@isEven => this % 2 == 0
 
 /*
 Add definition of greater/less operator here for Integer prototype
