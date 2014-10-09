@@ -21,6 +21,7 @@ import duro.reflang.antlr4_2.DuroParser.BinaryMessageOperandContext;
 import duro.reflang.antlr4_2.DuroParser.ClosureContext;
 import duro.reflang.antlr4_2.DuroParser.DictContext;
 import duro.reflang.antlr4_2.DuroParser.DictEntryContext;
+import duro.reflang.antlr4_2.DuroParser.ExpressionChainContext;
 import duro.reflang.antlr4_2.DuroParser.ExpressionContext;
 import duro.reflang.antlr4_2.DuroParser.GroupingContext;
 import duro.reflang.antlr4_2.DuroParser.IdContext;
@@ -133,6 +134,29 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public Object visitExpression(ExpressionContext ctx) {
+		ParserRuleContext expr = (ParserRuleContext)ctx.getChild(0);
+		if(!mustBeExpression) {
+			if(ctx.expressionChain().size() > 0) {
+				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				expr.accept(messageExchangeVisitor);
+				
+				for(int i = 0; i < ctx.expressionChain().size(); i++) {
+					ExpressionChainContext chain = ctx.expressionChain(i);
+					messageExchangeVisitor.mustBeExpression = i < ctx.expressionChain().size() - 1;
+					chain.accept(messageExchangeVisitor);
+				}
+			} else {
+				expr.accept(this);
+			}
+		} else {
+			expr.accept(this);
+		}
+		
+		return null;
 	}
 	
 	@Override
