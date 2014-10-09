@@ -36,6 +36,7 @@ import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsNoParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParContext;
+import duro.reflang.antlr4_2.DuroParser.MultiArgMessageNoParTailContext;
 import duro.reflang.antlr4_2.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4_2.DuroParser.ParArgContext;
 import duro.reflang.antlr4_2.DuroParser.ProgramContext;
@@ -262,13 +263,27 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 
 	private void appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx, boolean isForSelf) {
-		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		if(id.equals("current"))
-			new String();
+		String id = 
+			ctx.multiArgMessageNoParHead().ID_UNCAP().getText() + 
+			ctx.multiArgMessageNoParTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
-		for(MultiArgMessageArgsNoParContext argsCtx: ctx.multiArgMessageArgsNoPar()) {
-			for(MultiArgMessageArgNoParContext argCtx: argsCtx.multiArgMessageArgNoPar())
+		
+		for(ParserRuleContext argCtx: ctx.multiArgMessageNoParHead().multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
+			if(ctx.multiArgMessageNoParHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+				// Wrap arg into closure
+				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+			}
+			args.add(argCtx);
+		}
+
+		for(MultiArgMessageNoParTailContext tailCtx: ctx.multiArgMessageNoParTail()) {
+			for(ParserRuleContext argCtx: tailCtx.multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
+				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+					// Wrap arg into closure
+					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+				}
 				args.add(argCtx);
+			}
 		}
 		
 		appendMultiArgMessage(id, args, isForSelf);
@@ -316,11 +331,25 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private void appendSingleArgMessageNoPar(SingleArgMessageNoParContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
-		args.add(ctx.multiArgMessageArgNoPar());
+		ParserRuleContext argCtx = ctx.multiArgMessageArgNoPar();
+		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+			// Wrap arg into closure
+			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+		}
+		args.add(argCtx);
 		
 		appendMultiArgMessage(id, args, isForSelf);
 	}
 	
+	private ParserRuleContext wrapIntoClosure(ParserRuleContext parent, int invokingState, ParserRuleContext argCtx) {
+		ClosureContext argClosureCtx = new ClosureContext(parent, invokingState);
+		argClosureCtx.addChild(new BehaviorParamsContext(argClosureCtx, invokingState));
+		ExpressionContext body = new ExpressionContext(argClosureCtx, invokingState);
+		body.addChild(argCtx);
+		argClosureCtx.addChild(body);
+		return argClosureCtx;
+	}
+
 	@Override
 	public Object visitUnaryMessage(UnaryMessageContext ctx) {
 		String id = ctx.ID_UNCAP().getText();
