@@ -116,6 +116,22 @@ List = #[
 		items[size] = \item
 		size = size + 1
 	)
+	removeAt => (
+		/*
+		Should be replaced by something like the following (hard-coded macro):
+		
+		from: 1 To: size - 1, items[\i] = items[\i + 1]
+		
+		*/
+		
+		var i = \index
+		while: i < (size - 1), (
+			items[i] = items[i + 1]
+			i = i + 1
+		)
+		items[i] = null
+		size = size - 1
+	)
 	iterator => Generator.on: {
 		var i = 0
 		while: i < size, (
