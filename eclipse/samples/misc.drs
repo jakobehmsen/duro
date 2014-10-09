@@ -2,218 +2,37 @@
 A file containing miscellaneous and frequently changed code samples.
 */
 
-/*
-load => §sp_load(:path)
 
-load "std"
-load "collections"
-*/
+load: "std" // Should load std.drs and check for existing compatible compilations; if exists then load compilation; else compile and then load
+load: "collections"
 
-
-
+load: "/auxi"
 
 /*
-Iterable = #[]
-Iterable.each => (
-	var iterator = iterator()
-	while not(iterator.atEnd()), (
-		var next = iterator.next()
-		:block.call next
-	)
+var list = List.clone
+
+list.add: 1
+list.add: 2
+list.add: 54
+list.add: 7
+list.add: 54
+list.add: 743
+list.add: 44
+list.add: 34
+
+list.removeAt: 2
+
+list[3] = 46
+
+$p1045 (
+	list.where: {\x.isOdd}; each: {writeln: \x.toString}
 )
-
-Generator = #[
-	on => (
-		var generator = #[
-			current = null
-			producer = null
-			mover = null
-			gotnext = false
-			moveNext => (
-				current = null
-				gotNext = false
-				mover = frame
-				producer.setSender(mover)
-				producer.resume(null)
-			)
-		 	// TODO: Change this, because this limits support for yielding nulls
-			// - Could be replaced by having an extra putLastTime slot?
-			atEnd => not gotnext //current == null
-			put => (
-				current = :item
-				gotNext = true
-				producer = frame.sender()
-				mover.resume(null)
-			)
-			next => (
-				var previous = current
-				moveNext()
-				return previous
-			)
-		]
-		generator.mover = frame
-		:block.call(generator)
-		return generator
-	)
-]
-
-Generatable = #[
-	on => #[
-		prototype ^= Iterable
-		block = :block
-		iterator => Generator.on(block)
-	]
-]
-
-
-
-writeln => write :x + "\n"
-
-String.+ => stringConcat this, :rhs.toString()
-String.addToInt => :lhs.toString() + this
-String.toString => this
-
-Integer.+ => :rhs.addToInt this
-Integer.addToInt => intAdd :lhs, this
-Integer.< => intLess this, :rhs
-Integer.<= => if intLess(this, :rhs), true Else intEquals(this, :rhs)
-Integer.toString => intToString this
-
-Closure.call => eval this
-Closure.call => eval this With :arg0
-Closure.call => eval this With :arg0 With :arg1
-
-Frame.sender => frameSender this
-Frame.setSender => frameSetSender this, :sender
-Frame.resume => frameResume this, :arg
-
-fromTo => |start end| Generatable.on{
-	var i = start
-	while i < end, (
-		:generator.put i
-		i = i + 1
-	)
-}
-
-var int = from 1 To 100
-var intIt = int.iterator()
-
-while(not intIt.atEnd()), 
-	writeln(intIt.next())
 */
 
+$pp23 doStuff()
 
-
-
-Iterable = #[]
-Iterable@each => (
-	var iterator = iterator()
-	while: not: iterator.atEnd,
-		\block.call: iterator.next
+/*
+$p10 (
+	1.to: 100; map: {\x * \x}; where: {\x.isEven}; each: {writeln: \x}
 )
-
-Generator = #[
-	on => (
-		var generator = #[
-			current = null
-			producer = null
-			mover = null
-			gotNext = false
-			moveNext => (
-				current = null
-				gotNext = false
-				mover = frame
-				producer.setSender: mover
-				producer.resume: null
-			)
-			atEnd => not: gotNext
-			put => (
-				current = \item
-				gotNext = true
-				producer = frame.sender
-				mover.resume: null
-			)
-			next => (
-				var previous = current
-				moveNext()
-				return: previous
-			)
-		]
-		generator@mover = frame
-		\block.call: generator
-		return: generator
-	)
-]
-
-Generatable = #[
-	on => #[
-		prototype ^= Iterable
-		block = \block
-		iterator => Generator.on: block
-	]
-]
-
-
-
-
-String@+ => stringConcat: this, \rhs.toString
-String@addToInt => \lhs.toString + this
-String@toString => this
-
-Integer@+ => \rhs.addToInt: this
-Integer@addToInt => intAdd: \lhs, this
-Integer@< => intLess: this, \rhs
-Integer@<= => if: (intLess: this, \rhs), true Else: (intEquals: this, \rhs)
-Integer@toString => intToString: this
-
-Closure@call => eval: this
-Closure@call => eval: this With: \arg0
-Closure@call => eval: this With: \arg0 With: \arg1
-
-Frame@sender => frameSender: this
-Frame@setSender => frameSetSender: this, \sender
-Frame@resume => frameResume: this, \arg
-
-fromTo => |start end| Generatable.on: {
-	var i = start
-	while: i < end, (
-		\generator.put: i
-		i = i + 1
-	)
-}
-
-writeln => write: \x + "\n"
-
-var ints = from: 1 To: 10000
-
-ints.each: {writeln: \x}
-
-/*
-var intsIt = ints.iterator
-
-while: not: intsIt.atEnd, 
-	writeln: intsIt.next
-*/
-
-
-
-/*
-
-while(not intIt.atEnd), (writeln intIt.next)
-
-while not intIt.atEnd, writeln intIt.next
-while not :intIt.atEnd, writeln :intIt.next
-while: not: intIt.atEnd, writeln: \intIt.next
-
-if (intLess this, :rhs), true Else (intEquals this, :rhs)
-
-argument of multi keyword message can be single arg single keyword message
-() after a keyword indicates no arguments; only single keyword messages
-single arg single keyword message can be chained in argument of multi keyword message
-
-x.y send message y/0 to x
-
-x@y lookup field y at x
-x::y lookup field y at x
-
 */

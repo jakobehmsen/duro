@@ -27,11 +27,19 @@ public class Main {
 		}
 	
 		String mainObjectSourcePath = args[0];
+			
 		if(!mainObjectSourcePath.endsWith(".drs"))
 			mainObjectSourcePath += ".drs";
 		String mainObject = mainObjectSourcePath.substring(0, mainObjectSourcePath.length() - 4);
 		String mainObjectCodePath = mainObject + ".drr";
 		String mainObjectCodeJournalPath = mainObject + ".jnl";
+		
+		String commonsPath; 
+		if(args.length > 1)
+			commonsPath = args[1];
+		else
+			commonsPath = "commons"; 
+		
 		try {
 			Debug.println(Debug.LEVEL_MEDIUM, "Reading main process...");
 			long startReadMainProcess = System.currentTimeMillis();
@@ -42,7 +50,7 @@ public class Main {
 			
 			if(mainProcess != null) {
 				SymbolTable symbolTable = SymbolTable.ROOT;
-				mainProcess.setSymbolTable(symbolTable);
+				mainProcess.setup(symbolTable, commonsPath, new File(mainObjectSourcePath).getParentFile().getCanonicalPath());
 	
 				long endReadMainProcess = System.currentTimeMillis();
 				Debug.println(Debug.LEVEL_MEDIUM, "Read main process.");

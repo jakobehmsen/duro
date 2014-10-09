@@ -1,0 +1,41 @@
+MenuContainer = #[
+	with => #[
+		description = \description
+		items = \items
+		select => |parentMenu| #[
+			perform => 0.to: items.size; each: {
+				var item = items[\i]
+				writeln: "" + \index + ": " + \item@description
+			}
+			decide => |root ancestor parent| (
+				var selection = readln.parseInt
+				var item = items[selection]
+				
+				var itemSelect = item.select
+				itemSelect.select
+				return: itemSelect.decide: root, parent, this
+			)
+		]
+	]
+]
+MenuAction = #[
+	for => #[
+		description = \description
+		action = \actionBlock
+		select => #[
+			perform => action.call
+			decide |root ancestor parent| => parent
+		]
+	]
+]
+MenuActionUp = #[
+	for => #[
+		description = "Up"
+		select => #[
+			perform => null
+			decide |root ancestor parent| => ancestor
+		]
+	]
+]
+
+doStuff => writeln: "HOWDI THERE AGAIN!!!"

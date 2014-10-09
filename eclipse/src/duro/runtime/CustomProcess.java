@@ -177,10 +177,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		currentFrame = new Frame(null, protoAny, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
 	}
 	
-	private SymbolTable symbolTable;
+	private transient SymbolTable symbolTable;
+	private transient String commonsPath;
+	private transient String currentPath;
 	
-	public void setSymbolTable(SymbolTable symbolTable) {
+	public void setup(SymbolTable symbolTable, String commonsPath, String currentPath) {
 		this.symbolTable = symbolTable;
+		this.commonsPath = commonsPath;
+		this.currentPath = currentPath;
 	}
 
 	public void replay(InteractionHistory interactionHistory) {
@@ -989,17 +993,17 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			StringProcess pathSource = (StringProcess)currentFrame.stack.pop();
 			String path = pathSource.str;
 			try {
-//				// What to do here during replay?
-//				// or rather, what to replace this instruction with for replay?
-//				path = "commons/gens/" + path + ".drr";
-//				CustomProcess customProcess;
-//				
-//				try (ObjectInput oo = new ObjectInputStream(new FileInputStream(path))) {
-//					customProcess = (CustomProcess) oo.readObject();
-//			    }
-//				
-				String sourcePath = "commons/" + path + ".drs";
-				String codePath = "commons/" + path + ".drr";
+				String sourcePath;
+				String codePath;
+				
+				if(path.startsWith("/")) {
+					sourcePath = currentPath + path + ".drs";
+					codePath = currentPath + path + ".drr";
+				} else {
+					sourcePath = commonsPath + "/" + path + ".drs";
+					codePath = commonsPath + "/" + path + ".drr";
+				}
+				
 				Compiler_NEW compiler = new Compiler_NEW();
 				CustomProcess customProcess = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
