@@ -51,8 +51,11 @@ variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
 grouping: PAR_OP (expression)+ PAR_CL;
 
-multiArgMessageNoPar:
-    ID_UNCAP COLON multiArgMessageArgsNoPar (ID_CAP COLON multiArgMessageArgsNoPar)*;
+multiArgMessageNoPar: multiArgMessageNoParHead multiArgMessageNoParTail*;
+multiArgMessageNoParHead: 
+    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgsNoPar;
+multiArgMessageNoParTail:
+    ID_CAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgsNoPar;
 multiArgMessageArgsNoPar:
     (multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*)?;
 multiArgMessageArgNoPar: 
@@ -70,7 +73,8 @@ multiArgMessageArgNoParChain:
     ;
 
 selfSingleArgMessageNoPar: singleArgMessageNoPar;
-singleArgMessageNoPar: ID_UNCAP COLON multiArgMessageArgNoPar;
+singleArgMessageNoPar: 
+    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgNoPar;
 
 unaryMessage: ID_UNCAP;
 
@@ -136,6 +140,7 @@ PIPE: '|';
 HASH: '#';
 AT: '@';
 DOT: '.';
+SINGLE_QUOTE: '\'';
 COMMA: ',';
 COLON: ':';
 SEMI_COLON: ';';

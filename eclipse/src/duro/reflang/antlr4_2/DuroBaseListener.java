@@ -134,6 +134,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -232,6 +245,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

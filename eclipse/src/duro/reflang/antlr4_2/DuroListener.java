@@ -108,6 +108,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoParHead}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageNoParHead}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryMessage}.
 	 * @param ctx the parse tree
 	 */
@@ -194,6 +205,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#dict}.

@@ -75,6 +75,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageNoParHead}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#unaryMessage}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -129,6 +136,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link DuroParser#dict}.
