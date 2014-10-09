@@ -86,7 +86,7 @@ Array@iterator => Generator.on: {
 
 
 Integer@to => |end| Generatable.on: {
-	var i = 0
+	var i = this
 	while: i < end, (
 		\generator.put: i
 		i = i + 1
