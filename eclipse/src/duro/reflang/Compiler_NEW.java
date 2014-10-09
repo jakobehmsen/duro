@@ -1,7 +1,15 @@
 package duro.reflang;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.function.Supplier;
@@ -180,8 +188,59 @@ public class Compiler_NEW {
 		Debug.println(Debug.LEVEL_MEDIUM, "Generated program.");
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
-//		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), instructions.toArray(new Instruction[instructions.size()]));
+	}
+	
+	public CustomProcess load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
+		CustomProcess process = null;
+		
+		File mainObjectSourceFile = new File(sourcePath);
+		File mainObjectCodeFile = new File(codePath);
+		long mainObjectSourceFileLastModified = mainObjectSourceFile.lastModified();
+		
+		boolean shouldCompile = true;
+		
+		if(mainObjectCodeFile.exists()) {
+			try (ObjectInput oo = new ObjectInputStream(new FileInputStream(codePath))) {
+				long compilationSourceLastModified = (long) oo.readLong();
+				if(compilationSourceLastModified == mainObjectSourceFileLastModified) {
+					process = (CustomProcess) oo.readObject();
+					shouldCompile = false;
+					Debug.println(Debug.LEVEL_MEDIUM, "Loaded object file for '" + sourcePath + "'.");
+				} else {
+					Debug.println(Debug.LEVEL_MEDIUM, "Object file for '" + sourcePath + "' is out of date.");
+				}
+		    }
+		} else {
+			Debug.println(Debug.LEVEL_MEDIUM, "Missing object file for '" + sourcePath + "'.");
+		}
+		
+		if(shouldCompile) {
+			Debug.println(Debug.LEVEL_MEDIUM, "Compiling '" + codePath + "' into '" + codePath + "'...");
+			FileInputStream inputStream;
+			try {
+				inputStream = new FileInputStream(sourcePath);
+				process = compile(inputStream);
+				
+				if(hasErrors()) {
+					System.err.println("Errors were found during compilation of '" + sourcePath + "':");
+					printErrors();
+				} else {
+					
+					try (ObjectOutput oo = new ObjectOutputStream(new FileOutputStream(codePath))) {
+						oo.writeLong(mainObjectSourceFileLastModified);
+				        oo.writeObject(process);
+				    }
+					
+					Debug.println(Debug.LEVEL_MEDIUM, "Compiled '" + codePath + "' into '" + codePath + "'.");
+				}
+			} catch (IOException e) {
+				System.err.println("Compilation of '" + sourcePath + "' failed.");
+				e.printStackTrace();
+			}
+		}
+		
+		return process;
 	}
 	
 	private DuroListener createBodyListener(

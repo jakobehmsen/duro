@@ -1,17 +1,15 @@
 package duro.runtime;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
 import duro.debugging.Debug;
+import duro.reflang.Compiler_NEW;
 import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory {
@@ -991,15 +989,19 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			StringProcess pathSource = (StringProcess)currentFrame.stack.pop();
 			String path = pathSource.str;
 			try {
-				// What to do here during replay?
-				// or rather, what to replace this instruction with for replay?
-				path = "commons/gens/" + path + ".drr";
-				CustomProcess customProcess;
-				
-				try (ObjectInput oo = new ObjectInputStream(new FileInputStream(path))) {
-					customProcess = (CustomProcess) oo.readObject();
-			    }
-				
+//				// What to do here during replay?
+//				// or rather, what to replace this instruction with for replay?
+//				path = "commons/gens/" + path + ".drr";
+//				CustomProcess customProcess;
+//				
+//				try (ObjectInput oo = new ObjectInputStream(new FileInputStream(path))) {
+//					customProcess = (CustomProcess) oo.readObject();
+//			    }
+//				
+				String sourcePath = "commons/" + path + ".drs";
+				String codePath = "commons/" + path + ".drr";
+				Compiler_NEW compiler = new Compiler_NEW();
+				CustomProcess customProcess = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
 				currentFrame = new Frame(
