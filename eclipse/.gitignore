@@ -1,3 +1,5 @@
 /bin/
 /commons/gens/
 /samples/gens/
+/samples/*.drr
+/samples/*.jnl/
