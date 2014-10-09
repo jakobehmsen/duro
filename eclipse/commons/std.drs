@@ -43,6 +43,7 @@ Integer@/ => intDiv: this, \other
 Integer@% => intRem: this, \other
 Integer@toString => intToString: this
 Integer@isEven => this % 2 == 0
+Integer@isOdd => not: isEven()
 
 /*
 Add definition of greater/less operator here for Integer prototype
