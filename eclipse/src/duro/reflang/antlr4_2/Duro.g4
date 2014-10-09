@@ -2,11 +2,15 @@ grammar Duro;
 
 program: expression*;
 expression: 
-    assignment | 
-    variableDeclaration | 
-    selfMultiArgMessageNoPar |
-    interfaceId |
-    messageExchange;
+    (
+        assignment | 
+        variableDeclaration | 
+        selfMultiArgMessageNoPar |
+        interfaceId |
+        messageExchange
+    )
+    expressionChain*
+    ;
 assignment: 
     id
     (
@@ -24,6 +28,18 @@ messageChain:
     slotAssignment | 
     indexAssignment |
     binaryMessage (binaryMessage)*
+    ;
+
+expressionChain: 
+    SEMI_COLON
+    (
+        ((multiArgMessageWithPar | unaryMessage) | indexAccess) messageChain? |
+        multiArgMessageNoPar |
+        slotAccess messageChain? |
+        slotAssignment | 
+        indexAssignment |
+        binaryMessage (binaryMessage)*
+    )
     ;
                 
 receiver:
@@ -122,6 +138,7 @@ AT: '@';
 DOT: '.';
 COMMA: ',';
 COLON: ':';
+SEMI_COLON: ';';
 BACK_SLASH: '\\';
 DOLLAR: '$';
 
