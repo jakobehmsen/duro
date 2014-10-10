@@ -504,6 +504,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void enterAtom(@NotNull DuroParser.AtomContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#atom}.
+	 * @param ctx the parse tree
+	 */
+	void exitAtom(@NotNull DuroParser.AtomContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#messageChain}.
 	 * @param ctx the parse tree
 	 */

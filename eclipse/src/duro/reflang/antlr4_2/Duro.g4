@@ -43,7 +43,7 @@ expressionChain:
     ;
                 
 receiver:
-    selfMultiArgMessageWithPar | access | grouping | literal | parArg;
+    selfMultiArgMessageWithPar | atom;
 selfMultiArgMessageNoPar: multiArgMessageNoPar;
 selfMultiArgMessageWithPar: multiArgMessageWithPar;
 
@@ -62,8 +62,7 @@ multiArgMessageArgNoPar:
     selfSingleArgMessageNoPar |
     selfMultiArgMessageWithPar |
     multiArgMessageArgNoParReceiver multiArgMessageArgNoParChain?;
-multiArgMessageArgNoParReceiver: 
-    access | grouping | literal | parArg;
+multiArgMessageArgNoParReceiver: atom;
 multiArgMessageArgNoParChain:
     (DOT (multiArgMessageWithPar | unaryMessage) | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     DOT singleArgMessageNoPar |
@@ -71,6 +70,7 @@ multiArgMessageArgNoParChain:
     indexAssignment |
     binaryMessage+
     ;
+atom: access | grouping | literal | pseudoVar | parArg;
 
 selfSingleArgMessageNoPar: singleArgMessageNoPar;
 singleArgMessageNoPar: 
@@ -104,7 +104,7 @@ slotAssignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-literal: integer | string | dict | closure | array | pseudoVar;
+literal: integer | string | dict | closure | array;
 integer: INT;
 string: STRING;
 dict: HASH SQ_OP (dictEntry)* SQ_CL;

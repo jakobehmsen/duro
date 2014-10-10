@@ -327,6 +327,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitInterfaceId(@NotNull DuroParser.InterfaceIdContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtom(@NotNull DuroParser.AtomContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#messageChain}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

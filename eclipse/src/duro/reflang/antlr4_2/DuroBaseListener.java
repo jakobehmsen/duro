@@ -602,6 +602,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterAtom(@NotNull DuroParser.AtomContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitAtom(@NotNull DuroParser.AtomContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMessageChain(@NotNull DuroParser.MessageChainContext ctx) { }
 	/**
 	 * {@inheritDoc}
