@@ -633,6 +633,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		return null;
 	}
 	
+	public void appendGroup(List<ExpressionContext> group) {
+		appendGroup(group, mustBeExpression, this);
+	}
+	
 	private void appendGroup(List<ExpressionContext> group, boolean lastMustBeExpression, BodyVisitor expressionVisitor) {
 		// Only last expression have a pop instruction appended
 		for(int i = 0; i < group.size(); i++) {
