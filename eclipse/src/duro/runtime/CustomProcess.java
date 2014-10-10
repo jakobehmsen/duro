@@ -187,6 +187,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		this.currentPath = currentPath;
 	}
 
+	@SuppressWarnings("unused")
 	public void replay(InteractionHistory interactionHistory) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
 		
