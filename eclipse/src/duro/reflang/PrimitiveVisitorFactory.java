@@ -46,6 +46,21 @@ public interface PrimitiveVisitorFactory {
 			};
 		}
 	}
+	
+	public static class Util {
+		public static void acceptClosureBodyOrCall(ParserRuleContext expression, Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
+				MessageCollector errors, ArrayList<Runnable> endHandlers,
+				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				OrdinalAllocator idToParameterOrdinalMap,
+				OrdinalAllocator idToVariableOrdinalMap) {
+			if(expression.getRuleIndex() == DuroParser.RULE_closure) {
+				ClosureContext closure = (ClosureContext)expression;
+				new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap).appendGroup(closure.expression());
+			} else {
+				instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
+			}
+		}
+	}
 
 	public static class IfElse implements PrimitiveVisitorFactory {
 		@Override
@@ -95,12 +110,7 @@ public interface PrimitiveVisitorFactory {
 				}
 
 				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
-					if(expression.getRuleIndex() == DuroParser.RULE_closure) {
-						ClosureContext closure = (ClosureContext)expression;
-						new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap).appendGroup(closure.expression());
-					} else {
-						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
-					}
+					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
 				}
 			};
 		}
@@ -122,13 +132,15 @@ public interface PrimitiveVisitorFactory {
 					
 					int jumpIndex = instructions.size();
 					
-					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
+//					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 					
 					int conditionalJumpIndex = instructions.size();
 					instructions.add(null);
 					
 					OrdinalAllocator bodyIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
-					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToVariableOrdinalMap));
+					acceptClosureBodyOrCall(body, bodyIdToVariableOrdinalMap, false);
+//					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToVariableOrdinalMap));
 
 					int whileBodyEndIndex = instructions.size();
 					int jump = jumpIndex - whileBodyEndIndex;
@@ -140,6 +152,10 @@ public interface PrimitiveVisitorFactory {
 					
 					if(mustBeExpression)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+				}
+
+				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
+					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
 				}
 			};
 		}
