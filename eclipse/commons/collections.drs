@@ -10,7 +10,7 @@ Iterable@each => (
 )
 Iterable@where => |predicate| Generatable.on: {|generator|
 	each: {
-		if: predicate.call: \next, generator.put: \next
+		if' predicate.call: \next, generator.put: \next
 	}
 }
 Iterable@map => |block| Generatable.on: {|generator|
