@@ -52,11 +52,11 @@ Add definition of greater/less operator here for Integer prototype
 // Should do double dispatching
 Integer@> => intGreater: this, \other
 // Should do double dispatching
-Integer@>= => if: intGreater: this, \other, true Else: intEqual: this, \other
+Integer@>= => if' intGreater: this, \other, true Else' intEqual: this, \other
 // Should do double dispatching
 Integer@< => intLess: this, \other
 // Should do double dispatching
-Integer@<= => if: intLess: this, \other, true Else: intEqual: this, \other
+Integer@<= => if' intLess: this, \other, true Else' intEqual: this, \other
 Integer@== => \other.equalsInt: this
 Integer@equalsInt => intEqual: \lhs, this
 
