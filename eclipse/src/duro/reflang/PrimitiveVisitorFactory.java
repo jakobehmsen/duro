@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import duro.reflang.antlr4_2.DuroParser;
+import duro.reflang.antlr4_2.DuroParser.ClosureContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -60,13 +62,13 @@ public interface PrimitiveVisitorFactory {
 					ParserRuleContext trueBlock = args.get(1);
 					ParserRuleContext falseBlock = args.size() > 2 ? args.get(2) : null;
 					
-					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
 					
 					int conditionalJumpIndex = instructions.size();
 					instructions.add(null);
 					
 					OrdinalAllocator trueBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
-					trueBlock.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, trueBlockIdToVariableOrdinalMap));
+					acceptClosureBodyOrCall(trueBlock, trueBlockIdToVariableOrdinalMap, mustBeExpression);
 					
 					// After statement on true is generated, then a jump should be generated
 					// Leave a spot allocated here and write to it later
@@ -80,7 +82,7 @@ public interface PrimitiveVisitorFactory {
 
 					if(falseBlock != null) {
 						OrdinalAllocator falseBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
-						falseBlock.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, falseBlockIdToVariableOrdinalMap));
+						acceptClosureBodyOrCall(falseBlock, falseBlockIdToVariableOrdinalMap, mustBeExpression);
 					} else {
 						if(mustBeExpression)
 							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
@@ -90,6 +92,15 @@ public interface PrimitiveVisitorFactory {
 					int elseEndIndex = instructions.size();
 					int elseJump = elseEndIndex - jumpIndex;
 					instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, elseJump));
+				}
+
+				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
+					if(expression.getRuleIndex() == DuroParser.RULE_closure) {
+						ClosureContext closure = (ClosureContext)expression;
+						new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap).appendGroup(closure.expression());
+					} else {
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
+					}
 				}
 			};
 		}
@@ -129,7 +140,6 @@ public interface PrimitiveVisitorFactory {
 					
 					if(mustBeExpression)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-
 				}
 			};
 		}
