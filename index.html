@@ -15,6 +15,13 @@
 			a:hover {color: #5E5E5E;}
 			a:active {color: #8E8E8E;}
 			
+			.block1 {background-color: #003366;}
+			.block2 {background-color: #7B0048;}
+			.block3 {background-color: #902219;}
+			.block4 {background-color: #FF6600;}
+			.block5 {background-color: #FFCC00;}
+			.block6 {background-color: #7AB317;}
+			
 			.general {
 				border-width: 3px;
 			}
@@ -40,7 +47,7 @@
 	</head>
 	<body>
 		<div style="margin: 15px;" class="title"> 
-			<div style="font-weight: 900; text-align:center; padding: 6px; background-color: #003366; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; text-align:center; padding: 6px; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block1">
 				<div>Duro's project page</div>
 				<div></div>
 			</div>
@@ -51,7 +58,7 @@
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #7B0048; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block2">
 				Overview
 			</div>
 			
@@ -63,7 +70,7 @@
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #902219; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; color: #F5F5F5; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block3">
 				Motivation
 			</div>
 			
@@ -78,7 +85,7 @@
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #FF6600; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block4">
 				Possibilities
 			</div>
 			
@@ -93,7 +100,7 @@
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #FFCC00; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block5">
 				Challenges
 			</div>
 			
@@ -102,22 +109,19 @@
 					The idea of persistent processes may implicate a naive implementation, where the size of the processes increases very fast. Some sort of maintenance of the persistent processes are likely necessary and challenging to implement.
 				</div>
 				<div>
-					Since it is not just executables which are created but processes, updating application behavior cannot be done by simply replacing an executable since that'll destroy the existing evolution of the previously compiled process. Instead, update packages must be compiled once a process has moved into production usage.
+					Since it is not just executables which are created but processes, updating application behavior cannot be done by simply replacing an executable since that'll destroy the existing evolution of the previously compiled process. Therefore, a seperation between process progam and state could be valuable.
 				</div>
 			</div>
 		</div>
 		
 		<div style="margin: 15px;" class="content general"> 
-			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; background-color: #7AB317; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general">
+			<div style="font-weight: 900; font-style:oblique; text-align:center; padding: 6px; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 12px 12px 0px 0px; border-bottom-width: 0;" class="general block6">
 				Crystalization
 			</div>
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					The current goal is to implement an ECMAScript-like frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span>.
-				</div>
-				<div>
-					A genesis process contains the origins of the possible evolutions and is represented by an empty extensible journal of instructions associated to an initial sequence of instructions. After a genesis process has been resumed, its journal is no longer empty and the process is no longer a genesis process. Each time a process is resumed, it is evaluated until either a pause- or finish instruction is met. When a pause instruction is met, the process stops and will resume at exactly that point upon resumption. When a finish instruction is met, the process simply finishes and can no longer be resumed.
+					The current goal is to implement a frontend, inspired by, among others, ECMAScript and Smalltalk, for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span>. Basically, a process is realized by combining a program with an interaction history. An interaction history represent the state of a process. This way, the program is not entangled with the process - and thus, the program part of a process can be replaced without affecting the state of the process.
 				</div>
 			</div>
 		</div>
