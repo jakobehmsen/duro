@@ -74,18 +74,28 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		 */
 		private static final long serialVersionUID = 1L;
 		public Frame sender;
-		public final Process self;
+//		public final Process self;
+		
+		// Arguments and locals can be joined into a single locals array.
+		// The locals array should contain arguments, variables, and stack. This requires a max stack size to be supplied
 		public Process[] arguments;
 		public Process[] variables;
+		
 		public final Instruction[] instructions;
 		public int instructionPointer;
-		public Stack<Process> stack = new Stack<Process>();
-		public Handle reificationHandle;
+		public Stack<Process> stack = new Stack<Process>(); // Could be replaced by a pointer to locals
+		
+		// Could probably be improved by refering to either null, a FrameProcess or a Frame
+		// If referring to null, then a FrameProcess hasn't been created yet but will be created lazily
+		// If referring to a FrameProcess, a FrameProcess has been created
+		// If referring to a Frame, then that frame behaves as reification handle does now
+		public Handle reificationHandle; 
+		
 		public InterfaceIdPart interfaceId;
 		
-		public Frame(Frame sender, Process self, Process[] arguments, int variableCount, Instruction[] instructions, InterfaceIdPart interfaceId) {
+		public Frame(Frame sender, /*Process self, */Process[] arguments, int variableCount, Instruction[] instructions, InterfaceIdPart interfaceId) {
 			this.sender = sender;
-			this.self = self;
+//			this.self = self;
 			this.arguments = arguments;
 			variables = new Process[variableCount];
 			this.instructions = instructions;
@@ -93,9 +103,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			this.interfaceId = interfaceId;
 		}
 		
-		public Frame(Frame sender, Process self, Process[] arguments, Process[] variables, Instruction[] instructions, InterfaceIdPart interfaceId) {
+		public Frame(Frame sender, /*Process self, */Process[] arguments, Process[] variables, Instruction[] instructions, InterfaceIdPart interfaceId) {
 			this.sender = sender;
-			this.self = self;
+//			this.self = self;
 			this.arguments = arguments;
 			this.variables = variables;
 			this.instructions = instructions;
@@ -174,7 +184,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		closureBehavior = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
 		
-		currentFrame = new Frame(null, protoAny, new Process[parameterCount], variableCount, instructions, new Frame.InterfaceIdPart("default"));
+		Process[] arguments = new Process[1 + parameterCount];
+		arguments[0] = protoAny;
+		currentFrame = new Frame(null, /*protoAny, */arguments, variableCount, instructions, new Frame.InterfaceIdPart("default"));
 	}
 	
 	private transient SymbolTable symbolTable;
@@ -334,24 +346,27 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
-				Process[] arguments = new Process[behavior.parameterCount];
+				Process[] arguments = new Process[1 + behavior.parameterCount];
 
+				arguments[0] = receiver;
 				for(int i = argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
-				Process[] arguments = new Process[argumentCount];
-				
+				// Send some kind of generic call message?
+				Process[] arguments = new Process[1 + argumentCount];
+
 				for(int i = argumentCount - 1; i >= 0; i--)
 					arguments[i] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
+				arguments[0] = process;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -366,15 +381,18 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] arguments = new Process[behavior.parameterCount];
+				Process[] arguments = new Process[1 + behavior.parameterCount];
+				arguments[0] = receiver;
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
+				// Send some kind of generic call message?
 				Process[] arguments = new Process[1];
 				
 				Process process = (Process)callable;
+				arguments[0] = process;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -389,19 +407,22 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] arguments = new Process[behavior.parameterCount];
-				arguments[0] = currentFrame.stack.pop();
+				Process[] arguments = new Process[1 + behavior.parameterCount];
+				arguments[0] = receiver;
+				arguments[1] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
-				Process[] arguments = new Process[1];
-				arguments[0] = currentFrame.stack.pop();
+				// Send some kind of generic call message?
+				Process[] arguments = new Process[2];
+				arguments[1] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
+				arguments[0] = process;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -416,22 +437,25 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] arguments = new Process[behavior.parameterCount];
+				Process[] arguments = new Process[1 + behavior.parameterCount];
+				arguments[0] = receiver;
+				arguments[2] = currentFrame.stack.pop();
 				arguments[1] = currentFrame.stack.pop();
-				arguments[0] = currentFrame.stack.pop();
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
-				Process[] arguments = new Process[1];
+				// Send some kind of generic call message?
+				Process[] arguments = new Process[3];
+				arguments[2] = currentFrame.stack.pop();
 				arguments[1] = currentFrame.stack.pop();
-				arguments[0] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
+				arguments[0] = process;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -446,30 +470,33 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] arguments = new Process[behavior.parameterCount];
+				Process[] arguments = new Process[1 + behavior.parameterCount];
+				arguments[0] = receiver;
+				arguments[3] = currentFrame.stack.pop();
 				arguments[2] = currentFrame.stack.pop();
 				arguments[1] = currentFrame.stack.pop();
-				arguments[0] = currentFrame.stack.pop();
 				
 				currentFrame.stack.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, receiver, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
 			} else if(callable != null) {
-				Process[] arguments = new Process[1];
+				// Send some kind of generic call message?
+				Process[] arguments = new Process[4];
+				arguments[3] = currentFrame.stack.pop();
 				arguments[2] = currentFrame.stack.pop();
 				arguments[1] = currentFrame.stack.pop();
-				arguments[0] = currentFrame.stack.pop();
 				currentFrame.stack.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
+				arguments[0] = process;
 				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
 			
 			break;
-		} case Instruction.OPCODE_CALL: {
+		}/* case Instruction.OPCODE_CALL: {
 			int argumentCount = (int)instruction.operand1;
 			
 			Object callable = currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
@@ -527,7 +554,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
 			}
 			break;
-		} case Instruction.OPCODE_RET: {
+		}*/ case Instruction.OPCODE_RET: {
 			Frame returnFrame = currentFrame.sender;
 			returnFrame.stack.push(currentFrame.stack.peek());
 			currentFrame = returnFrame;
@@ -671,39 +698,39 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, closure.parameterCount);
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			System.arraycopy(currentFrame.arguments, 1 /*Ignore self*/, frame.frame.arguments, closure.argumentOffset, closure.parameterCount);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_0: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self, */frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			frame.frame.arguments[closure.argumentOffset] = currentFrame.arguments[0];
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			frame.frame.arguments[closure.argumentOffset] = currentFrame.arguments[1];
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, 2);
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			System.arraycopy(currentFrame.arguments, 1 /*Ignore self*/, frame.frame.arguments, closure.argumentOffset, 2);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self, */frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.stack.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.arguments, 0, frame.frame.arguments, closure.argumentOffset, 3);
-			currentFrame = new Frame(currentFrame, frame.frame.self, frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
+			System.arraycopy(currentFrame.arguments, 1 /*Ignore self*/, frame.frame.arguments, closure.argumentOffset, 3);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.arguments, frame.frame.variables, behavior.instructions, frame.frame.interfaceId);
 			
 			break;
 		}
@@ -722,7 +749,8 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		} 
 		
 		case Instruction.OPCODE_LOAD_THIS: {
-			currentFrame.stack.push(currentFrame.self);
+//			currentFrame.stack.push(currentFrame.self);
+			currentFrame.stack.push(currentFrame.arguments[0]);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1009,8 +1037,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				CustomProcess customProcess = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
+				customProcess.currentFrame.arguments = new Process[]{protoAny};
 				currentFrame = new Frame(
-					currentFrame, protoAny, customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
+					currentFrame, /*protoAny, */customProcess.currentFrame.arguments, customProcess.currentFrame.variables.length, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}

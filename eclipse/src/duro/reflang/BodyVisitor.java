@@ -494,7 +494,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		int selectorParameterCount = functionBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
 		int variableCount = functionBodyInterceptor.idToVariableOrdinalMap.size();
 		
-		functionBodyInterceptor.idToParameterOrdinalMap.generate();
+		functionBodyInterceptor.idToParameterOrdinalMap.generate(1); /*Start from 1 since zero is used for self*/
 		functionBodyInterceptor.idToVariableOrdinalMap.generate();
 
 		onEnd(() -> {
