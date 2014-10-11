@@ -85,11 +85,12 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		public int instructionPointer;
 		public Stack<Process> stack = new Stack<Process>(); // Could be replaced by a pointer to locals
 		
-		// Could probably be improved by refering to either null, a FrameProcess or a Frame
+		// Could probably be improved by referring to either null, a FrameProcess or a Frame
 		// If referring to null, then a FrameProcess hasn't been created yet but will be created lazily
 		// If referring to a FrameProcess, a FrameProcess has been created
 		// If referring to a Frame, then that frame behaves as reification handle does now
-		public Handle reificationHandle; 
+//		public Handle reificationHandle;
+		public Object reificationHandle; 
 		
 		public InterfaceIdPart interfaceId;
 		
@@ -99,7 +100,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			this.arguments = arguments;
 			variables = new Process[variableCount];
 			this.instructions = instructions;
-			reificationHandle = new Handle();
+//			this.reificationHandle = new Handle();
 			this.interfaceId = interfaceId;
 		}
 		
@@ -109,17 +110,31 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			this.arguments = arguments;
 			this.variables = variables;
 			this.instructions = instructions;
-			reificationHandle = new Handle();
+//			this.reificationHandle = reificationHandle;
+//			this.reificationHandle = new Handle();
 			this.interfaceId = interfaceId;
 		}
 		
 		public final FrameProcess getReifiedFrame(Process protoFrame) {
-			if(reificationHandle.value == null) {
-				reificationHandle.value = new FrameProcess(this);
-				reificationHandle.value.defineProto(SymbolTable.Codes.prototype, protoFrame);
+			if(reificationHandle instanceof FrameProcess) {
+				return (FrameProcess)reificationHandle;
+			} else if(reificationHandle == null) {
+				FrameProcess reification = new FrameProcess(this);
+				// Can this be supplied as a argument to FrameProcess?
+				reification.defineProto(SymbolTable.Codes.prototype, protoFrame);
+				reificationHandle = reification;
+				
+				return reification;
 			}
 			
-			return reificationHandle.value;
+			return null;
+			
+//			if(((Handle)reificationHandle).value == null) {
+//				((Handle)reificationHandle).value = new FrameProcess(this);
+//				((Handle)reificationHandle).value.defineProto(SymbolTable.Codes.prototype, protoFrame);
+//			}
+//			
+//			return ((Handle)reificationHandle).value;
 		}
 		
 		public void extendInterfaceId(String id) {
