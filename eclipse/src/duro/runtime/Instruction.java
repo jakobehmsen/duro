@@ -34,7 +34,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_FORWARD_CALL = 19;
 	public static final int OPCODE_RET = 20;
 	public static final int OPCODE_RET_NONE = 21;
-	public static final int OPCODE_RET_FORWARD = 22;
+//	public static final int OPCODE_RET_FORWARD = 22;
 	public static final int OPCODE_IF_TRUE = 23;
 	public static final int OPCODE_IF_FALSE = 24;
 	public static final int OPCODE_JUMP = 25;
@@ -142,6 +142,8 @@ public class Instruction implements Serializable {
 	public final Object operand2;
 	public final Object operand3;
 	
+	// Have x sets of 3 operands, where x is the number of different types, e.g. int, Instruction[], String, and whatevet 
+	
 	public Instruction(int opcode) {
 		this(opcode, null);
 	}
@@ -239,7 +241,7 @@ public class Instruction implements Serializable {
 	}
 
 	public static boolean isReturn(int opcode) {
-		return opcode == OPCODE_RET || opcode == OPCODE_RET_NONE || opcode == OPCODE_RET_FORWARD;
+		return opcode == OPCODE_RET || opcode == OPCODE_RET_NONE/* || opcode == OPCODE_RET_FORWARD*/;
 	}
 	
 	public static boolean isExpressionCompatible(int opcode) {
