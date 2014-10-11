@@ -1,4 +1,4 @@
-package runtime2;
+package duro.runtime2;
 
 public class Selector {
 	public final String name;
