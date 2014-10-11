@@ -181,8 +181,13 @@ public class Compiler_NEW {
 //		Walker walker = new Walker();
 //		walker.walk(programInterceptor, programCtx);
 		programCtx.accept(programVisitor);
-		idToParameterOrdinalMap.generate();
-		idToVariableOrdinalMap.generate();
+//		idToParameterOrdinalMap.generate();
+//		idToVariableOrdinalMap.generate();
+		int parameterOffset = 1;
+		idToParameterOrdinalMap.generate(parameterOffset);
+		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
+		idToVariableOrdinalMap.generate(variableOffset);
+		
 		for(Runnable handler: endHandlers)
 			handler.run();
 		long endGen = System.currentTimeMillis();
@@ -450,28 +455,28 @@ public class Compiler_NEW {
 ////					primitiveGenerator.exitPrimitive(instructions);
 //			}
 			
-			@Override
-			public void enterAccess(AccessContext ctx) {
-				if(mustBeExpression) {
-					String id = ctx.id().getText();
-					
-					if(idToParameterOrdinalMap.isDeclared(id)) {
-						// Load argument
-						idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
-						return;
-					}
-					
-					if(idToVariableOrdinalMap.isDeclared(id)) {
-						// Load variable
-						idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
-						return;
-					}
-					
-					// Get member
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
-				}
-			}
+//			@Override
+//			public void enterAccess(AccessContext ctx) {
+//				if(mustBeExpression) {
+//					String id = ctx.id().getText();
+//					
+//					if(idToParameterOrdinalMap.isDeclared(id)) {
+//						// Load argument
+//						idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//						return;
+//					}
+//					
+//					if(idToVariableOrdinalMap.isDeclared(id)) {
+//						// Load variable
+//						idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+//						return;
+//					}
+//					
+//					// Get member
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//					instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+//				}
+//			}
 			
 			@Override
 			public void enterInteger(IntegerContext ctx) {

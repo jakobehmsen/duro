@@ -701,45 +701,45 @@ public class Compiler {
 				// behavior
 			}
 			
-			@Override
-			public void enterLookup(LookupContext ctx) {
-				String id = ctx.ID().getText();
-				
-				if(idToParameterOrdinalMap.isDeclared(id)) {
-					// Load argument
-					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
-					return;
-				}
-				
-				if(idToVariableOrdinalMap.isDeclared(id)) {
-					// Load variable
-					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
-					return;
-				}
-				
-				// Get member
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
-			}
-			
-			@Override
-			public void enterArgumentParameter(ArgumentParameterContext ctx) {
-				idToParameterOrdinalMap.declare(ctx.ID().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
-			}
-			
-			@Override
-			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
-				String id = getMessageIdText(ctx.messageExchange().messageId());
-				if(idToParameterOrdinalMap.isDeclared(id)) {
-					// Call argument
-					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
-				} else if(idToVariableOrdinalMap.isDeclared(id)) {
-					// Call variable
-					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
-				} else {
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-				}
-			}
+//			@Override
+//			public void enterLookup(LookupContext ctx) {
+//				String id = ctx.ID().getText();
+//				
+//				if(idToParameterOrdinalMap.isDeclared(id)) {
+//					// Load argument
+//					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//					return;
+//				}
+//				
+//				if(idToVariableOrdinalMap.isDeclared(id)) {
+//					// Load variable
+//					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+//					return;
+//				}
+//				
+//				// Get member
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//				instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+//			}
+//			
+//			@Override
+//			public void enterArgumentParameter(ArgumentParameterContext ctx) {
+//				idToParameterOrdinalMap.declare(ctx.ID().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//			}
+//			
+//			@Override
+//			public void enterThisMessageExchange(ThisMessageExchangeContext ctx) {
+//				String id = getMessageIdText(ctx.messageExchange().messageId());
+//				if(idToParameterOrdinalMap.isDeclared(id)) {
+//					// Call argument
+//					idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//				} else if(idToVariableOrdinalMap.isDeclared(id)) {
+//					// Call variable
+//					idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
+//				} else {
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//				}
+//			}
 			
 			private int getMessageExchangeArgumentCount(MessageExchangeContext ctx) {
 				if(ctx.messageExchangeExpressionArguments() != null)
@@ -1666,8 +1666,8 @@ public class Compiler {
 			
 			for(YieldStatement yieldStatement: yieldStatements) {
 				for(int index: yieldStatement.indexes) {
-					idToParameterOrdinalMapIterator.declare("generator", generatorOrdinal -> 
-						iteratorInstructions.set(index, new Instruction(Instruction.OPCODE_LOAD_ARG, generatorOrdinal)));
+//					idToParameterOrdinalMapIterator.declare("generator", generatorOrdinal -> 
+//						iteratorInstructions.set(index, new Instruction(Instruction.OPCODE_LOAD_ARG, generatorOrdinal)));
 				}
 			}
 			

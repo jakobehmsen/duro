@@ -494,8 +494,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		int selectorParameterCount = functionBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
 		int variableCount = functionBodyInterceptor.idToVariableOrdinalMap.size();
 		
-		functionBodyInterceptor.idToParameterOrdinalMap.generate(1); /*Start from 1 since zero is used for self*/
-		functionBodyInterceptor.idToVariableOrdinalMap.generate();
+		/*Start from 1 since zero is used for self*/
+		int parameterOffset = 1;
+		functionBodyInterceptor.idToParameterOrdinalMap.generate(parameterOffset);
+		int variableOffset = parameterOffset + functionBodyInterceptor.idToParameterOrdinalMap.size();
+		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
 
 		onEnd(() -> {
 			Instruction[] bodyInstructions = functionBodyInterceptor.instructions.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
@@ -533,7 +536,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			
 			if(idToParameterOrdinalMap.isDeclared(id)) {
 				// Load argument
-				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, parameterOrdinal));
 				return null;
 			}
 			
@@ -553,7 +557,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitParArg(ParArgContext ctx) {
-		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+//		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
+		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, parameterOrdinal));
 
 		return null;
 	}
@@ -599,8 +604,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
 			int variableCount = closureBodyVisitor.idToVariableOrdinalMap.size();
 			
-			closureBodyVisitor.idToParameterOrdinalMap.generate();
-			closureBodyVisitor.idToVariableOrdinalMap.generate();
+//			closureBodyVisitor.idToParameterOrdinalMap.generate();
+//			closureBodyVisitor.idToVariableOrdinalMap.generate();
 
 			onEnd(() -> {
 				Instruction[] bodyInstructions = closureBodyVisitor.instructions.toArray(new Instruction[closureBodyVisitor.instructions.size()]);

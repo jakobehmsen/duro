@@ -68,7 +68,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_THIS = 44;
 	public static final int OPCODE_LOAD_NULL = 45;
 	public static final int OPCODE_LOAD_LOC = 46;
-	public static final int OPCODE_LOAD_ARG = 47;
+//	public static final int OPCODE_LOAD_ARG = 47;
 	public static final int OPCODE_LOAD_INT = 48;
 	public static final int OPCODE_LOAD_TRUE = 49;
 	public static final int OPCODE_LOAD_FALSE = 50;

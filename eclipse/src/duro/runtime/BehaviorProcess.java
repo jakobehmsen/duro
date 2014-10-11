@@ -15,8 +15,6 @@ public class BehaviorProcess extends DictionaryProcess {
 		this.instructions = instructions;
 	}
 
-
-
 	@Override
 	public DictionaryProcess newBase() {
 		return new BehaviorProcess(parameterCount, variableCount, instructions);
