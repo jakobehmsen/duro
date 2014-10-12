@@ -203,9 +203,10 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 //				locals[i - 1] = locals[i];
 //			locals[index] = p;
 			
-			for(int i = stackSize - 1; i > index; i--)
-				stack[i - 1] = locals[i];
+			for(int i = stackSize - 1; i >= index; i--)
+				stack[i + 1] = stack[i];
 			stack[index] = p;
+			stackSize++;
 		}
 
 		public final String stackToString() {
