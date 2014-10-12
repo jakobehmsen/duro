@@ -25,9 +25,9 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 
 import duro.debugging.Debug;
-import duro.reflang.antlr4_2.DuroLexer;
-import duro.reflang.antlr4_2.DuroParser;
-import duro.reflang.antlr4_2.DuroParser.ProgramContext;
+import duro.reflang.antlr4.DuroLexer;
+import duro.reflang.antlr4.DuroParser;
+import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;

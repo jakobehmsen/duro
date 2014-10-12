@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import duro.reflang.antlr4_2.DuroParser;
-import duro.reflang.antlr4_2.DuroParser.ClosureContext;
+import duro.reflang.antlr4.DuroParser;
+import duro.reflang.antlr4.DuroParser.ClosureContext;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
