@@ -15,15 +15,23 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_PAUSE = 0;
 	public static final int OPCODE_INC_IP = 1;
 	public static final int OPCODE_FINISH = 2;
+	@PushCount(1)
 	public static final int OPCODE_DUP = 3;
+	@PushCount(1)
 	public static final int OPCODE_DUP1 = 4;
+	@PushCount(1)
 	public static final int OPCODE_DUP2 = 5;
+	@PushCount(1)
 	public static final int OPCODE_DUP_ANY = 6;
+	@PopCount(1)
 	public static final int OPCODE_STORE_LOC = 7;
 	public static final int OPCODE_POP = 8;
+	@PopCount(1)
 	public static final int OPCODE_SWAP = 9;
 	public static final int OPCODE_SWAP1 = 10;
 	public static final int OPCODE_SWAP_ANY = 11;
+	@PopCount(source = PopCount.Source.OPERAND, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND = 12;
 	public static final int OPCODE_SEND_CODE = 13;
 	public static final int OPCODE_SEND_CODE_0 = 14;
@@ -32,6 +40,7 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SEND_CODE_3 = 17;
 	public static final int OPCODE_CALL = 18;
 	public static final int OPCODE_FORWARD_CALL = 19;
+	@PopCount(1)
 	public static final int OPCODE_RET = 20;
 	public static final int OPCODE_RET_NONE = 21;
 //	public static final int OPCODE_RET_FORWARD = 22;
@@ -39,100 +48,182 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_IF_FALSE = 24;
 	public static final int OPCODE_JUMP = 25;
 	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 2)
+	@PopCount(2)
 	public static final int OPCODE_SET = 26;
 	public static final int OPCODE_SET_CODE = 27;
 	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 2)
+	@PopCount(2)
 	public static final int OPCODE_SET_PROTO = 28;
 	public static final int OPCODE_SET_PROTO_CODE = 29;
 	@ExpressionCompatible(operandTypes = {String.class, Integer.class}, popCount = 1)
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_GET = 30;
 	public static final int OPCODE_GET_CODE = 31;
 	@ExpressionCompatible(popCount = 3)
+	@PopCount(3)
 	public static final int OPCODE_SLOTS_SET = 32;
 	@ExpressionCompatible(popCount = 3)
+	@PopCount(3)
 	public static final int OPCODE_SLOTS_SET_PROTO = 33;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(3)
+	@PushCount(1)
 	public static final int OPCODE_SLOTS_GET = 34;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SLOTS_IS_DEFINED = 35;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SLOTS_NAMES = 36;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(source = PopCount.Source.OPERAND, value = 0)
+	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE = 37;
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_0 = 38;
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_1 = 39;
+	@PopCount(3)
+	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_2 = 40;
+	@PopCount(4)
+	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_3 = 41;
 	public static final int OPCODE_EXTEND_INTER_ID = 42;
 	public static final int OPCODE_SHRINK_INTER_ID = 43;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_THIS = 44;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_NULL = 45;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_LOC = 46;
 //	public static final int OPCODE_LOAD_ARG = 47;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_INT = 48;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_TRUE = 49;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_FALSE = 50;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_STRING = 51;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_THIS_FRAME = 52;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_FRAME = 53;
+	@PushCount(1)
 	public static final int OPCODE_LOAD_BEHAVIOR = 54;
 
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_BOOLEAN_OR = 65;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_BOOLEAN_AND = 66;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_BOOLEAN_NOT = 67;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_ARRAY_GET = 68;
 	@ExpressionCompatible(popCount = 3)
+	@PopCount(3)
 	public static final int OPCODE_SP_ARRAY_SET = 69;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_STRING_CONCAT = 70;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_STRING_EQUAL = 71;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_ADD = 72;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_SUB = 73;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_MULT = 74;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_DIV = 75;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_REM = 76;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_EQUAL = 77;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_GREATER = 78;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_LESS = 79;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_INT_TO_STRING = 80;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_FRAME_SENDER = 81;
 	@ExpressionCompatible(popCount = 2)
+	@PopCount(1)
 	public static final int OPCODE_SP_FRAME_SET_SENDER = 82;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
 	public static final int OPCODE_SP_FRAME_RESUME = 83;
 	@ExpressionCompatible(popCount = 2) @DoesReturn
+	@PopCount(2)
+	@PushCount(1)
 	public static final int OPCODE_SP_REF_EQUAL = 84;
 
 	@ExpressionCompatible(popCount = 1)
+	@PopCount(1)
 	public static final int OPCODE_SP_WRITE = 127;
 	@ExpressionCompatible @DoesReturn
+	@PushCount(1)
 	public static final int OPCODE_SP_NEXT_LINE = 128;
 	@ExpressionCompatible @DoesReturn
+	@PushCount(1)
 	public static final int OPCODE_SP_NEW_DICT = 129;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_NEW_ARRAY = 130;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_ARRAY_LENGTH = 131;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
 	public static final int OPCODE_SP_LOAD = 132;
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_NEW_CLOSURE = 133;
+	@PushCount(1)
 	public static final int OPCODE_SP_NEW_BEHAVIOR = 134;
 	@ExpressionCompatible(popCount = 1) @DoesReturn
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_SP_CLONE = 135;
 	
 	public static final int OPCODE_BREAK_POINT = 255;
@@ -167,11 +258,15 @@ public class Instruction implements Serializable {
 		public final String name;
 		public final ExpressionCompatible expressionCompatible;
 		public final DoesReturn doesReturn;
+		public final PushCount pushCount;
+		public final PopCount popCount;
 		
-		public InstructionInfo(String name, ExpressionCompatible expressionCompatible, DoesReturn doesReturn) {
+		public InstructionInfo(String name, ExpressionCompatible expressionCompatible, DoesReturn doesReturn, PushCount pushCount, PopCount popCount) {
 			this.name = name;
 			this.expressionCompatible = expressionCompatible;
 			this.doesReturn = doesReturn;
+			this.pushCount = pushCount;
+			this.popCount = popCount;
 		}
 	}
 	
@@ -195,7 +290,11 @@ public class Instruction implements Serializable {
 				    	int fieldOpcode = (int)field.get(null);
 				    	String name = field.getName().substring("OPCODE_".length());
 				    	
-				    	InstructionInfo info = new InstructionInfo(name, field.getDeclaredAnnotation(ExpressionCompatible.class), field.getDeclaredAnnotation(DoesReturn.class));
+				    	InstructionInfo info = new InstructionInfo(name, 
+			    			field.getDeclaredAnnotation(ExpressionCompatible.class), 
+			    			field.getDeclaredAnnotation(DoesReturn.class), 
+			    			field.getDeclaredAnnotation(PushCount.class), 
+			    			field.getDeclaredAnnotation(PopCount.class));
 				    	
 				    	opcodeToIdMap.put(fieldOpcode, info);
 				    	idToOpcodeMap.put(name.toLowerCase(), fieldOpcode);
@@ -266,5 +365,40 @@ public class Instruction implements Serializable {
 		ensureMapCreated();
 
 		return opcodeToIdMap.get(opcode).expressionCompatible.popCount();
+	}
+	
+	public Object getOperand(int index) {
+		switch(index) {
+		case 0:
+			return operand1;
+		case 1:
+			return operand2;
+		case 2:
+			return operand3;
+		}
+		
+		return null;
+	}
+
+	public static int getPopCount(Instruction instruction) {
+		ensureMapCreated();
+
+		PopCount popCount = opcodeToIdMap.get(instruction.opcode).popCount;
+		
+		if(popCount != null) {
+			if(popCount.source() == PopCount.Source.VALUE)
+				return popCount.value();
+			
+			return (int)instruction.getOperand(popCount.value());
+		}
+		
+		return 0;
+	}
+
+	public static int getPushCount(Instruction instruction) {
+		ensureMapCreated();
+
+		PushCount pushCount = opcodeToIdMap.get(instruction.opcode).pushCount;
+		return pushCount != null ? pushCount.value() : 0;
 	}
 }
