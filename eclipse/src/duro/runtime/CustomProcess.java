@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import duro.debugging.Debug;
@@ -24,14 +23,6 @@ public class CustomProcess extends Process {
 	};
 
 	public static class Frame implements Serializable {
-		private static class Handle implements Serializable {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			public FrameProcess value;
-		}
-		
 		private static class InterfaceIdPart implements Serializable {
 			/**
 			 * 
