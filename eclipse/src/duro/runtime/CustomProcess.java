@@ -119,9 +119,9 @@ public class CustomProcess extends Process {
 			if(reificationHandle instanceof FrameProcess) {
 				return (FrameProcess)reificationHandle;
 			} else if(reificationHandle == null) {
-				FrameProcess reification = new FrameProcess(this);
-				// Can this be supplied as a argument to FrameProcess?
-				reification.defineProto(SymbolTable.Codes.prototype, protoFrame);
+				FrameProcess reification = new FrameProcess(protoFrame, this);
+//				// Can this be supplied as a argument to FrameProcess?
+//				reification.defineProto(SymbolTable.Codes.prototype, protoFrame);
 				reificationHandle = reification;
 				
 				return reification;
@@ -1289,8 +1289,8 @@ public class CustomProcess extends Process {
 			int argumentOffset = (int)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.pop();
-			ClosureProcess closure = new ClosureProcess(currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
-			closure.defineProto(SymbolTable.Codes.prototype, closureBehavior);
+			ClosureProcess closure = new ClosureProcess(closureBehavior, currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
+//			closure.defineProto(SymbolTable.Codes.prototype, closureBehavior);
 			currentFrame.push(closure);
 			currentFrame.instructionPointer++;
 			
@@ -1299,8 +1299,8 @@ public class CustomProcess extends Process {
 			int localCount = (int)instruction.operand1;
 			int maxStackSize = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
-			BehaviorProcess behavior = new BehaviorProcess(localCount, maxStackSize, instructions);
-			behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
+			BehaviorProcess behavior = new BehaviorProcess(protoBehavior, localCount, maxStackSize, instructions);
+//			behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
 			currentFrame.push(behavior);
 			currentFrame.instructionPointer++;
 			

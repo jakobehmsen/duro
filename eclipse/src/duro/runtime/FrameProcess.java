@@ -2,7 +2,7 @@ package duro.runtime;
 
 import duro.runtime.CustomProcess.Frame;
 
-public class FrameProcess extends DictionaryProcess {
+public class FrameProcess extends BuiltinProcess {
 	/**
 	 * 
 	 */
@@ -10,12 +10,13 @@ public class FrameProcess extends DictionaryProcess {
 
 	public CustomProcess.Frame frame;
 
-	public FrameProcess(Frame frame) {
+	public FrameProcess(Process prototype, Frame frame) {
+		super(prototype);
 		this.frame = frame;
 	}
 	
-	@Override
-	public DictionaryProcess newBase() {
-		return new FrameProcess(frame);
-	}
+//	@Override
+//	public DictionaryProcess newBase() {
+//		return new FrameProcess(frame);
+//	}
 }
