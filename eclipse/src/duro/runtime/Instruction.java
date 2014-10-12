@@ -19,17 +19,17 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_DUP = 3;
 	@PushCount(1)
 	public static final int OPCODE_DUP1 = 4;
-	@PushCount(1)
-	public static final int OPCODE_DUP2 = 5;
-	@PushCount(1)
-	public static final int OPCODE_DUP_ANY = 6;
+//	@PushCount(1)
+//	public static final int OPCODE_DUP2 = 5;
+//	@PushCount(1)
+//	public static final int OPCODE_DUP_ANY = 6;
 	@PopCount(1)
 	public static final int OPCODE_STORE_LOC = 7;
 	public static final int OPCODE_POP = 8;
-	@PopCount(1)
-	public static final int OPCODE_SWAP = 9;
-	public static final int OPCODE_SWAP1 = 10;
-	public static final int OPCODE_SWAP_ANY = 11;
+//	@PopCount(1)
+//	public static final int OPCODE_SWAP = 9;
+//	public static final int OPCODE_SWAP1 = 10;
+//	public static final int OPCODE_SWAP_ANY = 11;
 	@PopCount(source = PopCount.Source.OPERAND, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND = 12;
@@ -104,8 +104,6 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_STRING = 51;
 	@PushCount(1)
 	public static final int OPCODE_LOAD_THIS_FRAME = 52;
-	@PushCount(1)
-	public static final int OPCODE_LOAD_FRAME = 53;
 	@PushCount(1)
 	public static final int OPCODE_LOAD_BEHAVIOR = 54;
 

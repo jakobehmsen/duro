@@ -65,76 +65,36 @@ public class CustomProcess extends Process {
 		 */
 		private static final long serialVersionUID = 1L;
 		public Frame sender;
-//		public final Process self;
-		
-		// Arguments and locals can be joined into a single locals array.
-		// The locals array should contain arguments, variables, and stack. This requires a max stack size to be supplied
-//		public Process[] arguments;
-//		public Process[] variables;
 		public Process[] locals;
 		
 		public final Instruction[] instructions;
 		public int instructionPointer;
-//		private Stack<Process> stack = new Stack<Process>(); // Could be replaced by a pointer to locals
-		
-		// Could probably be improved by referring to either null, a FrameProcess or a Frame
-		// If referring to null, then a FrameProcess hasn't been created yet but will be created lazily
-		// If referring to a FrameProcess, a FrameProcess has been created
-		// If referring to a Frame, then that frame behaves as reification handle does now
-//		public Handle reificationHandle;
 		public Object reificationHandle; 
 		
 		public InterfaceIdPart interfaceId;
 		private Process[] stack;
-//		private int stackIndex;
 		private int stackSize;
 		
-		public Frame(Frame sender, /*Process self, Process[] arguments, int variableCount,*/ Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId, int maxStackSize) {
+		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId, int maxStackSize) {
 			this.sender = sender;
-//			this.self = self;
-//			this.arguments = arguments;
-//			variables = new Process[variableCount];
 			this.locals = locals;
 			this.instructions = instructions;
-//			this.reificationHandle = new Handle();
 			this.interfaceId = interfaceId;
-//			stackIndex = locals.length;
 			stackSize = 0;
 			stack = new Process[maxStackSize];
 		}
-		
-//		public Frame(Frame sender, /*Process self, Process[] arguments, Process[] variables, */ Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId) {
-//			this.sender = sender;
-////			this.self = self;
-////			this.arguments = arguments;
-////			this.variables = variables;
-//			this.locals = locals;
-//			this.instructions = instructions;
-////			this.reificationHandle = reificationHandle;
-////			this.reificationHandle = new Handle();
-//			this.interfaceId = interfaceId;
-//		}
 		
 		public final FrameProcess getReifiedFrame(Process protoFrame) {
 			if(reificationHandle instanceof FrameProcess) {
 				return (FrameProcess)reificationHandle;
 			} else if(reificationHandle == null) {
 				FrameProcess reification = new FrameProcess(protoFrame, this);
-//				// Can this be supplied as a argument to FrameProcess?
-//				reification.defineProto(SymbolTable.Codes.prototype, protoFrame);
 				reificationHandle = reification;
 				
 				return reification;
 			}
 			
 			return null;
-			
-//			if(((Handle)reificationHandle).value == null) {
-//				((Handle)reificationHandle).value = new FrameProcess(this);
-//				((Handle)reificationHandle).value.defineProto(SymbolTable.Codes.prototype, protoFrame);
-//			}
-//			
-//			return ((Handle)reificationHandle).value;
 		}
 		
 		public final void extendInterfaceId(String id) {
@@ -146,16 +106,10 @@ public class CustomProcess extends Process {
 		}
 		
 		public final String getInterfaceId() {
-//			return interfaceIdStack.stream().collect(Collectors.joining(";"));
 			return interfaceId.build();
 		}
 		
 		public final Process pop() {
-//			return stack.pop();
-//			Process p = locals[stackIndex];
-//			locals[stackIndex] = null;
-//			stackIndex++;
-//			return p;
 			stackSize--;
 			Process p = stack[stackSize];
 			stack[stackSize] = null;
@@ -220,34 +174,11 @@ public class CustomProcess extends Process {
 		}
 		
 		public final void push(Process p) {
-//			stackIndex--;
-//			locals[stackIndex] = p;
 			stack[stackSize] = p;
 			stackSize++;
 		}
 
 		public final void stackAdd(int index, Process p) {
-//			stack.add(index, p);
-			/*
-			top to bottom
-			[x, y, z]
-			add 1 i
-			[x, y, i, z]
-			
-			top to bottom
-			[x, y, z]
-			add 2 i
-			[x, i, y, z]
-			
-			top to bottom
-			[x, y, z]
-			add 3 i
-			[i, x, y, z]
-			*/
-//			for(int i = index; i > stackIndex; i--)
-//				locals[i - 1] = locals[i];
-//			locals[index] = p;
-			
 			for(int i = stackSize - 1; i >= index; i--)
 				stack[i + 1] = stack[i];
 			stack[index] = p;
@@ -255,20 +186,14 @@ public class CustomProcess extends Process {
 		}
 
 		public final String stackToString() {
-//			return stack.toString();
-//			return IntStream.range(stackIndex, locals.length).mapToObj(i -> i).sorted((x, y) -> y.compareTo(x)).map(i -> locals[i].toString()).collect(Collectors.joining());
 			return Arrays.toString(stack);
 		}
 
 		public final int stackSize() {
-//			return stack.size();
-//			return locals.length - stackIndex;
 			return stackSize;
 		}
 
 		public final Process peek() {
-//			return stack.peek();
-//			return locals[stackIndex];
 			return stack[stackSize - 1];
 		}
 		
@@ -276,20 +201,27 @@ public class CustomProcess extends Process {
 			stack[stackSize] = stack[stackSize - 1];
 			stackSize++;
 		}
+		
+		public final void dup1() {
+			stack[stackSize] = stack[stackSize - 1];
+			stack[stackSize - 1] = stack[stackSize - 2];
+			stack[stackSize - 2] = stack[stackSize];
+			stackSize++;
+		}
 
 		public final Process peek1() {
 			return stack[stackSize - 2];
 		}
 
+		public final Process peek2() {
+			return stack[stackSize - 3];
+		}
+
 		public final Process stackGet(int i) {
-//			return stack.get(i);
-//			return locals[locals.length - i - 1];
 			return stack[i];
 		}
 
 		public final void stackSet(int i, Process p) {
-//			stack.set(i, p);
-//			locals[i] = p;
 			stack[i] = p;
 		}
 	}
@@ -382,7 +314,7 @@ public class CustomProcess extends Process {
 	
 	private boolean stopRequested;
 	
-	private void next(Instruction instruction, InteractionHistory interactionHistory) {
+	private final void next(Instruction instruction, InteractionHistory interactionHistory) {
 		switch(instruction.opcode) {
 		case Instruction.OPCODE_PAUSE: {
 			Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_PAUSE);
@@ -408,29 +340,11 @@ public class CustomProcess extends Process {
 			break;
 		} case Instruction.OPCODE_DUP: {
 			currentFrame.dup();
-//			currentFrame.push(currentFrame.peek());
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_DUP1: {
-			int index = currentFrame.stackSize() - 2;
-			currentFrame.stackAdd(index, currentFrame.peek());
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_DUP2: {
-			int index = currentFrame.stackSize() - 3;
-			currentFrame.stackAdd(index, currentFrame.peek());
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_DUP_ANY: {
-			int sourceOffset = (int)instruction.operand1;
-			int insertionOffset = (int)instruction.operand2;
-			int top = currentFrame.stackSize() - 1;
-			
-			Process sourceValue = currentFrame.stackGet(top - sourceOffset);
-			currentFrame.stackAdd(top - insertionOffset, sourceValue);
+			currentFrame.dup1();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -442,31 +356,7 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_POP: {
-			currentFrame.pop();
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SWAP: {
-			Process tmp = currentFrame.stackGet(currentFrame.stackSize() - 1);
-			currentFrame.stackSet(currentFrame.stackSize() - 1, currentFrame.stackGet(currentFrame.stackSize() - 2));
-			currentFrame.stackSet(currentFrame.stackSize() - 2, tmp);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SWAP1: {
-			Process tmp = currentFrame.stackGet(currentFrame.stackSize() - 2);
-			currentFrame.stackSet(currentFrame.stackSize() - 2, currentFrame.stackGet(currentFrame.stackSize() - 3));
-			currentFrame.stackSet(currentFrame.stackSize() - 3, tmp);
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SWAP_ANY: {
-			int top = currentFrame.stackSize() - 1;
-			int index1 = top - (int)instruction.operand1; // operand1: offsetFromTop0 for first index
-			int index2 = top - (int)instruction.operand2; // operand2: offsetFromTop0 for second index
-			Process tmp = currentFrame.stackGet(index1);
-			currentFrame.stackSet(index1, currentFrame.stackGet(index2));
-			currentFrame.stackSet(index2, tmp);
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -510,14 +400,8 @@ public class CustomProcess extends Process {
 				locals[0] = receiver;
 				currentFrame.copyNInto(1, locals, argumentCount);
 				currentFrame.popN(argumentCount + 1); // Pop arguments and receiver
-
-//				locals[0] = receiver;
-//				for(int i = argumentCount - 1; i >= 0; i--)
-//					locals[i + 1] = currentFrame.pop();
-//				
-//				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount,*/ behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1 + argumentCount];
@@ -531,7 +415,7 @@ public class CustomProcess extends Process {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -549,7 +433,7 @@ public class CustomProcess extends Process {
 				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1];
@@ -557,7 +441,7 @@ public class CustomProcess extends Process {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -576,10 +460,8 @@ public class CustomProcess extends Process {
 				locals[0] = receiver;
 				currentFrame.copy1Into(1, locals);
 				currentFrame.pop2(); // Pop arguments and receiver
-//				locals[1] = currentFrame.pop();
-//				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
@@ -589,7 +471,7 @@ public class CustomProcess extends Process {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -608,13 +490,8 @@ public class CustomProcess extends Process {
 				locals[0] = receiver;
 				currentFrame.copy2Into(1, locals);
 				currentFrame.pop3(); // Pop arguments and receiver
-//				locals[0] = receiver;
-//				locals[2] = currentFrame.pop();
-//				locals[1] = currentFrame.pop();
 				
-//				currentFrame.pop(); // Pop receiver
-				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[3];
@@ -625,7 +502,7 @@ public class CustomProcess extends Process {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -644,14 +521,8 @@ public class CustomProcess extends Process {
 				locals[0] = receiver;
 				currentFrame.copy3Into(1, locals);
 				currentFrame.pop4(); // Pop arguments and receiver
-//				locals[0] = receiver;
-//				locals[3] = currentFrame.pop();
-//				locals[2] = currentFrame.pop();
-//				locals[1] = currentFrame.pop();
 				
-//				currentFrame.pop(); // Pop receiver
-				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[4];
@@ -663,71 +534,13 @@ public class CustomProcess extends Process {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
 			
 			break;
-		}/* case Instruction.OPCODE_CALL: {
-			int argumentCount = (int)instruction.operand1;
-			
-			Object callable = currentFrame.stack.get(currentFrame.stack.size() - argumentCount - 1);
-
-			if(callable instanceof BehaviorProcess) {
-				BehaviorProcess behavior = (BehaviorProcess)callable;
-				
-				Process[] arguments = new Process[behavior.parameterCount];
-				
-				if(argumentCount < behavior.parameterCount) {
-					for(int i = argumentCount - 1; i >= 0; i--)
-						arguments[i] = currentFrame.stack.pop();
-					for(int i = behavior.parameterCount - 1; i >= argumentCount; i--)
-						arguments[i] = singletonNil;
-				} else {
-					for(int i = behavior.parameterCount - 1; i >= 0; i--)
-						arguments[i] = currentFrame.stack.pop();
-				}
-				
-				currentFrame.stack.pop(); // Pop receiver
-				
-				currentFrame = new Frame(currentFrame, currentFrame.self, arguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
-			} else {
-				Process[] arguments = new Process[argumentCount];
-				
-				for(int i = argumentCount - 1; i >= 0; i--)
-					arguments[i] = currentFrame.stack.pop();
-				currentFrame.stack.pop(); // Pop receiver
-				
-				Process process = (Process)callable;
-				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
-			}
-			
-			break;
-		} case Instruction.OPCODE_FORWARD_CALL: {
-			Process[] arguments = currentFrame.arguments;
-			Process proxyCallable = currentFrame.self;
-			
-			Object callable = proxyCallable.getCallable(this, SymbolTable.Codes.call);
-
-			if(callable instanceof BehaviorProcess) {
-				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] callArguments;
-				if(arguments.length < behavior.parameterCount) {
-					callArguments = new Process[behavior.parameterCount];
-					System.arraycopy(arguments, 0, behavior.parameterCount, 0, arguments.length);
-				} else
-					callArguments = arguments;
-
-				currentFrame = new Frame(currentFrame, currentFrame.self, callArguments, behavior.variableCount, behavior.instructions, currentFrame.interfaceId);
-			} else {
-				Process process = (Process)callable;
-				
-				currentFrame = new Frame(currentFrame, process, arguments, 0, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
-			}
-			break;
-		}*/ case Instruction.OPCODE_RET: {
+		} case Instruction.OPCODE_RET: {
 			Frame returnFrame = currentFrame.sender;
 			returnFrame.push(currentFrame.peek());
 			currentFrame = returnFrame;
@@ -735,20 +548,11 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_RET_NONE: {
-//			Process result = currentFrame.self;
 			currentFrame = currentFrame.sender;
-//			currentFrame.stack.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
-		}/* case Instruction.OPCODE_RET_FORWARD: {
-			Frame returnFrame = currentFrame.sender;
-			returnFrame.stack.addAll(currentFrame.stack);
-			currentFrame = returnFrame;
-			currentFrame.instructionPointer++;
-			
-			break;
-		} */case Instruction.OPCODE_IF_TRUE: {
+		} case Instruction.OPCODE_IF_TRUE: {
 			BooleanProcess value = (BooleanProcess)currentFrame.pop();
 			if(value.value) {
 				int jump = (int)instruction.operand1;
@@ -783,9 +587,6 @@ public class CustomProcess extends Process {
 			Process value = currentFrame.peek();
 			Process receiver = (Process)currentFrame.peek1();
 			currentFrame.pop2();
-//			int code = (int)instruction.operand1;
-//			Process value = currentFrame.pop();
-//			Process receiver = (Process)currentFrame.pop();
 			receiver.define(code, value);
 			currentFrame.instructionPointer++;
 			
@@ -799,8 +600,9 @@ public class CustomProcess extends Process {
 			break;
 		} case Instruction.OPCODE_SET_PROTO_CODE: {
 			int code = (int)instruction.operand1;
-			Process value = currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			Process value = currentFrame.peek();
+			Process receiver = (Process)currentFrame.peek1();
+			currentFrame.pop2();
 			receiver.defineProto(code, value);
 			currentFrame.instructionPointer++;
 			
@@ -817,85 +619,75 @@ public class CustomProcess extends Process {
 			Process receiver = (Process)currentFrame.peek();
 			Process value = receiver.lookup(code);
 			currentFrame.set0(value);
-//			int code = (int)instruction.operand1;
-//			Process receiver = (Process)currentFrame.pop();
-//			Process value = receiver.lookup(code);
-//			currentFrame.push(value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_SET: {
-			Process value = currentFrame.pop();
-			StringProcess key = (StringProcess)currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			Process value = currentFrame.peek();
+			StringProcess key = (StringProcess)currentFrame.peek1();
+			Process receiver = (Process)currentFrame.peek2();
+			currentFrame.pop3();
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(key.str));
 			receiver.define(code, value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_SET_PROTO: {
-			Process value = currentFrame.pop();
-			StringProcess key = (StringProcess)currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			Process value = currentFrame.peek();
+			StringProcess key = (StringProcess)currentFrame.peek1();
+			Process receiver = (Process)currentFrame.peek2();
+			currentFrame.pop3();
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(key.str));
 			receiver.defineProto(code, value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_GET: {
-			StringProcess key = (StringProcess)currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			StringProcess key = (StringProcess)currentFrame.peek();
+			Process receiver = (Process)currentFrame.peek1();
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(key.str));
 			Process value = receiver.lookup(code);
-			currentFrame.push(value);
+			currentFrame.set1(value);
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_IS_DEFINED: {
-			StringProcess key = (StringProcess)currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			StringProcess key = (StringProcess)currentFrame.peek();
+			Process receiver = (Process)currentFrame.peek1();
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(key.str));
 			Process value = receiver.lookup(code);
-			currentFrame.push(getBoolean(value != null));
+			currentFrame.set1(getBoolean(value != null));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SLOTS_NAMES: {
-			Process receiver = (Process)currentFrame.pop();
+			Process receiver = (Process)currentFrame.peek();
 			String[] rawNames = receiver.getNames();
 			Process[] names = new Process[rawNames.length];
 			for(int i = 0; i < names.length; i++)
 				names[i] = createString(rawNames[i]);
 			ArrayProcess namesArray = new ArrayProcess(names);
 			namesArray.defineProto(SymbolTable.Codes.prototype, protoArray);
-			currentFrame.push(namesArray);
+			currentFrame.set0(namesArray);
 			currentFrame.instructionPointer++;
 			
 			break;
-		}
-		
-		
-		case Instruction.OPCODE_CALL_CLOSURE: {
+		} case Instruction.OPCODE_CALL_CLOSURE: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, closure.parameterCount, 1);
 			currentFrame.popN(closure.parameterCount);
-			
-//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
-//			BehaviorProcess behavior = closure.behavior;
-//			FrameProcess frame = closure.frame;
-////			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, closure.parameterCount);
-//			for(int i = closure.parameterCount - 1; i >= 0; i--)
-//				frame.frame.locals[closure.argumentOffset + i] = currentFrame.pop();
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_0: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
@@ -904,13 +696,7 @@ public class CustomProcess extends Process {
 			FrameProcess frame = closure.frame;
 			frame.frame.locals[closure.argumentOffset] = currentFrame.peek1();
 			currentFrame.pop2();
-			
-//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
-//			BehaviorProcess behavior = closure.behavior;
-//			FrameProcess frame = closure.frame;
-//			frame.frame.locals[closure.argumentOffset] = currentFrame.locals[1];
-//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
@@ -919,14 +705,7 @@ public class CustomProcess extends Process {
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 2, 1);
 			currentFrame.pop3();
-			
-//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
-//			BehaviorProcess behavior = closure.behavior;
-//			FrameProcess frame = closure.frame;
-//			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
-//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
-//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 2);
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
@@ -935,20 +714,10 @@ public class CustomProcess extends Process {
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 3, 1);
 			currentFrame.pop4();
-			
-//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
-//			BehaviorProcess behavior = closure.behavior;
-//			FrameProcess frame = closure.frame;
-//			frame.frame.locals[closure.argumentOffset + 2] = currentFrame.pop();
-//			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
-//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
-//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 3);
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
-		}
-		
-		case Instruction.OPCODE_EXTEND_INTER_ID: {
+		} case Instruction.OPCODE_EXTEND_INTER_ID: {
 			String id = (String)instruction.operand1;
 			currentFrame.extendInterfaceId(id);
 			currentFrame.instructionPointer++;
@@ -959,10 +728,7 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} 
-		
-		case Instruction.OPCODE_LOAD_THIS: {
-//			currentFrame.stack.push(currentFrame.self);
+		} case Instruction.OPCODE_LOAD_THIS: {
 			currentFrame.push(currentFrame.locals[0]);
 			currentFrame.instructionPointer++;
 			
@@ -979,14 +745,7 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		}/* case Instruction.OPCODE_LOAD_ARG: {
-			int ordinal = (int)instruction.operand1;
-			Process value = currentFrame.arguments[ordinal];
-			currentFrame.stack.push(value);
-			currentFrame.instructionPointer++;
-			
-			break;
-		}*/ case Instruction.OPCODE_LOAD_INT: {
+		} case Instruction.OPCODE_LOAD_INT: {
 			int intValue = (int)instruction.operand1;
 			currentFrame.push(new IntegerProcess(protoInteger, intValue));
 			currentFrame.instructionPointer++;
@@ -1014,13 +773,6 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_LOAD_FRAME: {
-			// May be unused
-			FrameProcess frame = (FrameProcess)instruction.operand1;
-			currentFrame.push(frame);
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_LOAD_BEHAVIOR: {
 			BehaviorProcess behavior = (BehaviorProcess)instruction.operand1;
 			currentFrame.push(behavior);
@@ -1031,39 +783,40 @@ public class CustomProcess extends Process {
 		
 		// Special opcodes
 		case Instruction.OPCODE_SP_BOOLEAN_OR: {
-			BooleanProcess rhs = (BooleanProcess)currentFrame.pop();
-			BooleanProcess lhs = (BooleanProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.value || rhs.value));
+			BooleanProcess rhs = (BooleanProcess)currentFrame.peek();
+			BooleanProcess lhs = (BooleanProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.value || rhs.value));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_BOOLEAN_AND: {
-			BooleanProcess rhs = (BooleanProcess)currentFrame.pop();
-			BooleanProcess lhs = (BooleanProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.value && rhs.value));
+			BooleanProcess rhs = (BooleanProcess)currentFrame.peek();
+			BooleanProcess lhs = (BooleanProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.value && rhs.value));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_BOOLEAN_NOT: {
 			BooleanProcess b = (BooleanProcess)currentFrame.peek();
 			currentFrame.set0(getBoolean(!b.value));
-			
-//			BooleanProcess b = (BooleanProcess)currentFrame.pop();
-//			currentFrame.push(getBoolean(!b.value));
 			currentFrame.instructionPointer++;
 			
 			break;
 		}  case Instruction.OPCODE_SP_ARRAY_GET: {
-			IntegerProcess index = (IntegerProcess)currentFrame.pop();
-			ArrayProcess array = (ArrayProcess)currentFrame.pop();
-			currentFrame.push(array.get(index.intValue));
+			IntegerProcess index = (IntegerProcess)currentFrame.peek();
+			ArrayProcess array = (ArrayProcess)currentFrame.peek1();
+			currentFrame.set1(array.get(index.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_SET: {
-			Process value = currentFrame.pop();
-			IntegerProcess index = (IntegerProcess)currentFrame.pop();
-			ArrayProcess array = (ArrayProcess)currentFrame.pop();
+			Process value = currentFrame.peek();
+			IntegerProcess index = (IntegerProcess)currentFrame.peek1();
+			ArrayProcess array = (ArrayProcess)currentFrame.peek2();
+			currentFrame.pop3();
 			array.set(index.intValue, value);
 			currentFrame.instructionPointer++;
 			
@@ -1073,18 +826,14 @@ public class CustomProcess extends Process {
 			StringProcess lhs = (StringProcess)currentFrame.peek1();
 			currentFrame.set1(createString(lhs.str + rhs.str));
 			currentFrame.pop1();
-			
-//			StringProcess rhs = (StringProcess)currentFrame.pop();
-//			StringProcess lhs = (StringProcess)currentFrame.pop();
-//			StringProcess result = createString(lhs.str + rhs.str);
-//			currentFrame.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_STRING_EQUAL: {
-			StringProcess rhs = (StringProcess)currentFrame.pop();
-			StringProcess lhs = (StringProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.str.equals(rhs.str)));
+			StringProcess rhs = (StringProcess)currentFrame.peek();
+			StringProcess lhs = (StringProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.str.equals(rhs.str)));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1093,52 +842,54 @@ public class CustomProcess extends Process {
 			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
 			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
 			currentFrame.pop1();
-			
-//			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-//			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-//			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		}case Instruction.OPCODE_SP_INT_SUB: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue - rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue - rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_MULT: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue * rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue * rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_DIV: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue / rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue / rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_REM: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue % rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue % rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_EQUAL: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.intValue == rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.intValue == rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_GREATER: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.intValue > rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.intValue > rhs.intValue));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1147,35 +898,25 @@ public class CustomProcess extends Process {
 			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
 			currentFrame.set1(getBoolean(lhs.intValue < rhs.intValue));
 			currentFrame.pop1();
-			
-//			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-//			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-//			currentFrame.push(getBoolean(lhs.intValue < rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_TO_STRING: {
 			IntegerProcess integer = (IntegerProcess)currentFrame.peek();
 			currentFrame.set0(createString(Integer.toString(integer.intValue)));
-			
-//			IntegerProcess integer = (IntegerProcess)currentFrame.pop();
-//			StringProcess result = createString(Integer.toString(integer.intValue));
-//			currentFrame.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
 			currentFrame.set0(frame.frame.sender.getReifiedFrame(protoFrame));
-			
-//			FrameProcess frame = (FrameProcess)currentFrame.pop();
-//			currentFrame.push(frame.frame.sender.getReifiedFrame(protoFrame));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SET_SENDER: {
-			FrameProcess newSender = (FrameProcess)currentFrame.pop();
-			FrameProcess frame = (FrameProcess)currentFrame.pop();
+			FrameProcess newSender = (FrameProcess)currentFrame.peek();
+			FrameProcess frame = (FrameProcess)currentFrame.peek1();
+			currentFrame.pop2();
 			frame.frame.sender = newSender.frame;
 			currentFrame.instructionPointer++;
 			
@@ -1184,31 +925,27 @@ public class CustomProcess extends Process {
 			Process value = currentFrame.peek();
 			FrameProcess frame = (FrameProcess)currentFrame.peek1();
 			currentFrame.pop2();
-//			Process value = currentFrame.pop();
-//			FrameProcess frame = (FrameProcess)currentFrame.pop();
-
 			currentFrame = frame.frame;
 			currentFrame.push(value);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_REF_EQUAL: {
-			Process rhs = currentFrame.pop();
-			Process lhs = currentFrame.pop();
-			currentFrame.push(getBoolean(lhs == rhs));
+			Process rhs = currentFrame.peek();
+			Process lhs = currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs == rhs));
+			currentFrame.pop1();
 			currentFrame.instructionPointer++;
 			
 			break;
-		}
-		
-		case Instruction.OPCODE_SP_WRITE: {
+		} case Instruction.OPCODE_SP_WRITE: {
 			Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_SP_WRITE);
 			if(output == null) {
 				StringProcess value = (StringProcess)currentFrame.pop();
 				System.out.print(value.str);
 				interactionHistory.append(currentFrame.getInterfaceId(), instruction, instruction);
 			} else {
-				currentFrame.pop();
+				currentFrame.pop1();
 			}
 			currentFrame.instructionPointer++;
 			
@@ -1245,16 +982,16 @@ public class CustomProcess extends Process {
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
-			IntegerProcess length = (IntegerProcess)currentFrame.pop();
+			IntegerProcess length = (IntegerProcess)currentFrame.peek();
 			ArrayProcess newArray = new ArrayProcess(length.intValue, singletonNil);
 			newArray.defineProto(SymbolTable.Codes.prototype, protoArray);
-			currentFrame.push(newArray);
+			currentFrame.set0(newArray);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_ARRAY_LENGTH: {
-			ArrayProcess newArray = (ArrayProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, newArray.length()));
+			ArrayProcess newArray = (ArrayProcess)currentFrame.peek();
+			currentFrame.set0(new IntegerProcess(protoInteger, newArray.length()));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1279,7 +1016,7 @@ public class CustomProcess extends Process {
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
 				customProcess.currentFrame.locals = new Process[]{protoAny};
 				currentFrame = new Frame(
-					currentFrame, /*protoAny, */customProcess.currentFrame.locals, /*customProcess.currentFrame.variables.length, */customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId, customProcess.currentFrame.stack.length);
+					currentFrame, customProcess.currentFrame.locals, customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId, customProcess.currentFrame.stack.length);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -1288,10 +1025,10 @@ public class CustomProcess extends Process {
 		} case Instruction.OPCODE_SP_NEW_CLOSURE: {
 			int argumentOffset = (int)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
-			BehaviorProcess behavior = (BehaviorProcess)currentFrame.pop();
+			
+			BehaviorProcess behavior = (BehaviorProcess)currentFrame.peek();
 			ClosureProcess closure = new ClosureProcess(closureBehavior, currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
-//			closure.defineProto(SymbolTable.Codes.prototype, closureBehavior);
-			currentFrame.push(closure);
+			currentFrame.set0(closure);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1300,15 +1037,14 @@ public class CustomProcess extends Process {
 			int maxStackSize = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
 			BehaviorProcess behavior = new BehaviorProcess(protoBehavior, localCount, maxStackSize, instructions);
-//			behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
 			currentFrame.push(behavior);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_CLONE: {
-			DictionaryProcess dict = (DictionaryProcess)currentFrame.pop();
+			DictionaryProcess dict = (DictionaryProcess)currentFrame.peek();
 			DictionaryProcess clone = dict.clone();
-			currentFrame.push(clone);
+			currentFrame.set0(clone);
 			currentFrame.instructionPointer++;
 			
 			break;
