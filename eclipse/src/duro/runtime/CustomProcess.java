@@ -12,7 +12,7 @@ import duro.debugging.Debug;
 import duro.reflang.Compiler_NEW;
 import duro.reflang.SymbolTable;
 
-public class CustomProcess extends Process implements Iterable<Object> {
+public class CustomProcess extends Process {
 	/**
 	 * 
 	 */
@@ -1370,11 +1370,6 @@ public class CustomProcess extends Process implements Iterable<Object> {
 
 	@Override
 	public Process lookup(int selectorCode) {
-		return null;
-	}
-
-	@Override
-	public Iterator<Object> iterator() {
 		return null;
 	}
 	
