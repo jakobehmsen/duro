@@ -190,6 +190,10 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			System.arraycopy(stack, stackSize - n, a, i, n);
 		}
 
+		public final void copyNInto(int i, Process[] a, int n, int m) {
+			System.arraycopy(stack, stackSize - n - m, a, i, n);
+		}
+
 		public final void pop2() {
 			int newSize = stackSize - 2;
 			Arrays.fill(stack, newSize, stackSize, null);
@@ -265,6 +269,10 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 //			return stack.peek();
 //			return locals[stackIndex];
 			return stack[stackSize - 1];
+		}
+
+		public Process peek1() {
+			return stack[stackSize - 2];
 		}
 
 		public final Process stackGet(int i) {
@@ -853,12 +861,18 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 		
 		
 		case Instruction.OPCODE_CALL_CLOSURE: {
-			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, closure.parameterCount);
-			for(int i = closure.parameterCount - 1; i >= 0; i--)
-				frame.frame.locals[closure.argumentOffset + i] = currentFrame.pop();
+			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, closure.parameterCount, 1);
+			currentFrame.popN(closure.parameterCount);
+			
+//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+//			BehaviorProcess behavior = closure.behavior;
+//			FrameProcess frame = closure.frame;
+////			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, closure.parameterCount);
+//			for(int i = closure.parameterCount - 1; i >= 0; i--)
+//				frame.frame.locals[closure.argumentOffset + i] = currentFrame.pop();
 			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
@@ -870,31 +884,49 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
-			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
+			frame.frame.locals[closure.argumentOffset] = currentFrame.peek1();
+			currentFrame.pop2();
+			
+//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+//			BehaviorProcess behavior = closure.behavior;
+//			FrameProcess frame = closure.frame;
 //			frame.frame.locals[closure.argumentOffset] = currentFrame.locals[1];
-			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
 			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
-			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
-			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 2, 1);
+			currentFrame.pop3();
+			
+//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+//			BehaviorProcess behavior = closure.behavior;
+//			FrameProcess frame = closure.frame;
+//			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
+//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
 //			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 2);
 			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
-			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			frame.frame.locals[closure.argumentOffset + 2] = currentFrame.pop();
-			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
-			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 3, 1);
+			currentFrame.pop4();
+			
+//			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
+//			BehaviorProcess behavior = closure.behavior;
+//			FrameProcess frame = closure.frame;
+//			frame.frame.locals[closure.argumentOffset + 2] = currentFrame.pop();
+//			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
+//			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
 //			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 3);
 			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
