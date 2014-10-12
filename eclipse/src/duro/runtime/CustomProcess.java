@@ -283,6 +283,11 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 //			return locals[stackIndex];
 			return stack[stackSize - 1];
 		}
+		
+		public final void dup() {
+			stack[stackSize] = stack[stackSize - 1];
+			stackSize++;
+		}
 
 		public Process peek1() {
 			return stack[stackSize - 2];
@@ -414,7 +419,8 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_DUP: {
-			currentFrame.push(currentFrame.peek());
+			currentFrame.dup();
+//			currentFrame.push(currentFrame.peek());
 			currentFrame.instructionPointer++;
 			
 			break;
