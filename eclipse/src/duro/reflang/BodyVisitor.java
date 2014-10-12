@@ -57,7 +57,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap;
 	private MessageCollector errors;
 	private ArrayList<Runnable> endHandlers;
-	private ArrayList<Instruction> instructions;
+	private CodeEmitter instructions;
 	private boolean mustBeExpression;
 	private OrdinalAllocator idToParameterOrdinalMap;
 	private OrdinalAllocator idToVariableOrdinalMap;
@@ -66,14 +66,14 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
 		this.endHandlers = endHandlers;
-		this.instructions = new ArrayList<Instruction>();
+		this.instructions = new CodeEmitter();
 		this.mustBeExpression = true;
 		this.idToParameterOrdinalMap = new OrdinalAllocator();
 		this.idToVariableOrdinalMap = new OrdinalAllocator();
 	}
 
 	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
-			ArrayList<Instruction> instructions,
+			CodeEmitter instructions,
 			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 			OrdinalAllocator idToVariableOrdinalMap) {
 		this.primitiveMap = primitiveMap;
@@ -478,6 +478,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
 			// newValue, receiver, newValue
+		/* The sequence could be changed as follows for set instructions:
+		[value, target]
+		
+		This way, a simple dup operation can be performed:
+		[value, value, target]
+		*/
 		instructions.add(new Instruction(opcodeAssign, id, 0));
 		// newValue | e
 	}
@@ -500,12 +506,20 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		int variableOffset = parameterOffset + functionBodyInterceptor.idToParameterOrdinalMap.size();
 		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
 
-		onEnd(() -> {
+		onEnd(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR), () -> {
 			Instruction[] bodyInstructions = functionBodyInterceptor.instructions.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
-			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
+			// localCount should be irrelevant because locals of the closed frame is used
+			int localCount = 1 + parameterCount + variableCount; 
+			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, functionBodyInterceptor.instructions.getMaxStackSize(), bodyInstructions);
 		});
 		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+		/* The sequence could be changed as follows for set instructions:
+		[value, target]
+		
+		This way, a simple dup operation can be performed:
+		[value, value, target]
+		*/
 		instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 	}
 	
@@ -593,7 +607,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(mustBeExpression) {
 			OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
 			OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
-			BodyVisitor closureBodyVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, new ArrayList<Instruction>(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
+			BodyVisitor closureBodyVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, new CodeEmitter(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
 			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
 				String parameterId = parameterIdNode.getText();
 				closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
@@ -607,9 +621,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 //			closureBodyVisitor.idToParameterOrdinalMap.generate();
 //			closureBodyVisitor.idToVariableOrdinalMap.generate();
 
-			onEnd(() -> {
+			onEnd(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR), () -> {
 				Instruction[] bodyInstructions = closureBodyVisitor.instructions.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
-				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
+				int localCount = 1 + parameterCount + variableCount;
+				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, closureBodyVisitor.instructions.getMaxStackSize(), bodyInstructions);
 			});
 			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
 				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
@@ -711,9 +726,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			.replace("\\t", "\t");
 	}
 	
-	private void onEnd(Supplier<Instruction> instructionSup) {
+	private void onEnd(Instruction templateInstruction, Supplier<Instruction> instructionSup) {
 		int index = instructions.size();
-		instructions.add(null);
+//		instructions.add(null);
+		instructions.add(templateInstruction);
 		endHandlers.add(() -> {
 			Instruction instruction = instructionSup.get();
 			instructions.set(index, instruction);

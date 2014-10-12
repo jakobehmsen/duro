@@ -46,7 +46,7 @@ public class OrdinalAllocator {
 		return outer;
 	}
 	
-	public void declare(String id, ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
+	public void declare(String id, CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
 		declare(id, instructionsConsumer(instructions, instructionFunc));
 	}
 	
@@ -65,7 +65,7 @@ public class OrdinalAllocator {
 		allocationInfo.ordinalHandlers.add(handler);
 	}
 	
-	public void ordinalFor(String id, ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
+	public void ordinalFor(String id, CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
 		ordinalFor(id, instructionsConsumer(instructions, instructionFunc));
 	}
 	
@@ -78,9 +78,11 @@ public class OrdinalAllocator {
 			outer.ordinalFor(id, handler);
 	}
 	
-	public Consumer<Integer> instructionsConsumer(ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
+	public Consumer<Integer> instructionsConsumer(CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
 		final int index = instructions.size();
-		instructions.add(null);
+//		instructions.add(null);
+		// Add representational instructions
+		instructions.add(instructionFunc.apply(-1));
 		
 		return ordinal -> {
 			Instruction instruction = instructionFunc.apply(ordinal);
@@ -120,7 +122,7 @@ public class OrdinalAllocator {
 			childrenStart.stream().mapToInt(a -> a.sizeExceptEnd()).sum();
 	}
 	
-	public void getLocalParameterOffset(ArrayList<Instruction> instructions, Function<Integer, Instruction> instructionFunc) {
+	public void getLocalParameterOffset(CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
 		getLocalParameterOffset(instructionsConsumer(instructions, instructionFunc));
 	}
 

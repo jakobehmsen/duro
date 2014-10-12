@@ -13,7 +13,7 @@ import duro.runtime.Selector;
 
 public interface PrimitiveVisitorFactory {
 	PrimitiveVisitor create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
-			ArrayList<Instruction> instructions,
+			CodeEmitter instructions,
 			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 			OrdinalAllocator idToVariableOrdinalMap);
 	
@@ -30,7 +30,7 @@ public interface PrimitiveVisitorFactory {
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
-				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
 			return new PrimitiveVisitor() {
@@ -50,7 +50,7 @@ public interface PrimitiveVisitorFactory {
 	public static class Util {
 		public static void acceptClosureBodyOrCall(ParserRuleContext expression, Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
-				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
 			if(expression.getRuleIndex() == DuroParser.RULE_closure) {
@@ -67,7 +67,7 @@ public interface PrimitiveVisitorFactory {
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
-				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
 			return new PrimitiveVisitor() {
@@ -121,7 +121,7 @@ public interface PrimitiveVisitorFactory {
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
-				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
 			return new PrimitiveVisitor() {
@@ -166,7 +166,7 @@ public interface PrimitiveVisitorFactory {
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
-				ArrayList<Instruction> instructions, boolean mustBeExpression,
+				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap) {
 			return new PrimitiveVisitor() {
@@ -197,7 +197,7 @@ public interface PrimitiveVisitorFactory {
 						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_3));
 						break;
 					default:
-						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE));
+						instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE, closureArgCount));
 						break;
 					}
 				}

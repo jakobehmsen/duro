@@ -141,6 +141,7 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 3), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 4), new PrimitiveVisitorFactory.Eval());
+		primitiveMap.put(Selector.get("evalWith", 5), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
 		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
@@ -176,7 +177,8 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), false));
 		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 		
-		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		CodeEmitter instructions = new CodeEmitter();
+//		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
 //		Walker walker = new Walker();
 //		walker.walk(programInterceptor, programCtx);
@@ -194,7 +196,7 @@ public class Compiler_NEW {
 		Debug.println(Debug.LEVEL_MEDIUM, "Generated program.");
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
-		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), instructions.toArray(new Instruction[instructions.size()]));
+		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), instructions.getMaxStackSize(), instructions.toArray(new Instruction[instructions.size()]));
 	}
 	
 	public CustomProcess load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
@@ -275,83 +277,83 @@ public class Compiler_NEW {
 //				}
 //			}
 			
-			@Override
-			public void enterAssignment(AssignmentContext ctx) {
-				walker.suspendWalkWithin(ctx);
-				
-				String id = ctx.id().getText();
-				
-//				if(ctx.op.getType() == DuroLexer.ASSIGN && idToVariableOrdinalMap.isDeclared(id))
-//					return;
-				
-				
-				
-				switch(ctx.op.getType()) {
-				case DuroLexer.ASSIGN: {
-					// newValue, newValue
-					if(idToVariableOrdinalMap.isDeclared(id)) {
-						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
-						if(mustBeExpression)
-							instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// Variable assignment
-						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
-					} else {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// receiver
-						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
-						// receiver, newValue
-						if(mustBeExpression)
-							instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-							// newValue, receiver, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
-						// newValue | e
-					}
-					break;
-				} case DuroLexer.ASSIGN_PROTO: {
-					if(!mustBeExpression)
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
-					if(mustBeExpression)
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// newValue, newValue
-					if(mustBeExpression) {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-						// newValue, receiver, newValue
-					}
-					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
-					break;
-				}
-				}
-
-				// Member assignment for this
-				if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
-					walker.suspendWalkWithin(ctx); // Rhs is quoted
-					
-					OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
-					OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
-					for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
-						String parameterId = parameterIdNode.getText();
-						newIdToParameterOrdinalMap.declare(parameterId);
-					}
-					BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.expression());
-					int parameterCount = newIdToParameterOrdinalMap.size();
-					int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
-					
-					newIdToParameterOrdinalMap.generate();
-					newIdToVariableOrdinalMap.generate();
-
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-					onEnd(() -> {
-						Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-						return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
-					});
-					if(mustBeExpression)
-						instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-					instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
-				}
-			}
+//			@Override
+//			public void enterAssignment(AssignmentContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+//				
+//				String id = ctx.id().getText();
+//				
+////				if(ctx.op.getType() == DuroLexer.ASSIGN && idToVariableOrdinalMap.isDeclared(id))
+////					return;
+//				
+//				
+//				
+//				switch(ctx.op.getType()) {
+//				case DuroLexer.ASSIGN: {
+//					// newValue, newValue
+//					if(idToVariableOrdinalMap.isDeclared(id)) {
+//						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+//						if(mustBeExpression)
+//							instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// Variable assignment
+//						idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//					} else {
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// receiver
+//						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+//						// receiver, newValue
+//						if(mustBeExpression)
+//							instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+//							// newValue, receiver, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_SET, id, 0));
+//						// newValue | e
+//					}
+//					break;
+//				} case DuroLexer.ASSIGN_PROTO: {
+//					if(!mustBeExpression)
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//					append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+//					if(mustBeExpression)
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// newValue, newValue
+//					if(mustBeExpression) {
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// newValue, newValue, receiver
+//						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//						// newValue, receiver, newValue
+//					}
+//					instructions.add(new Instruction(Instruction.OPCODE_SET_PROTO, id, 0));
+//					break;
+//				}
+//				}
+//
+//				// Member assignment for this
+//				if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
+//					walker.suspendWalkWithin(ctx); // Rhs is quoted
+//					
+//					OrdinalAllocator newIdToParameterOrdinalMap = new OrdinalAllocator();
+//					OrdinalAllocator newIdToVariableOrdinalMap = new OrdinalAllocator();
+//					for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
+//						String parameterId = parameterIdNode.getText();
+//						newIdToParameterOrdinalMap.declare(parameterId);
+//					}
+//					BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.expression());
+//					int parameterCount = newIdToParameterOrdinalMap.size();
+//					int selectorParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
+//					
+//					newIdToParameterOrdinalMap.generate();
+//					newIdToVariableOrdinalMap.generate();
+//
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//					onEnd(() -> {
+//						Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+//						return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+//					});
+//					if(mustBeExpression)
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+//					instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
+//				}
+//			}
 			
 			@Override
 			public void exitAssignment(AssignmentContext ctx) {
@@ -389,26 +391,26 @@ public class Compiler_NEW {
 //				// newValue
 			}
 			
-			@Override
-			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
-				walker.suspendWalkWithin(ctx);
-				
-				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.id().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.id().getText())) {
-					idToVariableOrdinalMap.declare(ctx.id().getText());
-
-					if(ctx.expression() == null) { 
-						if(mustBeExpression)
-							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
-					} else {
-						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
-						if(mustBeExpression)
-							instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
-					}
-				} else {
-					appendError(ctx, "Variable '" + ctx.id().getText() + "' is already declared in this scope.");
-				}
-			}
+//			@Override
+//			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
+//				walker.suspendWalkWithin(ctx);
+//				
+//				if(!idToVariableOrdinalMap.isDeclaredLocally(ctx.id().getText()) && !idToParameterOrdinalMap.isDeclared(ctx.id().getText())) {
+//					idToVariableOrdinalMap.declare(ctx.id().getText());
+//
+//					if(ctx.expression() == null) { 
+//						if(mustBeExpression)
+//							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//					} else {
+//						append(true, idToParameterOrdinalMap, idToVariableOrdinalMap, ctx.expression(), instructions);
+//						if(mustBeExpression)
+//							instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
+//					}
+//				} else {
+//					appendError(ctx, "Variable '" + ctx.id().getText() + "' is already declared in this scope.");
+//				}
+//			}
 			
 			@Override
 			public void exitBinaryMessage(BinaryMessageContext ctx) {

@@ -198,7 +198,7 @@ public class Compiler {
 		long endGen = System.currentTimeMillis();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
-		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
+		return new CustomProcess(idToParameterOrdinalMap.size(), bodyInfo.localCount, -1, bodyInfo.instructions.toArray(new Instruction[bodyInfo.instructions.size()]));
 	}
 	
 	private static class YieldStatement {
@@ -478,53 +478,53 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_DUP)); // Dup receiver
 			}
 			
-			@Override
-			public void exitUnaryExpressionPostIncDecApplication(UnaryExpressionPostIncDecApplicationContext ctx) {
-				ParserRuleContext targetCtx = (ParserRuleContext)ctx.getChild(0);
-				switch(targetCtx.getRuleIndex()) {
-				case DuroParser.RULE_unaryExpressionPostIncDecApplicationVariable: {
-					// Either variable assignment or member assignment
-					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();;
-					
-					if(idToVariableOrdinalMap.isDeclared(id))
-						appendUnaryExpressionPostIncDecApplicationVariable(ctx, targetCtx);
-					else {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// receiver
-						appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
-					}
-					
-					break;
-				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
-					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
-					appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
-					break;
-				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationIndexAccess:
-					// receiver, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
-					// receiver, id, receiver, id
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
-					// receiver, id, value
-					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
-					// value, receiver, id, value,
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-					// value, receiver, id, value, 1
-					appendIncDec(ctx.op);
-					// value, receiver, id, value'
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
-					instructions.add(new Instruction(Instruction.OPCODE_POP));
-					break;
-				}
-			}
+//			@Override
+//			public void exitUnaryExpressionPostIncDecApplication(UnaryExpressionPostIncDecApplicationContext ctx) {
+//				ParserRuleContext targetCtx = (ParserRuleContext)ctx.getChild(0);
+//				switch(targetCtx.getRuleIndex()) {
+//				case DuroParser.RULE_unaryExpressionPostIncDecApplicationVariable: {
+//					// Either variable assignment or member assignment
+//					String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();;
+//					
+//					if(idToVariableOrdinalMap.isDeclared(id))
+//						appendUnaryExpressionPostIncDecApplicationVariable(ctx, targetCtx);
+//					else {
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// receiver
+//						appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
+//					}
+//					
+//					break;
+//				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationMemberAccess: {
+//					String id = ((UnaryExpressionPostIncDecApplicationMemberAccessContext)targetCtx).ID().getText();
+//					appendUnaryExpressionPostIncDecApplicationMemberAccess(ctx, id);
+//					break;
+//				} case DuroParser.RULE_unaryExpressionPostIncDecApplicationIndexAccess:
+//					// receiver, receiver, id
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+//					// receiver, id, receiver, id
+//					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
+//					// receiver, id, value
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP2));
+//					// value, receiver, id, value,
+//					instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+//					// value, receiver, id, value, 1
+//					appendIncDec(ctx.op);
+//					// value, receiver, id, value'
+//					instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
+//					instructions.add(new Instruction(Instruction.OPCODE_POP));
+//					break;
+//				}
+//			}
 			
-			private void appendUnaryExpressionPostIncDecApplicationVariable(UnaryExpressionPostIncDecApplicationContext ctx, ParserRuleContext targetCtx) {
-				String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
-				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
-				appendIncDec(ctx.op);
-				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-			}
+//			private void appendUnaryExpressionPostIncDecApplicationVariable(UnaryExpressionPostIncDecApplicationContext ctx, ParserRuleContext targetCtx) {
+//				String id = ((UnaryExpressionPostIncDecApplicationVariableContext)targetCtx).ID().getText();
+//				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, ordinal));
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, 1));
+//				appendIncDec(ctx.op);
+//				idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//			}
 			
 			private void appendUnaryExpressionPostIncDecApplicationMemberAccess(UnaryExpressionPostIncDecApplicationContext ctx, String id) {
 				// receiver
@@ -553,96 +553,96 @@ public class Compiler {
 				}
 			}
 			
-			@Override
-			public void enterVariableAssignment(VariableAssignmentContext ctx) {
-				String firstId = ctx.ID().getText();
-				
-				if(idToVariableOrdinalMap.isDeclared(firstId)) {
-					// Variable assignment
-					switch(ctx.op.getType()) {
-					case DuroLexer.ASSIGN: {
-						break;
-					} default: {
-						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
-						// oldValue
-						break;
-					}
-					}
-				} else {
-					// Member assignment for this
-					switch(ctx.op.getType()) {
-					case DuroLexer.ASSIGN: {
-						break;
-					} default: {
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						instructions.add(new Instruction(Instruction.OPCODE_GET, firstId, 0));
-						// oldValue
-						break;
-					}
-					}
-				}
-			}
+//			@Override
+//			public void enterVariableAssignment(VariableAssignmentContext ctx) {
+//				String firstId = ctx.ID().getText();
+//				
+//				if(idToVariableOrdinalMap.isDeclared(firstId)) {
+//					// Variable assignment
+//					switch(ctx.op.getType()) {
+//					case DuroLexer.ASSIGN: {
+//						break;
+//					} default: {
+//						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, firstOrdinal));
+//						// oldValue
+//						break;
+//					}
+//					}
+//				} else {
+//					// Member assignment for this
+//					switch(ctx.op.getType()) {
+//					case DuroLexer.ASSIGN: {
+//						break;
+//					} default: {
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						instructions.add(new Instruction(Instruction.OPCODE_GET, firstId, 0));
+//						// oldValue
+//						break;
+//					}
+//					}
+//				}
+//			}
 			
-			@Override
-			public void exitVariableAssignment(VariableAssignmentContext ctx) {
-				String firstId = ctx.ID().getText();
-
-				if(idToVariableOrdinalMap.isDeclared(firstId)) {
-					// Variable assignment
-					switch(ctx.op.getType()) {
-					case DuroLexer.ASSIGN: {
-						// newValue
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// newValue, newValue
-						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
-						// newValue
-						
-						break;
-					} default: {
-						// Multiple returns values are not supported here yet.
-						
-						// oldValue, newValuePart
-						appendAssignmentReducer(ctx.op);
-						// newValue
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// newValue, newValue
-						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
-						// newValue
-						break;
-					}
-					}
-				} else {
-					// Member assignment for this
-					switch(ctx.op.getType()) {
-					case DuroLexer.ASSIGN: {
-						// newValue
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// newValue, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-						// newValue, receiver, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
-						// newValue
-						
-						break;
-					} default: {
-						// oldValue, newValuePart
-						appendAssignmentReducer(ctx.op);
-						// newValue
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						// newValue, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-						// newValue, newValue, receiver
-						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
-						// newValue, receiver, newValue
-						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
-						// newValue
-						break;
-					}
-					}
-				}
-			}
+//			@Override
+//			public void exitVariableAssignment(VariableAssignmentContext ctx) {
+//				String firstId = ctx.ID().getText();
+//
+//				if(idToVariableOrdinalMap.isDeclared(firstId)) {
+//					// Variable assignment
+//					switch(ctx.op.getType()) {
+//					case DuroLexer.ASSIGN: {
+//						// newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// newValue, newValue
+//						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//						// newValue
+//						
+//						break;
+//					} default: {
+//						// Multiple returns values are not supported here yet.
+//						
+//						// oldValue, newValuePart
+//						appendAssignmentReducer(ctx.op);
+//						// newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// newValue, newValue
+//						idToVariableOrdinalMap.ordinalFor(firstId, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
+//						// newValue
+//						break;
+//					}
+//					}
+//				} else {
+//					// Member assignment for this
+//					switch(ctx.op.getType()) {
+//					case DuroLexer.ASSIGN: {
+//						// newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// newValue, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// newValue, newValue, receiver
+//						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//						// newValue, receiver, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
+//						// newValue
+//						
+//						break;
+//					} default: {
+//						// oldValue, newValuePart
+//						appendAssignmentReducer(ctx.op);
+//						// newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						// newValue, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//						// newValue, newValue, receiver
+//						instructions.add(new Instruction(Instruction.OPCODE_SWAP));
+//						// newValue, receiver, newValue
+//						instructions.add(new Instruction(Instruction.OPCODE_SET, firstId, 0));
+//						// newValue
+//						break;
+//					}
+//					}
+//				}
+//			}
 			
 			private void appendAssignmentReducer(Token op) {
 				switch(op.getType()) {
@@ -890,26 +890,26 @@ public class Compiler {
 				}
 			}
 			
-			@Override
-			public void exitClosureLiteral(ClosureLiteralContext ctx) {
-				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
-				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
-				for(TerminalNode parameterIdNode: ctx.behaviorParameters().ID()) {
-					String parameterId = parameterIdNode.getText();
-					newIdToParameterOrdinalMap.declare(parameterId);
-				}
-				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
-				int parameterCount = newIdToParameterOrdinalMap.size();
-				int closureParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
-				
-				onEnd(() -> {
-					Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
-					return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
-				});
-				newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
-					new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
-				// [closure]
-			}
+//			@Override
+//			public void exitClosureLiteral(ClosureLiteralContext ctx) {
+//				OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
+//				OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
+//				for(TerminalNode parameterIdNode: ctx.behaviorParameters().ID()) {
+//					String parameterId = parameterIdNode.getText();
+//					newIdToParameterOrdinalMap.declare(parameterId);
+//				}
+//				BodyInfo functionBodyInfo = getBodyInfo(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, ctx.closureBody());
+//				int parameterCount = newIdToParameterOrdinalMap.size();
+//				int closureParameterCount = newIdToParameterOrdinalMap.sizeExceptEnd();
+//				
+//				onEnd(() -> {
+//					Instruction[] bodyInstructions = functionBodyInfo.instructions.toArray(new Instruction[functionBodyInfo.instructions.size()]);
+//					return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, functionBodyInfo.localCount, bodyInstructions);
+//				});
+//				newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
+//					new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
+//				// [closure]
+//			}
 			
 			Stack<Integer> arrayOperandNumberStack = new Stack<Integer>();
 			
@@ -1062,17 +1062,17 @@ public class Compiler {
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			}
 			
-			@Override
-			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
-				for(TerminalNode idNode: ctx.ID()) {
-					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText()) && !idToParameterOrdinalMap.isDeclared(idNode.getText())) {
-						instructions.add(new Instruction(Instruction.OPCODE_DUP));
-						idToVariableOrdinalMap.declare(idNode.getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
-					} else {
-						appendError(ctx, "Variable '" + idNode.getText() + "' is already declared in this scope.");
-					}
-				}
-			}
+//			@Override
+//			public void exitVariableDeclarationAndAssignment(VariableDeclarationAndAssignmentContext ctx) {
+//				for(TerminalNode idNode: ctx.ID()) {
+//					if(!idToVariableOrdinalMap.isDeclaredLocally(idNode.getText()) && !idToParameterOrdinalMap.isDeclared(idNode.getText())) {
+//						instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//						idToVariableOrdinalMap.declare(idNode.getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
+//					} else {
+//						appendError(ctx, "Variable '" + idNode.getText() + "' is already declared in this scope.");
+//					}
+//				}
+//			}
 			
 			@Override
 			public void enterVariableDeclaration(VariableDeclarationContext ctx) {
@@ -1302,37 +1302,37 @@ public class Compiler {
 					idToVariableOrdinalMap.declare(varCtx.ID().getText());
 			}
 			
-			@Override
-			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
-				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
-				
-				// iterable
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
-				// iterator
-				int jumpIndex = instructions.size();
-				forInJumpIndexStack.push(jumpIndex);
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				// iterator, iterator
-				instructions.add(new Instruction(Instruction.OPCODE_SEND, "atEnd", 0));
-				// iterator, bool
-				int conditionalJumpIndex = instructions.size();
-				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
-				instructions.add(null);
-				// iterator
-				
-				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
-					// iterator
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
-					// iterator, iterator
-					instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
-					// iterator, next
-					String id = varCtx.ID().getText();
-					idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
-					// iterator
-				}
-				
-				// iterator
-			}
+//			@Override
+//			public void enterForInStatementBody(ForInStatementBodyContext ctx) {
+//				ForInStatementContext forInStatementCtx = (ForInStatementContext)ctx.getParent();
+//				
+//				// iterable
+//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "iterator", 0));
+//				// iterator
+//				int jumpIndex = instructions.size();
+//				forInJumpIndexStack.push(jumpIndex);
+//				instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//				// iterator, iterator
+//				instructions.add(new Instruction(Instruction.OPCODE_SEND, "atEnd", 0));
+//				// iterator, bool
+//				int conditionalJumpIndex = instructions.size();
+//				forInConditionalJumpIndexStack.push(conditionalJumpIndex);
+//				instructions.add(null);
+//				// iterator
+//				
+//				for(ForInStatementVarContext varCtx: forInStatementCtx.forInStatementVar()) {
+//					// iterator
+//					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+//					// iterator, iterator
+//					instructions.add(new Instruction(Instruction.OPCODE_SEND, "next", 0));
+//					// iterator, next
+//					String id = varCtx.ID().getText();
+//					idToVariableOrdinalMap.ordinalFor(id, instructions, ordinal -> new Instruction(Instruction.OPCODE_STORE_LOC, ordinal));
+//					// iterator
+//				}
+//				
+//				// iterator
+//			}
 			
 			@Override
 			public void exitForInStatementBody(ForInStatementBodyContext ctx) {
@@ -1683,8 +1683,8 @@ public class Compiler {
 				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, parameterCount, variableCount, bodyInstructions);
 			});
 			// Generatable, Behavior
-			idToParameterOrdinalMapIterator.getLocalParameterOffset(generatorInstructions, closureParameterOffset -> 
-				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
+//			idToParameterOrdinalMapIterator.getLocalParameterOffset(generatorInstructions, closureParameterOffset -> 
+//				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 			// Generatable, Closure
 			generatorInstructions.add(new Instruction(Instruction.OPCODE_SEND, "on", 1));
 			// a generatable
