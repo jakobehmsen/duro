@@ -4,15 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import duro.debugging.Debug;
 import duro.reflang.Compiler_NEW;
 import duro.reflang.SymbolTable;
 
-public class CustomProcess extends Process implements Iterable<Object>, ProcessFactory {
+public class CustomProcess extends Process implements Iterable<Object>/*, ProcessFactory*/ {
 	/**
 	 * 
 	 */
@@ -84,7 +87,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		
 		public final Instruction[] instructions;
 		public int instructionPointer;
-		private Stack<Process> stack = new Stack<Process>(); // Could be replaced by a pointer to locals
+//		private Stack<Process> stack = new Stack<Process>(); // Could be replaced by a pointer to locals
 		
 		// Could probably be improved by referring to either null, a FrameProcess or a Frame
 		// If referring to null, then a FrameProcess hasn't been created yet but will be created lazily
@@ -94,8 +97,11 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		public Object reificationHandle; 
 		
 		public InterfaceIdPart interfaceId;
+		private Process[] stack;
+//		private int stackIndex;
+		private int stackSize;
 		
-		public Frame(Frame sender, /*Process self, Process[] arguments, int variableCount,*/ Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId) {
+		public Frame(Frame sender, /*Process self, Process[] arguments, int variableCount,*/ Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId, int maxStackSize) {
 			this.sender = sender;
 //			this.self = self;
 //			this.arguments = arguments;
@@ -104,6 +110,9 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			this.instructions = instructions;
 //			this.reificationHandle = new Handle();
 			this.interfaceId = interfaceId;
+//			stackIndex = locals.length;
+			stackSize = 0;
+			stack = new Process[maxStackSize];
 		}
 		
 //		public Frame(Frame sender, /*Process self, Process[] arguments, Process[] variables, */ Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId) {
@@ -154,35 +163,79 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		}
 		
 		public final Process pop() {
-			return stack.pop();
+//			return stack.pop();
+//			Process p = locals[stackIndex];
+//			locals[stackIndex] = null;
+//			stackIndex++;
+//			return p;
+			stackSize--;
+			Process p = stack[stackSize];
+			stack[stackSize] = null;
+			return p;
 		}
 		
 		public final void push(Process p) {
-			stack.push(p);
+//			stackIndex--;
+//			locals[stackIndex] = p;
+			stack[stackSize] = p;
+			stackSize++;
 		}
 
 		public final void stackAdd(int index, Process p) {
-			stack.add(index, p);
+//			stack.add(index, p);
+			/*
+			top to bottom
+			[x, y, z]
+			add 1 i
+			[x, y, i, z]
+			
+			top to bottom
+			[x, y, z]
+			add 2 i
+			[x, i, y, z]
+			
+			top to bottom
+			[x, y, z]
+			add 3 i
+			[i, x, y, z]
+			*/
+//			for(int i = index; i > stackIndex; i--)
+//				locals[i - 1] = locals[i];
+//			locals[index] = p;
+			
+			for(int i = stackSize - 1; i > index; i--)
+				stack[i - 1] = locals[i];
+			stack[index] = p;
 		}
 
 		public final String stackToString() {
-			return stack.toString();
+//			return stack.toString();
+//			return IntStream.range(stackIndex, locals.length).mapToObj(i -> i).sorted((x, y) -> y.compareTo(x)).map(i -> locals[i].toString()).collect(Collectors.joining());
+			return Arrays.toString(stack);
 		}
 
 		public final int stackSize() {
-			return stack.size();
+//			return stack.size();
+//			return locals.length - stackIndex;
+			return stackSize;
 		}
 
 		public final Process peek() {
-			return stack.peek();
+//			return stack.peek();
+//			return locals[stackIndex];
+			return stack[stackSize - 1];
 		}
 
 		public final Process stackGet(int i) {
-			return stack.get(i);
+//			return stack.get(i);
+//			return locals[locals.length - i - 1];
+			return stack[i];
 		}
 
 		public void stackSet(int i, Process p) {
-			stack.set(i, p);
+//			stack.set(i, p);
+//			locals[i] = p;
+			stack[i] = p;
 		}
 	}
 	
@@ -198,7 +251,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	private DictionaryProcess protoBehavior;
 	private DictionaryProcess closureBehavior;
 
-	public CustomProcess(int parameterCount, int variableCount, Instruction[] instructions) {
+	public CustomProcess(int parameterCount, int variableCount, int maxStackSize, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
 		// Should CustomProcess not be a process at all? Should CustomProcess hold any and push it instead this?  - Also at other locations, e.g. when loading.
 		// Add Any prototype
@@ -236,7 +289,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		
 		Process[] locals = new Process[1 + parameterCount + variableCount];
 		locals[0] = protoAny;
-		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceIdPart("default"));
+		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceIdPart("default"), maxStackSize);
 	}
 	
 	private transient SymbolTable symbolTable;
@@ -391,34 +444,34 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - argumentCount - 1);
 			
-			Object callable = receiver.getCallable(this, code);
+			Object callable = receiver.getCallable(code);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
-				Process[] locals = new Process[1 + behavior.parameterCount + behavior.variableCount];
+				Process[] locals = new Process[behavior.localCount];
 
 				locals[0] = receiver;
 				for(int i = argumentCount - 1; i >= 0; i--)
-					locals[i] = currentFrame.pop();
+					locals[i + 1] = currentFrame.pop();
 				
 				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount,*/ behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount,*/ behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1 + argumentCount];
 
 				// Perhaps arguments should be pushed in reverse order?
 				// This way, System.arraycopy could probably be used when Frame.locals also represents stack
-				for(int i = argumentCount - 1; i >= 0; i--)
-					locals[i] = currentFrame.pop();
+				for(int i = argumentCount - 1; i > 0; i--)
+					locals[i + 1] = currentFrame.pop();
 				currentFrame.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -429,14 +482,14 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = currentFrame.pop();
 			
-			Object callable = receiver.getCallable(this, code);
+			Object callable = receiver.getCallable(code);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[1 + behavior.parameterCount + behavior.variableCount];
+				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1];
@@ -444,7 +497,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -455,16 +508,16 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 2);
 			
-			Object callable = receiver.getCallable(this, code);
+			Object callable = receiver.getCallable(code);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[1 + behavior.parameterCount + behavior.variableCount];
+				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
 				locals[1] = currentFrame.pop();
 				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
@@ -474,7 +527,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -485,18 +538,18 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 3);
 			
-			Object callable = receiver.getCallable(this, code);
+			Object callable = receiver.getCallable(code);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[1 + behavior.parameterCount + behavior.variableCount];
+				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
 				locals[2] = currentFrame.pop();
 				locals[1] = currentFrame.pop();
 				
 				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[3];
@@ -507,7 +560,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -518,11 +571,11 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 4);
 			
-			Object callable = receiver.getCallable(this, code);
+			Object callable = receiver.getCallable(code);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[1 + behavior.parameterCount + behavior.variableCount];
+				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
 				locals[3] = currentFrame.pop();
 				locals[2] = currentFrame.pop();
@@ -530,7 +583,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				
 				currentFrame.pop(); // Pop receiver
 				
-				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[4];
@@ -542,7 +595,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId);
+				currentFrame = new Frame(currentFrame, /*process, */locals, /*0, */FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -750,39 +803,47 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, closure.parameterCount);
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId);
+//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, closure.parameterCount);
+			for(int i = closure.parameterCount - 1; i >= 0; i--)
+				frame.frame.locals[closure.argumentOffset + i] = currentFrame.pop();
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_0: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			frame.frame.locals[closure.argumentOffset] = currentFrame.locals[1];
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId);
+//			frame.frame.locals[closure.argumentOffset] = currentFrame.locals[1];
+			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 2);
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId);
+			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
+			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 2);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 3);
-			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId);
+			frame.frame.locals[closure.argumentOffset + 2] = currentFrame.pop();
+			frame.frame.locals[closure.argumentOffset + 1] = currentFrame.pop();
+			frame.frame.locals[closure.argumentOffset] = currentFrame.pop();
+//			System.arraycopy(currentFrame.locals, 1 /*Ignore self*/, frame.frame.locals, closure.argumentOffset, 3);
+			currentFrame = new Frame(currentFrame, /*frame.frame.self,*/ frame.frame.locals, /*frame.frame.variables,*/ behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
 			
 			break;
 		}
@@ -1091,7 +1152,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
 				customProcess.currentFrame.locals = new Process[]{protoAny};
 				currentFrame = new Frame(
-					currentFrame, /*protoAny, */customProcess.currentFrame.locals, /*customProcess.currentFrame.variables.length, */customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId);
+					currentFrame, /*protoAny, */customProcess.currentFrame.locals, /*customProcess.currentFrame.variables.length, */customProcess.currentFrame.instructions, customProcess.currentFrame.interfaceId, customProcess.currentFrame.stack.length);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
@@ -1108,10 +1169,10 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_BEHAVIOR: {
-			int parameterCount = (int)instruction.operand1;
-			int variableCount = (int)instruction.operand2;
+			int localCount = (int)instruction.operand1;
+			int maxStackSize = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
-			BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
+			BehaviorProcess behavior = new BehaviorProcess(localCount, maxStackSize, instructions);
 			behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
 			currentFrame.push(behavior);
 			currentFrame.instructionPointer++;
@@ -1157,7 +1218,7 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 	}
 	
 	@Override
-	public Object getCallable(ProcessFactory factory, int selectorCode) {
+	public Object getCallable(int selectorCode) {
 		return null;
 	}
 	
@@ -1181,12 +1242,12 @@ public class CustomProcess extends Process implements Iterable<Object>, ProcessF
 		return null;
 	}
 	
-	@Override
-	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
-		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
-		behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
-		return behavior;
-	}
+//	@Override
+//	public BehaviorProcess createBehavior(int parameterCount, int variableCount, Instruction[] instructions) {
+//		BehaviorProcess behavior = new BehaviorProcess(parameterCount, variableCount, instructions);
+//		behavior.defineProto(SymbolTable.Codes.prototype, protoBehavior);
+//		return behavior;
+//	}
 	
 	public final BooleanProcess getBoolean(boolean value) {
 		return value ? singletonTrue : singletonFalse;
