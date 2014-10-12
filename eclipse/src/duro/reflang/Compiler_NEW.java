@@ -139,9 +139,9 @@ public class Compiler_NEW {
 		primitiveMap.put(Selector.get("pause", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_PAUSE), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
-		primitiveMap.put(Selector.get("evalWith", 3), new PrimitiveVisitorFactory.Eval());
-		primitiveMap.put(Selector.get("evalWith", 4), new PrimitiveVisitorFactory.Eval());
-		primitiveMap.put(Selector.get("evalWith", 5), new PrimitiveVisitorFactory.Eval());
+		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
+		primitiveMap.put(Selector.get("evalWithWithWith", 4), new PrimitiveVisitorFactory.Eval());
+		primitiveMap.put(Selector.get("evalWithWithWithWith", 5), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
 		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
