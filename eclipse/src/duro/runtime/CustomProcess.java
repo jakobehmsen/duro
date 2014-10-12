@@ -194,6 +194,19 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			System.arraycopy(stack, stackSize - n - m, a, i, n);
 		}
 
+		public final void set0(Process p) {
+			stack[stackSize - 1] = p;
+		}
+		
+		public final void set1(Process p) {
+			stack[stackSize - 2] = p;
+		}
+
+		public final void pop1() {
+			stackSize--;
+			stack[stackSize] = null;
+		}
+
 		public final void pop2() {
 			int newSize = stackSize - 2;
 			Arrays.fill(stack, newSize, stackSize, null);
@@ -773,8 +786,12 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			break;
 		} case Instruction.OPCODE_SET_CODE: {
 			int code = (int)instruction.operand1;
-			Process value = currentFrame.pop();
-			Process receiver = (Process)currentFrame.pop();
+			Process value = currentFrame.peek();
+			Process receiver = (Process)currentFrame.peek1();
+			currentFrame.pop2();
+//			int code = (int)instruction.operand1;
+//			Process value = currentFrame.pop();
+//			Process receiver = (Process)currentFrame.pop();
 			receiver.define(code, value);
 			currentFrame.instructionPointer++;
 			
@@ -803,9 +820,13 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			break;
 		} case Instruction.OPCODE_GET_CODE: {
 			int code = (int)instruction.operand1;
-			Process receiver = (Process)currentFrame.pop();
+			Process receiver = (Process)currentFrame.peek();
 			Process value = receiver.lookup(code);
-			currentFrame.push(value);
+			currentFrame.set0(value);
+//			int code = (int)instruction.operand1;
+//			Process receiver = (Process)currentFrame.pop();
+//			Process value = receiver.lookup(code);
+//			currentFrame.push(value);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1030,8 +1051,11 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_SP_BOOLEAN_NOT: {
-			BooleanProcess b = (BooleanProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(!b.value));
+			BooleanProcess b = (BooleanProcess)currentFrame.peek();
+			currentFrame.set0(getBoolean(!b.value));
+			
+//			BooleanProcess b = (BooleanProcess)currentFrame.pop();
+//			currentFrame.push(getBoolean(!b.value));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1051,10 +1075,15 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_SP_STRING_CONCAT: {
-			StringProcess rhs = (StringProcess)currentFrame.pop();
-			StringProcess lhs = (StringProcess)currentFrame.pop();
-			StringProcess result = createString(lhs.str + rhs.str);
-			currentFrame.push(result);
+			StringProcess rhs = (StringProcess)currentFrame.peek();
+			StringProcess lhs = (StringProcess)currentFrame.peek1();
+			currentFrame.set1(createString(lhs.str + rhs.str));
+			currentFrame.pop1();
+			
+//			StringProcess rhs = (StringProcess)currentFrame.pop();
+//			StringProcess lhs = (StringProcess)currentFrame.pop();
+//			StringProcess result = createString(lhs.str + rhs.str);
+//			currentFrame.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1066,9 +1095,14 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_ADD: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
+			currentFrame.pop1();
+			
+//			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
+//			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
+//			currentFrame.push(new IntegerProcess(protoInteger, lhs.intValue + rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1115,22 +1149,33 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_LESS: {
-			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
-			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
-			currentFrame.push(getBoolean(lhs.intValue < rhs.intValue));
+			IntegerProcess rhs = (IntegerProcess)currentFrame.peek();
+			IntegerProcess lhs = (IntegerProcess)currentFrame.peek1();
+			currentFrame.set1(getBoolean(lhs.intValue < rhs.intValue));
+			currentFrame.pop1();
+			
+//			IntegerProcess rhs = (IntegerProcess)currentFrame.pop();
+//			IntegerProcess lhs = (IntegerProcess)currentFrame.pop();
+//			currentFrame.push(getBoolean(lhs.intValue < rhs.intValue));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_INT_TO_STRING: {
-			IntegerProcess integer = (IntegerProcess)currentFrame.pop();
-			StringProcess result = createString(Integer.toString(integer.intValue));
-			currentFrame.push(result);
+			IntegerProcess integer = (IntegerProcess)currentFrame.peek();
+			currentFrame.set0(createString(Integer.toString(integer.intValue)));
+			
+//			IntegerProcess integer = (IntegerProcess)currentFrame.pop();
+//			StringProcess result = createString(Integer.toString(integer.intValue));
+//			currentFrame.push(result);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SENDER: {
-			FrameProcess frame = (FrameProcess)currentFrame.pop();
-			currentFrame.push(frame.frame.sender.getReifiedFrame(protoFrame));
+			FrameProcess frame = (FrameProcess)currentFrame.peek();
+			currentFrame.set0(frame.frame.sender.getReifiedFrame(protoFrame));
+			
+//			FrameProcess frame = (FrameProcess)currentFrame.pop();
+//			currentFrame.push(frame.frame.sender.getReifiedFrame(protoFrame));
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -1142,8 +1187,11 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			
 			break;
 		} case Instruction.OPCODE_SP_FRAME_RESUME: {
-			Process value = currentFrame.pop();
-			FrameProcess frame = (FrameProcess)currentFrame.pop();
+			Process value = currentFrame.peek();
+			FrameProcess frame = (FrameProcess)currentFrame.peek1();
+			currentFrame.pop2();
+//			Process value = currentFrame.pop();
+//			FrameProcess frame = (FrameProcess)currentFrame.pop();
 
 			currentFrame = frame.frame;
 			currentFrame.push(value);

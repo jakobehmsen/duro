@@ -3,12 +3,28 @@ A file containing miscellaneous and frequently changed code samples.
 */
 
 
+/*
+$p1043 (
+	writeSomething => (
+		var x = \a
+		var y = \b
+		write: x
+		write: "\n"
+		write: y
+		write: "\n"
+	)
+	writeSomething: "Hi", "Bye"
+)
+*/
+
+
 load: "std" // Should load std.drs and check for existing compatible compilations; if exists then load compilation; else compile and then load
 load: "collections"
 
 load: "/auxi"
 
-/*
+
+
 var list = List.clone
 
 list.add: 1
@@ -24,15 +40,68 @@ list.removeAt: 2
 
 list[3] = 46
 
-$p1045 (
-	list.where: {\x.isOdd}; each: {writeln: \x.toString}
+
+/*
+$p104gd23jlk (
+	//list.where: {\x.isOdd}; each: {writeln: \x.toString}
+	list.where' \x.isOdd; each' writeln: \x.toString
+	//list.each' writeln: \x.toString
+	//writeln: list[3]
+	//#(2 2 54 4 45).each' writeln: \x
 )
 */
 
-$pp23 doStuff()
+
+$p9ge32h (
+	//1.to: 10000; map' \x * \x; where' \x.isEven; each' writeln: \x
+	//1.to: 10000; map' \x * \x; where' \x.isEven; each' writeln: \x
+	1.to: 10000; each' writeln: \x
+	//writeln: "Hi there"
+)
+
+//var val = {\x + \y + \z + \i}.call: 1, 2, 8, 3
+//writeln: val
+
 
 /*
-$p10 (
-	1.to: 100; map: {\x * \x}; where: {\x.isEven}; each: {writeln: \x}
+Closure@call => eval: this
+Closure@call => eval: this With: \n
+Closure@call => eval: this With: \n, \m
+Closure@call => eval: this With: \n, \m, \o
+Closure@call => eval: this With: \n, \m, \o, \p
+var c = {|x y z a| intAdd: x, y}
+var x = c.call: 4, 8, 9, 12 //eval: c With: 6
+write: intToString: x
+*/
+
+/*
+var i = 0
+while' (intLess: i, 10), (
+	write: intToString: i
+	write: "\n"
+	i = intAdd: i, 1
+)
+*/
+
+/*
+var x = if' true, "Yes" Else' "No"
+write: x
+*/
+
+/*
+$p99kj8tk5h (
+	writeln: "Hello there, and bye again..."
+	pause()
+	writeln: "Welcome back :) now I die :~(..."
+)
+*/
+
+
+/*
+Integer@+ => intAdd: this, \rhs
+Integer@toString => intToString: this
+
+$p9j8tk5hj (
+	write: (3 + 6).toString
 )
 */

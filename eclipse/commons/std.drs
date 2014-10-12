@@ -67,3 +67,5 @@ Frame@resume => frameResume: this, \x
 Closure@call => eval: this
 Closure@call => eval: this With: \arg0
 Closure@call => eval: this With: \arg0 With: \arg1
+Closure@call => eval: this With: \arg0 With: \arg1 With: \arg2
+Closure@call => eval: this With: \arg0 With: \arg1 With: \arg2 With: \arg3
