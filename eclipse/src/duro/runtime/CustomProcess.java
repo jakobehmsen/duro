@@ -173,6 +173,46 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			stack[stackSize] = null;
 			return p;
 		}
+
+		public final void copy1Into(int i, Process[] a) {
+			a[i] = stack[stackSize - 1];
+		}
+
+		public final void copy2Into(int i, Process[] a) {
+			System.arraycopy(stack, stackSize - 2, a, i, 2);
+		}
+
+		public final void copy3Into(int i, Process[] a) {
+			System.arraycopy(stack, stackSize - 3, a, i, 3);
+		}
+
+		public final void copyNInto(int i, Process[] a, int n) {
+			System.arraycopy(stack, stackSize - n, a, i, n);
+		}
+
+		public final void pop2() {
+			int newSize = stackSize - 2;
+			Arrays.fill(stack, newSize, stackSize, null);
+			stackSize = newSize;
+		}
+
+		public final void pop3() {
+			int newSize = stackSize - 3;
+			Arrays.fill(stack, newSize, stackSize, null);
+			stackSize = newSize;
+		}
+
+		public final void pop4() {
+			int newSize = stackSize - 4;
+			Arrays.fill(stack, newSize, stackSize, null);
+			stackSize = newSize;
+		}
+
+		public final void popN(int n) {
+			int newSize = stackSize - n;
+			Arrays.fill(stack, newSize, stackSize, null);
+			stackSize = newSize;
+		}
 		
 		public final void push(Process p) {
 //			stackIndex--;
@@ -451,12 +491,16 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
 				Process[] locals = new Process[behavior.localCount];
-
-				locals[0] = receiver;
-				for(int i = argumentCount - 1; i >= 0; i--)
-					locals[i + 1] = currentFrame.pop();
 				
-				currentFrame.pop(); // Pop receiver
+				locals[0] = receiver;
+				currentFrame.copyNInto(1, locals, argumentCount);
+				currentFrame.popN(argumentCount + 1); // Pop arguments and receiver
+
+//				locals[0] = receiver;
+//				for(int i = argumentCount - 1; i >= 0; i--)
+//					locals[i + 1] = currentFrame.pop();
+//				
+//				currentFrame.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount,*/ behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
@@ -515,15 +559,17 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
-				locals[1] = currentFrame.pop();
-				currentFrame.pop(); // Pop receiver
+				currentFrame.copy1Into(1, locals);
+				currentFrame.pop2(); // Pop arguments and receiver
+//				locals[1] = currentFrame.pop();
+//				currentFrame.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
 				locals[1] = currentFrame.pop();
-				currentFrame.pop(); // Pop receiver
+				currentFrame.pop();
 				
 				Process process = (Process)callable;
 				locals[0] = process;
@@ -545,10 +591,13 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
-				locals[2] = currentFrame.pop();
-				locals[1] = currentFrame.pop();
+				currentFrame.copy2Into(1, locals);
+				currentFrame.pop3(); // Pop arguments and receiver
+//				locals[0] = receiver;
+//				locals[2] = currentFrame.pop();
+//				locals[1] = currentFrame.pop();
 				
-				currentFrame.pop(); // Pop receiver
+//				currentFrame.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
@@ -578,11 +627,14 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				Process[] locals = new Process[behavior.localCount];
 				locals[0] = receiver;
-				locals[3] = currentFrame.pop();
-				locals[2] = currentFrame.pop();
-				locals[1] = currentFrame.pop();
+				currentFrame.copy3Into(1, locals);
+				currentFrame.pop4(); // Pop arguments and receiver
+//				locals[0] = receiver;
+//				locals[3] = currentFrame.pop();
+//				locals[2] = currentFrame.pop();
+//				locals[1] = currentFrame.pop();
 				
-				currentFrame.pop(); // Pop receiver
+//				currentFrame.pop(); // Pop receiver
 				
 				currentFrame = new Frame(currentFrame, /*receiver, */locals, /*behavior.variableCount, */behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
 			} else if(callable != null) {
