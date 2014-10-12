@@ -11,7 +11,7 @@ public abstract class Process implements Serializable {
 
 	public abstract void resume(List<InteractionHistory.Interaction> playedInstructions);
 
-	public abstract Object getCallable(ProcessFactory factory, int selectorCode);
+	public abstract Object getCallable(int selectorCode);
 
 	public abstract Process lookup(int selectorCode);
 

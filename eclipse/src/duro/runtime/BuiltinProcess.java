@@ -23,8 +23,8 @@ public class BuiltinProcess extends Process {
 	}
 
 	@Override
-	public Object getCallable(ProcessFactory factory, int selectorCode) {
-		return prototype.getCallable(factory, selectorCode);
+	public Object getCallable(int selectorCode) {
+		return prototype.getCallable(selectorCode);
 	}
 
 	@Override

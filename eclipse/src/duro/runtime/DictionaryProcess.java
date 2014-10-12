@@ -43,14 +43,14 @@ public class DictionaryProcess extends Process {
 	private Hashtable<Integer, Member> properties = new Hashtable<Integer, Member>();
 	
 	@Override
-	public Object getCallable(ProcessFactory factory, int selectorCode) {
+	public Object getCallable(int selectorCode) {
 		Member callableMember = properties.get(selectorCode);
 		
 		if(callableMember != null)
 			return callableMember.value;
 		
 		for(Process proto: protos.values()) {
-			Object callable = proto.getCallable(factory, selectorCode);
+			Object callable = proto.getCallable(selectorCode);
 			if(callable != null)
 				return callable;
 		}

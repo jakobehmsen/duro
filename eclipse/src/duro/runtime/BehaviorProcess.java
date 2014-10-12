@@ -5,18 +5,18 @@ public class BehaviorProcess extends DictionaryProcess {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public int parameterCount;
-	public int variableCount;
+	public int localCount; // receiver + arguments + variables
+	public int maxStackSize; // stack
 	public Instruction[] instructions;
 	
-	public BehaviorProcess(int parameterCount, int variableCount, Instruction[] instructions) {
-		this.parameterCount = parameterCount;
-		this.variableCount = variableCount;
+	public BehaviorProcess(int localCount, int maxStackSize, Instruction[] instructions) {
+		this.localCount = localCount;
+		this.maxStackSize = maxStackSize;
 		this.instructions = instructions;
 	}
 
 	@Override
 	public DictionaryProcess newBase() {
-		return new BehaviorProcess(parameterCount, variableCount, instructions);
+		return new BehaviorProcess(localCount, maxStackSize, instructions);
 	}
 }
