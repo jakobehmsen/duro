@@ -149,15 +149,15 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 //			return ((Handle)reificationHandle).value;
 		}
 		
-		public void extendInterfaceId(String id) {
+		public final void extendInterfaceId(String id) {
 			interfaceId = interfaceId.extend(id);
 		}
 		
-		public void shrinkInterfaceId() {
+		public final void shrinkInterfaceId() {
 			interfaceId = interfaceId.parent;
 		}
 		
-		public String getInterfaceId() {
+		public final String getInterfaceId() {
 //			return interfaceIdStack.stream().collect(Collectors.joining(";"));
 			return interfaceId.build();
 		}
@@ -289,7 +289,7 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			stackSize++;
 		}
 
-		public Process peek1() {
+		public final Process peek1() {
 			return stack[stackSize - 2];
 		}
 
@@ -299,7 +299,7 @@ public class CustomProcess extends Process implements Iterable<Object>/*, Proces
 			return stack[i];
 		}
 
-		public void stackSet(int i, Process p) {
+		public final void stackSet(int i, Process p) {
 //			stack.set(i, p);
 //			locals[i] = p;
 			stack[i] = p;
