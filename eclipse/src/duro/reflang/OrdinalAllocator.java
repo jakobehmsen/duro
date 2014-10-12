@@ -80,9 +80,7 @@ public class OrdinalAllocator {
 	
 	public Consumer<Integer> instructionsConsumer(CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
 		final int index = instructions.size();
-//		instructions.add(null);
-		// Add representational instructions
-		instructions.add(instructionFunc.apply(-1));
+		instructions.add(null);
 		
 		return ordinal -> {
 			Instruction instruction = instructionFunc.apply(ordinal);
