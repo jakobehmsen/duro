@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import duro.debugging.Debug;
-import duro.reflang.Compiler_NEW;
+import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 
 public class CustomProcess extends Process {
@@ -1273,7 +1273,7 @@ public class CustomProcess extends Process {
 					codePath = commonsPath + "/" + path + ".drr";
 				}
 				
-				Compiler_NEW compiler = new Compiler_NEW();
+				Compiler compiler = new Compiler();
 				CustomProcess customProcess = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.currentFrame.instructions[customProcess.currentFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);

@@ -32,12 +32,12 @@ import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
-public class Compiler_NEW {
+public class Compiler {
 //	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
 	private MessageCollector errors = new MessageCollector();
 	private ArrayList<Runnable> endHandlers = new ArrayList<Runnable>();
 	
-	public Compiler_NEW() {
+	public Compiler() {
 //		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
 	}
 	

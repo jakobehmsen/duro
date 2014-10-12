@@ -20,7 +20,7 @@ public class Main {
 		FileInputStream inputStream;
 		try {
 			inputStream = new FileInputStream(sourceCodePath);
-			duro.reflang.Compiler_NEW compiler = new Compiler_NEW();
+			duro.reflang.Compiler compiler = new Compiler();
 			CustomProcess process = compiler.compile(inputStream);
 			
 			if(compiler.hasErrors())

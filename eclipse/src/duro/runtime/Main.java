@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import duro.debugging.Debug;
-import duro.reflang.Compiler_NEW;
+import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 import duro.transcriber.Journal;
 
@@ -34,7 +34,7 @@ public class Main {
 			Debug.println(Debug.LEVEL_MEDIUM, "Reading main process...");
 			long startReadMainProcess = System.currentTimeMillis();
 			
-			Compiler_NEW compiler = new Compiler_NEW();
+			Compiler compiler = new Compiler();
 			
 			CustomProcess mainProcess = compiler.load(mainObjectSourcePath, mainObjectCodePath);
 			
