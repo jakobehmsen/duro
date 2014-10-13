@@ -63,9 +63,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private boolean mustBeExpression;
 	private OrdinalAllocator idToParameterOrdinalMap;
 	private OrdinalAllocator idToVariableOrdinalMap;
-	private Set<String> fields;
+	private Set<String> accessFields;
+	private Set<String> assignFields;
 
-	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, Set<String> fields) {
+	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, Set<String> accessFields, Set<String> assignFields) {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
 		this.endHandlers = endHandlers;
@@ -73,12 +74,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.mustBeExpression = true;
 		this.idToParameterOrdinalMap = new OrdinalAllocator();
 		this.idToVariableOrdinalMap = new OrdinalAllocator();
-		this.fields = fields;
+		this.accessFields = accessFields;
+		this.assignFields = assignFields;
 	}
 
 	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
 			CodeEmitter instructions, boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, 
-			Set<String> fields) {
+			Set<String> accessFields, Set<String> assignFields) {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
 		this.endHandlers = endHandlers;
@@ -86,19 +88,24 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.mustBeExpression = mustBeExpression;
 		this.idToParameterOrdinalMap = idToParameterOrdinalMap;
 		this.idToVariableOrdinalMap = idToVariableOrdinalMap;
-		this.fields = fields;
+		this.accessFields = accessFields;
+		this.assignFields = assignFields;
 	}
 	
-	private BodyVisitor startDict(Set<String> fields) {
-		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+	private BodyVisitor startDictFields(Set<String> assignFields) {
+		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
+	}
+	
+	private BodyVisitor startDictMethods(Set<String> fields) {
+		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
 	}
 	
 	private BodyVisitor startInner(boolean mustBeExpression) {
-		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 	}
 	
 	private BodyVisitor startInner(OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap) {
-		return new BodyVisitor(primitiveMap, errors, endHandlers, new CodeEmitter(), true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+		return new BodyVisitor(primitiveMap, errors, endHandlers, new CodeEmitter(), true, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 	}
 	
 	@Override
@@ -380,7 +387,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
-			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 			primitiveInterceptor.visitPrimitive(id, args);
 		} else {
 			if(isForSelf)
@@ -503,11 +510,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		instructions.add(new Instruction(opcodeAssign, id, 0));
 		// newValue | e
 		
-		fields.add(id);
+		assignFields.add(id);
 	}
 
 	private void appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, String id, boolean returnValue) {
-		BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, fields);
+		BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, accessFields, assignFields);
 		for(IdContext parameterIdNode: paramsCtx.id()) {
 			String parameterId = parameterIdNode.getText();
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
@@ -587,7 +594,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		
 		boolean accessMustBeExpression = mustBeExpression;
 		onEnd(() -> {
-			if(fields.contains(id)) {
+			if(accessFields.contains(id)) {
 				// Get member
 				if(accessMustBeExpression) {
 					return new Instruction(Instruction.OPCODE_GET, id, 0);
@@ -600,7 +607,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			}
 		});
 		onEnd(() -> {
-			if(fields.contains(id)) {
+			if(accessFields.contains(id)) {
 				// Get member
 				return new Instruction(Instruction.OPCODE_NONE, id, 0);
 			} else {
@@ -628,7 +635,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitDict(DictContext ctx) {
 		instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 		
-		BodyVisitor dictVisitor = startDict(new HashSet<String>());
+		HashSet<String> fields = new HashSet<String>();
+		BodyVisitor fieldsVisitor = startDictFields(fields);
+		BodyVisitor methodsVisitor = startDictMethods(fields);
 		
 		for(DictEntryContext entryCtx: ctx.dictEntry()) {
 			instructions.add(new Instruction(Instruction.OPCODE_DUP));
@@ -637,13 +646,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			
 			switch(entryCtx.op.getType()) {
 			case DuroLexer.ASSIGN:
-				dictVisitor.appendAssignSlot(entryCtx.expression(), id, false);
+				fieldsVisitor.appendAssignSlot(entryCtx.expression(), id, false);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
-				dictVisitor.appendAssignProto(entryCtx.expression(), id, false);
+				fieldsVisitor.appendAssignProto(entryCtx.expression(), id, false);
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
-				dictVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), id, false);
+				methodsVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), id, false);
 				break;
 			}
 		}

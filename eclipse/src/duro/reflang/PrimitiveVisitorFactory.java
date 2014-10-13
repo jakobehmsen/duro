@@ -16,7 +16,7 @@ public interface PrimitiveVisitorFactory {
 	PrimitiveVisitor create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
 			CodeEmitter instructions,
 			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
-			OrdinalAllocator idToVariableOrdinalMap, Set<String> fields);
+			OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields);
 	
 	public static class ConstInstruction implements PrimitiveVisitorFactory {
 		private Instruction instruction;
@@ -33,12 +33,12 @@ public interface PrimitiveVisitorFactory {
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
-				OrdinalAllocator idToVariableOrdinalMap, Set<String> fields) {
+				OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields) {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
 					for(ParserRuleContext arg: args)
-						arg.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields));
+						arg.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields));
 					
 					instructions.add(instruction);
 					if(mustBeExpression && !doesReturn)
@@ -53,10 +53,10 @@ public interface PrimitiveVisitorFactory {
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
-				OrdinalAllocator idToVariableOrdinalMap, Set<String> fields) {
+				OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields) {
 			if(expression.getRuleIndex() == DuroParser.RULE_closure) {
 				ClosureContext closure = (ClosureContext)expression;
-				new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields).appendGroup(closure.expression());
+				new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields).appendGroup(closure.expression());
 			} else {
 				instructions.add(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
 			}
@@ -70,7 +70,7 @@ public interface PrimitiveVisitorFactory {
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
-				OrdinalAllocator idToVariableOrdinalMap, Set<String> fields) {
+				OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields) {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
@@ -111,7 +111,7 @@ public interface PrimitiveVisitorFactory {
 				}
 
 				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
-					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 				}
 			};
 		}
@@ -124,7 +124,7 @@ public interface PrimitiveVisitorFactory {
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
-				OrdinalAllocator idToVariableOrdinalMap, Set<String> fields) {
+				OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields) {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
@@ -156,7 +156,7 @@ public interface PrimitiveVisitorFactory {
 				}
 
 				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
-					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+					Util.acceptClosureBodyOrCall(expression, primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 				}
 			};
 		}
@@ -169,11 +169,11 @@ public interface PrimitiveVisitorFactory {
 				MessageCollector errors, ArrayList<Runnable> endHandlers,
 				CodeEmitter instructions, boolean mustBeExpression,
 				OrdinalAllocator idToParameterOrdinalMap,
-				OrdinalAllocator idToVariableOrdinalMap, Set<String> fields) {
+				OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, Set<String> assignFields) {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
-					BodyVisitor argVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+					BodyVisitor argVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 					
 					// Append eval arguments first
 					ParserRuleContext closureArg = args.get(0);
