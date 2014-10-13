@@ -187,7 +187,8 @@ public class Instruction implements Serializable {
 	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_SP_CLONE = 135;
-	
+
+	public static final int OPCODE_NONE = 254;
 	public static final int OPCODE_BREAK_POINT = 255;
 
 	public final int opcode;
