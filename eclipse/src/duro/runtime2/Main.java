@@ -2,17 +2,7 @@ package duro.runtime2;
 
 // jdk.internal ?
 
-import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.GeneratorAdapter;
-import org.objectweb.asm.commons.Method;
-import org.objectweb.asm.util.CheckClassAdapter;
 
 public class Main extends ClassLoader {
 	public static void main(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException {
