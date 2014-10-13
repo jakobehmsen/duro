@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
@@ -163,7 +164,7 @@ public class Compiler {
 		
 		CodeEmitter instructions = new CodeEmitter();
 //		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, new HashSet<String>());
 //		Walker walker = new Walker();
 //		walker.walk(programInterceptor, programCtx);
 		programCtx.accept(programVisitor);

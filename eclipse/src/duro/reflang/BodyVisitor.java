@@ -1,8 +1,10 @@
 package duro.reflang;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -61,8 +63,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private boolean mustBeExpression;
 	private OrdinalAllocator idToParameterOrdinalMap;
 	private OrdinalAllocator idToVariableOrdinalMap;
+	private Set<String> fields;
 
-	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers) {
+	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, Set<String> fields) {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
 		this.endHandlers = endHandlers;
@@ -70,12 +73,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.mustBeExpression = true;
 		this.idToParameterOrdinalMap = new OrdinalAllocator();
 		this.idToVariableOrdinalMap = new OrdinalAllocator();
+		this.fields = fields;
 	}
 
 	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, ArrayList<Runnable> endHandlers, 
-			CodeEmitter instructions,
-			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
-			OrdinalAllocator idToVariableOrdinalMap) {
+			CodeEmitter instructions, boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, 
+			Set<String> fields) {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
 		this.endHandlers = endHandlers;
@@ -83,11 +86,24 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.mustBeExpression = mustBeExpression;
 		this.idToParameterOrdinalMap = idToParameterOrdinalMap;
 		this.idToVariableOrdinalMap = idToVariableOrdinalMap;
+		this.fields = fields;
+	}
+	
+	private BodyVisitor startDict(Set<String> fields) {
+		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+	}
+	
+	private BodyVisitor startInner(boolean mustBeExpression) {
+		return new BodyVisitor(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
+	}
+	
+	private BodyVisitor startInner(OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap) {
+		return new BodyVisitor(primitiveMap, errors, endHandlers, new CodeEmitter(), true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
 	}
 	
 	@Override
 	public Object visitProgram(ProgramContext ctx) {
-		BodyVisitor rootExpressionInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap);
+		BodyVisitor rootExpressionInterceptor = startInner(false);
 
 		for(int i = 0; i < ctx.expression().size() ; i++)
 			ctx.expression(i).accept(rootExpressionInterceptor);
@@ -115,7 +131,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitMessageExchange(MessageExchangeContext ctx) {
 		if(!mustBeExpression) {
 			if(ctx.messageChain() != null) {
-				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyVisitor messageExchangeVisitor = startInner(true);
 				ctx.receiver().accept(messageExchangeVisitor);
 				
 				MessageChainContext chain = ctx.messageChain();
@@ -127,7 +143,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				}
 
 			} else {
-				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				ctx.receiver().accept(startInner(false));
 			}
 		} else {
 			super.visitMessageExchange(ctx);
@@ -141,7 +157,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		ParserRuleContext expr = (ParserRuleContext)ctx.getChild(0);
 		if(!mustBeExpression) {
 			if(ctx.expressionChain().size() > 0) {
-				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyVisitor messageExchangeVisitor = startInner(true);
 				expr.accept(messageExchangeVisitor);
 				
 				for(int i = 0; i < ctx.expressionChain().size(); i++) {
@@ -163,7 +179,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
 		if(!mustBeExpression) {
 			if(ctx.binaryMessageOperandChain() != null) {
-				BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+				BodyVisitor messageExchangeVisitor = startInner(true);
 				ctx.receiver().accept(messageExchangeVisitor);
 				
 				BinaryMessageOperandChainContext chain = ctx.binaryMessageOperandChain();
@@ -175,7 +191,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				}
 
 			} else {
-				ctx.receiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				ctx.receiver().accept(startInner(false));
 			}
 		} else {
 			super.visitBinaryMessageOperand(ctx);
@@ -188,10 +204,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitMultiArgMessageArgNoPar(MultiArgMessageArgNoParContext ctx) {
 		if(!mustBeExpression) {
 			if(ctx.selfSingleArgMessageNoPar() != null) {
-				ctx.selfSingleArgMessageNoPar().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				ctx.selfSingleArgMessageNoPar().accept(startInner(false));
 			} else {
 				if(ctx.multiArgMessageArgNoParChain() != null) {
-					BodyVisitor messageExchangeVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+					BodyVisitor messageExchangeVisitor = startInner(true);
 					ctx.multiArgMessageArgNoParReceiver().accept(messageExchangeVisitor);
 					
 					MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
@@ -203,7 +219,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 					}
 	
 				} else {
-					ctx.multiArgMessageArgNoParReceiver().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, idToVariableOrdinalMap));
+					ctx.multiArgMessageArgNoParReceiver().accept(startInner(false));
 				}
 			}
 		} else {
@@ -222,7 +238,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				if(mustBeExpression)
 					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			} else {
-				ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+				ctx.expression().accept(startInner(true));
 				if(mustBeExpression)
 					instructions.add(new Instruction(Instruction.OPCODE_DUP));
 				idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
@@ -364,12 +380,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
-			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, endHandlers, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, fields);
 			primitiveInterceptor.visitPrimitive(id, args);
 		} else {
 			if(isForSelf)
 				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : startInner(true);
 			for(ParserRuleContext argCtx: args)
 				argCtx.accept(argsVisitor);
 			
@@ -382,7 +398,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitGrouping(GroupingContext ctx) {
-		BodyVisitor expressionVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+		BodyVisitor expressionVisitor = startInner(mustBeExpression);
 		appendGroup(ctx.expression(), mustBeExpression, expressionVisitor);
 		
 		return null;
@@ -441,10 +457,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitIndexAssignment(IndexAssignmentContext ctx) {
 		// receiver
 		ExpressionContext indexCtx = ctx.expression(0);
-		indexCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		indexCtx.accept(startInner(true));
 		// receiver, index
 		ExpressionContext valueCtx = ctx.expression(1);
-		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		valueCtx.accept(startInner(true));
 		// receiver, index, value
 		instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 		// result
@@ -456,7 +472,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 
 	private void appendAssignVariable(ExpressionContext valueCtx, String id) {
-		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		valueCtx.accept(startInner(true));
 		if(mustBeExpression)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP));
 		// Variable assignment
@@ -473,7 +489,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 	private void appendAssignSlot(ExpressionContext valueCtx, String id, int opcodeAssign, boolean returnValue) {
 		// receiver
-		valueCtx.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+		valueCtx.accept(startInner(true));
 		// receiver, newValue
 		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
@@ -486,10 +502,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		*/
 		instructions.add(new Instruction(opcodeAssign, id, 0));
 		// newValue | e
+		
+		fields.add(id);
 	}
 
 	private void appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, String id, boolean returnValue) {
-		BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers);
+		BodyVisitor functionBodyInterceptor = new BodyVisitor(primitiveMap, errors, endHandlers, fields);
 		for(IdContext parameterIdNode: paramsCtx.id()) {
 			String parameterId = parameterIdNode.getText();
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
@@ -536,7 +554,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	@Override
 	public Object visitIndexAccess(IndexAccessContext ctx) {
 		if(mustBeExpression) {
-			ctx.expression().accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
+			ctx.expression().accept(startInner(true));
 			instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
 		}
 		
@@ -545,26 +563,55 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitAccess(AccessContext ctx) {
-		if(mustBeExpression) {
-			String id = ctx.id().getText();
-			
-			if(idToParameterOrdinalMap.isDeclared(id)) {
+		String id = ctx.id().getText();
+		
+		if(idToParameterOrdinalMap.isDeclared(id)) {
+			if(mustBeExpression) {
 				// Load argument
 //				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, parameterOrdinal));
-				return null;
 			}
-			
-			if(idToVariableOrdinalMap.isDeclared(id)) {
+			return null;
+		}
+		
+		if(idToVariableOrdinalMap.isDeclared(id)) {
+			if(mustBeExpression) {
 				// Load variable
 				idToVariableOrdinalMap.ordinalFor(id, instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, variableOrdinal));
-				return null;
 			}
-			
-			// Get member
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
-			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+			return null;
 		}
+
+		// Up to three instructions
+		instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+		
+		boolean accessMustBeExpression = mustBeExpression;
+		onEnd(() -> {
+			if(fields.contains(id)) {
+				// Get member
+				if(accessMustBeExpression) {
+					return new Instruction(Instruction.OPCODE_GET, id, 0);
+				} else {
+					return new Instruction(Instruction.OPCODE_POP, id, 0);
+				}
+			} else {
+				// Message to self
+				return new Instruction(Instruction.OPCODE_SEND, id, 0);
+			}
+		});
+		onEnd(() -> {
+			if(fields.contains(id)) {
+				// Get member
+				return new Instruction(Instruction.OPCODE_NONE, id, 0);
+			} else {
+				if(accessMustBeExpression) {
+					return new Instruction(Instruction.OPCODE_NONE, id, 0);
+				} else {
+					// Message to self
+					return new Instruction(Instruction.OPCODE_POP, id, 0);
+				}
+			}
+		});
 		
 		return null;
 	}
@@ -581,6 +628,8 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitDict(DictContext ctx) {
 		instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 		
+		BodyVisitor dictVisitor = startDict(new HashSet<String>());
+		
 		for(DictEntryContext entryCtx: ctx.dictEntry()) {
 			instructions.add(new Instruction(Instruction.OPCODE_DUP));
 			
@@ -588,13 +637,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			
 			switch(entryCtx.op.getType()) {
 			case DuroLexer.ASSIGN:
-				appendAssignSlot(entryCtx.expression(), id, false);
+				dictVisitor.appendAssignSlot(entryCtx.expression(), id, false);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
-				appendAssignProto(entryCtx.expression(), id, false);
+				dictVisitor.appendAssignProto(entryCtx.expression(), id, false);
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
-				appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), id, false);
+				dictVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), id, false);
 				break;
 			}
 		}
@@ -607,7 +656,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(mustBeExpression) {
 			OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
 			OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
-			BodyVisitor closureBodyVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, new CodeEmitter(), true, newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
+			BodyVisitor closureBodyVisitor = startInner(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap);
 			for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
 				String parameterId = parameterIdNode.getText();
 				closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
@@ -639,7 +688,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			int length = ctx.expression().size();
 			instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, length));
 			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
-			BodyVisitor itemVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap);
+			BodyVisitor itemVisitor = startInner(true);
 			
 			for(int i = 0; i < length; i++) {
 				instructions.add(new Instruction(Instruction.OPCODE_DUP));

@@ -1048,6 +1048,9 @@ public class CustomProcess extends Process {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_NONE: {
+			currentFrame.instructionPointer++;
+			break;
 		} case Instruction.OPCODE_BREAK_POINT: {
 			currentFrame.instructionPointer++;
 			break;
