@@ -74,27 +74,58 @@ public interface PrimitiveVisitorFactory {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
+//					ParserRuleContext condition = args.get(0);
+//					ParserRuleContext trueBlock = args.get(1);
+//					ParserRuleContext falseBlock = args.size() > 2 ? args.get(2) : null;
+//					
+//					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
+//					
+//					int conditionalJumpIndex = instructions.size();
+//					instructions.add(null);
+//					
+//					OrdinalAllocator trueBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+//					acceptClosureBodyOrCall(trueBlock, trueBlockIdToVariableOrdinalMap, mustBeExpression);
+//					
+//					// After statement on true is generated, then a jump should be generated
+//					// Leave a spot allocated here and write to it later
+//					int jumpIndex = instructions.size();
+//					instructions.add(null);
+//
+//					// Now, the spot allocated for a conditional jump can be populated
+//					int ifEndIndex = instructions.size();
+//					int ifJump = ifEndIndex - conditionalJumpIndex;
+//					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, ifJump));
+//
+//					if(falseBlock != null) {
+//						OrdinalAllocator falseBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+//						acceptClosureBodyOrCall(falseBlock, falseBlockIdToVariableOrdinalMap, mustBeExpression);
+//					} else {
+//						if(mustBeExpression)
+//							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+//					}
+//
+//					// Now, the spot allocated for a jump can be populated
+//					int elseEndIndex = instructions.size();
+//					int elseJump = elseEndIndex - jumpIndex;
+//					instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, elseJump));
+					
 					ParserRuleContext condition = args.get(0);
 					ParserRuleContext trueBlock = args.get(1);
 					ParserRuleContext falseBlock = args.size() > 2 ? args.get(2) : null;
 					
 					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
 					
-					int conditionalJumpIndex = instructions.size();
-					instructions.add(null);
+					Label labelElse = new Label();
+					Label labelEnd = new Label();
+					
+					instructions.jump(jump -> new Instruction(Instruction.OPCODE_IF_FALSE, jump), labelElse);
 					
 					OrdinalAllocator trueBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 					acceptClosureBodyOrCall(trueBlock, trueBlockIdToVariableOrdinalMap, mustBeExpression);
 					
-					// After statement on true is generated, then a jump should be generated
-					// Leave a spot allocated here and write to it later
-					int jumpIndex = instructions.size();
-					instructions.add(null);
+					instructions.jump(jump -> new Instruction(Instruction.OPCODE_JUMP, jump), labelEnd);
 
-					// Now, the spot allocated for a conditional jump can be populated
-					int ifEndIndex = instructions.size();
-					int ifJump = ifEndIndex - conditionalJumpIndex;
-					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, ifJump));
+					instructions.label(labelElse);
 
 					if(falseBlock != null) {
 						OrdinalAllocator falseBlockIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
@@ -104,10 +135,7 @@ public interface PrimitiveVisitorFactory {
 							instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
 					}
 
-					// Now, the spot allocated for a jump can be populated
-					int elseEndIndex = instructions.size();
-					int elseJump = elseEndIndex - jumpIndex;
-					instructions.set(jumpIndex, new Instruction(Instruction.OPCODE_JUMP, elseJump));
+					instructions.label(labelEnd);
 				}
 
 				private void acceptClosureBodyOrCall(ParserRuleContext expression, OrdinalAllocator idToVariableOrdinalMap, boolean mustBeExpression) {
