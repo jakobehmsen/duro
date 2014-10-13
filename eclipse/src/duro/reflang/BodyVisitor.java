@@ -532,10 +532,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
 
 		onEnd(() -> {
-			Instruction[] bodyInstructions = functionBodyInterceptor.instructions.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
+			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
+			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
 			// localCount should be irrelevant because locals of the closed frame is used
 			int localCount = 1 + parameterCount + variableCount; 
-			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, functionBodyInterceptor.instructions.getMaxStackSize(), bodyInstructions);
+			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
 		});
 		if(returnValue)
 			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
@@ -680,9 +681,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 //			closureBodyVisitor.idToVariableOrdinalMap.generate();
 
 			onEnd(() -> {
-				Instruction[] bodyInstructions = closureBodyVisitor.instructions.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
+				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
+				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
 				int localCount = 1 + parameterCount + variableCount;
-				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, closureBodyVisitor.instructions.getMaxStackSize(), bodyInstructions);
+				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
 			});
 			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
 				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));

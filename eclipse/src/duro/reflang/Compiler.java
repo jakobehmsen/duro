@@ -183,7 +183,9 @@ public class Compiler {
 		Debug.println(Debug.LEVEL_MEDIUM, "Generated program.");
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
 		
-		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), instructions.getMaxStackSize(), instructions.toArray(new Instruction[instructions.size()]));
+		CodeEmission code = instructions.generate();
+		
+		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), code.getMaxStackSize(), code.toArray(new Instruction[instructions.size()]));
 	}
 	
 	public CustomProcess load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
