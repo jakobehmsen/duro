@@ -147,8 +147,7 @@ public class CodeEmitter {
 		return instructions.size();
 	}
 	
-	public Label createLabel() {
-		Label label = new Label();
+	public void label(Label label) {
 		instructionProducers.add(new CodeEmit() {
 			@Override
 			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
@@ -158,10 +157,9 @@ public class CodeEmitter {
 			@Override
 			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
 		});
-		return label;
 	}
 	
-	public void jump(Function<Integer, Instruction> indexToInstruction, Label label) {
+	public void jump(Function<Integer, Instruction> jumpToInstruction, Label label) {
 		instructionProducers.add(new CodeEmit() {
 			@Override
 			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
@@ -171,7 +169,8 @@ public class CodeEmitter {
 			@Override
 			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) {
 				int index = labelToIndex.get(label);
-				Instruction instruction = indexToInstruction.apply(index);
+				int jump = index - start;
+				Instruction instruction = jumpToInstruction.apply(jump);
 				instructions.set(start, instruction);
 			}
 		});
