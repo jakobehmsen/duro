@@ -156,28 +156,61 @@ public interface PrimitiveVisitorFactory {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, List<ParserRuleContext> args) {
+//					ParserRuleContext condition = args.get(0);
+//					ParserRuleContext body = args.get(1);
+//					
+//					int jumpIndex = instructions.size();
+//					
+//					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
+//					
+//					int conditionalJumpIndex = instructions.size();
+//					instructions.add(null);
+//					
+//					OrdinalAllocator bodyIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
+//					acceptClosureBodyOrCall(body, bodyIdToVariableOrdinalMap, false);
+//
+//					int whileBodyEndIndex = instructions.size();
+//					int jump = jumpIndex - whileBodyEndIndex;
+//					instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+//					
+//					int whileEndIndex = instructions.size();
+//					int conditionalJump = whileEndIndex - conditionalJumpIndex;
+//					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+//					
+//					if(mustBeExpression)
+//						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					
+					
+					
 					ParserRuleContext condition = args.get(0);
 					ParserRuleContext body = args.get(1);
 					
-					int jumpIndex = instructions.size();
+					Label labelLoop = new Label();
+					Label labelEnd = new Label();
 					
+//					int jumpIndex = instructions.size();
+
+					instructions.label(labelLoop);
 					acceptClosureBodyOrCall(condition, idToVariableOrdinalMap, true);
-//					condition.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap));
 					
-					int conditionalJumpIndex = instructions.size();
-					instructions.add(null);
+					instructions.jump(jump -> new Instruction(Instruction.OPCODE_IF_FALSE, jump), labelEnd);
+//					int conditionalJumpIndex = instructions.size();
+//					instructions.add(null);
 					
 					OrdinalAllocator bodyIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 					acceptClosureBodyOrCall(body, bodyIdToVariableOrdinalMap, false);
-//					body.accept(new BodyVisitor(primitiveMap, errors, endHandlers, instructions, false, idToParameterOrdinalMap, bodyIdToVariableOrdinalMap));
 
-					int whileBodyEndIndex = instructions.size();
-					int jump = jumpIndex - whileBodyEndIndex;
-					instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
+//					int whileBodyEndIndex = instructions.size();
+//					int jump = jumpIndex - whileBodyEndIndex;
+//					instructions.add(new Instruction(Instruction.OPCODE_JUMP, jump));
 					
-					int whileEndIndex = instructions.size();
-					int conditionalJump = whileEndIndex - conditionalJumpIndex;
-					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					instructions.jump(jump -> new Instruction(Instruction.OPCODE_JUMP, jump), labelLoop);
+					
+//					int whileEndIndex = instructions.size();
+//					int conditionalJump = whileEndIndex - conditionalJumpIndex;
+//					instructions.set(conditionalJumpIndex, new Instruction(Instruction.OPCODE_IF_FALSE, conditionalJump));
+					
+					instructions.label(labelEnd);
 					
 					if(mustBeExpression)
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
