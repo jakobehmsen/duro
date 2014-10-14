@@ -4,9 +4,9 @@ Collections library
 
 Iterable = #[]
 Iterable@each => (
-	var iterator = iterator()
-	while' not: iterator.atEnd,
-		\block.call: iterator.next
+	var it = iterator
+	while' not: it.atEnd,
+		\block.call: it.next
 )
 Iterable@where => |predicate| Generatable.on: {|generator|
 	each: {
@@ -45,7 +45,7 @@ Generator = #[
 			)
 			next => (
 				var previous = current
-				moveNext()
+				moveNext
 				return: previous
 			)
 		]
@@ -76,7 +76,7 @@ Array@[] => arrayGet: this, \index
 Array@length => arrayLength: this
 Array@iterator => Generator.on: {
 	var i = 0
-	while' i < length(), (
+	while' i < length, (
 		var item = this[i]
 		\generator.put: item
 		i = i + 1
