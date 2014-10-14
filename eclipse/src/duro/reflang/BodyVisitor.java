@@ -828,15 +828,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			.replace("\\t", "\t");
 	}
 	
-	private void onEnd(Supplier<Instruction> instructionSup) {
-		int index = instructions.size();
-		instructions.addSingle(null);
-		endHandlers.add(() -> {
-			Instruction instruction = instructionSup.get();
-			instructions.set(index, instruction);
-		});
-	}
-	
 	private void appendError(ParserRuleContext ctx, String message) {
 		appendError(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), message);
 	}
