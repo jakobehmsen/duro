@@ -177,8 +177,6 @@ public class Compiler {
 		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
 		idToVariableOrdinalMap.generate(variableOffset);
 		
-		for(Runnable handler: endHandlers)
-			handler.run();
 		long endGen = System.currentTimeMillis();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generated program.");
 		Debug.println(Debug.LEVEL_MEDIUM, "Generate time: " + (endGen - startGen));
