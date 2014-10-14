@@ -591,7 +591,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		instructions.add(new CodeEmit() {
 			@Override
 			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
-				if(accessFields.contains(id)) {
+				if(Character.isUpperCase(id.charAt(0)) || accessFields.contains(id)) {
 					// Get member
 					if(accessMustBeExpression) {
 						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
