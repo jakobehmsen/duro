@@ -16,7 +16,7 @@ public class CodeEmitter {
 //	private int stackIndex;
 //	private int maxStackSize;
 	
-	public void add(Instruction instruction) {
+	public void addSingle(Instruction instruction) {
 //		if(instruction != null) {
 //			stackIndex -= Instruction.getPopCount(instruction);
 //			stackIndex += Instruction.getPushCount(instruction);
@@ -53,6 +53,10 @@ public class CodeEmitter {
 				public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
 				
 			});
+	}
+	
+	public void add(CodeEmit emit) {
+		instructionProducers.add(emit);
 	}
 	
 	public void set(int index, Instruction instruction) {

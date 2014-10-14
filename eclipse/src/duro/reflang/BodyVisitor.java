@@ -115,7 +115,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		for(int i = 0; i < ctx.expression().size() ; i++)
 			ctx.expression(i).accept(rootExpressionInterceptor);
 
-		instructions.add(new Instruction(Instruction.OPCODE_FINISH));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_FINISH));
 		
 		return null;
 	}
@@ -124,11 +124,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitInterfaceId(InterfaceIdContext ctx) {
 		idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 		String interfaceId = ctx.id().getText();
-		instructions.add(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, interfaceId));
 
 		ctx.expression().accept(this);
 		
-		instructions.add(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
 		idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 		
 		return null;
@@ -243,11 +243,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 			if(ctx.expression() == null) { 
 				if(mustBeExpression)
-					instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			} else {
 				ctx.expression().accept(startInner(true));
 				if(mustBeExpression)
-					instructions.add(new Instruction(Instruction.OPCODE_DUP));
+					instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
 				idToVariableOrdinalMap.declare(ctx.id().getText(), instructions, variableOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, variableOrdinal));
 			}
 		} else {
@@ -262,10 +262,10 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		visitChildren(ctx);
 		
 		String id = ctx.BIN_OP().getText();
-		instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 1));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, id, 1));
 		
 		if(!mustBeExpression)
-			instructions.add(new Instruction(Instruction.OPCODE_POP));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 		
 		return null;
 	}
@@ -391,15 +391,15 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			primitiveInterceptor.visitPrimitive(id, args);
 		} else {
 			if(isForSelf)
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			ParseTreeVisitor<Object> argsVisitor = mustBeExpression ? this : startInner(true);
 			for(ParserRuleContext argCtx: args)
 				argCtx.accept(argsVisitor);
 			
-			instructions.add(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, id, parameterCount));
 			
 			if(!mustBeExpression)
-				instructions.add(new Instruction(Instruction.OPCODE_POP));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 		}
 	}
 	
@@ -421,12 +421,12 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			if(idToVariableOrdinalMap.isDeclared(id))
 				appendAssignVariable(ctx.expression(), id);
 			else {
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 				appendAssignSlot(ctx.expression(), id, mustBeExpression);
 			}
 			break;
 		} case DuroLexer.ASSIGN_PROTO: {
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			appendAssignProto(ctx.expression(), id, mustBeExpression);
 			break;
 		}
@@ -434,7 +434,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 
 		// Quoted member assignment for this
 		if(ctx.op.getType() == DuroLexer.ASSIGN_QUOTED) {
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), id, mustBeExpression);
 		}
 		
@@ -469,11 +469,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		ExpressionContext valueCtx = ctx.expression(1);
 		valueCtx.accept(startInner(true));
 		// receiver, index, value
-		instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, "[]", 2));
 		// result
 		
 		if(!mustBeExpression)
-			instructions.add(new Instruction(Instruction.OPCODE_POP));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 		
 		return null;
 	}
@@ -481,7 +481,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private void appendAssignVariable(ExpressionContext valueCtx, String id) {
 		valueCtx.accept(startInner(true));
 		if(mustBeExpression)
-			instructions.add(new Instruction(Instruction.OPCODE_DUP));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
 		// Variable assignment
 		idToVariableOrdinalMap.ordinalFor(id, instructions, firstOrdinal -> new Instruction(Instruction.OPCODE_STORE_LOC, firstOrdinal));
 	}
@@ -499,7 +499,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		valueCtx.accept(startInner(true));
 		// receiver, newValue
 		if(returnValue)
-			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
 			// newValue, receiver, newValue
 		/* The sequence could be changed as follows for set instructions:
 		[value, target]
@@ -507,7 +507,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		This way, a simple dup operation can be performed:
 		[value, value, target]
 		*/
-		instructions.add(new Instruction(opcodeAssign, id, 0));
+		instructions.addSingle(new Instruction(opcodeAssign, id, 0));
 		// newValue | e
 		
 		assignFields.add(id);
@@ -520,7 +520,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
 		}
 		valueCtx.accept(functionBodyInterceptor);
-		functionBodyInterceptor.instructions.add(new Instruction(Instruction.OPCODE_RET));
+		functionBodyInterceptor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET));
 		int parameterCount = functionBodyInterceptor.idToParameterOrdinalMap.size();
 		int selectorParameterCount = functionBodyInterceptor.idToParameterOrdinalMap.sizeExceptEnd();
 		int variableCount = functionBodyInterceptor.idToVariableOrdinalMap.size();
@@ -539,21 +539,21 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
 		});
 		if(returnValue)
-			instructions.add(new Instruction(Instruction.OPCODE_DUP1));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
 		/* The sequence could be changed as follows for set instructions:
 		[value, target]
 		
 		This way, a simple dup operation can be performed:
 		[value, value, target]
 		*/
-		instructions.add(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, selectorParameterCount));
 	}
 	
 	@Override
 	public Object visitSlotAccess(SlotAccessContext ctx) {
 		if(mustBeExpression) {
 			String id = getSelectorId(ctx.selector());
-			instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_GET, id, 0));
 		}
 		
 		return null;
@@ -563,7 +563,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitIndexAccess(IndexAccessContext ctx) {
 		if(mustBeExpression) {
 			ctx.expression().accept(startInner(true));
-			instructions.add(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, "[]", 1));
 		}
 		
 		return null;
@@ -591,7 +591,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		}
 
 		// Up to three instructions
-		instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 		
 		boolean accessMustBeExpression = mustBeExpression;
 		onEnd(() -> {
@@ -634,14 +634,14 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	@Override
 	public Object visitDict(DictContext ctx) {
-		instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 		
 		HashSet<String> fields = new HashSet<String>();
 		BodyVisitor fieldsVisitor = startDictFields(fields);
 		BodyVisitor methodsVisitor = startDictMethods(fields);
 		
 		for(DictEntryContext entryCtx: ctx.dictEntry()) {
-			instructions.add(new Instruction(Instruction.OPCODE_DUP));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
 			
 			String id = getSelectorId(entryCtx.selector());
 			
@@ -672,7 +672,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
 			}
 			appendGroup(ctx.expression(), true, closureBodyVisitor);
-			closureBodyVisitor.instructions.add(new Instruction(Instruction.OPCODE_RET));
+			closureBodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET));
 			int parameterCount = closureBodyVisitor.idToParameterOrdinalMap.size();
 			int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
 			int variableCount = closureBodyVisitor.idToVariableOrdinalMap.size();
@@ -697,16 +697,16 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitArray(ArrayContext ctx) {
 		if(mustBeExpression) {
 			int length = ctx.expression().size();
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, length));
-			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_INT, length));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
 			BodyVisitor itemVisitor = startInner(true);
 			
 			for(int i = 0; i < length; i++) {
-				instructions.add(new Instruction(Instruction.OPCODE_DUP));
-				instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, i));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_INT, i));
 				ExpressionContext item = ctx.expression(i);
 				item.accept(itemVisitor);
-				instructions.add(new Instruction(Instruction.OPCODE_SP_ARRAY_SET));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_SP_ARRAY_SET));
 			}
 		}
 		
@@ -732,19 +732,19 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitPseudoVar(PseudoVarContext ctx) {
 		switch(ctx.PSEUDO_VAR().getText()) {
 		case "this":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
 			break;
 		case "null":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_NULL));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
 			break;
 		case "true":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_TRUE));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_TRUE));
 			break;
 		case "false":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_FALSE));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_FALSE));
 			break;
 		case "frame":
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS_FRAME));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS_FRAME));
 			break;
 		}
 		
@@ -755,7 +755,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public Object visitInteger(IntegerContext ctx) {
 		if(mustBeExpression) {
 			int value = Integer.parseInt(ctx.INT().getText());
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_INT, value));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_INT, value));
 		}
 		
 		return null;
@@ -769,7 +769,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			// - i.e., no need for filtering the string.
 			String string = extractStringLiteral(rawString);
 			
-			instructions.add(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_STRING, string));
 		}
 		
 		return null;
@@ -788,7 +788,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	
 	private void onEnd(Supplier<Instruction> instructionSup) {
 		int index = instructions.size();
-		instructions.add(null);
+		instructions.addSingle(null);
 		endHandlers.add(() -> {
 			Instruction instruction = instructionSup.get();
 			instructions.set(index, instruction);

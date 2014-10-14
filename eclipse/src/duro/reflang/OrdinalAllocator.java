@@ -1,13 +1,26 @@
 package duro.reflang;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-
 import java.util.function.Function;
 
 import duro.runtime.Instruction;
 
 public class OrdinalAllocator {
+	private static class AllocationEmit implements CodeEmit {
+		public Instruction instruction;
+
+		@Override
+		public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
+			instructions.add(instruction);
+		}
+
+		@Override
+		public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
+	}
+	
 	private static class AllocationInfo {
 		public final String id;
 		public final ArrayList<Consumer<Integer>> ordinalHandlers;
@@ -79,13 +92,19 @@ public class OrdinalAllocator {
 	}
 	
 	public Consumer<Integer> instructionsConsumer(CodeEmitter instructions, Function<Integer, Instruction> instructionFunc) {
-		final int index = instructions.size();
-		instructions.add(null);
-		
+		AllocationEmit emit = new AllocationEmit();
+		instructions.add(emit);
 		return ordinal -> {
 			Instruction instruction = instructionFunc.apply(ordinal);
-			instructions.set(index, instruction);
+			emit.instruction = instruction;
 		};
+//		final int index = instructions.size();
+//		instructions.addSingle(null);
+//		
+//		return ordinal -> {
+//			Instruction instruction = instructionFunc.apply(ordinal);
+//			instructions.set(index, instruction);
+//		};
 	}
 	
 	private AllocationInfo getAllocationInfo(String id) {
