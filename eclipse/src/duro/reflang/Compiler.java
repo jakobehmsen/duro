@@ -37,7 +37,6 @@ import duro.runtime.Selector;
 public class Compiler {
 //	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
 	private MessageCollector errors = new MessageCollector();
-	private ArrayList<Runnable> endHandlers = new ArrayList<Runnable>();
 	
 	public Compiler() {
 //		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
@@ -166,7 +165,7 @@ public class Compiler {
 		CodeEmitter instructions = new CodeEmitter();
 //		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 		Set<String> fields = new HashSet<String>();
-		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, endHandlers, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
+		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
 //		Walker walker = new Walker();
 //		walker.walk(programInterceptor, programCtx);
 		programCtx.accept(programVisitor);
