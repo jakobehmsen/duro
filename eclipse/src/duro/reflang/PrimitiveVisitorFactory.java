@@ -262,6 +262,9 @@ public interface PrimitiveVisitorFactory {
 						instructions.addSingle(new Instruction(Instruction.OPCODE_CALL_CLOSURE, closureArgCount));
 						break;
 					}
+					
+					if(!mustBeExpression)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_POP, closureArgCount));
 				}
 			};
 		}
