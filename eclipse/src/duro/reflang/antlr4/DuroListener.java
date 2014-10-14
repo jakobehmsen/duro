@@ -64,28 +64,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgsWithParArg}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgsWithParArg(@NotNull DuroParser.MultiArgMessageArgsWithParArgContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgsWithParArg}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgsWithParArg(@NotNull DuroParser.MultiArgMessageArgsWithParArgContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgsWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgsWithPar(@NotNull DuroParser.MultiArgMessageArgsWithParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgsWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgsWithPar(@NotNull DuroParser.MultiArgMessageArgsWithParContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
 	 * @param ctx the parse tree
 	 */
@@ -163,17 +141,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitArray(@NotNull DuroParser.ArrayContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterSelfMultiArgMessageWithPar(@NotNull DuroParser.SelfMultiArgMessageWithParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#selfMultiArgMessageWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitSelfMultiArgMessageWithPar(@NotNull DuroParser.SelfMultiArgMessageWithParContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoPar}.
 	 * @param ctx the parse tree
 	 */
@@ -194,17 +161,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageWithPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageWithPar(@NotNull DuroParser.MultiArgMessageWithParContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.

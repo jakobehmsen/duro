@@ -22,7 +22,7 @@ interfaceId: DOLLAR id() expression;
 
 messageExchange: receiver messageChain?;
 messageChain:
-    (DOT (multiArgMessageWithPar | unaryMessage) | indexAccess) messageChain? |
+    (DOT unaryMessage | indexAccess) messageChain? |
     DOT multiArgMessageNoPar |
     slotAccess messageChain? |
     slotAssignment | 
@@ -33,7 +33,7 @@ messageChain:
 expressionChain: 
     SEMI_COLON
     (
-        ((multiArgMessageWithPar | unaryMessage) | indexAccess) messageChain? |
+        (unaryMessage | indexAccess) messageChain? |
         multiArgMessageNoPar |
         slotAccess messageChain? |
         slotAssignment | 
@@ -42,10 +42,8 @@ expressionChain:
     )
     ;
                 
-receiver:
-    selfMultiArgMessageWithPar | atom;
+receiver: atom;
 selfMultiArgMessageNoPar: multiArgMessageNoPar;
-selfMultiArgMessageWithPar: multiArgMessageWithPar;
 
 variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
@@ -60,11 +58,10 @@ multiArgMessageArgsNoPar:
     (multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*)?;
 multiArgMessageArgNoPar: 
     selfSingleArgMessageNoPar |
-    selfMultiArgMessageWithPar |
     multiArgMessageArgNoParReceiver multiArgMessageArgNoParChain?;
 multiArgMessageArgNoParReceiver: atom;
 multiArgMessageArgNoParChain:
-    (DOT (multiArgMessageWithPar | unaryMessage) | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+    (DOT unaryMessage | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     DOT singleArgMessageNoPar |
     slotAssignment | 
     indexAssignment |
@@ -78,21 +75,12 @@ singleArgMessageNoPar:
 
 unaryMessage: ID_UNCAP;
 
-multiArgMessageWithPar: 
-    ID_UNCAP multiArgMessageArgsWithPar (ID_CAP multiArgMessageArgsWithPar)*;
-multiArgMessageArgsWithPar: PAR_OP (multiArgMessageArgsWithParArg (COMMA multiArgMessageArgsWithParArg)*)? PAR_CL;
-multiArgMessageArgsWithParArg: 
-    assignment | 
-    variableDeclaration |
-    interfaceId |
-    messageExchange;
-
 slotAccess: AT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
 binaryMessageOperand: receiver (binaryMessageOperandChain)?;
 binaryMessageOperandChain:
-    (DOT multiArgMessageWithPar | slotAccess | indexAccess) binaryMessageOperandChain? |
+    (slotAccess | indexAccess) binaryMessageOperandChain? |
     slotAssignment | 
     indexAssignment
     ;
