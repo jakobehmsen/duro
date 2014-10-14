@@ -54,4 +54,8 @@ public class CodeEmission {
 		
 		return maxStackSize;
 	}
+
+	public int size() {
+		return instructions.size();
+	}
 }
