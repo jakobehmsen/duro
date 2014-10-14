@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -590,36 +591,59 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			return null;
 		}
 
-		// Up to three instructions
-		instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
-		
 		boolean accessMustBeExpression = mustBeExpression;
-		onEnd(() -> {
-			if(accessFields.contains(id)) {
-				// Get member
-				if(accessMustBeExpression) {
-					return new Instruction(Instruction.OPCODE_GET, id, 0);
-				} else {
-					return new Instruction(Instruction.OPCODE_POP, id, 0);
-				}
-			} else {
-				// Message to self
-				return new Instruction(Instruction.OPCODE_SEND, id, 0);
-			}
-		});
-		onEnd(() -> {
-			if(accessFields.contains(id)) {
-				// Get member
-				return new Instruction(Instruction.OPCODE_NONE, id, 0);
-			} else {
-				if(accessMustBeExpression) {
-					return new Instruction(Instruction.OPCODE_NONE, id, 0);
+		// Up to three instructions
+		instructions.add(new CodeEmit() {
+			@Override
+			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
+				if(accessFields.contains(id)) {
+					// Get member
+					if(accessMustBeExpression) {
+						instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+						instructions.add(new Instruction(Instruction.OPCODE_GET, id, 0));
+					}
 				} else {
 					// Message to self
-					return new Instruction(Instruction.OPCODE_POP, id, 0);
+					instructions.add(new Instruction(Instruction.OPCODE_LOAD_THIS));
+					instructions.add(new Instruction(Instruction.OPCODE_SEND, id, 0));
+					if(!accessMustBeExpression)
+						instructions.add(new Instruction(Instruction.OPCODE_POP));
 				}
 			}
+			
+			@Override
+			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
 		});
+		
+//		instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
+//		
+//		boolean accessMustBeExpression = mustBeExpression;
+//		onEnd(() -> {
+//			if(accessFields.contains(id)) {
+//				// Get member
+//				if(accessMustBeExpression) {
+//					return new Instruction(Instruction.OPCODE_GET, id, 0);
+//				} else {
+//					return new Instruction(Instruction.OPCODE_POP, id, 0);
+//				}
+//			} else {
+//				// Message to self
+//				return new Instruction(Instruction.OPCODE_SEND, id, 0);
+//			}
+//		});
+//		onEnd(() -> {
+//			if(accessFields.contains(id)) {
+//				// Get member
+//				return new Instruction(Instruction.OPCODE_NONE, id, 0);
+//			} else {
+//				if(accessMustBeExpression) {
+//					return new Instruction(Instruction.OPCODE_NONE, id, 0);
+//				} else {
+//					// Message to self
+//					return new Instruction(Instruction.OPCODE_POP, id, 0);
+//				}
+//			}
+//		});
 		
 		return null;
 	}
