@@ -35,16 +35,13 @@ import duro.reflang.antlr4.DuroParser.MessageChainContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParChainContext;
 import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageArgsWithParContext;
 import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParContext;
 import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParTailContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageWithParContext;
 import duro.reflang.antlr4.DuroParser.ParArgContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4.DuroParser.SelectorContext;
 import duro.reflang.antlr4.DuroParser.SelfMultiArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.SelfMultiArgMessageWithParContext;
 import duro.reflang.antlr4.DuroParser.SelfSingleArgMessageNoParContext;
 import duro.reflang.antlr4.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4.DuroParser.SlotAccessContext;
@@ -303,31 +300,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				}
 				args.add(argCtx);
 			}
-		}
-		
-		appendMultiArgMessage(id, args, isForSelf);
-	}
-	
-	@Override
-	public Object visitSelfMultiArgMessageWithPar(SelfMultiArgMessageWithParContext ctx) {
-		appendMultiArgMessageWithPar(ctx.multiArgMessageWithPar(), true);
-		
-		return null;
-	}
-	
-	@Override
-	public Object visitMultiArgMessageWithPar(MultiArgMessageWithParContext ctx) {
-		appendMultiArgMessageWithPar(ctx, false);
-		
-		return null;
-	}
-
-	private void appendMultiArgMessageWithPar(MultiArgMessageWithParContext ctx, boolean isForSelf) {
-		String id = ctx.ID_UNCAP().getText() + ctx.ID_CAP().stream().map(x -> x.getText()).collect(Collectors.joining());
-		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
-		for(MultiArgMessageArgsWithParContext argsCtx: ctx.multiArgMessageArgsWithPar()) {
-			for(ParserRuleContext argCtx: argsCtx.multiArgMessageArgsWithParArg())
-				args.add(argCtx);
 		}
 		
 		appendMultiArgMessage(id, args, isForSelf);
