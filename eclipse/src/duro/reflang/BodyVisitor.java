@@ -703,13 +703,20 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			
 //			closureBodyVisitor.idToParameterOrdinalMap.generate();
 //			closureBodyVisitor.idToVariableOrdinalMap.generate();
-
-			onEnd(() -> {
+			
+			instructions.add(instructions -> {
 				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
 				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
 				int localCount = 1 + parameterCount + variableCount;
-				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
+				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 			});
+
+//			onEnd(() -> {
+//				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
+//				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
+//				int localCount = 1 + parameterCount + variableCount;
+//				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
+//			});
 			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
 				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 		}
