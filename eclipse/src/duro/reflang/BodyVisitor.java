@@ -6,7 +6,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -529,24 +528,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		int variableOffset = parameterOffset + functionBodyInterceptor.idToParameterOrdinalMap.size();
 		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
 		
-		
-		
-		
 		instructions.add(instructions -> {
 			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
 			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
 			int localCount = 1 + parameterCount + variableCount;
 			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 		});
-		
 
-//		onEnd(() -> {
-//			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
-//			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
-//			// localCount should be irrelevant because locals of the closed frame is used
-//			int localCount = 1 + parameterCount + variableCount; 
-//			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
-//		});
 		if(returnValue)
 			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
 		/* The sequence could be changed as follows for set instructions:
@@ -585,7 +573,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		if(idToParameterOrdinalMap.isDeclared(id)) {
 			if(mustBeExpression) {
 				// Load argument
-//				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 				idToParameterOrdinalMap.ordinalFor(id, instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, parameterOrdinal));
 			}
 			return null;
@@ -623,42 +610,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
 		});
 		
-//		instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
-//		
-//		boolean accessMustBeExpression = mustBeExpression;
-//		onEnd(() -> {
-//			if(accessFields.contains(id)) {
-//				// Get member
-//				if(accessMustBeExpression) {
-//					return new Instruction(Instruction.OPCODE_GET, id, 0);
-//				} else {
-//					return new Instruction(Instruction.OPCODE_POP, id, 0);
-//				}
-//			} else {
-//				// Message to self
-//				return new Instruction(Instruction.OPCODE_SEND, id, 0);
-//			}
-//		});
-//		onEnd(() -> {
-//			if(accessFields.contains(id)) {
-//				// Get member
-//				return new Instruction(Instruction.OPCODE_NONE, id, 0);
-//			} else {
-//				if(accessMustBeExpression) {
-//					return new Instruction(Instruction.OPCODE_NONE, id, 0);
-//				} else {
-//					// Message to self
-//					return new Instruction(Instruction.OPCODE_POP, id, 0);
-//				}
-//			}
-//		});
-		
 		return null;
 	}
 	
 	@Override
 	public Object visitParArg(ParArgContext ctx) {
-//		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_ARG, parameterOrdinal));
 		idToParameterOrdinalMap.declare(ctx.id().getText(), instructions, parameterOrdinal -> new Instruction(Instruction.OPCODE_LOAD_LOC, parameterOrdinal));
 
 		return null;
@@ -709,9 +665,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
 			int variableCount = closureBodyVisitor.idToVariableOrdinalMap.size();
 			
-//			closureBodyVisitor.idToParameterOrdinalMap.generate();
-//			closureBodyVisitor.idToVariableOrdinalMap.generate();
-			
 			instructions.add(instructions -> {
 				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
 				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
@@ -719,12 +672,6 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 			});
 
-//			onEnd(() -> {
-//				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
-//				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
-//				int localCount = 1 + parameterCount + variableCount;
-//				return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
-//			});
 			newIdToParameterOrdinalMap.getLocalParameterOffset(instructions, closureParameterOffset -> 
 				new Instruction(Instruction.OPCODE_SP_NEW_CLOSURE, closureParameterOffset, closureParameterCount));
 		}

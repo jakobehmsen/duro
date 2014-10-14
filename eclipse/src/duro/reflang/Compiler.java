@@ -10,7 +10,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -35,20 +34,11 @@ import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public class Compiler {
-//	private Hashtable<Selector, PrimitiveGeneratorFactory> primitiveMap = new Hashtable<Selector, PrimitiveGeneratorFactory>();
 	private MessageCollector errors = new MessageCollector();
-	
-	public Compiler() {
-//		primitiveMap.put(Selector.get("write", 1), new PrimitiveGeneratorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
-	}
 	
 	private void appendError(int line, int charPositionInLine, String message) {
 		errors.appendMessage(line, charPositionInLine, message);
 	}
-	
-//	private void appendErrors(MessageCollector errors) {
-//		this.errors.appendMessages(errors);
-//	}
 	
 	public boolean hasErrors() {
 		return errors.hasMessages();
@@ -111,9 +101,7 @@ public class Compiler {
 		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generating program...");
-//		BodyInfo bodyInfo = getBodyInfo(idToParameterOrdinalMap, idToVariableOrdinalMap, programCtx);
-//		idToParameterOrdinalMap.generate();
-//		idToVariableOrdinalMap.generate();
+
 		Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap = new Hashtable<Selector, PrimitiveVisitorFactory>();
 		primitiveMap.put(Selector.get("ifElse", 3), new PrimitiveVisitorFactory.IfElse());
 		primitiveMap.put(Selector.get("if", 2), new PrimitiveVisitorFactory.IfElse());
@@ -163,14 +151,12 @@ public class Compiler {
 		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 		
 		CodeEmitter instructions = new CodeEmitter();
-//		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+
 		Set<String> fields = new HashSet<String>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
-//		Walker walker = new Walker();
-//		walker.walk(programInterceptor, programCtx);
+
 		programCtx.accept(programVisitor);
-//		idToParameterOrdinalMap.generate();
-//		idToVariableOrdinalMap.generate();
+
 		int parameterOffset = 1;
 		idToParameterOrdinalMap.generate(parameterOffset);
 		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
