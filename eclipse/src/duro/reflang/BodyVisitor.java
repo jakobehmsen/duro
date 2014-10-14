@@ -531,14 +531,25 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		functionBodyInterceptor.idToParameterOrdinalMap.generate(parameterOffset);
 		int variableOffset = parameterOffset + functionBodyInterceptor.idToParameterOrdinalMap.size();
 		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
-
-		onEnd(() -> {
+		
+		
+		
+		
+		instructions.add(instructions -> {
 			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
 			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
-			// localCount should be irrelevant because locals of the closed frame is used
-			int localCount = 1 + parameterCount + variableCount; 
-			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
+			int localCount = 1 + parameterCount + variableCount;
+			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 		});
+		
+
+//		onEnd(() -> {
+//			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
+//			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
+//			// localCount should be irrelevant because locals of the closed frame is used
+//			int localCount = 1 + parameterCount + variableCount; 
+//			return new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions);
+//		});
 		if(returnValue)
 			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
 		/* The sequence could be changed as follows for set instructions:
