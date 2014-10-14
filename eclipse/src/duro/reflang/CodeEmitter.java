@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import duro.runtime.Instruction;
@@ -53,6 +54,18 @@ public class CodeEmitter {
 				public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
 				
 			});
+	}
+	
+	public void add(Consumer<List<Instruction>> emit) {
+		instructionProducers.add(new CodeEmit() {
+			@Override
+			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
+				emit.accept(instructions);
+			}
+			
+			@Override
+			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) { }
+		});
 	}
 	
 	public void add(CodeEmit emit) {
