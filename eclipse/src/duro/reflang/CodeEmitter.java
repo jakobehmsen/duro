@@ -11,7 +11,7 @@ import duro.runtime.Instruction;
 public class CodeEmitter {
 	// Support for labels?
 	
-	private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+//	private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 	private ArrayList<CodeEmit> instructionProducers = new ArrayList<CodeEmit>();
 //	private int stackIndex;
 //	private int maxStackSize;
@@ -31,7 +31,7 @@ public class CodeEmitter {
 //		if(stackIndex > maxStackSize)
 //			maxStackSize = stackIndex;
 		
-		instructions.add(instruction);
+//		instructions.add(instruction);
 		
 		if(instruction != null)
 			instructionProducers.add(new CodeEmit() {
@@ -57,7 +57,7 @@ public class CodeEmitter {
 	
 	public void set(int index, Instruction instruction) {
 		// Assumed only non stack affecting instruction are supplied here
-		instructions.set(index, instruction);
+//		instructions.set(index, instruction);
 
 		instructionProducers.set(index, new CodeEmit() {
 			@Override
@@ -144,7 +144,7 @@ public class CodeEmitter {
 //	}
 
 	public int size() {
-		return instructions.size();
+		return instructionProducers.size();
 	}
 	
 	public void label(Label label) {
