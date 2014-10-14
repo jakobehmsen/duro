@@ -196,7 +196,7 @@ public class Compiler {
 		}
 		
 		if(shouldCompile) {
-			Debug.println(Debug.LEVEL_MEDIUM, "Compiling '" + codePath + "' into '" + codePath + "'...");
+			Debug.println(Debug.LEVEL_MEDIUM, "Compiling '" + sourcePath + "' into '" + codePath + "'...");
 			FileInputStream inputStream;
 			try {
 				inputStream = new FileInputStream(sourcePath);
