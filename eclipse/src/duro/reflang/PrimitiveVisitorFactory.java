@@ -12,7 +12,7 @@ import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public interface PrimitiveVisitorFactory {
-	PrimitiveVisitor create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, CodeEmitter instructions, 
+	PrimitiveVisitor create(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, PendingCodeEmitter instructions, 
 			boolean mustBeExpression,
 			OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap,
 			Set<String> accessFields, Set<String> assignFields);
@@ -29,7 +29,7 @@ public interface PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
-				MessageCollector errors, CodeEmitter instructions,
+				MessageCollector errors, PendingCodeEmitter instructions,
 				boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap,
 				Set<String> accessFields, Set<String> assignFields) {
@@ -49,7 +49,7 @@ public interface PrimitiveVisitorFactory {
 	
 	public static class Util {
 		public static void acceptClosureBodyOrCall(ParserRuleContext expression, Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
-				MessageCollector errors, CodeEmitter instructions,
+				MessageCollector errors, PendingCodeEmitter instructions,
 				boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap,
 				Set<String> accessFields, Set<String> assignFields) {
@@ -66,7 +66,7 @@ public interface PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
-				MessageCollector errors, CodeEmitter instructions,
+				MessageCollector errors, PendingCodeEmitter instructions,
 				boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap,
 				Set<String> accessFields, Set<String> assignFields) {
@@ -113,7 +113,7 @@ public interface PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
-				MessageCollector errors, CodeEmitter instructions,
+				MessageCollector errors, PendingCodeEmitter instructions,
 				boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap,
 				Set<String> accessFields, Set<String> assignFields) {
@@ -153,7 +153,7 @@ public interface PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(
 				Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap,
-				MessageCollector errors, CodeEmitter instructions,
+				MessageCollector errors, PendingCodeEmitter instructions,
 				boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap,
 				OrdinalAllocator idToVariableOrdinalMap,
 				Set<String> accessFields, Set<String> assignFields) {

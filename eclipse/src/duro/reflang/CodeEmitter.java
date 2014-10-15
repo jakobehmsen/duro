@@ -160,9 +160,9 @@ public class CodeEmitter {
 //		return maxStackSize;
 //	}
 
-	public int size() {
-		return instructionProducers.size();
-	}
+//	public int size() {
+//		return instructionProducers.size();
+//	}
 	
 	public void label(Label label) {
 		instructionProducers.add(new CodeEmit() {

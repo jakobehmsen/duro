@@ -1,5 +1,6 @@
 package duro.reflang;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -150,7 +151,7 @@ public class Compiler {
 		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), false));
 		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 		
-		CodeEmitter instructions = new CodeEmitter();
+		PendingCodeEmitter instructions = new PendingCodeEmitter();
 
 		Set<String> fields = new HashSet<String>();
 		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
@@ -221,5 +222,21 @@ public class Compiler {
 		}
 		
 		return process;
+	}
+
+	public static void warmup() {
+		String testSource = 
+			"var x = 0\n" + 
+			"var c = {if' true, true Else: false}\n" + 
+			"obj = #[x = 0 y => x]";
+		
+		Compiler compiler = new Compiler();
+		try {
+			for(int i = 0; i < 10; i++)
+				compiler.compile(new ByteArrayInputStream(testSource.getBytes("UTF-8")));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

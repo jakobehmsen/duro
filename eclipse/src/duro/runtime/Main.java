@@ -15,6 +15,11 @@ public class Main {
 			System.out.println("Please supply path of object code.");
 			return;
 		}
+
+//		long startWarmup = System.currentTimeMillis();
+//		Compiler.warmup();
+//		long endWarmup = System.currentTimeMillis();
+//		Debug.println(Debug.LEVEL_MEDIUM, "Warm up time: " + (endWarmup - startWarmup));
 	
 		String mainObjectSourcePath = args[0];
 			

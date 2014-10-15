@@ -55,7 +55,7 @@ import duro.runtime.Selector;
 public class BodyVisitor extends DuroBaseVisitor<Object> {
 	private Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap;
 	private MessageCollector errors;
-	private CodeEmitter instructions;
+	private PendingCodeEmitter instructions;
 	private boolean mustBeExpression;
 	private OrdinalAllocator idToParameterOrdinalMap;
 	private OrdinalAllocator idToVariableOrdinalMap;
@@ -65,7 +65,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, Set<String> accessFields, Set<String> assignFields) {
 		this.primitiveMap = primitiveMap;
 		this.errors = errors;
-		this.instructions = new CodeEmitter();
+		this.instructions = new PendingCodeEmitter();
 		this.mustBeExpression = true;
 		this.idToParameterOrdinalMap = new OrdinalAllocator();
 		this.idToVariableOrdinalMap = new OrdinalAllocator();
@@ -73,7 +73,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		this.assignFields = assignFields;
 	}
 
-	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, CodeEmitter instructions, 
+	public BodyVisitor(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, MessageCollector errors, PendingCodeEmitter instructions, 
 			boolean mustBeExpression, OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap, Set<String> accessFields, 
 			Set<String> assignFields) {
 		this.primitiveMap = primitiveMap;
@@ -99,7 +99,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	private BodyVisitor startInner(OrdinalAllocator idToParameterOrdinalMap, OrdinalAllocator idToVariableOrdinalMap) {
-		return new BodyVisitor(primitiveMap, errors, new CodeEmitter(), true, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
+		return new BodyVisitor(primitiveMap, errors, new PendingCodeEmitter(), true, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 	}
 	
 	@Override
@@ -356,6 +356,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
+			// Some primitives creates labels/jumps; what about primitives which are to be resolved when access are resolved?
 			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(primitiveMap, errors, instructions, mustBeExpression, idToParameterOrdinalMap, idToVariableOrdinalMap, accessFields, assignFields);
 			primitiveInterceptor.visitPrimitive(id, args);
 		} else {
@@ -502,7 +503,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		
 		instructions.add(instructions -> {
 			CodeEmission bodyCode = functionBodyInterceptor.instructions.generate();
-			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[functionBodyInterceptor.instructions.size()]);
+			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 			int localCount = 1 + parameterCount + variableCount;
 			instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 		});
@@ -639,7 +640,7 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			
 			instructions.add(instructions -> {
 				CodeEmission bodyCode = closureBodyVisitor.instructions.generate();
-				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[closureBodyVisitor.instructions.size()]);
+				Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 				int localCount = 1 + parameterCount + variableCount;
 				instructions.add(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, localCount, bodyCode.getMaxStackSize(), bodyInstructions));
 			});
