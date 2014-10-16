@@ -21,15 +21,16 @@ public class ASTToCode implements ASTVisitor {
 
 	@Override
 	public void visitMessageExchange(ASTMessageExchange ast) {
-		// TODO Auto-generated method stub
-		
+		visitAsExpression(ast.receiver);
+		for(int i = 0; i < ast.message.arguments.length; i++)
+			visitAsExpression(ast.message.arguments[i]);
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, ast.message.id, ast.message.arguments.length));
+		if(!mustBeExpression)
+			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 	}
 
 	@Override
-	public void visitMessage(ASTMessage ast) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void visitMessage(ASTMessage ast) { }
 
 	@Override
 	public void visitThis(ASTThis ast) {
@@ -101,7 +102,8 @@ public class ASTToCode implements ASTVisitor {
 		visitAsExpression(ast.value);
 		if(mustBeExpression)
 			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
-		instructions.addSingle(new Instruction(Instruction.OPCODE_SET, ast.id, ast.arity));
+
+		appendSlotAssignment(ast.id, ast.type, ast.arity, ast.value);
 	}
 
 	@Override
@@ -114,7 +116,7 @@ public class ASTToCode implements ASTVisitor {
 
 	@Override
 	public void visitClosure(ASTClosure ast) {
-		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, instructions, mustBeExpression);
+		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, instructions, true);
 		ast.body.accept(bodyVisitor);
 		CodeEmission bodyCode = bodyVisitor.instructions.generate();
 		Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
@@ -130,16 +132,56 @@ public class ASTToCode implements ASTVisitor {
 	}
 
 	@Override
-	public void visitDict(ASTDict astDict) {
-		// TODO Auto-generated method stub
-		
+	public void visitDict(ASTDict ast) {
+		if(mustBeExpression) {
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
+			for(ASTDict.Entry entry: ast.entries) {
+				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
+				appendSlotAssignment(entry.id, entry.type, entry.arity, entry.value);
+			}
+		}
+	}
+	
+	private void appendSlotAssignment(String id, int type, int arity, AST value) {
+		switch(type) {
+		case ASTSlotAssignment.TYPE_REGULAR:
+			value.accept(this);
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, arity));
+			break;
+		case ASTSlotAssignment.TYPE_PROTO:
+			value.accept(this);
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SET_PROTO, id, arity));
+			break;
+		case ASTSlotAssignment.TYPE_QUOTED:
+			ASTToCode bodyVisitor = new ASTToCode(primitiveMap, instructions, true);
+			ASTBehavior behavior = (ASTBehavior)value;
+			behavior.body.accept(bodyVisitor);
+			CodeEmission bodyCode = bodyVisitor.instructions.generate();
+			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, behavior.localCount, bodyCode.getMaxStackSize(), bodyInstructions));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, arity));
+			break;
+		}
 	}
 
 	@Override
 	public void visitArray(ASTArray ast) {
-		// TODO Auto-generated method stub
-		
+		if(mustBeExpression) {
+			int length = ast.items.length;
+			instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_INT, length));
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY));
+			
+			for(int i = 0; i < length; i++) {
+				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
+				instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_INT, i));
+				ast.items[i].accept(this);
+				instructions.addSingle(new Instruction(Instruction.OPCODE_SP_ARRAY_SET));
+			}
+		}
 	}
+	
+	@Override
+	public void visitBehavior(ASTBehavior ast) { }
 	
 	private void visitAsExpression(AST ast) {
 		visit(ast, true);
