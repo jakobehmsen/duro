@@ -4,16 +4,17 @@ import java.util.Hashtable;
 
 import duro.reflang.CodeEmission;
 import duro.reflang.CodeEmitter;
-import duro.reflang.PrimitiveVisitorFactory;
+import duro.reflang.PrimitiveVisitor2;
+import duro.reflang.PrimitiveVisitorFactory2;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public class ASTToCode implements ASTVisitor {
-	private Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap;
+	private Hashtable<Selector, PrimitiveVisitorFactory2> primitiveMap;
 	private CodeEmitter instructions;
 	private boolean mustBeExpression;
 
-	public ASTToCode(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, CodeEmitter instructions, boolean mustBeExpression) {
+	public ASTToCode(Hashtable<Selector, PrimitiveVisitorFactory2> primitiveMap, CodeEmitter instructions, boolean mustBeExpression) {
 		this.primitiveMap = primitiveMap;
 		this.instructions = instructions;
 		this.mustBeExpression = mustBeExpression;
@@ -21,12 +22,22 @@ public class ASTToCode implements ASTVisitor {
 
 	@Override
 	public void visitMessageExchange(ASTMessageExchange ast) {
-		visitAsExpression(ast.receiver);
-		for(int i = 0; i < ast.message.arguments.length; i++)
-			visitAsExpression(ast.message.arguments[i]);
-		instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, ast.message.id, ast.message.arguments.length));
-		if(!mustBeExpression)
-			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
+		String id = ast.message.id;
+		int parameterCount = ast.message.arguments.length;
+		
+		PrimitiveVisitorFactory2 primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+		
+		if(primitiveVisitorFactory != null) {
+			PrimitiveVisitor2 primitiveInterceptor = primitiveVisitorFactory.create(this, instructions, mustBeExpression);
+			primitiveInterceptor.visitPrimitive(id, ast.message.arguments);
+		} else {
+			visitAsExpression(ast.receiver);
+			for(int i = 0; i < ast.message.arguments.length; i++)
+				visitAsExpression(ast.message.arguments[i]);
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SEND, ast.message.id, ast.message.arguments.length));
+			if(!mustBeExpression)
+				instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
+		}
 	}
 
 	@Override
@@ -183,11 +194,11 @@ public class ASTToCode implements ASTVisitor {
 	@Override
 	public void visitBehavior(ASTBehavior ast) { }
 	
-	private void visitAsExpression(AST ast) {
+	public void visitAsExpression(AST ast) {
 		visit(ast, true);
 	}
 	
-	private void visit(AST ast, boolean astMustBeExpression) {
+	public void visit(AST ast, boolean astMustBeExpression) {
 		if(this.mustBeExpression != astMustBeExpression) {
 			boolean mustExpressionTmp = mustBeExpression;
 			mustBeExpression = astMustBeExpression;
