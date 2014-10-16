@@ -34,10 +34,10 @@ public interface PrimitiveVisitorFactory2 {
 	}
 	
 	public static class Util {
-		public static void acceptClosureBodyOrCall(ASTToCode visitor, AST expression, CodeEmitter instructions) {
+		public static void acceptClosureBodyOrCall(ASTToCode visitor, AST expression, CodeEmitter instructions, boolean mustBeExpression) {
 			if(expression instanceof ASTClosure) {
 				ASTClosure closure = (ASTClosure)expression;
-				visitor.visitAsExpression(closure.body);
+				visitor.visit(closure.body, mustBeExpression);
 			} else {
 				instructions.addSingle(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
 			}
@@ -54,21 +54,21 @@ public interface PrimitiveVisitorFactory2 {
 					AST trueBlock = args[1];
 					AST falseBlock = args.length > 2 ? args[2] : null;
 					
-					Util.acceptClosureBodyOrCall(visitor, condition, instructions);
+					Util.acceptClosureBodyOrCall(visitor, condition, instructions, true);
 					
 					Label labelElse = new Label();
 					Label labelEnd = new Label();
 					
 					instructions.jump(jump -> new Instruction(Instruction.OPCODE_IF_FALSE, jump), labelElse);
 					
-					Util.acceptClosureBodyOrCall(visitor, trueBlock, instructions);
+					Util.acceptClosureBodyOrCall(visitor, trueBlock, instructions, mustBeExpression);
 					
 					instructions.jump(jump -> new Instruction(Instruction.OPCODE_JUMP, jump), labelEnd);
 
 					instructions.label(labelElse);
 
 					if(falseBlock != null) {
-						Util.acceptClosureBodyOrCall(visitor, falseBlock, instructions);
+						Util.acceptClosureBodyOrCall(visitor, falseBlock, instructions, mustBeExpression);
 					} else {
 						if(mustBeExpression)
 							instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
@@ -94,11 +94,11 @@ public interface PrimitiveVisitorFactory2 {
 					Label labelEnd = new Label();
 
 					instructions.label(labelLoop);
-					Util.acceptClosureBodyOrCall(visitor, condition, instructions);
+					Util.acceptClosureBodyOrCall(visitor, condition, instructions, true);
 					
 					instructions.jump(jump -> new Instruction(Instruction.OPCODE_IF_FALSE, jump), labelEnd);
 					
-					Util.acceptClosureBodyOrCall(visitor, body, instructions);
+					Util.acceptClosureBodyOrCall(visitor, body, instructions, false);
 					
 					instructions.jump(jump -> new Instruction(Instruction.OPCODE_JUMP, jump), labelLoop);
 					
