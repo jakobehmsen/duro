@@ -19,6 +19,12 @@ public class ASTToCode implements ASTVisitor {
 		this.instructions = instructions;
 		this.mustBeExpression = mustBeExpression;
 	}
+	
+	@Override
+	public void visitProgram(ASTProgram ast) {
+		visit(ast.body, false);
+		instructions.addSingle(new Instruction(Instruction.OPCODE_FINISH));
+	}
 
 	@Override
 	public void visitMessageExchange(ASTMessageExchange ast) {

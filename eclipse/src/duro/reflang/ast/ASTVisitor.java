@@ -20,4 +20,5 @@ public interface ASTVisitor {
 	void visitDict(ASTDict ast);
 	void visitArray(ASTArray ast);
 	void visitBehavior(ASTBehavior ast);
+	void visitProgram(ASTProgram ast);
 }

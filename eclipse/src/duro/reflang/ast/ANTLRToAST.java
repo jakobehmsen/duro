@@ -66,7 +66,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 
 	@Override
 	public ASTBuilder visitProgram(ProgramContext ctx) {
-		return appendGrouping(ctx.expression());
+		ASTBuilder bodyBuilder = appendGrouping(ctx.expression());
+		return () -> new ASTProgram(bodyBuilder.build());
 	}
 	
 	@Override
