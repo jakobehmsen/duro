@@ -48,6 +48,7 @@ import duro.reflang.antlr4.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
+import duro.runtime.Instruction;
 
 public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	private OrdinalAllocator idToParameterOrdinalMap;
@@ -84,7 +85,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	@Override
 	public ASTBuilder visitInterfaceId(InterfaceIdContext ctx) {
 		String id = ctx.id().getText();
+		idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 		ASTBuilder bodyBuilder = ctx.expression().accept(this);
+		idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 		
 		return () -> new ASTInterfaceId(id, bodyBuilder.build());
 	}
@@ -442,10 +445,11 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		
 		ASTBuilder bodyBuilder = appendGrouping(ctx.expression());
 		
-		int parameterCount = closureBodyVisitor.idToParameterOrdinalMap.size();
 		int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
+		IntHolder closureParameterOffsetHolder = new IntHolder();
+		newIdToParameterOrdinalMap.getLocalParameterOffset(offset -> closureParameterOffsetHolder.value = offset);
 		
-		return () -> new ASTClosure(parameterCount, closureParameterCount, bodyBuilder.build());
+		return () -> new ASTClosure(closureParameterOffsetHolder.value, closureParameterCount, bodyBuilder.build());
 	}
 	
 	private static String getSelectorId(SelectorContext ctx) {
