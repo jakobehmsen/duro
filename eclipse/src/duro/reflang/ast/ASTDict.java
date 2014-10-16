@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTDict implements AST {
 	public static class Entry {

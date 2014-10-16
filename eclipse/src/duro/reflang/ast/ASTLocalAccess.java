@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTLocalAccess implements AST {
 	public final int ordinal;

@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTMessageExchange implements AST {
 	public final AST receiver;

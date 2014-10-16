@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.omg.CORBA.IntHolder;
 
+import duro.reflang.MessageCollector;
+import duro.reflang.OrdinalAllocator;
 import duro.reflang.antlr4.DuroBaseVisitor;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroParser.AccessContext;

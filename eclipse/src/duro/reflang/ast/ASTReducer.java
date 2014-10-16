@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 import java.util.function.Function;
 

@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTSlotAccess implements AST {
 	public final AST receiver;

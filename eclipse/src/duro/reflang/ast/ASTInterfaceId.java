@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTInterfaceId implements AST {
 	public final String id;

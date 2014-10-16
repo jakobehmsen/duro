@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTGrouping implements AST {
 	public final AST[] items;

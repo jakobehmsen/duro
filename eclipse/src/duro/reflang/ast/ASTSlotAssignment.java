@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTSlotAssignment implements AST {
 	public static final int TYPE_REGULAR = 0;

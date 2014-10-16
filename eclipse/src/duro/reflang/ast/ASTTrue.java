@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTTrue implements AST {
 	public static final ASTTrue INSTANCE = new ASTTrue();

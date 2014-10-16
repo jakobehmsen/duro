@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTFrame implements AST {
 	public static final ASTFrame INSTANCE = new ASTFrame();

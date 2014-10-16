@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTClosure implements AST {
 	public final int parameterCount;

@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public interface ASTVisitor {
 	void visitMessageExchange(ASTMessageExchange ast);

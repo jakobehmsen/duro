@@ -1,4 +1,4 @@
-package duro.reflang;
+package duro.reflang.ast;
 
 public class ASTNull implements AST {
 	public static final ASTNull INSTANCE = new ASTNull();
