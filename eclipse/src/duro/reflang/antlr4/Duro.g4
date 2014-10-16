@@ -22,23 +22,21 @@ interfaceId: DOLLAR id() expression;
 
 messageExchange: receiver messageChain?;
 messageChain:
-    (DOT unaryMessage | indexAccess) messageChain? |
+    (DOT unaryMessage | indexAccess | slotAccess) messageChain? |
     DOT multiArgMessageNoPar |
-    slotAccess messageChain? |
     slotAssignment | 
     indexAssignment |
-    binaryMessage (binaryMessage)*
+    binaryMessage+
     ;
 
 expressionChain: 
     SEMI_COLON
     (
-        (unaryMessage | indexAccess) messageChain? |
+        (unaryMessage | indexAccess | slotAccess) messageChain? |
         multiArgMessageNoPar |
-        slotAccess messageChain? |
         slotAssignment | 
         indexAssignment |
-        binaryMessage (binaryMessage)*
+        binaryMessage+
     )
     ;
                 
