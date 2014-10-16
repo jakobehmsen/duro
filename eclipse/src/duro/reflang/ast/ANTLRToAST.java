@@ -48,7 +48,6 @@ import duro.reflang.antlr4.DuroParser.SingleArgMessageNoParContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
-import duro.runtime.Instruction;
 
 public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	private OrdinalAllocator idToParameterOrdinalMap;
@@ -239,8 +238,14 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		int parameterCount = args.size();
 		
 		ASTBuilder[] argumentBuilders = new ASTBuilder[parameterCount];
-		for(int i = 0; i < argumentBuilders.length; i++)
+		for(int i = 0; i < argumentBuilders.length; i++) {
+			// For each argument, a local scope should be allocated
+			idToParameterOrdinalMap = idToParameterOrdinalMap.newInnerStart();
+			idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 			argumentBuilders[i] = args.get(i).accept(this);
+			idToParameterOrdinalMap = idToParameterOrdinalMap.getOuter();
+			idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
+		}
 		
 		return new ASTBuilderFromReceiver() {
 			@Override
@@ -376,15 +381,16 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
 		}
 		
-		ASTBuilder valueBuilder = valueCtx.accept(functionBodyInterceptor);
+		ASTBuilder bodyBuilder = valueCtx.accept(functionBodyInterceptor);
 		
 		/*Start from 1 since zero is used for self*/
 		int parameterOffset = 1;
 		functionBodyInterceptor.idToParameterOrdinalMap.generate(parameterOffset);
 		int variableOffset = parameterOffset + functionBodyInterceptor.idToParameterOrdinalMap.size();
 		functionBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
+		int localCount = 1 + functionBodyInterceptor.idToParameterOrdinalMap.size() + functionBodyInterceptor.idToVariableOrdinalMap.size();
 		
-		return valueBuilder;
+		return () -> new ASTBehavior(localCount, bodyBuilder.build());
 	}
 	
 	@Override

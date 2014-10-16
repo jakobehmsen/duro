@@ -17,6 +17,7 @@ public interface ASTVisitor {
 	void visitGrouping(ASTGrouping ast);
 	void visitClosure(ASTClosure ast);
 	void visitInterfaceId(ASTInterfaceId ast);
-	void visitDict(ASTDict astDict);
+	void visitDict(ASTDict ast);
 	void visitArray(ASTArray ast);
+	void visitBehavior(ASTBehavior ast);
 }
