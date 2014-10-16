@@ -133,8 +133,9 @@ public class ASTToCode implements ASTVisitor {
 
 	@Override
 	public void visitClosure(ASTClosure ast) {
-		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, instructions, true);
+		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), true);
 		ast.body.accept(bodyVisitor);
+		bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET));
 		CodeEmission bodyCode = bodyVisitor.instructions.generate();
 		Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 		instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, 0 /*Zero because inherited from frame*/, bodyCode.getMaxStackSize(), bodyInstructions));
@@ -144,7 +145,7 @@ public class ASTToCode implements ASTVisitor {
 	@Override
 	public void visitInterfaceId(ASTInterfaceId ast) {
 		instructions.addSingle(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, ast.id));
-		ast.accept(this);
+		ast.body.accept(this);
 		instructions.addSingle(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
 	}
 
@@ -170,9 +171,10 @@ public class ASTToCode implements ASTVisitor {
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SET_PROTO, id, arity));
 			break;
 		case ASTSlotAssignment.TYPE_QUOTED:
-			ASTToCode bodyVisitor = new ASTToCode(primitiveMap, instructions, true);
+			ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), true);
 			ASTBehavior behavior = (ASTBehavior)value;
 			behavior.body.accept(bodyVisitor);
+			bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET));
 			CodeEmission bodyCode = bodyVisitor.instructions.generate();
 			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, behavior.localCount, bodyCode.getMaxStackSize(), bodyInstructions));
