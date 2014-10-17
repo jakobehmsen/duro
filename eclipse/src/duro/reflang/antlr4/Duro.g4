@@ -8,32 +8,25 @@ expressionReceiver:
 assignment: id assignmentOperator expression;
 assignmentOperator: op=(ASSIGN | ASSIGN_PROTO | ASSIGN_QUOTED) behaviorParams;
 interfaceId: DOLLAR id expression;
-
 messageExchange: receiver messageChain* messageEnd?;
 messageChain: DOT unaryMessage | indexAccess | slotAccess;
 messageEnd: 
     DOT multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
-
 expressionChain: SEMI_COLON (unaryMessage | indexAccess | slotAccess);
-
 expressionEnd: 
     SEMI_COLON
-    (multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+);
-                
+    (multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+);            
 receiver: atom;
 selfMultiKeyMessage: multiKeyMessage;
-
 variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
 grouping: PAR_OP (expression)+ PAR_CL;
-
 multiKeyMessage: multiKeyMessageHead multiKeyMessageTail*;
 multiKeyMessageHead: 
     ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
 multiKeyMessageTail:
     ID_CAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
-multiKeyMessageArgs:
-    (multiKeyMessageArg (COMMA multiKeyMessageArg)*)?;
+multiKeyMessageArgs: (multiKeyMessageArg (COMMA multiKeyMessageArg)*)?;
 multiKeyMessageArg: 
     selfSingleKeyMessage |
     multiKeyMessageArgReceiver multiKeyMessageArgChain* multiKeyMessageArgEnd?;
@@ -42,12 +35,9 @@ multiKeyMessageArgChain: DOT unaryMessage | slotAccess | indexAccess;
 multiKeyMessageArgEnd:
     DOT singleKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
 atom: access | grouping | literal | pseudoVar | parArg;
-
 selfSingleKeyMessage: singleKeyMessage;
 singleKeyMessage: ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArg;
-
 unaryMessage: ID_UNCAP;
-
 slotAccess: AT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageArg;
@@ -74,14 +64,12 @@ indexOperator: SQ_OP SQ_CL;
 VAR: 'var';
 PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame';
 INT: DIGIT+;
-
 fragment DIGIT: ('0'..'9');
 fragment LETTER_LOWER: [a-z];
 fragment LETTER_UPPER: [A-Z];
 fragment LETTER: (LETTER_LOWER|LETTER_UPPER);
 ID_CAP: LETTER_UPPER (LETTER | DIGIT | '_')*;
 ID_UNCAP: LETTER_LOWER (LETTER | DIGIT | '_')*;
-
 PIPE: '|';
 HASH: '#';
 AT: '@';
@@ -92,24 +80,19 @@ COLON: ':';
 SEMI_COLON: ';';
 BACK_SLASH: '\\';
 DOLLAR: '$';
-
 PAR_OP: '(';
 PAR_CL: ')';
 SQ_OP: '[';
 SQ_CL: ']';
 BRA_OP: '{';
 BAR_CL: '}';
-
 BIN_OP: '+'|'-'|'*'|'/'|'%'|'=='|'!='|'>'|'>='|'<'|'<=';
-
 ASSIGN: '=';
 ASSIGN_PROTO: '^=';
 ASSIGN_QUOTED: '=>';
-
 WS: [ \t\u000C\r\n]+ -> skip;
 SINGLELINE_COMMENT: '//' ~('\r' | '\n')* -> skip;
 MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
-
 STRING: '"' (EscapeSequence | ~[\\"])* '"';
 fragment HexDigit: [0-9a-fA-F];
 fragment EscapeSequence: '\\' [btnfr"'\\] | UnicodeEscape | OctalEscape;
