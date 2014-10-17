@@ -43,13 +43,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx) { }
+	@Override public void enterBinaryMessageArgChain(@NotNull DuroParser.BinaryMessageArgChainContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx) { }
+	@Override public void exitBinaryMessageArgChain(@NotNull DuroParser.BinaryMessageArgChainContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -69,13 +69,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx) { }
+	@Override public void enterSelfSingleKeyMessage(@NotNull DuroParser.SelfSingleKeyMessageContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx) { }
+	@Override public void exitSelfSingleKeyMessage(@NotNull DuroParser.SelfSingleKeyMessageContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -95,6 +95,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMultiKeyMessageTail(@NotNull DuroParser.MultiKeyMessageTailContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageTail(@NotNull DuroParser.MultiKeyMessageTailContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterInteger(@NotNull DuroParser.IntegerContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -108,13 +121,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx) { }
+	@Override public void enterMultiKeyMessageArgs(@NotNull DuroParser.MultiKeyMessageArgsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx) { }
+	@Override public void exitMultiKeyMessageArgs(@NotNull DuroParser.MultiKeyMessageArgsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -147,6 +160,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMultiKeyMessageArgChain(@NotNull DuroParser.MultiKeyMessageArgChainContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageArgChain(@NotNull DuroParser.MultiKeyMessageArgChainContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterLiteral(@NotNull DuroParser.LiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -154,6 +180,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitLiteral(@NotNull DuroParser.LiteralContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMultiKeyMessageArgEnd(@NotNull DuroParser.MultiKeyMessageArgEndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageArgEnd(@NotNull DuroParser.MultiKeyMessageArgEndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -173,39 +212,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx) { }
+	@Override public void enterBinaryMessageArgEnd(@NotNull DuroParser.BinaryMessageArgEndContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx) { }
+	@Override public void exitBinaryMessageArgEnd(@NotNull DuroParser.BinaryMessageArgEndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -225,19 +238,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterSelector(@NotNull DuroParser.SelectorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -245,6 +245,19 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitSelector(@NotNull DuroParser.SelectorContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterSingleKeyMessage(@NotNull DuroParser.SingleKeyMessageContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSingleKeyMessage(@NotNull DuroParser.SingleKeyMessageContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -264,13 +277,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx) { }
+	@Override public void enterMultiKeyMessageArg(@NotNull DuroParser.MultiKeyMessageArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx) { }
+	@Override public void exitMultiKeyMessageArg(@NotNull DuroParser.MultiKeyMessageArgContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -342,19 +355,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterAssignment(@NotNull DuroParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -381,19 +381,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -414,19 +401,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMultiArgMessageArgNoParEnd(@NotNull DuroParser.MultiArgMessageArgNoParEndContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMultiArgMessageArgNoParEnd(@NotNull DuroParser.MultiArgMessageArgNoParEndContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -498,13 +472,13 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx) { }
+	@Override public void enterSelfMultiKeyMessage(@NotNull DuroParser.SelfMultiKeyMessageContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx) { }
+	@Override public void exitSelfMultiKeyMessage(@NotNull DuroParser.SelfMultiKeyMessageContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -518,6 +492,58 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitIndexAccess(@NotNull DuroParser.IndexAccessContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMultiKeyMessage(@NotNull DuroParser.MultiKeyMessageContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessage(@NotNull DuroParser.MultiKeyMessageContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMultiKeyMessageHead(@NotNull DuroParser.MultiKeyMessageHeadContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageHead(@NotNull DuroParser.MultiKeyMessageHeadContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterMultiKeyMessageArgReceiver(@NotNull DuroParser.MultiKeyMessageArgReceiverContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageArgReceiver(@NotNull DuroParser.MultiKeyMessageArgReceiverContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterBinaryMessageArg(@NotNull DuroParser.BinaryMessageArgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryMessageArg(@NotNull DuroParser.BinaryMessageArgContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -557,32 +583,6 @@ public class DuroBaseListener implements DuroListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitExpressionChain(@NotNull DuroParser.ExpressionChainContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -17,9 +17,8 @@ import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
 import duro.reflang.antlr4.DuroParser.BehaviorParamsContext;
+import duro.reflang.antlr4.DuroParser.BinaryMessageArgContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageContext;
-import duro.reflang.antlr4.DuroParser.BinaryMessageOperandChainContext;
-import duro.reflang.antlr4.DuroParser.BinaryMessageOperandContext;
 import duro.reflang.antlr4.DuroParser.ClosureContext;
 import duro.reflang.antlr4.DuroParser.DictContext;
 import duro.reflang.antlr4.DuroParser.DictEntryContext;
@@ -31,19 +30,17 @@ import duro.reflang.antlr4.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
-import duro.reflang.antlr4.DuroParser.MessageChainContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParChainContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParTailContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageArgContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageTailContext;
 import duro.reflang.antlr4.DuroParser.ParArgContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4.DuroParser.SelectorContext;
-import duro.reflang.antlr4.DuroParser.SelfMultiArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.SelfSingleArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.SingleArgMessageNoParContext;
+import duro.reflang.antlr4.DuroParser.SelfMultiKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.SelfSingleKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.SingleKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
@@ -177,9 +174,9 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
-	public Object visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
+	public Object visitBinaryMessageArg(BinaryMessageArgContext ctx) {
 		if(!mustBeExpression) {
-			if(ctx.binaryMessageOperandChain() != null) {
+			if(ctx.binaryMessageArgChain() != null) {
 				BodyVisitor messageExchangeVisitor = startInner(true);
 				ctx.receiver().accept(messageExchangeVisitor);
 				
@@ -195,21 +192,21 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				ctx.receiver().accept(startInner(false));
 			}
 		} else {
-			super.visitBinaryMessageOperand(ctx);
+			super.visitBinaryMessageArg(ctx);
 		}
 		
 		return false;
 	}
 	
 	@Override
-	public Object visitMultiArgMessageArgNoPar(MultiArgMessageArgNoParContext ctx) {
+	public Object visitMultiKeyMessageArg(MultiKeyMessageArgContext ctx) {
 		if(!mustBeExpression) {
-			if(ctx.selfSingleArgMessageNoPar() != null) {
-				ctx.selfSingleArgMessageNoPar().accept(startInner(false));
+			if(ctx.selfSingleKeyMessage() != null) {
+				ctx.selfSingleKeyMessage().accept(startInner(false));
 			} else {
-				if(ctx.multiArgMessageArgNoParChain() != null) {
+				if(ctx.multiKeyMessageArgChain() != null) {
 					BodyVisitor messageExchangeVisitor = startInner(true);
-					ctx.multiArgMessageArgNoParReceiver().accept(messageExchangeVisitor);
+					ctx.multiKeyMessageArgReceiver().accept(messageExchangeVisitor);
 					
 //					MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
 //					
@@ -220,11 +217,11 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 //					}
 	
 				} else {
-					ctx.multiArgMessageArgNoParReceiver().accept(startInner(false));
+					ctx.multiKeyMessageArgReceiver().accept(startInner(false));
 				}
 			}
 		} else {
-			super.visitMultiArgMessageArgNoPar(ctx);
+			super.visitMultiKeyMessageArg(ctx);
 		}
 		
 		return false;
@@ -265,35 +262,35 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
-	public Object visitSelfMultiArgMessageNoPar(SelfMultiArgMessageNoParContext ctx) {
-		appendMultiArgMessageNoPar(ctx.multiArgMessageNoPar(), true);
+	public Object visitSelfMultiKeyMessage(SelfMultiKeyMessageContext ctx) {
+		appendMultiArgMessageNoPar(ctx.multiKeyMessage(), true);
 		
 		return null;
 	}
 	
 	@Override
-	public Object visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
+	public Object visitMultiKeyMessage(MultiKeyMessageContext ctx) {
 		appendMultiArgMessageNoPar(ctx, false);
 		
 		return null;
 	}
 
-	private void appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx, boolean isForSelf) {
+	private void appendMultiArgMessageNoPar(MultiKeyMessageContext ctx, boolean isForSelf) {
 		String id = 
-			ctx.multiArgMessageNoParHead().ID_UNCAP().getText() + 
-			ctx.multiArgMessageNoParTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
+			ctx.multiKeyMessageHead().ID_UNCAP().getText() + 
+			ctx.multiKeyMessageTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		
-		for(ParserRuleContext argCtx: ctx.multiArgMessageNoParHead().multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
-			if(ctx.multiArgMessageNoParHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+		for(ParserRuleContext argCtx: ctx.multiKeyMessageHead().multiKeyMessageArgs().multiKeyMessageArg()) {
+			if(ctx.multiKeyMessageHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 				// Wrap arg into closure
 				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
 			}
 			args.add(argCtx);
 		}
 
-		for(MultiArgMessageNoParTailContext tailCtx: ctx.multiArgMessageNoParTail()) {
-			for(ParserRuleContext argCtx: tailCtx.multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
+		for(MultiKeyMessageTailContext tailCtx: ctx.multiKeyMessageTail()) {
+			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
 				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 					// Wrap arg into closure
 					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
@@ -306,23 +303,23 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 	}
 	
 	@Override
-	public Object visitSelfSingleArgMessageNoPar(SelfSingleArgMessageNoParContext ctx) {
-		appendSingleArgMessageNoPar(ctx.singleArgMessageNoPar(), true);
+	public Object visitSelfSingleKeyMessage(SelfSingleKeyMessageContext ctx) {
+		appendSingleArgMessageNoPar(ctx.singleKeyMessage(), true);
 		
 		return null;
 	}
 	
 	@Override
-	public Object visitSingleArgMessageNoPar(SingleArgMessageNoParContext ctx) {
+	public Object visitSingleKeyMessage(SingleKeyMessageContext ctx) {
 		appendSingleArgMessageNoPar(ctx, false);
 		
 		return null;
 	}
 
-	private void appendSingleArgMessageNoPar(SingleArgMessageNoParContext ctx, boolean isForSelf) {
+	private void appendSingleArgMessageNoPar(SingleKeyMessageContext ctx, boolean isForSelf) {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
-		ParserRuleContext argCtx = ctx.multiArgMessageArgNoPar();
+		ParserRuleContext argCtx = ctx.multiKeyMessageArg();
 		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 			// Wrap arg into closure
 			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);

@@ -31,15 +31,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitAccess(@NotNull DuroParser.AccessContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryMessageOperand}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryMessageArgChain}.
 	 * @param ctx the parse tree
 	 */
-	void enterBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx);
+	void enterBinaryMessageArgChain(@NotNull DuroParser.BinaryMessageArgChainContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryMessageOperand}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryMessageArgChain}.
 	 * @param ctx the parse tree
 	 */
-	void exitBinaryMessageOperand(@NotNull DuroParser.BinaryMessageOperandContext ctx);
+	void exitBinaryMessageArgChain(@NotNull DuroParser.BinaryMessageArgChainContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#string}.
@@ -53,15 +53,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitString(@NotNull DuroParser.StringContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
+	 * Enter a parse tree produced by {@link DuroParser#selfSingleKeyMessage}.
 	 * @param ctx the parse tree
 	 */
-	void enterSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
+	void enterSelfSingleKeyMessage(@NotNull DuroParser.SelfSingleKeyMessageContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#selfSingleArgMessageNoPar}.
+	 * Exit a parse tree produced by {@link DuroParser#selfSingleKeyMessage}.
 	 * @param ctx the parse tree
 	 */
-	void exitSelfSingleArgMessageNoPar(@NotNull DuroParser.SelfSingleArgMessageNoParContext ctx);
+	void exitSelfSingleKeyMessage(@NotNull DuroParser.SelfSingleKeyMessageContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#program}.
@@ -75,6 +75,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitProgram(@NotNull DuroParser.ProgramContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageTail}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageTail(@NotNull DuroParser.MultiKeyMessageTailContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageTail}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageTail(@NotNull DuroParser.MultiKeyMessageTailContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#integer}.
 	 * @param ctx the parse tree
 	 */
@@ -86,15 +97,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitInteger(@NotNull DuroParser.IntegerContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoParHead}.
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArgs}.
 	 * @param ctx the parse tree
 	 */
-	void enterMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx);
+	void enterMultiKeyMessageArgs(@NotNull DuroParser.MultiKeyMessageArgsContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageNoParHead}.
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageArgs}.
 	 * @param ctx the parse tree
 	 */
-	void exitMultiArgMessageNoParHead(@NotNull DuroParser.MultiArgMessageNoParHeadContext ctx);
+	void exitMultiKeyMessageArgs(@NotNull DuroParser.MultiKeyMessageArgsContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#unaryMessage}.
@@ -119,6 +130,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitDictEntry(@NotNull DuroParser.DictEntryContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArgChain}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageArgChain(@NotNull DuroParser.MultiKeyMessageArgChainContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageArgChain}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageArgChain(@NotNull DuroParser.MultiKeyMessageArgChainContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#literal}.
 	 * @param ctx the parse tree
 	 */
@@ -128,6 +150,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(@NotNull DuroParser.LiteralContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArgEnd}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageArgEnd(@NotNull DuroParser.MultiKeyMessageArgEndContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageArgEnd}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageArgEnd(@NotNull DuroParser.MultiKeyMessageArgEndContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#array}.
@@ -141,37 +174,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitArray(@NotNull DuroParser.ArrayContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoPar}.
+	 * Enter a parse tree produced by {@link DuroParser#binaryMessageArgEnd}.
 	 * @param ctx the parse tree
 	 */
-	void enterMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx);
+	void enterBinaryMessageArgEnd(@NotNull DuroParser.BinaryMessageArgEndContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageNoPar}.
+	 * Exit a parse tree produced by {@link DuroParser#binaryMessageArgEnd}.
 	 * @param ctx the parse tree
 	 */
-	void exitMultiArgMessageNoPar(@NotNull DuroParser.MultiArgMessageNoParContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgNoPar(@NotNull DuroParser.MultiArgMessageArgNoParContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageNoParTail}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageNoParTail(@NotNull DuroParser.MultiArgMessageNoParTailContext ctx);
+	void exitBinaryMessageArgEnd(@NotNull DuroParser.BinaryMessageArgEndContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#dict}.
@@ -185,17 +196,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitDict(@NotNull DuroParser.DictContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryMessageOperandChain}.
-	 * @param ctx the parse tree
-	 */
-	void enterBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryMessageOperandChain}.
-	 * @param ctx the parse tree
-	 */
-	void exitBinaryMessageOperandChain(@NotNull DuroParser.BinaryMessageOperandChainContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#selector}.
 	 * @param ctx the parse tree
 	 */
@@ -205,6 +205,17 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSelector(@NotNull DuroParser.SelectorContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#singleKeyMessage}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleKeyMessage(@NotNull DuroParser.SingleKeyMessageContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#singleKeyMessage}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleKeyMessage(@NotNull DuroParser.SingleKeyMessageContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#id}.
@@ -218,15 +229,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitId(@NotNull DuroParser.IdContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoParChain}.
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArg}.
 	 * @param ctx the parse tree
 	 */
-	void enterMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx);
+	void enterMultiKeyMessageArg(@NotNull DuroParser.MultiKeyMessageArgContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParChain}.
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageArg}.
 	 * @param ctx the parse tree
 	 */
-	void exitMultiArgMessageArgNoParChain(@NotNull DuroParser.MultiArgMessageArgNoParChainContext ctx);
+	void exitMultiKeyMessageArg(@NotNull DuroParser.MultiKeyMessageArgContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#slotAccess}.
@@ -284,17 +295,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitReceiver(@NotNull DuroParser.ReceiverContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#selfMultiArgMessageNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#selfMultiArgMessageNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitSelfMultiArgMessageNoPar(@NotNull DuroParser.SelfMultiArgMessageNoParContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#assignment}.
 	 * @param ctx the parse tree
 	 */
@@ -317,17 +317,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#binaryMessageOperandEnd}.
-	 * @param ctx the parse tree
-	 */
-	void enterBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#binaryMessageOperandEnd}.
-	 * @param ctx the parse tree
-	 */
-	void exitBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#behaviorParams}.
 	 * @param ctx the parse tree
 	 */
@@ -348,17 +337,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoParEnd}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgNoParEnd(@NotNull DuroParser.MultiArgMessageArgNoParEndContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParEnd}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgNoParEnd(@NotNull DuroParser.MultiArgMessageArgNoParEndContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#indexOperator}.
@@ -416,15 +394,15 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBinaryMessage(@NotNull DuroParser.BinaryMessageContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#singleArgMessageNoPar}.
+	 * Enter a parse tree produced by {@link DuroParser#selfMultiKeyMessage}.
 	 * @param ctx the parse tree
 	 */
-	void enterSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx);
+	void enterSelfMultiKeyMessage(@NotNull DuroParser.SelfMultiKeyMessageContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link DuroParser#singleArgMessageNoPar}.
+	 * Exit a parse tree produced by {@link DuroParser#selfMultiKeyMessage}.
 	 * @param ctx the parse tree
 	 */
-	void exitSingleArgMessageNoPar(@NotNull DuroParser.SingleArgMessageNoParContext ctx);
+	void exitSelfMultiKeyMessage(@NotNull DuroParser.SelfMultiKeyMessageContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#indexAccess}.
@@ -436,6 +414,50 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndexAccess(@NotNull DuroParser.IndexAccessContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessage}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessage(@NotNull DuroParser.MultiKeyMessageContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessage}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessage(@NotNull DuroParser.MultiKeyMessageContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageHead}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageHead(@NotNull DuroParser.MultiKeyMessageHeadContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageHead}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageHead(@NotNull DuroParser.MultiKeyMessageHeadContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArgReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageArgReceiver(@NotNull DuroParser.MultiKeyMessageArgReceiverContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageArgReceiver}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageArgReceiver(@NotNull DuroParser.MultiKeyMessageArgReceiverContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryMessageArg}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryMessageArg(@NotNull DuroParser.BinaryMessageArgContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryMessageArg}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryMessageArg(@NotNull DuroParser.BinaryMessageArgContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#binaryOperator}.
@@ -469,28 +491,6 @@ public interface DuroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpressionChain(@NotNull DuroParser.ExpressionChainContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgsNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgsNoPar}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgsNoPar(@NotNull DuroParser.MultiArgMessageArgsNoParContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link DuroParser#multiArgMessageArgNoParReceiver}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParReceiver}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultiArgMessageArgNoParReceiver(@NotNull DuroParser.MultiArgMessageArgNoParReceiverContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link DuroParser#interfaceId}.

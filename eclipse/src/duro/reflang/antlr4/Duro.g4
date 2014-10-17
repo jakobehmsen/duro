@@ -3,11 +3,8 @@ grammar Duro;
 program: expression*;
 expression: 
     (
-        assignment | 
-        variableDeclaration | 
-        selfMultiArgMessageNoPar |
-        interfaceId |
-        messageExchange
+        assignment | variableDeclaration | selfMultiKeyMessage |
+        interfaceId | messageExchange
     )
     expressionChain*
     expressionEnd?
@@ -19,90 +16,53 @@ assignment:
         |
         op=ASSIGN_QUOTED behaviorParams expression
     );
-interfaceId: DOLLAR id() expression;
+interfaceId: DOLLAR id expression;
 
 messageExchange: receiver messageChain* messageEnd?;
-messageChain: DOT unaryMessage | indexAccess | slotAccess
-    /*(DOT unaryMessage | indexAccess | slotAccess) messageChain? |
-    DOT multiArgMessageNoPar |
-    slotAssignment | 
-    indexAssignment |
-    binaryMessage+*/
-    ;
+messageChain: DOT unaryMessage | indexAccess | slotAccess;
 messageEnd: 
-    DOT multiArgMessageNoPar | slotAssignment | 
-    indexAssignment | binaryMessage+;
+    DOT multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
 
-expressionChain: 
-    SEMI_COLON (unaryMessage | indexAccess | slotAccess)
-    /*(
-        (unaryMessage | indexAccess | slotAccess) messageChain? |
-        multiArgMessageNoPar |
-        slotAssignment | 
-        indexAssignment |
-        binaryMessage+
-    )*/
-    ;
+expressionChain: SEMI_COLON (unaryMessage | indexAccess | slotAccess);
 
 expressionEnd: 
     SEMI_COLON
-    (
-        multiArgMessageNoPar | slotAssignment | indexAssignment | binaryMessage+
-    );
+    (multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+);
                 
 receiver: atom;
-selfMultiArgMessageNoPar: multiArgMessageNoPar;
+selfMultiKeyMessage: multiKeyMessage;
 
 variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
 grouping: PAR_OP (expression)+ PAR_CL;
 
-multiArgMessageNoPar: multiArgMessageNoParHead multiArgMessageNoParTail*;
-multiArgMessageNoParHead: 
-    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgsNoPar;
-multiArgMessageNoParTail:
-    ID_CAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgsNoPar;
-multiArgMessageArgsNoPar:
-    (multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*)?;
-multiArgMessageArgNoPar: 
-    selfSingleArgMessageNoPar |
-    (
-        multiArgMessageArgNoParReceiver 
-        multiArgMessageArgNoParChain*
-        multiArgMessageArgNoParEnd?
-    );
-multiArgMessageArgNoParReceiver: atom;
-multiArgMessageArgNoParChain: DOT unaryMessage | slotAccess | indexAccess
-    /*(DOT unaryMessage | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
-    DOT singleArgMessageNoPar |
-    slotAssignment | 
-    indexAssignment |
-    binaryMessage+*/
-    ;
-multiArgMessageArgNoParEnd:
-    DOT singleArgMessageNoPar | slotAssignment | 
-    indexAssignment | binaryMessage+
-    ;
+multiKeyMessage: multiKeyMessageHead multiKeyMessageTail*;
+multiKeyMessageHead: 
+    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
+multiKeyMessageTail:
+    ID_CAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
+multiKeyMessageArgs:
+    (multiKeyMessageArg (COMMA multiKeyMessageArg)*)?;
+multiKeyMessageArg: 
+    selfSingleKeyMessage |
+    multiKeyMessageArgReceiver multiKeyMessageArgChain* multiKeyMessageArgEnd?;
+multiKeyMessageArgReceiver: atom;
+multiKeyMessageArgChain: DOT unaryMessage | slotAccess | indexAccess;
+multiKeyMessageArgEnd:
+    DOT singleKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
 atom: access | grouping | literal | pseudoVar | parArg;
 
-selfSingleArgMessageNoPar: singleArgMessageNoPar;
-singleArgMessageNoPar: 
-    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiArgMessageArgNoPar;
+selfSingleKeyMessage: singleKeyMessage;
+singleKeyMessage: ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArg;
 
 unaryMessage: ID_UNCAP;
 
 slotAccess: AT selector;
 indexAccess: SQ_OP expression SQ_CL;
-binaryMessage: BIN_OP binaryMessageOperand;
-binaryMessageOperand: 
-    receiver binaryMessageOperandChain* binaryMessageOperandEnd?;
-binaryMessageOperandChain:
-    DOT unaryMessage | slotAccess | indexAccess
-    /*(slotAccess | indexAccess) binaryMessageOperandChain? |
-    slotAssignment | 
-    indexAssignment*/
-    ;
-binaryMessageOperandEnd: slotAssignment | indexAssignment;
+binaryMessage: BIN_OP binaryMessageArg;
+binaryMessageArg: receiver binaryMessageArgChain* binaryMessageArgEnd?;
+binaryMessageArgChain: DOT unaryMessage | slotAccess | indexAccess;
+binaryMessageArgEnd: slotAssignment | indexAssignment;
 indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
 slotAssignment: 
     AT selector

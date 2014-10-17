@@ -19,32 +19,28 @@ import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
 import duro.reflang.antlr4.DuroParser.BehaviorParamsContext;
+import duro.reflang.antlr4.DuroParser.BinaryMessageArgContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageContext;
-import duro.reflang.antlr4.DuroParser.BinaryMessageOperandChainContext;
-import duro.reflang.antlr4.DuroParser.BinaryMessageOperandContext;
 import duro.reflang.antlr4.DuroParser.ClosureContext;
 import duro.reflang.antlr4.DuroParser.DictContext;
 import duro.reflang.antlr4.DuroParser.DictEntryContext;
-import duro.reflang.antlr4.DuroParser.ExpressionChainContext;
 import duro.reflang.antlr4.DuroParser.ExpressionContext;
 import duro.reflang.antlr4.DuroParser.GroupingContext;
 import duro.reflang.antlr4.DuroParser.IdContext;
 import duro.reflang.antlr4.DuroParser.IndexAccessContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
-import duro.reflang.antlr4.DuroParser.MessageChainContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParChainContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageArgNoParContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.MultiArgMessageNoParTailContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageArgContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.MultiKeyMessageTailContext;
 import duro.reflang.antlr4.DuroParser.ParArgContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.PseudoVarContext;
 import duro.reflang.antlr4.DuroParser.SelectorContext;
-import duro.reflang.antlr4.DuroParser.SelfMultiArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.SelfSingleArgMessageNoParContext;
-import duro.reflang.antlr4.DuroParser.SingleArgMessageNoParContext;
+import duro.reflang.antlr4.DuroParser.SelfMultiKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.SelfSingleKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.SingleKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
@@ -66,16 +62,16 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 
 	@Override
 	public ASTBuilder visitProgram(ProgramContext ctx) {
-		ASTBuilder bodyBuilder = appendGrouping(ctx.expression());
+		ASTBuilder bodyBuilder = groupingBuilder(ctx.expression());
 		return () -> new ASTProgram(bodyBuilder.build());
 	}
 	
 	@Override
 	public ASTBuilder visitGrouping(GroupingContext ctx) {
-		return appendGrouping(ctx.expression());
+		return groupingBuilder(ctx.expression());
 	}
 	
-	private ASTBuilder appendGrouping(List<ExpressionContext> expressions) {
+	private ASTBuilder groupingBuilder(List<ExpressionContext> expressions) {
 		ASTBuilder[] itemBuilders = new ASTBuilder[expressions.size()];
 		for(int i = 0; i < itemBuilders.length; i++)
 			itemBuilders[i] = expressions.get(i).accept(this);
@@ -94,10 +90,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitMessageExchange(MessageExchangeContext ctx) {
-		return appendMessageExchange(ctx.receiver(), ctx.messageChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.messageEnd());
+		return messageExchangeBuilder(ctx.receiver(), ctx.messageChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.messageEnd());
 	}
 	
-	private ASTBuilder appendMessageExchange(ParserRuleContext receiver, List<ParserRuleContext> chain, ParserRuleContext end) {
+	private ASTBuilder messageExchangeBuilder(ParserRuleContext receiver, List<ParserRuleContext> chain, ParserRuleContext end) {
 		ASTBuilder receiverBuilder = receiver.accept(this);
 		
 		for(ParserRuleContext chainPart: chain) {
@@ -117,66 +113,24 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	public ASTBuilder visitExpression(ExpressionContext ctx) {
 		ParserRuleContext receiver = (ParserRuleContext)ctx.getChild(0);
 
-		return appendMessageExchange(receiver, ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
-		
-//		if(ctx.expressionChain().size() > 0) {
-//			ASTBuilder receiverBuilder = receiver.accept(this);
-//			
-//			for(int i = 0; i < ctx.expressionChain().size(); i++) {
-//				ExpressionChainContext chain = ctx.expressionChain(i);
-//				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-//				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-//			}
-//
-//			return receiverBuilder;
-//		} else
-//			return receiver.accept(this);
+		return messageExchangeBuilder(receiver, ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
 	}
 	
 	@Override
-	public ASTBuilder visitMultiArgMessageArgNoPar(MultiArgMessageArgNoParContext ctx) {
-		if(ctx.selfSingleArgMessageNoPar() != null) {
-			return ctx.selfSingleArgMessageNoPar().accept(this);
+	public ASTBuilder visitMultiKeyMessageArg(MultiKeyMessageArgContext ctx) {
+		if(ctx.selfSingleKeyMessage() != null) {
+			return ctx.selfSingleKeyMessage().accept(this);
 		} else {
-			return appendMessageExchange(
-				ctx.multiArgMessageArgNoParReceiver(), 
-				ctx.multiArgMessageArgNoParChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), 
-				ctx.multiArgMessageArgNoParEnd());
-//			if(ctx.multiArgMessageArgNoParChain() != null) {
-//				ASTBuilder receiverBuilder = ctx.multiArgMessageArgNoParReceiver().accept(this);
-//				
-//				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
-//				
-//				while(chain != null) {
-//					ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-//					receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-//					chain = chain.multiArgMessageArgNoParChain();
-//				}
-//
-//				return receiverBuilder;
-//			} else
-//				return ctx.multiArgMessageArgNoParReceiver().accept(this);
+			return messageExchangeBuilder(
+				ctx.multiKeyMessageArgReceiver(), 
+				ctx.multiKeyMessageArgChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), 
+				ctx.multiKeyMessageArgEnd());
 		}
 	}
 	
 	@Override
-	public ASTBuilder visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
-		return appendMessageExchange(ctx.receiver(), ctx.binaryMessageOperandChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.binaryMessageOperandEnd());
-		
-//		if(ctx.binaryMessageOperandChain() != null) {
-//			ASTBuilder receiverBuilder = ctx.receiver().accept(this);
-//			
-//			BinaryMessageOperandChainContext chain = ctx.binaryMessageOperandChain();
-//			
-//			while(chain != null) {
-//				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-//				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-//				chain = chain.binaryMessageOperandChain();
-//			}
-//
-//			return receiverBuilder;
-//		} else
-//			return ctx.receiver().accept(this);
+	public ASTBuilder visitBinaryMessageArg(BinaryMessageArgContext ctx) {
+		return messageExchangeBuilder(ctx.receiver(), ctx.binaryMessageArgChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.binaryMessageArgEnd());
 	}
 	
 	@Override
@@ -187,7 +141,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			idToVariableOrdinalMap.declare(id);
 
 			if(ctx.expression() != null)
-				return appendAssignVariable(ctx.expression(), id);
+				return assignVariableBuilder(ctx.expression(), id);
 		} else {
 			appendError(ctx, "Variable '" + ctx.id().getText() + "' is already declared in this scope.");
 		}
@@ -199,42 +153,42 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	public ASTBuilder visitBinaryMessage(BinaryMessageContext ctx) {
 		String id = ctx.BIN_OP().getText();
 		
-		return appendMultiArgMessage(id, Arrays.asList(ctx.binaryMessageOperand()));
+		return multiKeyMessageFromReceiverBuilder(id, Arrays.asList(ctx.binaryMessageArg()));
 	}
 	
 	@Override
 	public ASTBuilder visitIndexAccess(IndexAccessContext ctx) {
 		String id = "[]";
 		
-		return appendMultiArgMessage(id, Arrays.asList(ctx.expression()));
+		return multiKeyMessageFromReceiverBuilder(id, Arrays.asList(ctx.expression()));
 	}
 	
 	@Override
-	public ASTBuilder visitSelfMultiArgMessageNoPar(SelfMultiArgMessageNoParContext ctx) {
-		return appendMultiArgMessageNoPar(ctx.multiArgMessageNoPar()).createBuilder(() -> ASTThis.INSTANCE);
+	public ASTBuilder visitSelfMultiKeyMessage(SelfMultiKeyMessageContext ctx) {
+		return multiKeyMessageFromReceiverBuilder(ctx.multiKeyMessage()).createBuilder(() -> ASTThis.INSTANCE);
 	}
 	
 	@Override
-	public ASTBuilderFromReceiver visitMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
-		return appendMultiArgMessageNoPar(ctx);
+	public ASTBuilderFromReceiver visitMultiKeyMessage(MultiKeyMessageContext ctx) {
+		return multiKeyMessageFromReceiverBuilder(ctx);
 	}
 	
-	private ASTBuilderFromReceiver appendMultiArgMessageNoPar(MultiArgMessageNoParContext ctx) {
+	private ASTBuilderFromReceiver multiKeyMessageFromReceiverBuilder(MultiKeyMessageContext ctx) {
 		String id = 
-			ctx.multiArgMessageNoParHead().ID_UNCAP().getText() + 
-			ctx.multiArgMessageNoParTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
+			ctx.multiKeyMessageHead().ID_UNCAP().getText() + 
+			ctx.multiKeyMessageTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		
-		for(ParserRuleContext argCtx: ctx.multiArgMessageNoParHead().multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
-			if(ctx.multiArgMessageNoParHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+		for(ParserRuleContext argCtx: ctx.multiKeyMessageHead().multiKeyMessageArgs().multiKeyMessageArg()) {
+			if(ctx.multiKeyMessageHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 				// Wrap arg into closure
 				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
 			}
 			args.add(argCtx);
 		}
 
-		for(MultiArgMessageNoParTailContext tailCtx: ctx.multiArgMessageNoParTail()) {
-			for(ParserRuleContext argCtx: tailCtx.multiArgMessageArgsNoPar().multiArgMessageArgNoPar()) {
+		for(MultiKeyMessageTailContext tailCtx: ctx.multiKeyMessageTail()) {
+			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
 				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 					// Wrap arg into closure
 					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
@@ -243,10 +197,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			}
 		}
 		
-		return appendMultiArgMessage(id, args);
+		return multiKeyMessageFromReceiverBuilder(id, args);
 	}	
 	
-	protected ASTBuilderFromReceiver appendMultiArgMessage(String id, List<ParserRuleContext> args) {
+	protected ASTBuilderFromReceiver multiKeyMessageFromReceiverBuilder(String id, List<ParserRuleContext> args) {
 		int parameterCount = args.size();
 		
 		ASTBuilder[] argumentBuilders = new ASTBuilder[parameterCount];
@@ -282,26 +236,26 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	}
 	
 	@Override
-	public ASTBuilder visitSelfSingleArgMessageNoPar(SelfSingleArgMessageNoParContext ctx) {
-		return appendSingleArgMessageNoPar(ctx.singleArgMessageNoPar()).createBuilder(() -> ASTThis.INSTANCE);
+	public ASTBuilder visitSelfSingleKeyMessage(SelfSingleKeyMessageContext ctx) {
+		return singleKeyMessageBuilderFromReceiver(ctx.singleKeyMessage()).createBuilder(() -> ASTThis.INSTANCE);
 	}
 	
 	@Override
-	public ASTBuilder visitSingleArgMessageNoPar(SingleArgMessageNoParContext ctx) {
-		return appendSingleArgMessageNoPar(ctx);
+	public ASTBuilder visitSingleKeyMessage(SingleKeyMessageContext ctx) {
+		return singleKeyMessageBuilderFromReceiver(ctx);
 	}
 
-	private ASTBuilderFromReceiver appendSingleArgMessageNoPar(SingleArgMessageNoParContext ctx) {
+	private ASTBuilderFromReceiver singleKeyMessageBuilderFromReceiver(SingleKeyMessageContext ctx) {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
-		ParserRuleContext argCtx = ctx.multiArgMessageArgNoPar();
+		ParserRuleContext argCtx = ctx.multiKeyMessageArg();
 		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 			// Wrap arg into closure
 			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
 		}
 		args.add(argCtx);
 		
-		return appendMultiArgMessage(id, args);
+		return multiKeyMessageFromReceiverBuilder(id, args);
 	}
 
 	@Override
@@ -309,7 +263,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();;
 		
-		return appendMultiArgMessage(id, args);
+		return multiKeyMessageFromReceiverBuilder(id, args);
 	}
 	
 	@Override
@@ -320,7 +274,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		case DuroLexer.ASSIGN: {
 			// newValue, newValue
 			if(idToVariableOrdinalMap.isDeclared(id))
-				return appendAssignVariable(ctx.expression(), id);
+				return assignVariableBuilder(ctx.expression(), id);
 			else {
 				// Modify accessFields/assignFields?
 				ASTBuilder valueBuilder = ctx.expression().accept(this);
@@ -332,7 +286,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_PROTO, ASTThis.INSTANCE, id, 0, valueBuilder.build());
 		} case DuroLexer.ASSIGN_QUOTED: {
 			OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
-			ASTBuilder valueBuilder = appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), bodyIdToParameterOrdinalMap);
+			ASTBuilder valueBuilder = assignQuotedBuilder(ctx.behaviorParams(), ctx.expression(), bodyIdToParameterOrdinalMap);
 			int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_QUOTED, ASTThis.INSTANCE, id, arity, valueBuilder.build());
 		}
@@ -345,10 +299,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = ctx.id().getText();
 		
 		if(idToParameterOrdinalMap.isDeclared(id))
-			return appendAccessParameter(id);
+			return accessParameterBuilder(id);
 		
 		if(idToVariableOrdinalMap.isDeclared(id))
-			return appendAccessVariable(id);
+			return accessVariableBuilder(id);
 		
 		return () -> {
 			if(Character.isUpperCase(id.charAt(0)) || accessFields.contains(id))
@@ -360,11 +314,11 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		};
 	}
 
-	private ASTBuilder appendAssignVariable(ExpressionContext valueCtx, String id) {
-		return appendAssignLocal(valueCtx, id, idToVariableOrdinalMap);
+	private ASTBuilder assignVariableBuilder(ExpressionContext valueCtx, String id) {
+		return assignLocalBuilder(valueCtx, id, idToVariableOrdinalMap);
 	}
 
-	private ASTBuilder appendAssignLocal(ExpressionContext valueCtx, String id, OrdinalAllocator ordinalMap) {
+	private ASTBuilder assignLocalBuilder(ExpressionContext valueCtx, String id, OrdinalAllocator ordinalMap) {
 		IntHolder ordinalHolder = new IntHolder();
 		ASTBuilder valueBuilder = valueCtx.accept(this);
 		ordinalMap.ordinalFor(id, ordinal -> ordinalHolder.value = ordinal);
@@ -372,22 +326,22 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		return () -> new ASTLocalAssignment(ordinalHolder.value, valueBuilder.build());
 	}
 
-	private ASTBuilder appendAccessParameter(String id) {
-		return appendAccessLocal(id, idToParameterOrdinalMap);
+	private ASTBuilder accessParameterBuilder(String id) {
+		return accessLocalBuilder(id, idToParameterOrdinalMap);
 	}
 
-	private ASTBuilder appendAccessVariable(String id) {
-		return appendAccessLocal(id, idToVariableOrdinalMap);
+	private ASTBuilder accessVariableBuilder(String id) {
+		return accessLocalBuilder(id, idToVariableOrdinalMap);
 	}
 
-	private ASTBuilder appendAccessLocal(String id, OrdinalAllocator ordinalMap) {
+	private ASTBuilder accessLocalBuilder(String id, OrdinalAllocator ordinalMap) {
 		IntHolder ordinalHolder = new IntHolder();
 		ordinalMap.ordinalFor(id, ordinal -> ordinalHolder.value = ordinal);
 		
 		return () -> new ASTLocalAccess(ordinalHolder.value);
 	}
 
-	private ASTBuilder appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, OrdinalAllocator bodyIdToParameterOrdinalMap) {
+	private ASTBuilder assignQuotedBuilder(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, OrdinalAllocator bodyIdToParameterOrdinalMap) {
 		ANTLRToAST functionBodyInterceptor = new ANTLRToAST(bodyIdToParameterOrdinalMap, new OrdinalAllocator(), errors, accessFields, assignFields);
 		for(IdContext parameterIdNode: paramsCtx.id()) {
 			String parameterId = parameterIdNode.getText();
@@ -410,7 +364,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	public ASTBuilder visitParArg(ParArgContext ctx) {
 		String id = ctx.id().getText();
 		idToParameterOrdinalMap.declare(id);
-		return appendAccessParameter(id);
+		return accessParameterBuilder(id);
 	}
 	
 	@Override
@@ -438,7 +392,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
 				OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
-				valueBuilders[i] = methodsVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), bodyIdToParameterOrdinalMap);
+				valueBuilders[i] = methodsVisitor.assignQuotedBuilder(entryCtx.behaviorParams(), entryCtx.expression(), bodyIdToParameterOrdinalMap);
 				int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_QUOTED, arity, valueAst);
 				break;
@@ -464,7 +418,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
 		}
 		
-		ASTBuilder bodyBuilder = appendGrouping(ctx.expression());
+		ASTBuilder bodyBuilder = groupingBuilder(ctx.expression());
 		
 		int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
 		IntHolder closureParameterOffsetHolder = new IntHolder();
