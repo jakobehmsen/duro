@@ -9,12 +9,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.omg.CORBA.IntHolder;
 
 import duro.reflang.MessageCollector;
 import duro.reflang.OrdinalAllocator;
 import duro.reflang.antlr4.DuroBaseVisitor;
 import duro.reflang.antlr4.DuroLexer;
+import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
@@ -30,6 +32,7 @@ import duro.reflang.antlr4.DuroParser.ExpressionReceiverContext;
 import duro.reflang.antlr4.DuroParser.GroupingContext;
 import duro.reflang.antlr4.DuroParser.IdContext;
 import duro.reflang.antlr4.DuroParser.IndexAccessContext;
+import duro.reflang.antlr4.DuroParser.IndexAssignmentContext;
 import duro.reflang.antlr4.DuroParser.IntegerContext;
 import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
@@ -165,6 +168,15 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = "[]";
 		
 		return multiKeyMessageFromReceiverBuilder(id, Arrays.asList(ctx.expression()));
+	}
+	
+
+	@Override 
+	public ASTBuilder visitIndexAssignment(IndexAssignmentContext ctx) { 
+//		return visitChildren(ctx);
+		String id = "[]";
+		
+		return multiKeyMessageFromReceiverBuilder(id, ctx.expression().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()));
 	}
 	
 	@Override
@@ -417,7 +429,6 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		for(int i = 0; i < valueBuilders.length; i++) {
 			DictEntryContext entryCtx = ctx.dictEntry(i);
 			String id = getSelectorId(entryCtx.selector());
-			valueBuilders[i] = entryCtx.expression().accept(this);
 			List<IdContext> paramIds = entryCtx.assignmentOperator().behaviorParams().id(); 
 			
 			switch(entryCtx.assignmentOperator().op.getType()) {
