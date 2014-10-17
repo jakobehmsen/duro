@@ -34,21 +34,23 @@ public class DuroParser extends Parser {
 		RULE_multiArgMessageNoParHead = 15, RULE_multiArgMessageNoParTail = 16, 
 		RULE_multiArgMessageArgsNoPar = 17, RULE_multiArgMessageArgNoPar = 18, 
 		RULE_multiArgMessageArgNoParReceiver = 19, RULE_multiArgMessageArgNoParChain = 20, 
-		RULE_atom = 21, RULE_selfSingleArgMessageNoPar = 22, RULE_singleArgMessageNoPar = 23, 
-		RULE_unaryMessage = 24, RULE_slotAccess = 25, RULE_indexAccess = 26, RULE_binaryMessage = 27, 
-		RULE_binaryMessageOperand = 28, RULE_binaryMessageOperandChain = 29, RULE_indexAssignment = 30, 
-		RULE_slotAssignment = 31, RULE_literal = 32, RULE_integer = 33, RULE_string = 34, 
-		RULE_dict = 35, RULE_dictEntry = 36, RULE_closure = 37, RULE_behaviorParams = 38, 
-		RULE_array = 39, RULE_pseudoVar = 40, RULE_parArg = 41, RULE_id = 42, 
-		RULE_selector = 43, RULE_binaryOperator = 44, RULE_indexOperator = 45;
+		RULE_multiArgMessageArgNoParEnd = 21, RULE_atom = 22, RULE_selfSingleArgMessageNoPar = 23, 
+		RULE_singleArgMessageNoPar = 24, RULE_unaryMessage = 25, RULE_slotAccess = 26, 
+		RULE_indexAccess = 27, RULE_binaryMessage = 28, RULE_binaryMessageOperand = 29, 
+		RULE_binaryMessageOperandChain = 30, RULE_indexAssignment = 31, RULE_slotAssignment = 32, 
+		RULE_literal = 33, RULE_integer = 34, RULE_string = 35, RULE_dict = 36, 
+		RULE_dictEntry = 37, RULE_closure = 38, RULE_behaviorParams = 39, RULE_array = 40, 
+		RULE_pseudoVar = 41, RULE_parArg = 42, RULE_id = 43, RULE_selector = 44, 
+		RULE_binaryOperator = 45, RULE_indexOperator = 46;
 	public static final String[] ruleNames = {
 		"program", "expression", "assignment", "interfaceId", "messageExchange", 
 		"messageChain", "messageEnd", "expressionChain", "expressionEnd", "receiver", 
 		"selfMultiArgMessageNoPar", "variableDeclaration", "access", "grouping", 
 		"multiArgMessageNoPar", "multiArgMessageNoParHead", "multiArgMessageNoParTail", 
 		"multiArgMessageArgsNoPar", "multiArgMessageArgNoPar", "multiArgMessageArgNoParReceiver", 
-		"multiArgMessageArgNoParChain", "atom", "selfSingleArgMessageNoPar", "singleArgMessageNoPar", 
-		"unaryMessage", "slotAccess", "indexAccess", "binaryMessage", "binaryMessageOperand", 
+		"multiArgMessageArgNoParChain", "multiArgMessageArgNoParEnd", "atom", 
+		"selfSingleArgMessageNoPar", "singleArgMessageNoPar", "unaryMessage", 
+		"slotAccess", "indexAccess", "binaryMessage", "binaryMessageOperand", 
 		"binaryMessageOperandChain", "indexAssignment", "slotAssignment", "literal", 
 		"integer", "string", "dict", "dictEntry", "closure", "behaviorParams", 
 		"array", "pseudoVar", "parArg", "id", "selector", "binaryOperator", "indexOperator"
@@ -103,16 +105,16 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(95);
+			setState(97);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAR) | (1L << PSEUDO_VAR) | (1L << INT) | (1L << ID_CAP) | (1L << ID_UNCAP) | (1L << HASH) | (1L << BACK_SLASH) | (1L << DOLLAR) | (1L << PAR_OP) | (1L << BRA_OP) | (1L << STRING))) != 0)) {
 				{
 				{
-				setState(92); expression();
+				setState(94); expression();
 				}
 				}
-				setState(97);
+				setState(99);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -180,58 +182,58 @@ public class DuroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(103);
+			setState(105);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				{
-				setState(98); assignment();
+				setState(100); assignment();
 				}
 				break;
 
 			case 2:
 				{
-				setState(99); variableDeclaration();
+				setState(101); variableDeclaration();
 				}
 				break;
 
 			case 3:
 				{
-				setState(100); selfMultiArgMessageNoPar();
+				setState(102); selfMultiArgMessageNoPar();
 				}
 				break;
 
 			case 4:
 				{
-				setState(101); interfaceId();
+				setState(103); interfaceId();
 				}
 				break;
 
 			case 5:
 				{
-				setState(102); messageExchange();
+				setState(104); messageExchange();
 				}
 				break;
 			}
-			setState(108);
+			setState(110);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(105); expressionChain();
+					setState(107); expressionChain();
 					}
 					} 
 				}
-				setState(110);
+				setState(112);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,2,_ctx);
 			}
-			setState(112);
+			setState(114);
 			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				{
-				setState(111); expressionEnd();
+				setState(113); expressionEnd();
 				}
 				break;
 			}
@@ -288,29 +290,29 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(114); id();
-			setState(121);
+			setState(116); id();
+			setState(123);
 			switch (_input.LA(1)) {
 			case ASSIGN:
 			case ASSIGN_PROTO:
 				{
 				{
-				setState(115);
+				setState(117);
 				((AssignmentContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==ASSIGN || _la==ASSIGN_PROTO) ) {
 					((AssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(116); expression();
+				setState(118); expression();
 				}
 				}
 				break;
 			case ASSIGN_QUOTED:
 				{
-				setState(117); ((AssignmentContext)_localctx).op = match(ASSIGN_QUOTED);
-				setState(118); behaviorParams();
-				setState(119); expression();
+				setState(119); ((AssignmentContext)_localctx).op = match(ASSIGN_QUOTED);
+				setState(120); behaviorParams();
+				setState(121); expression();
 				}
 				break;
 			default:
@@ -362,11 +364,11 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(123); match(DOLLAR);
-			setState(124); id();
+			setState(125); match(DOLLAR);
+			setState(126); id();
 			{
 			}
-			setState(126); expression();
+			setState(128); expression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -419,27 +421,27 @@ public class DuroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(128); receiver();
-			setState(132);
+			setState(130); receiver();
+			setState(134);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(129); messageChain();
+					setState(131); messageChain();
 					}
 					} 
 				}
-				setState(134);
+				setState(136);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			}
-			setState(136);
+			setState(138);
 			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
-				setState(135); messageEnd();
+				setState(137); messageEnd();
 				}
 				break;
 			}
@@ -490,25 +492,25 @@ public class DuroParser extends Parser {
 		MessageChainContext _localctx = new MessageChainContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_messageChain);
 		try {
-			setState(142);
+			setState(144);
 			switch (_input.LA(1)) {
 			case DOT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(138); match(DOT);
-				setState(139); unaryMessage();
+				setState(140); match(DOT);
+				setState(141); unaryMessage();
 				}
 				break;
 			case SQ_OP:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(140); indexAccess();
+				setState(142); indexAccess();
 				}
 				break;
 			case AT:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(141); slotAccess();
+				setState(143); slotAccess();
 				}
 				break;
 			default:
@@ -567,31 +569,31 @@ public class DuroParser extends Parser {
 		enterRule(_localctx, 12, RULE_messageEnd);
 		try {
 			int _alt;
-			setState(153);
+			setState(155);
 			switch (_input.LA(1)) {
 			case DOT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(144); match(DOT);
-				setState(145); multiArgMessageNoPar();
+				setState(146); match(DOT);
+				setState(147); multiArgMessageNoPar();
 				}
 				break;
 			case AT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(146); slotAssignment();
+				setState(148); slotAssignment();
 				}
 				break;
 			case SQ_OP:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(147); indexAssignment();
+				setState(149); indexAssignment();
 				}
 				break;
 			case BIN_OP:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(149); 
+				setState(151); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 				do {
@@ -599,14 +601,14 @@ public class DuroParser extends Parser {
 					case 1:
 						{
 						{
-						setState(148); binaryMessage();
+						setState(150); binaryMessage();
 						}
 						}
 						break;
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(151); 
+					setState(153); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 				} while ( _alt!=2 && _alt!=-1 );
@@ -663,22 +665,22 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(155); match(SEMI_COLON);
-			setState(159);
+			setState(157); match(SEMI_COLON);
+			setState(161);
 			switch (_input.LA(1)) {
 			case ID_UNCAP:
 				{
-				setState(156); unaryMessage();
+				setState(158); unaryMessage();
 				}
 				break;
 			case SQ_OP:
 				{
-				setState(157); indexAccess();
+				setState(159); indexAccess();
 				}
 				break;
 			case AT:
 				{
-				setState(158); slotAccess();
+				setState(160); slotAccess();
 				}
 				break;
 			default:
@@ -740,27 +742,27 @@ public class DuroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(161); match(SEMI_COLON);
-			setState(170);
+			setState(163); match(SEMI_COLON);
+			setState(172);
 			switch (_input.LA(1)) {
 			case ID_UNCAP:
 				{
-				setState(162); multiArgMessageNoPar();
+				setState(164); multiArgMessageNoPar();
 				}
 				break;
 			case AT:
 				{
-				setState(163); slotAssignment();
+				setState(165); slotAssignment();
 				}
 				break;
 			case SQ_OP:
 				{
-				setState(164); indexAssignment();
+				setState(166); indexAssignment();
 				}
 				break;
 			case BIN_OP:
 				{
-				setState(166); 
+				setState(168); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
 				do {
@@ -768,14 +770,14 @@ public class DuroParser extends Parser {
 					case 1:
 						{
 						{
-						setState(165); binaryMessage();
+						setState(167); binaryMessage();
 						}
 						}
 						break;
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(168); 
+					setState(170); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,11,_ctx);
 				} while ( _alt!=2 && _alt!=-1 );
@@ -826,7 +828,7 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(172); atom();
+			setState(174); atom();
 			}
 		}
 		catch (RecognitionException re) {
@@ -869,7 +871,7 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(174); multiArgMessageNoPar();
+			setState(176); multiArgMessageNoPar();
 			}
 		}
 		catch (RecognitionException re) {
@@ -918,14 +920,14 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(176); match(VAR);
-			setState(177); id();
-			setState(180);
+			setState(178); match(VAR);
+			setState(179); id();
+			setState(182);
 			_la = _input.LA(1);
 			if (_la==ASSIGN) {
 				{
-				setState(178); match(ASSIGN);
-				setState(179); expression();
+				setState(180); match(ASSIGN);
+				setState(181); expression();
 				}
 			}
 
@@ -971,7 +973,7 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(182); id();
+			setState(184); id();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1020,21 +1022,21 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(184); match(PAR_OP);
-			setState(186); 
+			setState(186); match(PAR_OP);
+			setState(188); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(185); expression();
+				setState(187); expression();
 				}
 				}
-				setState(188); 
+				setState(190); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAR) | (1L << PSEUDO_VAR) | (1L << INT) | (1L << ID_CAP) | (1L << ID_UNCAP) | (1L << HASH) | (1L << BACK_SLASH) | (1L << DOLLAR) | (1L << PAR_OP) | (1L << BRA_OP) | (1L << STRING))) != 0) );
-			setState(190); match(PAR_CL);
+			setState(192); match(PAR_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1084,19 +1086,19 @@ public class DuroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(192); multiArgMessageNoParHead();
-			setState(196);
+			setState(194); multiArgMessageNoParHead();
+			setState(198);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					{
 					{
-					setState(193); multiArgMessageNoParTail();
+					setState(195); multiArgMessageNoParTail();
 					}
 					} 
 				}
-				setState(198);
+				setState(200);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
 			}
@@ -1147,15 +1149,15 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(199); match(ID_UNCAP);
-			setState(200);
+			setState(201); match(ID_UNCAP);
+			setState(202);
 			((MultiArgMessageNoParHeadContext)_localctx).modifier = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==SINGLE_QUOTE || _la==COLON) ) {
 				((MultiArgMessageNoParHeadContext)_localctx).modifier = (Token)_errHandler.recoverInline(this);
 			}
 			consume();
-			setState(201); multiArgMessageArgsNoPar();
+			setState(203); multiArgMessageArgsNoPar();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1203,15 +1205,15 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(203); match(ID_CAP);
-			setState(204);
+			setState(205); match(ID_CAP);
+			setState(206);
 			((MultiArgMessageNoParTailContext)_localctx).modifier = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==SINGLE_QUOTE || _la==COLON) ) {
 				((MultiArgMessageNoParTailContext)_localctx).modifier = (Token)_errHandler.recoverInline(this);
 			}
 			consume();
-			setState(205); multiArgMessageArgsNoPar();
+			setState(207); multiArgMessageArgsNoPar();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1262,24 +1264,24 @@ public class DuroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(215);
+			setState(217);
 			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 			case 1:
 				{
-				setState(207); multiArgMessageArgNoPar();
-				setState(212);
+				setState(209); multiArgMessageArgNoPar();
+				setState(214);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
 				while ( _alt!=2 && _alt!=-1 ) {
 					if ( _alt==1 ) {
 						{
 						{
-						setState(208); match(COMMA);
-						setState(209); multiArgMessageArgNoPar();
+						setState(210); match(COMMA);
+						setState(211); multiArgMessageArgNoPar();
 						}
 						} 
 					}
-					setState(214);
+					setState(216);
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
 				}
@@ -1303,11 +1305,17 @@ public class DuroParser extends Parser {
 		public MultiArgMessageArgNoParReceiverContext multiArgMessageArgNoParReceiver() {
 			return getRuleContext(MultiArgMessageArgNoParReceiverContext.class,0);
 		}
-		public MultiArgMessageArgNoParChainContext multiArgMessageArgNoParChain() {
-			return getRuleContext(MultiArgMessageArgNoParChainContext.class,0);
+		public List<MultiArgMessageArgNoParChainContext> multiArgMessageArgNoParChain() {
+			return getRuleContexts(MultiArgMessageArgNoParChainContext.class);
 		}
 		public SelfSingleArgMessageNoParContext selfSingleArgMessageNoPar() {
 			return getRuleContext(SelfSingleArgMessageNoParContext.class,0);
+		}
+		public MultiArgMessageArgNoParChainContext multiArgMessageArgNoParChain(int i) {
+			return getRuleContext(MultiArgMessageArgNoParChainContext.class,i);
+		}
+		public MultiArgMessageArgNoParEndContext multiArgMessageArgNoParEnd() {
+			return getRuleContext(MultiArgMessageArgNoParEndContext.class,0);
 		}
 		public MultiArgMessageArgNoParContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1332,26 +1340,44 @@ public class DuroParser extends Parser {
 		MultiArgMessageArgNoParContext _localctx = new MultiArgMessageArgNoParContext(_ctx, getState());
 		enterRule(_localctx, 36, RULE_multiArgMessageArgNoPar);
 		try {
-			setState(222);
-			switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
+			int _alt;
+			setState(230);
+			switch ( getInterpreter().adaptivePredict(_input,20,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(217); selfSingleArgMessageNoPar();
+				setState(219); selfSingleArgMessageNoPar();
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(218); multiArgMessageArgNoParReceiver();
-				setState(220);
-				switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
+				{
+				setState(220); multiArgMessageArgNoParReceiver();
+				setState(224);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+				while ( _alt!=2 && _alt!=-1 ) {
+					if ( _alt==1 ) {
+						{
+						{
+						setState(221); multiArgMessageArgNoParChain();
+						}
+						} 
+					}
+					setState(226);
+					_errHandler.sync(this);
+					_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
+				}
+				setState(228);
+				switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
 				case 1:
 					{
-					setState(219); multiArgMessageArgNoParChain();
+					setState(227); multiArgMessageArgNoParEnd();
 					}
 					break;
+				}
 				}
 				}
 				break;
@@ -1397,7 +1423,7 @@ public class DuroParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(224); atom();
+			setState(232); atom();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1419,26 +1445,8 @@ public class DuroParser extends Parser {
 		public UnaryMessageContext unaryMessage() {
 			return getRuleContext(UnaryMessageContext.class,0);
 		}
-		public BinaryMessageContext binaryMessage(int i) {
-			return getRuleContext(BinaryMessageContext.class,i);
-		}
-		public MultiArgMessageArgNoParChainContext multiArgMessageArgNoParChain() {
-			return getRuleContext(MultiArgMessageArgNoParChainContext.class,0);
-		}
-		public IndexAssignmentContext indexAssignment() {
-			return getRuleContext(IndexAssignmentContext.class,0);
-		}
-		public SlotAssignmentContext slotAssignment() {
-			return getRuleContext(SlotAssignmentContext.class,0);
-		}
 		public IndexAccessContext indexAccess() {
 			return getRuleContext(IndexAccessContext.class,0);
-		}
-		public SingleArgMessageNoParContext singleArgMessageNoPar() {
-			return getRuleContext(SingleArgMessageNoParContext.class,0);
-		}
-		public List<BinaryMessageContext> binaryMessage() {
-			return getRuleContexts(BinaryMessageContext.class);
 		}
 		public MultiArgMessageArgNoParChainContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1463,70 +1471,108 @@ public class DuroParser extends Parser {
 		MultiArgMessageArgNoParChainContext _localctx = new MultiArgMessageArgNoParChainContext(_ctx, getState());
 		enterRule(_localctx, 40, RULE_multiArgMessageArgNoParChain);
 		try {
-			int _alt;
-			setState(244);
-			switch ( getInterpreter().adaptivePredict(_input,23,_ctx) ) {
-			case 1:
+			setState(238);
+			switch (_input.LA(1)) {
+			case DOT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(230);
-				switch (_input.LA(1)) {
-				case DOT:
-					{
-					setState(226); match(DOT);
-					setState(227); unaryMessage();
-					}
-					break;
-				case AT:
-					{
-					setState(228); slotAccess();
-					}
-					break;
-				case SQ_OP:
-					{
-					setState(229); indexAccess();
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				setState(233);
-				switch ( getInterpreter().adaptivePredict(_input,21,_ctx) ) {
-				case 1:
-					{
-					setState(232); multiArgMessageArgNoParChain();
-					}
-					break;
-				}
+				setState(234); match(DOT);
+				setState(235); unaryMessage();
 				}
 				break;
-
-			case 2:
+			case AT:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(235); match(DOT);
-				setState(236); singleArgMessageNoPar();
+				setState(236); slotAccess();
 				}
 				break;
-
-			case 3:
+			case SQ_OP:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(237); slotAssignment();
+				setState(237); indexAccess();
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
 
-			case 4:
+	public static class MultiArgMessageArgNoParEndContext extends ParserRuleContext {
+		public TerminalNode DOT() { return getToken(DuroParser.DOT, 0); }
+		public BinaryMessageContext binaryMessage(int i) {
+			return getRuleContext(BinaryMessageContext.class,i);
+		}
+		public IndexAssignmentContext indexAssignment() {
+			return getRuleContext(IndexAssignmentContext.class,0);
+		}
+		public SlotAssignmentContext slotAssignment() {
+			return getRuleContext(SlotAssignmentContext.class,0);
+		}
+		public SingleArgMessageNoParContext singleArgMessageNoPar() {
+			return getRuleContext(SingleArgMessageNoParContext.class,0);
+		}
+		public List<BinaryMessageContext> binaryMessage() {
+			return getRuleContexts(BinaryMessageContext.class);
+		}
+		public MultiArgMessageArgNoParEndContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_multiArgMessageArgNoParEnd; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).enterMultiArgMessageArgNoParEnd(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof DuroListener ) ((DuroListener)listener).exitMultiArgMessageArgNoParEnd(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof DuroVisitor ) return ((DuroVisitor<? extends T>)visitor).visitMultiArgMessageArgNoParEnd(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final MultiArgMessageArgNoParEndContext multiArgMessageArgNoParEnd() throws RecognitionException {
+		MultiArgMessageArgNoParEndContext _localctx = new MultiArgMessageArgNoParEndContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_multiArgMessageArgNoParEnd);
+		try {
+			int _alt;
+			setState(249);
+			switch (_input.LA(1)) {
+			case DOT:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(240); match(DOT);
+				setState(241); singleArgMessageNoPar();
+				}
+				break;
+			case AT:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(242); slotAssignment();
+				}
+				break;
+			case SQ_OP:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(243); indexAssignment();
+				}
+				break;
+			case BIN_OP:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(238); indexAssignment();
-				}
-				break;
-
-			case 5:
-				enterOuterAlt(_localctx, 5);
-				{
-				setState(240); 
+				setState(245); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,22,_ctx);
 				do {
@@ -1534,19 +1580,21 @@ public class DuroParser extends Parser {
 					case 1:
 						{
 						{
-						setState(239); binaryMessage();
+						setState(244); binaryMessage();
 						}
 						}
 						break;
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(242); 
+					setState(247); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,22,_ctx);
 				} while ( _alt!=2 && _alt!=-1 );
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1597,21 +1645,21 @@ public class DuroParser extends Parser {
 
 	public final AtomContext atom() throws RecognitionException {
 		AtomContext _localctx = new AtomContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_atom);
+		enterRule(_localctx, 44, RULE_atom);
 		try {
-			setState(251);
+			setState(256);
 			switch (_input.LA(1)) {
 			case ID_CAP:
 			case ID_UNCAP:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(246); access();
+				setState(251); access();
 				}
 				break;
 			case PAR_OP:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(247); grouping();
+				setState(252); grouping();
 				}
 				break;
 			case INT:
@@ -1620,19 +1668,19 @@ public class DuroParser extends Parser {
 			case STRING:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(248); literal();
+				setState(253); literal();
 				}
 				break;
 			case PSEUDO_VAR:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(249); pseudoVar();
+				setState(254); pseudoVar();
 				}
 				break;
 			case BACK_SLASH:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(250); parArg();
+				setState(255); parArg();
 				}
 				break;
 			default:
@@ -1675,11 +1723,11 @@ public class DuroParser extends Parser {
 
 	public final SelfSingleArgMessageNoParContext selfSingleArgMessageNoPar() throws RecognitionException {
 		SelfSingleArgMessageNoParContext _localctx = new SelfSingleArgMessageNoParContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_selfSingleArgMessageNoPar);
+		enterRule(_localctx, 46, RULE_selfSingleArgMessageNoPar);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(253); singleArgMessageNoPar();
+			setState(258); singleArgMessageNoPar();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1722,20 +1770,20 @@ public class DuroParser extends Parser {
 
 	public final SingleArgMessageNoParContext singleArgMessageNoPar() throws RecognitionException {
 		SingleArgMessageNoParContext _localctx = new SingleArgMessageNoParContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_singleArgMessageNoPar);
+		enterRule(_localctx, 48, RULE_singleArgMessageNoPar);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(255); match(ID_UNCAP);
-			setState(256);
+			setState(260); match(ID_UNCAP);
+			setState(261);
 			((SingleArgMessageNoParContext)_localctx).modifier = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==SINGLE_QUOTE || _la==COLON) ) {
 				((SingleArgMessageNoParContext)_localctx).modifier = (Token)_errHandler.recoverInline(this);
 			}
 			consume();
-			setState(257); multiArgMessageArgNoPar();
+			setState(262); multiArgMessageArgNoPar();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1772,11 +1820,11 @@ public class DuroParser extends Parser {
 
 	public final UnaryMessageContext unaryMessage() throws RecognitionException {
 		UnaryMessageContext _localctx = new UnaryMessageContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_unaryMessage);
+		enterRule(_localctx, 50, RULE_unaryMessage);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(259); match(ID_UNCAP);
+			setState(264); match(ID_UNCAP);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1816,12 +1864,12 @@ public class DuroParser extends Parser {
 
 	public final SlotAccessContext slotAccess() throws RecognitionException {
 		SlotAccessContext _localctx = new SlotAccessContext(_ctx, getState());
-		enterRule(_localctx, 50, RULE_slotAccess);
+		enterRule(_localctx, 52, RULE_slotAccess);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(261); match(AT);
-			setState(262); selector();
+			setState(266); match(AT);
+			setState(267); selector();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1862,13 +1910,13 @@ public class DuroParser extends Parser {
 
 	public final IndexAccessContext indexAccess() throws RecognitionException {
 		IndexAccessContext _localctx = new IndexAccessContext(_ctx, getState());
-		enterRule(_localctx, 52, RULE_indexAccess);
+		enterRule(_localctx, 54, RULE_indexAccess);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(264); match(SQ_OP);
-			setState(265); expression();
-			setState(266); match(SQ_CL);
+			setState(269); match(SQ_OP);
+			setState(270); expression();
+			setState(271); match(SQ_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1908,12 +1956,12 @@ public class DuroParser extends Parser {
 
 	public final BinaryMessageContext binaryMessage() throws RecognitionException {
 		BinaryMessageContext _localctx = new BinaryMessageContext(_ctx, getState());
-		enterRule(_localctx, 54, RULE_binaryMessage);
+		enterRule(_localctx, 56, RULE_binaryMessage);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(268); match(BIN_OP);
-			setState(269); binaryMessageOperand();
+			setState(273); match(BIN_OP);
+			setState(274); binaryMessageOperand();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1955,16 +2003,16 @@ public class DuroParser extends Parser {
 
 	public final BinaryMessageOperandContext binaryMessageOperand() throws RecognitionException {
 		BinaryMessageOperandContext _localctx = new BinaryMessageOperandContext(_ctx, getState());
-		enterRule(_localctx, 56, RULE_binaryMessageOperand);
+		enterRule(_localctx, 58, RULE_binaryMessageOperand);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(271); receiver();
-			setState(273);
+			setState(276); receiver();
+			setState(278);
 			switch ( getInterpreter().adaptivePredict(_input,25,_ctx) ) {
 			case 1:
 				{
-				setState(272); binaryMessageOperandChain();
+				setState(277); binaryMessageOperandChain();
 				}
 				break;
 			}
@@ -2018,33 +2066,33 @@ public class DuroParser extends Parser {
 
 	public final BinaryMessageOperandChainContext binaryMessageOperandChain() throws RecognitionException {
 		BinaryMessageOperandChainContext _localctx = new BinaryMessageOperandChainContext(_ctx, getState());
-		enterRule(_localctx, 58, RULE_binaryMessageOperandChain);
+		enterRule(_localctx, 60, RULE_binaryMessageOperandChain);
 		try {
-			setState(284);
+			setState(289);
 			switch ( getInterpreter().adaptivePredict(_input,28,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(277);
+				setState(282);
 				switch (_input.LA(1)) {
 				case AT:
 					{
-					setState(275); slotAccess();
+					setState(280); slotAccess();
 					}
 					break;
 				case SQ_OP:
 					{
-					setState(276); indexAccess();
+					setState(281); indexAccess();
 					}
 					break;
 				default:
 					throw new NoViableAltException(this);
 				}
-				setState(280);
+				setState(285);
 				switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 				case 1:
 					{
-					setState(279); binaryMessageOperandChain();
+					setState(284); binaryMessageOperandChain();
 					}
 					break;
 				}
@@ -2054,14 +2102,14 @@ public class DuroParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(282); slotAssignment();
+				setState(287); slotAssignment();
 				}
 				break;
 
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(283); indexAssignment();
+				setState(288); indexAssignment();
 				}
 				break;
 			}
@@ -2108,15 +2156,15 @@ public class DuroParser extends Parser {
 
 	public final IndexAssignmentContext indexAssignment() throws RecognitionException {
 		IndexAssignmentContext _localctx = new IndexAssignmentContext(_ctx, getState());
-		enterRule(_localctx, 60, RULE_indexAssignment);
+		enterRule(_localctx, 62, RULE_indexAssignment);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(286); match(SQ_OP);
-			setState(287); expression();
-			setState(288); match(SQ_CL);
-			setState(289); match(ASSIGN);
-			setState(290); expression();
+			setState(291); match(SQ_OP);
+			setState(292); expression();
+			setState(293); match(SQ_CL);
+			setState(294); match(ASSIGN);
+			setState(295); expression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -2166,35 +2214,35 @@ public class DuroParser extends Parser {
 
 	public final SlotAssignmentContext slotAssignment() throws RecognitionException {
 		SlotAssignmentContext _localctx = new SlotAssignmentContext(_ctx, getState());
-		enterRule(_localctx, 62, RULE_slotAssignment);
+		enterRule(_localctx, 64, RULE_slotAssignment);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(292); match(AT);
-			setState(293); selector();
-			setState(300);
+			setState(297); match(AT);
+			setState(298); selector();
+			setState(305);
 			switch (_input.LA(1)) {
 			case ASSIGN:
 			case ASSIGN_PROTO:
 				{
 				{
-				setState(294);
+				setState(299);
 				((SlotAssignmentContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==ASSIGN || _la==ASSIGN_PROTO) ) {
 					((SlotAssignmentContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(295); expression();
+				setState(300); expression();
 				}
 				}
 				break;
 			case ASSIGN_QUOTED:
 				{
-				setState(296); ((SlotAssignmentContext)_localctx).op = match(ASSIGN_QUOTED);
-				setState(297); behaviorParams();
-				setState(298); expression();
+				setState(301); ((SlotAssignmentContext)_localctx).op = match(ASSIGN_QUOTED);
+				setState(302); behaviorParams();
+				setState(303); expression();
 				}
 				break;
 			default:
@@ -2250,42 +2298,42 @@ public class DuroParser extends Parser {
 
 	public final LiteralContext literal() throws RecognitionException {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
-		enterRule(_localctx, 64, RULE_literal);
+		enterRule(_localctx, 66, RULE_literal);
 		try {
-			setState(307);
+			setState(312);
 			switch ( getInterpreter().adaptivePredict(_input,30,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(302); integer();
+				setState(307); integer();
 				}
 				break;
 
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(303); string();
+				setState(308); string();
 				}
 				break;
 
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(304); dict();
+				setState(309); dict();
 				}
 				break;
 
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(305); closure();
+				setState(310); closure();
 				}
 				break;
 
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(306); array();
+				setState(311); array();
 				}
 				break;
 			}
@@ -2324,11 +2372,11 @@ public class DuroParser extends Parser {
 
 	public final IntegerContext integer() throws RecognitionException {
 		IntegerContext _localctx = new IntegerContext(_ctx, getState());
-		enterRule(_localctx, 66, RULE_integer);
+		enterRule(_localctx, 68, RULE_integer);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(309); match(INT);
+			setState(314); match(INT);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2365,11 +2413,11 @@ public class DuroParser extends Parser {
 
 	public final StringContext string() throws RecognitionException {
 		StringContext _localctx = new StringContext(_ctx, getState());
-		enterRule(_localctx, 68, RULE_string);
+		enterRule(_localctx, 70, RULE_string);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(311); match(STRING);
+			setState(316); match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2414,27 +2462,27 @@ public class DuroParser extends Parser {
 
 	public final DictContext dict() throws RecognitionException {
 		DictContext _localctx = new DictContext(_ctx, getState());
-		enterRule(_localctx, 70, RULE_dict);
+		enterRule(_localctx, 72, RULE_dict);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(313); match(HASH);
-			setState(314); match(SQ_OP);
-			setState(318);
+			setState(318); match(HASH);
+			setState(319); match(SQ_OP);
+			setState(323);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ID_CAP) | (1L << ID_UNCAP) | (1L << SQ_OP) | (1L << BIN_OP))) != 0)) {
 				{
 				{
-				setState(315); dictEntry();
+				setState(320); dictEntry();
 				}
 				}
-				setState(320);
+				setState(325);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(321); match(SQ_CL);
+			setState(326); match(SQ_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2483,34 +2531,34 @@ public class DuroParser extends Parser {
 
 	public final DictEntryContext dictEntry() throws RecognitionException {
 		DictEntryContext _localctx = new DictEntryContext(_ctx, getState());
-		enterRule(_localctx, 72, RULE_dictEntry);
+		enterRule(_localctx, 74, RULE_dictEntry);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(323); selector();
-			setState(330);
+			setState(328); selector();
+			setState(335);
 			switch (_input.LA(1)) {
 			case ASSIGN:
 			case ASSIGN_PROTO:
 				{
 				{
-				setState(324);
+				setState(329);
 				((DictEntryContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==ASSIGN || _la==ASSIGN_PROTO) ) {
 					((DictEntryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(325); expression();
+				setState(330); expression();
 				}
 				}
 				break;
 			case ASSIGN_QUOTED:
 				{
-				setState(326); ((DictEntryContext)_localctx).op = match(ASSIGN_QUOTED);
-				setState(327); behaviorParams();
-				setState(328); expression();
+				setState(331); ((DictEntryContext)_localctx).op = match(ASSIGN_QUOTED);
+				setState(332); behaviorParams();
+				setState(333); expression();
 				}
 				break;
 			default:
@@ -2562,29 +2610,29 @@ public class DuroParser extends Parser {
 
 	public final ClosureContext closure() throws RecognitionException {
 		ClosureContext _localctx = new ClosureContext(_ctx, getState());
-		enterRule(_localctx, 74, RULE_closure);
+		enterRule(_localctx, 76, RULE_closure);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(332); match(BRA_OP);
-			setState(333); behaviorParams();
+			setState(337); match(BRA_OP);
+			setState(338); behaviorParams();
 			{
-			setState(337);
+			setState(342);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAR) | (1L << PSEUDO_VAR) | (1L << INT) | (1L << ID_CAP) | (1L << ID_UNCAP) | (1L << HASH) | (1L << BACK_SLASH) | (1L << DOLLAR) | (1L << PAR_OP) | (1L << BRA_OP) | (1L << STRING))) != 0)) {
 				{
 				{
-				setState(334); expression();
+				setState(339); expression();
 				}
 				}
-				setState(339);
+				setState(344);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
 			}
-			setState(340); match(BAR_CL);
+			setState(345); match(BAR_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2630,30 +2678,30 @@ public class DuroParser extends Parser {
 
 	public final BehaviorParamsContext behaviorParams() throws RecognitionException {
 		BehaviorParamsContext _localctx = new BehaviorParamsContext(_ctx, getState());
-		enterRule(_localctx, 76, RULE_behaviorParams);
+		enterRule(_localctx, 78, RULE_behaviorParams);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(350);
+			setState(355);
 			_la = _input.LA(1);
 			if (_la==PIPE) {
 				{
-				setState(342); match(PIPE);
-				setState(344); 
+				setState(347); match(PIPE);
+				setState(349); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(343); id();
+					setState(348); id();
 					}
 					}
-					setState(346); 
+					setState(351); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( _la==ID_CAP || _la==ID_UNCAP );
-				setState(348); match(PIPE);
+				setState(353); match(PIPE);
 				}
 			}
 
@@ -2701,27 +2749,27 @@ public class DuroParser extends Parser {
 
 	public final ArrayContext array() throws RecognitionException {
 		ArrayContext _localctx = new ArrayContext(_ctx, getState());
-		enterRule(_localctx, 78, RULE_array);
+		enterRule(_localctx, 80, RULE_array);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(352); match(HASH);
-			setState(353); match(PAR_OP);
-			setState(357);
+			setState(357); match(HASH);
+			setState(358); match(PAR_OP);
+			setState(362);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAR) | (1L << PSEUDO_VAR) | (1L << INT) | (1L << ID_CAP) | (1L << ID_UNCAP) | (1L << HASH) | (1L << BACK_SLASH) | (1L << DOLLAR) | (1L << PAR_OP) | (1L << BRA_OP) | (1L << STRING))) != 0)) {
 				{
 				{
-				setState(354); expression();
+				setState(359); expression();
 				}
 				}
-				setState(359);
+				setState(364);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(360); match(PAR_CL);
+			setState(365); match(PAR_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2758,11 +2806,11 @@ public class DuroParser extends Parser {
 
 	public final PseudoVarContext pseudoVar() throws RecognitionException {
 		PseudoVarContext _localctx = new PseudoVarContext(_ctx, getState());
-		enterRule(_localctx, 80, RULE_pseudoVar);
+		enterRule(_localctx, 82, RULE_pseudoVar);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(362); match(PSEUDO_VAR);
+			setState(367); match(PSEUDO_VAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -2802,12 +2850,12 @@ public class DuroParser extends Parser {
 
 	public final ParArgContext parArg() throws RecognitionException {
 		ParArgContext _localctx = new ParArgContext(_ctx, getState());
-		enterRule(_localctx, 82, RULE_parArg);
+		enterRule(_localctx, 84, RULE_parArg);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(364); match(BACK_SLASH);
-			setState(365); id();
+			setState(369); match(BACK_SLASH);
+			setState(370); id();
 			}
 		}
 		catch (RecognitionException re) {
@@ -2845,12 +2893,12 @@ public class DuroParser extends Parser {
 
 	public final IdContext id() throws RecognitionException {
 		IdContext _localctx = new IdContext(_ctx, getState());
-		enterRule(_localctx, 84, RULE_id);
+		enterRule(_localctx, 86, RULE_id);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(367);
+			setState(372);
 			_la = _input.LA(1);
 			if ( !(_la==ID_CAP || _la==ID_UNCAP) ) {
 			_errHandler.recoverInline(this);
@@ -2900,27 +2948,27 @@ public class DuroParser extends Parser {
 
 	public final SelectorContext selector() throws RecognitionException {
 		SelectorContext _localctx = new SelectorContext(_ctx, getState());
-		enterRule(_localctx, 86, RULE_selector);
+		enterRule(_localctx, 88, RULE_selector);
 		try {
-			setState(372);
+			setState(377);
 			switch (_input.LA(1)) {
 			case ID_CAP:
 			case ID_UNCAP:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(369); id();
+				setState(374); id();
 				}
 				break;
 			case BIN_OP:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(370); binaryOperator();
+				setState(375); binaryOperator();
 				}
 				break;
 			case SQ_OP:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(371); indexOperator();
+				setState(376); indexOperator();
 				}
 				break;
 			default:
@@ -2961,11 +3009,11 @@ public class DuroParser extends Parser {
 
 	public final BinaryOperatorContext binaryOperator() throws RecognitionException {
 		BinaryOperatorContext _localctx = new BinaryOperatorContext(_ctx, getState());
-		enterRule(_localctx, 88, RULE_binaryOperator);
+		enterRule(_localctx, 90, RULE_binaryOperator);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(374); match(BIN_OP);
+			setState(379); match(BIN_OP);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3003,12 +3051,12 @@ public class DuroParser extends Parser {
 
 	public final IndexOperatorContext indexOperator() throws RecognitionException {
 		IndexOperatorContext _localctx = new IndexOperatorContext(_ctx, getState());
-		enterRule(_localctx, 90, RULE_indexOperator);
+		enterRule(_localctx, 92, RULE_indexOperator);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(376); match(SQ_OP);
-			setState(377); match(SQ_CL);
+			setState(381); match(SQ_OP);
+			setState(382); match(SQ_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3023,138 +3071,139 @@ public class DuroParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3 \u017e\4\2\t\2\4"+
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3 \u0183\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
 		"\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36\4\37\t\37\4 \t \4!"+
 		"\t!\4\"\t\"\4#\t#\4$\t$\4%\t%\4&\t&\4\'\t\'\4(\t(\4)\t)\4*\t*\4+\t+\4"+
-		",\t,\4-\t-\4.\t.\4/\t/\3\2\7\2`\n\2\f\2\16\2c\13\2\3\3\3\3\3\3\3\3\3\3"+
-		"\5\3j\n\3\3\3\7\3m\n\3\f\3\16\3p\13\3\3\3\5\3s\n\3\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\5\4|\n\4\3\5\3\5\3\5\3\5\3\5\3\6\3\6\7\6\u0085\n\6\f\6\16\6\u0088"+
-		"\13\6\3\6\5\6\u008b\n\6\3\7\3\7\3\7\3\7\5\7\u0091\n\7\3\b\3\b\3\b\3\b"+
-		"\3\b\6\b\u0098\n\b\r\b\16\b\u0099\5\b\u009c\n\b\3\t\3\t\3\t\3\t\5\t\u00a2"+
-		"\n\t\3\n\3\n\3\n\3\n\3\n\6\n\u00a9\n\n\r\n\16\n\u00aa\5\n\u00ad\n\n\3"+
-		"\13\3\13\3\f\3\f\3\r\3\r\3\r\3\r\5\r\u00b7\n\r\3\16\3\16\3\17\3\17\6\17"+
-		"\u00bd\n\17\r\17\16\17\u00be\3\17\3\17\3\20\3\20\7\20\u00c5\n\20\f\20"+
-		"\16\20\u00c8\13\20\3\21\3\21\3\21\3\21\3\22\3\22\3\22\3\22\3\23\3\23\3"+
-		"\23\7\23\u00d5\n\23\f\23\16\23\u00d8\13\23\5\23\u00da\n\23\3\24\3\24\3"+
-		"\24\5\24\u00df\n\24\5\24\u00e1\n\24\3\25\3\25\3\26\3\26\3\26\3\26\5\26"+
-		"\u00e9\n\26\3\26\5\26\u00ec\n\26\3\26\3\26\3\26\3\26\3\26\6\26\u00f3\n"+
-		"\26\r\26\16\26\u00f4\5\26\u00f7\n\26\3\27\3\27\3\27\3\27\3\27\5\27\u00fe"+
-		"\n\27\3\30\3\30\3\31\3\31\3\31\3\31\3\32\3\32\3\33\3\33\3\33\3\34\3\34"+
-		"\3\34\3\34\3\35\3\35\3\35\3\36\3\36\5\36\u0114\n\36\3\37\3\37\5\37\u0118"+
-		"\n\37\3\37\5\37\u011b\n\37\3\37\3\37\5\37\u011f\n\37\3 \3 \3 \3 \3 \3"+
-		" \3!\3!\3!\3!\3!\3!\3!\3!\5!\u012f\n!\3\"\3\"\3\"\3\"\3\"\5\"\u0136\n"+
-		"\"\3#\3#\3$\3$\3%\3%\3%\7%\u013f\n%\f%\16%\u0142\13%\3%\3%\3&\3&\3&\3"+
-		"&\3&\3&\3&\5&\u014d\n&\3\'\3\'\3\'\7\'\u0152\n\'\f\'\16\'\u0155\13\'\3"+
-		"\'\3\'\3(\3(\6(\u015b\n(\r(\16(\u015c\3(\3(\5(\u0161\n(\3)\3)\3)\7)\u0166"+
-		"\n)\f)\16)\u0169\13)\3)\3)\3*\3*\3+\3+\3+\3,\3,\3-\3-\3-\5-\u0177\n-\3"+
-		".\3.\3/\3/\3/\3/\2\60\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,."+
-		"\60\62\64\668:<>@BDFHJLNPRTVXZ\\\2\5\3\2\32\33\4\2\r\r\17\17\3\2\6\7\u018a"+
-		"\2a\3\2\2\2\4i\3\2\2\2\6t\3\2\2\2\b}\3\2\2\2\n\u0082\3\2\2\2\f\u0090\3"+
-		"\2\2\2\16\u009b\3\2\2\2\20\u009d\3\2\2\2\22\u00a3\3\2\2\2\24\u00ae\3\2"+
-		"\2\2\26\u00b0\3\2\2\2\30\u00b2\3\2\2\2\32\u00b8\3\2\2\2\34\u00ba\3\2\2"+
-		"\2\36\u00c2\3\2\2\2 \u00c9\3\2\2\2\"\u00cd\3\2\2\2$\u00d9\3\2\2\2&\u00e0"+
-		"\3\2\2\2(\u00e2\3\2\2\2*\u00f6\3\2\2\2,\u00fd\3\2\2\2.\u00ff\3\2\2\2\60"+
-		"\u0101\3\2\2\2\62\u0105\3\2\2\2\64\u0107\3\2\2\2\66\u010a\3\2\2\28\u010e"+
-		"\3\2\2\2:\u0111\3\2\2\2<\u011e\3\2\2\2>\u0120\3\2\2\2@\u0126\3\2\2\2B"+
-		"\u0135\3\2\2\2D\u0137\3\2\2\2F\u0139\3\2\2\2H\u013b\3\2\2\2J\u0145\3\2"+
-		"\2\2L\u014e\3\2\2\2N\u0160\3\2\2\2P\u0162\3\2\2\2R\u016c\3\2\2\2T\u016e"+
-		"\3\2\2\2V\u0171\3\2\2\2X\u0176\3\2\2\2Z\u0178\3\2\2\2\\\u017a\3\2\2\2"+
-		"^`\5\4\3\2_^\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2b\3\3\2\2\2ca\3\2\2"+
-		"\2dj\5\6\4\2ej\5\30\r\2fj\5\26\f\2gj\5\b\5\2hj\5\n\6\2id\3\2\2\2ie\3\2"+
-		"\2\2if\3\2\2\2ig\3\2\2\2ih\3\2\2\2jn\3\2\2\2km\5\20\t\2lk\3\2\2\2mp\3"+
-		"\2\2\2nl\3\2\2\2no\3\2\2\2or\3\2\2\2pn\3\2\2\2qs\5\22\n\2rq\3\2\2\2rs"+
-		"\3\2\2\2s\5\3\2\2\2t{\5V,\2uv\t\2\2\2v|\5\4\3\2wx\7\34\2\2xy\5N(\2yz\5"+
-		"\4\3\2z|\3\2\2\2{u\3\2\2\2{w\3\2\2\2|\7\3\2\2\2}~\7\22\2\2~\177\5V,\2"+
-		"\177\u0080\3\2\2\2\u0080\u0081\5\4\3\2\u0081\t\3\2\2\2\u0082\u0086\5\24"+
-		"\13\2\u0083\u0085\5\f\7\2\u0084\u0083\3\2\2\2\u0085\u0088\3\2\2\2\u0086"+
-		"\u0084\3\2\2\2\u0086\u0087\3\2\2\2\u0087\u008a\3\2\2\2\u0088\u0086\3\2"+
-		"\2\2\u0089\u008b\5\16\b\2\u008a\u0089\3\2\2\2\u008a\u008b\3\2\2\2\u008b"+
-		"\13\3\2\2\2\u008c\u008d\7\f\2\2\u008d\u0091\5\62\32\2\u008e\u0091\5\66"+
-		"\34\2\u008f\u0091\5\64\33\2\u0090\u008c\3\2\2\2\u0090\u008e\3\2\2\2\u0090"+
-		"\u008f\3\2\2\2\u0091\r\3\2\2\2\u0092\u0093\7\f\2\2\u0093\u009c\5\36\20"+
-		"\2\u0094\u009c\5@!\2\u0095\u009c\5> \2\u0096\u0098\58\35\2\u0097\u0096"+
-		"\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u0097\3\2\2\2\u0099\u009a\3\2\2\2\u009a"+
-		"\u009c\3\2\2\2\u009b\u0092\3\2\2\2\u009b\u0094\3\2\2\2\u009b\u0095\3\2"+
-		"\2\2\u009b\u0097\3\2\2\2\u009c\17\3\2\2\2\u009d\u00a1\7\20\2\2\u009e\u00a2"+
-		"\5\62\32\2\u009f\u00a2\5\66\34\2\u00a0\u00a2\5\64\33\2\u00a1\u009e\3\2"+
-		"\2\2\u00a1\u009f\3\2\2\2\u00a1\u00a0\3\2\2\2\u00a2\21\3\2\2\2\u00a3\u00ac"+
-		"\7\20\2\2\u00a4\u00ad\5\36\20\2\u00a5\u00ad\5@!\2\u00a6\u00ad\5> \2\u00a7"+
-		"\u00a9\58\35\2\u00a8\u00a7\3\2\2\2\u00a9\u00aa\3\2\2\2\u00aa\u00a8\3\2"+
-		"\2\2\u00aa\u00ab\3\2\2\2\u00ab\u00ad\3\2\2\2\u00ac\u00a4\3\2\2\2\u00ac"+
-		"\u00a5\3\2\2\2\u00ac\u00a6\3\2\2\2\u00ac\u00a8\3\2\2\2\u00ad\23\3\2\2"+
-		"\2\u00ae\u00af\5,\27\2\u00af\25\3\2\2\2\u00b0\u00b1\5\36\20\2\u00b1\27"+
-		"\3\2\2\2\u00b2\u00b3\7\3\2\2\u00b3\u00b6\5V,\2\u00b4\u00b5\7\32\2\2\u00b5"+
-		"\u00b7\5\4\3\2\u00b6\u00b4\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\31\3\2\2"+
-		"\2\u00b8\u00b9\5V,\2\u00b9\33\3\2\2\2\u00ba\u00bc\7\23\2\2\u00bb\u00bd"+
-		"\5\4\3\2\u00bc\u00bb\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00bc\3\2\2\2\u00be"+
-		"\u00bf\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0\u00c1\7\24\2\2\u00c1\35\3\2\2"+
-		"\2\u00c2\u00c6\5 \21\2\u00c3\u00c5\5\"\22\2\u00c4\u00c3\3\2\2\2\u00c5"+
-		"\u00c8\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c6\u00c7\3\2\2\2\u00c7\37\3\2\2"+
-		"\2\u00c8\u00c6\3\2\2\2\u00c9\u00ca\7\7\2\2\u00ca\u00cb\t\3\2\2\u00cb\u00cc"+
-		"\5$\23\2\u00cc!\3\2\2\2\u00cd\u00ce\7\6\2\2\u00ce\u00cf\t\3\2\2\u00cf"+
-		"\u00d0\5$\23\2\u00d0#\3\2\2\2\u00d1\u00d6\5&\24\2\u00d2\u00d3\7\16\2\2"+
-		"\u00d3\u00d5\5&\24\2\u00d4\u00d2\3\2\2\2\u00d5\u00d8\3\2\2\2\u00d6\u00d4"+
-		"\3\2\2\2\u00d6\u00d7\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8\u00d6\3\2\2\2\u00d9"+
-		"\u00d1\3\2\2\2\u00d9\u00da\3\2\2\2\u00da%\3\2\2\2\u00db\u00e1\5.\30\2"+
-		"\u00dc\u00de\5(\25\2\u00dd\u00df\5*\26\2\u00de\u00dd\3\2\2\2\u00de\u00df"+
-		"\3\2\2\2\u00df\u00e1\3\2\2\2\u00e0\u00db\3\2\2\2\u00e0\u00dc\3\2\2\2\u00e1"+
-		"\'\3\2\2\2\u00e2\u00e3\5,\27\2\u00e3)\3\2\2\2\u00e4\u00e5\7\f\2\2\u00e5"+
-		"\u00e9\5\62\32\2\u00e6\u00e9\5\64\33\2\u00e7\u00e9\5\66\34\2\u00e8\u00e4"+
-		"\3\2\2\2\u00e8\u00e6\3\2\2\2\u00e8\u00e7\3\2\2\2\u00e9\u00eb\3\2\2\2\u00ea"+
-		"\u00ec\5*\26\2\u00eb\u00ea\3\2\2\2\u00eb\u00ec\3\2\2\2\u00ec\u00f7\3\2"+
-		"\2\2\u00ed\u00ee\7\f\2\2\u00ee\u00f7\5\60\31\2\u00ef\u00f7\5@!\2\u00f0"+
-		"\u00f7\5> \2\u00f1\u00f3\58\35\2\u00f2\u00f1\3\2\2\2\u00f3\u00f4\3\2\2"+
-		"\2\u00f4\u00f2\3\2\2\2\u00f4\u00f5\3\2\2\2\u00f5\u00f7\3\2\2\2\u00f6\u00e8"+
-		"\3\2\2\2\u00f6\u00ed\3\2\2\2\u00f6\u00ef\3\2\2\2\u00f6\u00f0\3\2\2\2\u00f6"+
-		"\u00f2\3\2\2\2\u00f7+\3\2\2\2\u00f8\u00fe\5\32\16\2\u00f9\u00fe\5\34\17"+
-		"\2\u00fa\u00fe\5B\"\2\u00fb\u00fe\5R*\2\u00fc\u00fe\5T+\2\u00fd\u00f8"+
-		"\3\2\2\2\u00fd\u00f9\3\2\2\2\u00fd\u00fa\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fd"+
-		"\u00fc\3\2\2\2\u00fe-\3\2\2\2\u00ff\u0100\5\60\31\2\u0100/\3\2\2\2\u0101"+
-		"\u0102\7\7\2\2\u0102\u0103\t\3\2\2\u0103\u0104\5&\24\2\u0104\61\3\2\2"+
-		"\2\u0105\u0106\7\7\2\2\u0106\63\3\2\2\2\u0107\u0108\7\13\2\2\u0108\u0109"+
-		"\5X-\2\u0109\65\3\2\2\2\u010a\u010b\7\25\2\2\u010b\u010c\5\4\3\2\u010c"+
-		"\u010d\7\26\2\2\u010d\67\3\2\2\2\u010e\u010f\7\31\2\2\u010f\u0110\5:\36"+
-		"\2\u01109\3\2\2\2\u0111\u0113\5\24\13\2\u0112\u0114\5<\37\2\u0113\u0112"+
-		"\3\2\2\2\u0113\u0114\3\2\2\2\u0114;\3\2\2\2\u0115\u0118\5\64\33\2\u0116"+
-		"\u0118\5\66\34\2\u0117\u0115\3\2\2\2\u0117\u0116\3\2\2\2\u0118\u011a\3"+
-		"\2\2\2\u0119\u011b\5<\37\2\u011a\u0119\3\2\2\2\u011a\u011b\3\2\2\2\u011b"+
-		"\u011f\3\2\2\2\u011c\u011f\5@!\2\u011d\u011f\5> \2\u011e\u0117\3\2\2\2"+
-		"\u011e\u011c\3\2\2\2\u011e\u011d\3\2\2\2\u011f=\3\2\2\2\u0120\u0121\7"+
-		"\25\2\2\u0121\u0122\5\4\3\2\u0122\u0123\7\26\2\2\u0123\u0124\7\32\2\2"+
-		"\u0124\u0125\5\4\3\2\u0125?\3\2\2\2\u0126\u0127\7\13\2\2\u0127\u012e\5"+
-		"X-\2\u0128\u0129\t\2\2\2\u0129\u012f\5\4\3\2\u012a\u012b\7\34\2\2\u012b"+
-		"\u012c\5N(\2\u012c\u012d\5\4\3\2\u012d\u012f\3\2\2\2\u012e\u0128\3\2\2"+
-		"\2\u012e\u012a\3\2\2\2\u012fA\3\2\2\2\u0130\u0136\5D#\2\u0131\u0136\5"+
-		"F$\2\u0132\u0136\5H%\2\u0133\u0136\5L\'\2\u0134\u0136\5P)\2\u0135\u0130"+
-		"\3\2\2\2\u0135\u0131\3\2\2\2\u0135\u0132\3\2\2\2\u0135\u0133\3\2\2\2\u0135"+
-		"\u0134\3\2\2\2\u0136C\3\2\2\2\u0137\u0138\7\5\2\2\u0138E\3\2\2\2\u0139"+
-		"\u013a\7 \2\2\u013aG\3\2\2\2\u013b\u013c\7\n\2\2\u013c\u0140\7\25\2\2"+
-		"\u013d\u013f\5J&\2\u013e\u013d\3\2\2\2\u013f\u0142\3\2\2\2\u0140\u013e"+
-		"\3\2\2\2\u0140\u0141\3\2\2\2\u0141\u0143\3\2\2\2\u0142\u0140\3\2\2\2\u0143"+
-		"\u0144\7\26\2\2\u0144I\3\2\2\2\u0145\u014c\5X-\2\u0146\u0147\t\2\2\2\u0147"+
-		"\u014d\5\4\3\2\u0148\u0149\7\34\2\2\u0149\u014a\5N(\2\u014a\u014b\5\4"+
-		"\3\2\u014b\u014d\3\2\2\2\u014c\u0146\3\2\2\2\u014c\u0148\3\2\2\2\u014d"+
-		"K\3\2\2\2\u014e\u014f\7\27\2\2\u014f\u0153\5N(\2\u0150\u0152\5\4\3\2\u0151"+
-		"\u0150\3\2\2\2\u0152\u0155\3\2\2\2\u0153\u0151\3\2\2\2\u0153\u0154\3\2"+
-		"\2\2\u0154\u0156\3\2\2\2\u0155\u0153\3\2\2\2\u0156\u0157\7\30\2\2\u0157"+
-		"M\3\2\2\2\u0158\u015a\7\t\2\2\u0159\u015b\5V,\2\u015a\u0159\3\2\2\2\u015b"+
-		"\u015c\3\2\2\2\u015c\u015a\3\2\2\2\u015c\u015d\3\2\2\2\u015d\u015e\3\2"+
-		"\2\2\u015e\u015f\7\t\2\2\u015f\u0161\3\2\2\2\u0160\u0158\3\2\2\2\u0160"+
-		"\u0161\3\2\2\2\u0161O\3\2\2\2\u0162\u0163\7\n\2\2\u0163\u0167\7\23\2\2"+
-		"\u0164\u0166\5\4\3\2\u0165\u0164\3\2\2\2\u0166\u0169\3\2\2\2\u0167\u0165"+
-		"\3\2\2\2\u0167\u0168\3\2\2\2\u0168\u016a\3\2\2\2\u0169\u0167\3\2\2\2\u016a"+
-		"\u016b\7\24\2\2\u016bQ\3\2\2\2\u016c\u016d\7\4\2\2\u016dS\3\2\2\2\u016e"+
-		"\u016f\7\21\2\2\u016f\u0170\5V,\2\u0170U\3\2\2\2\u0171\u0172\t\4\2\2\u0172"+
-		"W\3\2\2\2\u0173\u0177\5V,\2\u0174\u0177\5Z.\2\u0175\u0177\5\\/\2\u0176"+
-		"\u0173\3\2\2\2\u0176\u0174\3\2\2\2\u0176\u0175\3\2\2\2\u0177Y\3\2\2\2"+
-		"\u0178\u0179\7\31\2\2\u0179[\3\2\2\2\u017a\u017b\7\25\2\2\u017b\u017c"+
-		"\7\26\2\2\u017c]\3\2\2\2(ainr{\u0086\u008a\u0090\u0099\u009b\u00a1\u00aa"+
-		"\u00ac\u00b6\u00be\u00c6\u00d6\u00d9\u00de\u00e0\u00e8\u00eb\u00f4\u00f6"+
-		"\u00fd\u0113\u0117\u011a\u011e\u012e\u0135\u0140\u014c\u0153\u015c\u0160"+
-		"\u0167\u0176";
+		",\t,\4-\t-\4.\t.\4/\t/\4\60\t\60\3\2\7\2b\n\2\f\2\16\2e\13\2\3\3\3\3\3"+
+		"\3\3\3\3\3\5\3l\n\3\3\3\7\3o\n\3\f\3\16\3r\13\3\3\3\5\3u\n\3\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\5\4~\n\4\3\5\3\5\3\5\3\5\3\5\3\6\3\6\7\6\u0087\n\6"+
+		"\f\6\16\6\u008a\13\6\3\6\5\6\u008d\n\6\3\7\3\7\3\7\3\7\5\7\u0093\n\7\3"+
+		"\b\3\b\3\b\3\b\3\b\6\b\u009a\n\b\r\b\16\b\u009b\5\b\u009e\n\b\3\t\3\t"+
+		"\3\t\3\t\5\t\u00a4\n\t\3\n\3\n\3\n\3\n\3\n\6\n\u00ab\n\n\r\n\16\n\u00ac"+
+		"\5\n\u00af\n\n\3\13\3\13\3\f\3\f\3\r\3\r\3\r\3\r\5\r\u00b9\n\r\3\16\3"+
+		"\16\3\17\3\17\6\17\u00bf\n\17\r\17\16\17\u00c0\3\17\3\17\3\20\3\20\7\20"+
+		"\u00c7\n\20\f\20\16\20\u00ca\13\20\3\21\3\21\3\21\3\21\3\22\3\22\3\22"+
+		"\3\22\3\23\3\23\3\23\7\23\u00d7\n\23\f\23\16\23\u00da\13\23\5\23\u00dc"+
+		"\n\23\3\24\3\24\3\24\7\24\u00e1\n\24\f\24\16\24\u00e4\13\24\3\24\5\24"+
+		"\u00e7\n\24\5\24\u00e9\n\24\3\25\3\25\3\26\3\26\3\26\3\26\5\26\u00f1\n"+
+		"\26\3\27\3\27\3\27\3\27\3\27\6\27\u00f8\n\27\r\27\16\27\u00f9\5\27\u00fc"+
+		"\n\27\3\30\3\30\3\30\3\30\3\30\5\30\u0103\n\30\3\31\3\31\3\32\3\32\3\32"+
+		"\3\32\3\33\3\33\3\34\3\34\3\34\3\35\3\35\3\35\3\35\3\36\3\36\3\36\3\37"+
+		"\3\37\5\37\u0119\n\37\3 \3 \5 \u011d\n \3 \5 \u0120\n \3 \3 \5 \u0124"+
+		"\n \3!\3!\3!\3!\3!\3!\3\"\3\"\3\"\3\"\3\"\3\"\3\"\3\"\5\"\u0134\n\"\3"+
+		"#\3#\3#\3#\3#\5#\u013b\n#\3$\3$\3%\3%\3&\3&\3&\7&\u0144\n&\f&\16&\u0147"+
+		"\13&\3&\3&\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u0152\n\'\3(\3(\3(\7(\u0157"+
+		"\n(\f(\16(\u015a\13(\3(\3(\3)\3)\6)\u0160\n)\r)\16)\u0161\3)\3)\5)\u0166"+
+		"\n)\3*\3*\3*\7*\u016b\n*\f*\16*\u016e\13*\3*\3*\3+\3+\3,\3,\3,\3-\3-\3"+
+		".\3.\3.\5.\u017c\n.\3/\3/\3\60\3\60\3\60\3\60\2\61\2\4\6\b\n\f\16\20\22"+
+		"\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^\2\5\3\2\32"+
+		"\33\4\2\r\r\17\17\3\2\6\7\u018d\2c\3\2\2\2\4k\3\2\2\2\6v\3\2\2\2\b\177"+
+		"\3\2\2\2\n\u0084\3\2\2\2\f\u0092\3\2\2\2\16\u009d\3\2\2\2\20\u009f\3\2"+
+		"\2\2\22\u00a5\3\2\2\2\24\u00b0\3\2\2\2\26\u00b2\3\2\2\2\30\u00b4\3\2\2"+
+		"\2\32\u00ba\3\2\2\2\34\u00bc\3\2\2\2\36\u00c4\3\2\2\2 \u00cb\3\2\2\2\""+
+		"\u00cf\3\2\2\2$\u00db\3\2\2\2&\u00e8\3\2\2\2(\u00ea\3\2\2\2*\u00f0\3\2"+
+		"\2\2,\u00fb\3\2\2\2.\u0102\3\2\2\2\60\u0104\3\2\2\2\62\u0106\3\2\2\2\64"+
+		"\u010a\3\2\2\2\66\u010c\3\2\2\28\u010f\3\2\2\2:\u0113\3\2\2\2<\u0116\3"+
+		"\2\2\2>\u0123\3\2\2\2@\u0125\3\2\2\2B\u012b\3\2\2\2D\u013a\3\2\2\2F\u013c"+
+		"\3\2\2\2H\u013e\3\2\2\2J\u0140\3\2\2\2L\u014a\3\2\2\2N\u0153\3\2\2\2P"+
+		"\u0165\3\2\2\2R\u0167\3\2\2\2T\u0171\3\2\2\2V\u0173\3\2\2\2X\u0176\3\2"+
+		"\2\2Z\u017b\3\2\2\2\\\u017d\3\2\2\2^\u017f\3\2\2\2`b\5\4\3\2a`\3\2\2\2"+
+		"be\3\2\2\2ca\3\2\2\2cd\3\2\2\2d\3\3\2\2\2ec\3\2\2\2fl\5\6\4\2gl\5\30\r"+
+		"\2hl\5\26\f\2il\5\b\5\2jl\5\n\6\2kf\3\2\2\2kg\3\2\2\2kh\3\2\2\2ki\3\2"+
+		"\2\2kj\3\2\2\2lp\3\2\2\2mo\5\20\t\2nm\3\2\2\2or\3\2\2\2pn\3\2\2\2pq\3"+
+		"\2\2\2qt\3\2\2\2rp\3\2\2\2su\5\22\n\2ts\3\2\2\2tu\3\2\2\2u\5\3\2\2\2v"+
+		"}\5X-\2wx\t\2\2\2x~\5\4\3\2yz\7\34\2\2z{\5P)\2{|\5\4\3\2|~\3\2\2\2}w\3"+
+		"\2\2\2}y\3\2\2\2~\7\3\2\2\2\177\u0080\7\22\2\2\u0080\u0081\5X-\2\u0081"+
+		"\u0082\3\2\2\2\u0082\u0083\5\4\3\2\u0083\t\3\2\2\2\u0084\u0088\5\24\13"+
+		"\2\u0085\u0087\5\f\7\2\u0086\u0085\3\2\2\2\u0087\u008a\3\2\2\2\u0088\u0086"+
+		"\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u008c\3\2\2\2\u008a\u0088\3\2\2\2\u008b"+
+		"\u008d\5\16\b\2\u008c\u008b\3\2\2\2\u008c\u008d\3\2\2\2\u008d\13\3\2\2"+
+		"\2\u008e\u008f\7\f\2\2\u008f\u0093\5\64\33\2\u0090\u0093\58\35\2\u0091"+
+		"\u0093\5\66\34\2\u0092\u008e\3\2\2\2\u0092\u0090\3\2\2\2\u0092\u0091\3"+
+		"\2\2\2\u0093\r\3\2\2\2\u0094\u0095\7\f\2\2\u0095\u009e\5\36\20\2\u0096"+
+		"\u009e\5B\"\2\u0097\u009e\5@!\2\u0098\u009a\5:\36\2\u0099\u0098\3\2\2"+
+		"\2\u009a\u009b\3\2\2\2\u009b\u0099\3\2\2\2\u009b\u009c\3\2\2\2\u009c\u009e"+
+		"\3\2\2\2\u009d\u0094\3\2\2\2\u009d\u0096\3\2\2\2\u009d\u0097\3\2\2\2\u009d"+
+		"\u0099\3\2\2\2\u009e\17\3\2\2\2\u009f\u00a3\7\20\2\2\u00a0\u00a4\5\64"+
+		"\33\2\u00a1\u00a4\58\35\2\u00a2\u00a4\5\66\34\2\u00a3\u00a0\3\2\2\2\u00a3"+
+		"\u00a1\3\2\2\2\u00a3\u00a2\3\2\2\2\u00a4\21\3\2\2\2\u00a5\u00ae\7\20\2"+
+		"\2\u00a6\u00af\5\36\20\2\u00a7\u00af\5B\"\2\u00a8\u00af\5@!\2\u00a9\u00ab"+
+		"\5:\36\2\u00aa\u00a9\3\2\2\2\u00ab\u00ac\3\2\2\2\u00ac\u00aa\3\2\2\2\u00ac"+
+		"\u00ad\3\2\2\2\u00ad\u00af\3\2\2\2\u00ae\u00a6\3\2\2\2\u00ae\u00a7\3\2"+
+		"\2\2\u00ae\u00a8\3\2\2\2\u00ae\u00aa\3\2\2\2\u00af\23\3\2\2\2\u00b0\u00b1"+
+		"\5.\30\2\u00b1\25\3\2\2\2\u00b2\u00b3\5\36\20\2\u00b3\27\3\2\2\2\u00b4"+
+		"\u00b5\7\3\2\2\u00b5\u00b8\5X-\2\u00b6\u00b7\7\32\2\2\u00b7\u00b9\5\4"+
+		"\3\2\u00b8\u00b6\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\31\3\2\2\2\u00ba\u00bb"+
+		"\5X-\2\u00bb\33\3\2\2\2\u00bc\u00be\7\23\2\2\u00bd\u00bf\5\4\3\2\u00be"+
+		"\u00bd\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0\u00be\3\2\2\2\u00c0\u00c1\3\2"+
+		"\2\2\u00c1\u00c2\3\2\2\2\u00c2\u00c3\7\24\2\2\u00c3\35\3\2\2\2\u00c4\u00c8"+
+		"\5 \21\2\u00c5\u00c7\5\"\22\2\u00c6\u00c5\3\2\2\2\u00c7\u00ca\3\2\2\2"+
+		"\u00c8\u00c6\3\2\2\2\u00c8\u00c9\3\2\2\2\u00c9\37\3\2\2\2\u00ca\u00c8"+
+		"\3\2\2\2\u00cb\u00cc\7\7\2\2\u00cc\u00cd\t\3\2\2\u00cd\u00ce\5$\23\2\u00ce"+
+		"!\3\2\2\2\u00cf\u00d0\7\6\2\2\u00d0\u00d1\t\3\2\2\u00d1\u00d2\5$\23\2"+
+		"\u00d2#\3\2\2\2\u00d3\u00d8\5&\24\2\u00d4\u00d5\7\16\2\2\u00d5\u00d7\5"+
+		"&\24\2\u00d6\u00d4\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8\u00d6\3\2\2\2\u00d8"+
+		"\u00d9\3\2\2\2\u00d9\u00dc\3\2\2\2\u00da\u00d8\3\2\2\2\u00db\u00d3\3\2"+
+		"\2\2\u00db\u00dc\3\2\2\2\u00dc%\3\2\2\2\u00dd\u00e9\5\60\31\2\u00de\u00e2"+
+		"\5(\25\2\u00df\u00e1\5*\26\2\u00e0\u00df\3\2\2\2\u00e1\u00e4\3\2\2\2\u00e2"+
+		"\u00e0\3\2\2\2\u00e2\u00e3\3\2\2\2\u00e3\u00e6\3\2\2\2\u00e4\u00e2\3\2"+
+		"\2\2\u00e5\u00e7\5,\27\2\u00e6\u00e5\3\2\2\2\u00e6\u00e7\3\2\2\2\u00e7"+
+		"\u00e9\3\2\2\2\u00e8\u00dd\3\2\2\2\u00e8\u00de\3\2\2\2\u00e9\'\3\2\2\2"+
+		"\u00ea\u00eb\5.\30\2\u00eb)\3\2\2\2\u00ec\u00ed\7\f\2\2\u00ed\u00f1\5"+
+		"\64\33\2\u00ee\u00f1\5\66\34\2\u00ef\u00f1\58\35\2\u00f0\u00ec\3\2\2\2"+
+		"\u00f0\u00ee\3\2\2\2\u00f0\u00ef\3\2\2\2\u00f1+\3\2\2\2\u00f2\u00f3\7"+
+		"\f\2\2\u00f3\u00fc\5\62\32\2\u00f4\u00fc\5B\"\2\u00f5\u00fc\5@!\2\u00f6"+
+		"\u00f8\5:\36\2\u00f7\u00f6\3\2\2\2\u00f8\u00f9\3\2\2\2\u00f9\u00f7\3\2"+
+		"\2\2\u00f9\u00fa\3\2\2\2\u00fa\u00fc\3\2\2\2\u00fb\u00f2\3\2\2\2\u00fb"+
+		"\u00f4\3\2\2\2\u00fb\u00f5\3\2\2\2\u00fb\u00f7\3\2\2\2\u00fc-\3\2\2\2"+
+		"\u00fd\u0103\5\32\16\2\u00fe\u0103\5\34\17\2\u00ff\u0103\5D#\2\u0100\u0103"+
+		"\5T+\2\u0101\u0103\5V,\2\u0102\u00fd\3\2\2\2\u0102\u00fe\3\2\2\2\u0102"+
+		"\u00ff\3\2\2\2\u0102\u0100\3\2\2\2\u0102\u0101\3\2\2\2\u0103/\3\2\2\2"+
+		"\u0104\u0105\5\62\32\2\u0105\61\3\2\2\2\u0106\u0107\7\7\2\2\u0107\u0108"+
+		"\t\3\2\2\u0108\u0109\5&\24\2\u0109\63\3\2\2\2\u010a\u010b\7\7\2\2\u010b"+
+		"\65\3\2\2\2\u010c\u010d\7\13\2\2\u010d\u010e\5Z.\2\u010e\67\3\2\2\2\u010f"+
+		"\u0110\7\25\2\2\u0110\u0111\5\4\3\2\u0111\u0112\7\26\2\2\u01129\3\2\2"+
+		"\2\u0113\u0114\7\31\2\2\u0114\u0115\5<\37\2\u0115;\3\2\2\2\u0116\u0118"+
+		"\5\24\13\2\u0117\u0119\5> \2\u0118\u0117\3\2\2\2\u0118\u0119\3\2\2\2\u0119"+
+		"=\3\2\2\2\u011a\u011d\5\66\34\2\u011b\u011d\58\35\2\u011c\u011a\3\2\2"+
+		"\2\u011c\u011b\3\2\2\2\u011d\u011f\3\2\2\2\u011e\u0120\5> \2\u011f\u011e"+
+		"\3\2\2\2\u011f\u0120\3\2\2\2\u0120\u0124\3\2\2\2\u0121\u0124\5B\"\2\u0122"+
+		"\u0124\5@!\2\u0123\u011c\3\2\2\2\u0123\u0121\3\2\2\2\u0123\u0122\3\2\2"+
+		"\2\u0124?\3\2\2\2\u0125\u0126\7\25\2\2\u0126\u0127\5\4\3\2\u0127\u0128"+
+		"\7\26\2\2\u0128\u0129\7\32\2\2\u0129\u012a\5\4\3\2\u012aA\3\2\2\2\u012b"+
+		"\u012c\7\13\2\2\u012c\u0133\5Z.\2\u012d\u012e\t\2\2\2\u012e\u0134\5\4"+
+		"\3\2\u012f\u0130\7\34\2\2\u0130\u0131\5P)\2\u0131\u0132\5\4\3\2\u0132"+
+		"\u0134\3\2\2\2\u0133\u012d\3\2\2\2\u0133\u012f\3\2\2\2\u0134C\3\2\2\2"+
+		"\u0135\u013b\5F$\2\u0136\u013b\5H%\2\u0137\u013b\5J&\2\u0138\u013b\5N"+
+		"(\2\u0139\u013b\5R*\2\u013a\u0135\3\2\2\2\u013a\u0136\3\2\2\2\u013a\u0137"+
+		"\3\2\2\2\u013a\u0138\3\2\2\2\u013a\u0139\3\2\2\2\u013bE\3\2\2\2\u013c"+
+		"\u013d\7\5\2\2\u013dG\3\2\2\2\u013e\u013f\7 \2\2\u013fI\3\2\2\2\u0140"+
+		"\u0141\7\n\2\2\u0141\u0145\7\25\2\2\u0142\u0144\5L\'\2\u0143\u0142\3\2"+
+		"\2\2\u0144\u0147\3\2\2\2\u0145\u0143\3\2\2\2\u0145\u0146\3\2\2\2\u0146"+
+		"\u0148\3\2\2\2\u0147\u0145\3\2\2\2\u0148\u0149\7\26\2\2\u0149K\3\2\2\2"+
+		"\u014a\u0151\5Z.\2\u014b\u014c\t\2\2\2\u014c\u0152\5\4\3\2\u014d\u014e"+
+		"\7\34\2\2\u014e\u014f\5P)\2\u014f\u0150\5\4\3\2\u0150\u0152\3\2\2\2\u0151"+
+		"\u014b\3\2\2\2\u0151\u014d\3\2\2\2\u0152M\3\2\2\2\u0153\u0154\7\27\2\2"+
+		"\u0154\u0158\5P)\2\u0155\u0157\5\4\3\2\u0156\u0155\3\2\2\2\u0157\u015a"+
+		"\3\2\2\2\u0158\u0156\3\2\2\2\u0158\u0159\3\2\2\2\u0159\u015b\3\2\2\2\u015a"+
+		"\u0158\3\2\2\2\u015b\u015c\7\30\2\2\u015cO\3\2\2\2\u015d\u015f\7\t\2\2"+
+		"\u015e\u0160\5X-\2\u015f\u015e\3\2\2\2\u0160\u0161\3\2\2\2\u0161\u015f"+
+		"\3\2\2\2\u0161\u0162\3\2\2\2\u0162\u0163\3\2\2\2\u0163\u0164\7\t\2\2\u0164"+
+		"\u0166\3\2\2\2\u0165\u015d\3\2\2\2\u0165\u0166\3\2\2\2\u0166Q\3\2\2\2"+
+		"\u0167\u0168\7\n\2\2\u0168\u016c\7\23\2\2\u0169\u016b\5\4\3\2\u016a\u0169"+
+		"\3\2\2\2\u016b\u016e\3\2\2\2\u016c\u016a\3\2\2\2\u016c\u016d\3\2\2\2\u016d"+
+		"\u016f\3\2\2\2\u016e\u016c\3\2\2\2\u016f\u0170\7\24\2\2\u0170S\3\2\2\2"+
+		"\u0171\u0172\7\4\2\2\u0172U\3\2\2\2\u0173\u0174\7\21\2\2\u0174\u0175\5"+
+		"X-\2\u0175W\3\2\2\2\u0176\u0177\t\4\2\2\u0177Y\3\2\2\2\u0178\u017c\5X"+
+		"-\2\u0179\u017c\5\\/\2\u017a\u017c\5^\60\2\u017b\u0178\3\2\2\2\u017b\u0179"+
+		"\3\2\2\2\u017b\u017a\3\2\2\2\u017c[\3\2\2\2\u017d\u017e\7\31\2\2\u017e"+
+		"]\3\2\2\2\u017f\u0180\7\25\2\2\u0180\u0181\7\26\2\2\u0181_\3\2\2\2(ck"+
+		"pt}\u0088\u008c\u0092\u009b\u009d\u00a3\u00ac\u00ae\u00b8\u00c0\u00c8"+
+		"\u00d8\u00db\u00e2\u00e6\u00e8\u00f0\u00f9\u00fb\u0102\u0118\u011c\u011f"+
+		"\u0123\u0133\u013a\u0145\u0151\u0158\u0161\u0165\u016c\u017b";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

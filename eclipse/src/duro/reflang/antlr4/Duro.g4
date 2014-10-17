@@ -66,14 +66,22 @@ multiArgMessageArgsNoPar:
     (multiArgMessageArgNoPar (COMMA multiArgMessageArgNoPar)*)?;
 multiArgMessageArgNoPar: 
     selfSingleArgMessageNoPar |
-    multiArgMessageArgNoParReceiver multiArgMessageArgNoParChain?;
+    (
+        multiArgMessageArgNoParReceiver 
+        multiArgMessageArgNoParChain*
+        multiArgMessageArgNoParEnd?
+    );
 multiArgMessageArgNoParReceiver: atom;
-multiArgMessageArgNoParChain:
-    (DOT unaryMessage | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
+multiArgMessageArgNoParChain: DOT unaryMessage | slotAccess | indexAccess
+    /*(DOT unaryMessage | slotAccess | indexAccess) multiArgMessageArgNoParChain? |
     DOT singleArgMessageNoPar |
     slotAssignment | 
     indexAssignment |
-    binaryMessage+
+    binaryMessage+*/
+    ;
+multiArgMessageArgNoParEnd:
+    DOT singleArgMessageNoPar | slotAssignment | 
+    indexAssignment | binaryMessage+
     ;
 atom: access | grouping | literal | pseudoVar | parArg;
 

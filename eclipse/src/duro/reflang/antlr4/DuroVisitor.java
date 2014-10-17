@@ -222,6 +222,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiArgMessageArgNoParEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiArgMessageArgNoParEnd(@NotNull DuroParser.MultiArgMessageArgNoParEndContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

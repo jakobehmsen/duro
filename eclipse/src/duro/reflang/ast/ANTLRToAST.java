@@ -138,20 +138,24 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		if(ctx.selfSingleArgMessageNoPar() != null) {
 			return ctx.selfSingleArgMessageNoPar().accept(this);
 		} else {
-			if(ctx.multiArgMessageArgNoParChain() != null) {
-				ASTBuilder receiverBuilder = ctx.multiArgMessageArgNoParReceiver().accept(this);
-				
-				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
-				
-				while(chain != null) {
-					ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-					receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-					chain = chain.multiArgMessageArgNoParChain();
-				}
-
-				return receiverBuilder;
-			} else
-				return ctx.multiArgMessageArgNoParReceiver().accept(this);
+			return appendMessageExchange(
+				ctx.multiArgMessageArgNoParReceiver(), 
+				ctx.multiArgMessageArgNoParChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), 
+				ctx.multiArgMessageArgNoParEnd());
+//			if(ctx.multiArgMessageArgNoParChain() != null) {
+//				ASTBuilder receiverBuilder = ctx.multiArgMessageArgNoParReceiver().accept(this);
+//				
+//				MultiArgMessageArgNoParChainContext chain = ctx.multiArgMessageArgNoParChain();
+//				
+//				while(chain != null) {
+//					ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
+//					receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
+//					chain = chain.multiArgMessageArgNoParChain();
+//				}
+//
+//				return receiverBuilder;
+//			} else
+//				return ctx.multiArgMessageArgNoParReceiver().accept(this);
 		}
 	}
 	
@@ -325,8 +329,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			ASTBuilder valueBuilder = ctx.expression().accept(this);
 			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_PROTO, ASTThis.INSTANCE, id, 0, valueBuilder.build());
 		} case DuroLexer.ASSIGN_QUOTED: {
-			ASTBuilder valueBuilder = appendAssignQuoted(ctx.behaviorParams(), ctx.expression());
-			int arity = ctx.behaviorParams().id().size();
+			OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
+			ASTBuilder valueBuilder = appendAssignQuoted(ctx.behaviorParams(), ctx.expression(), bodyIdToParameterOrdinalMap);
+			int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_QUOTED, ASTThis.INSTANCE, id, arity, valueBuilder.build());
 		}
 		}
@@ -380,8 +385,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		return () -> new ASTLocalAccess(ordinalHolder.value);
 	}
 
-	private ASTBuilder appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx) {
-		ANTLRToAST functionBodyInterceptor = new ANTLRToAST(new OrdinalAllocator(), new OrdinalAllocator(), errors, accessFields, assignFields);
+	private ASTBuilder appendAssignQuoted(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, OrdinalAllocator bodyIdToParameterOrdinalMap) {
+		ANTLRToAST functionBodyInterceptor = new ANTLRToAST(bodyIdToParameterOrdinalMap, new OrdinalAllocator(), errors, accessFields, assignFields);
 		for(IdContext parameterIdNode: paramsCtx.id()) {
 			String parameterId = parameterIdNode.getText();
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
@@ -430,8 +435,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
-				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_QUOTED, entryCtx.behaviorParams().PIPE().size(), valueAst);
-				valueBuilders[i] = methodsVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression());
+				OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
+				valueBuilders[i] = methodsVisitor.appendAssignQuoted(entryCtx.behaviorParams(), entryCtx.expression(), bodyIdToParameterOrdinalMap);
+				int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
+				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_QUOTED, arity, valueAst);
 				break;
 			}
 		}
