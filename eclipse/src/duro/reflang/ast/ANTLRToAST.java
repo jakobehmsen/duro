@@ -295,7 +295,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		List<IdContext> paramIds = opCtx.behaviorParams().id(); 
 		switch(opCtx.op.getType()) {
 		case DuroLexer.ASSIGN: {
-			// Modify accessFields/assignFields?
+			assignFields.add(id);
 			ASTBuilder valueBuilder = valueCtx.accept(this);
 			return new ASTBuilderFromReceiver() {
 				@Override
@@ -304,7 +304,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 				}
 			};
 		} case DuroLexer.ASSIGN_PROTO: {
-			// Modify accessFields/assignFields?
+			assignFields.add(id);
 			ASTBuilder valueBuilder = valueCtx.accept(this);
 			return new ASTBuilderFromReceiver() {
 				@Override
@@ -420,7 +420,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	@Override
 	public ASTBuilder visitDict(DictContext ctx) {
 		HashSet<String> fields = new HashSet<String>();
-		ANTLRToAST fieldsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, accessFields, assignFields);
+		ANTLRToAST fieldsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, accessFields, fields);
 		ANTLRToAST methodsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, fields, fields);
 		@SuppressWarnings("unchecked")
 		Function<AST, ASTDict.Entry>[] entryConstructors = (Function<AST, ASTDict.Entry>[])new Function<?, ?>[ctx.dictEntry().size()]; 
@@ -433,10 +433,12 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			
 			switch(entryCtx.assignmentOperator().op.getType()) {
 			case DuroLexer.ASSIGN:
+				fields.add(id);
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_REGULAR, paramIds.size(), valueAst);
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
+				fields.add(id);
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_PROTO, paramIds.size(), valueAst);
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
@@ -459,8 +461,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitClosure(ClosureContext ctx) {
-		OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
 		OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
+		OrdinalAllocator newIdToVariableOrdinalMap = idToVariableOrdinalMap.newInnerEnd();
 		ANTLRToAST closureBodyVisitor = new ANTLRToAST(newIdToParameterOrdinalMap, newIdToVariableOrdinalMap, errors, accessFields, assignFields);
 		
 		for(IdContext parameterIdNode: ctx.behaviorParams().id()) {
@@ -468,7 +470,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			closureBodyVisitor.idToParameterOrdinalMap.declare(parameterId);
 		}
 		
-		ASTBuilder bodyBuilder = groupingBuilder(ctx.expression());
+		ASTBuilder bodyBuilder = closureBodyVisitor.groupingBuilder(ctx.expression());
 		
 		int closureParameterCount = closureBodyVisitor.idToParameterOrdinalMap.sizeExceptEnd();
 		IntHolder closureParameterOffsetHolder = new IntHolder();
