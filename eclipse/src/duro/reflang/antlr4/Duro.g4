@@ -1,21 +1,12 @@
 grammar Duro;
 
 program: expression*;
-expression: 
-    (
-        assignment | variableDeclaration | selfMultiKeyMessage |
-        interfaceId | messageExchange
-    )
-    expressionChain*
-    expressionEnd?
-    ;
-assignment: 
-    id
-    (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
-        |
-        op=ASSIGN_QUOTED behaviorParams expression
-    );
+expression: expressionReceiver expressionChain* expressionEnd?;
+expressionReceiver:
+    assignment | variableDeclaration | selfMultiKeyMessage |
+    interfaceId | messageExchange;
+assignment: id assignmentOperator expression;
+assignmentOperator: op=(ASSIGN | ASSIGN_PROTO | ASSIGN_QUOTED) behaviorParams;
 interfaceId: DOLLAR id expression;
 
 messageExchange: receiver messageChain* messageEnd?;
@@ -64,23 +55,12 @@ binaryMessageArg: receiver binaryMessageArgChain* binaryMessageArgEnd?;
 binaryMessageArgChain: DOT unaryMessage | slotAccess | indexAccess;
 binaryMessageArgEnd: slotAssignment | indexAssignment;
 indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
-slotAssignment: 
-    AT selector
-    (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
-        |
-        op=ASSIGN_QUOTED behaviorParams expression
-    );
+slotAssignment: AT selector assignmentOperator expression;
 literal: integer | string | dict | closure | array;
 integer: INT;
 string: STRING;
 dict: HASH SQ_OP (dictEntry)* SQ_CL;
-dictEntry: selector
-    (
-        (op=(ASSIGN | ASSIGN_PROTO) expression)
-        |
-        op=ASSIGN_QUOTED behaviorParams expression
-    );
+dictEntry: selector assignmentOperator expression;
 closure: BRA_OP behaviorParams (expression*) BAR_CL;
 behaviorParams: (PIPE (id)+ PIPE)?;
 array: HASH PAR_OP expression* PAR_CL;
@@ -102,7 +82,6 @@ fragment LETTER: (LETTER_LOWER|LETTER_UPPER);
 ID_CAP: LETTER_UPPER (LETTER | DIGIT | '_')*;
 ID_UNCAP: LETTER_LOWER (LETTER | DIGIT | '_')*;
 
-PARAGRAPH: '§';
 PIPE: '|';
 HASH: '#';
 AT: '@';

@@ -111,9 +111,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitExpression(ExpressionContext ctx) {
-		ParserRuleContext receiver = (ParserRuleContext)ctx.getChild(0);
-
-		return messageExchangeBuilder(receiver, ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
+		return messageExchangeBuilder(
+			ctx.expressionReceiver(), ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
 	}
 	
 	@Override
@@ -130,7 +129,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitBinaryMessageArg(BinaryMessageArgContext ctx) {
-		return messageExchangeBuilder(ctx.receiver(), ctx.binaryMessageArgChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.binaryMessageArgEnd());
+		return messageExchangeBuilder(
+			ctx.receiver(), ctx.binaryMessageArgChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.binaryMessageArgEnd());
 	}
 	
 	@Override
@@ -269,8 +269,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	@Override
 	public ASTBuilder visitAssignment(AssignmentContext ctx) {
 		String id = ctx.id().getText();				
-		
-		switch(ctx.op.getType()) {
+
+		List<IdContext> paramIds = ctx.assignmentOperator().behaviorParams().id(); 
+		switch(ctx.assignmentOperator().op.getType()) {
 		case DuroLexer.ASSIGN: {
 			// newValue, newValue
 			if(idToVariableOrdinalMap.isDeclared(id))
@@ -278,15 +279,15 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			else {
 				// Modify accessFields/assignFields?
 				ASTBuilder valueBuilder = ctx.expression().accept(this);
-				return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_REGULAR, ASTThis.INSTANCE, id, 0, valueBuilder.build());
+				return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_REGULAR, ASTThis.INSTANCE, id, paramIds.size(), valueBuilder.build());
 			}
 		} case DuroLexer.ASSIGN_PROTO: {
 			// Modify accessFields/assignFields?
 			ASTBuilder valueBuilder = ctx.expression().accept(this);
-			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_PROTO, ASTThis.INSTANCE, id, 0, valueBuilder.build());
+			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_PROTO, ASTThis.INSTANCE, id, paramIds.size(), valueBuilder.build());
 		} case DuroLexer.ASSIGN_QUOTED: {
 			OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
-			ASTBuilder valueBuilder = assignQuotedBuilder(ctx.behaviorParams(), ctx.expression(), bodyIdToParameterOrdinalMap);
+			ASTBuilder valueBuilder = assignQuotedBuilder(paramIds, ctx.expression(), bodyIdToParameterOrdinalMap);
 			int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 			return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_QUOTED, ASTThis.INSTANCE, id, arity, valueBuilder.build());
 		}
@@ -341,9 +342,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		return () -> new ASTLocalAccess(ordinalHolder.value);
 	}
 
-	private ASTBuilder assignQuotedBuilder(BehaviorParamsContext paramsCtx, ExpressionContext valueCtx, OrdinalAllocator bodyIdToParameterOrdinalMap) {
+	private ASTBuilder assignQuotedBuilder(List<IdContext> paramIds, ExpressionContext valueCtx, OrdinalAllocator bodyIdToParameterOrdinalMap) {
 		ANTLRToAST functionBodyInterceptor = new ANTLRToAST(bodyIdToParameterOrdinalMap, new OrdinalAllocator(), errors, accessFields, assignFields);
-		for(IdContext parameterIdNode: paramsCtx.id()) {
+		for(IdContext parameterIdNode: paramIds) {
 			String parameterId = parameterIdNode.getText();
 			functionBodyInterceptor.idToParameterOrdinalMap.declare(parameterId);
 		}
@@ -380,19 +381,20 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			DictEntryContext entryCtx = ctx.dictEntry(i);
 			String id = getSelectorId(entryCtx.selector());
 			valueBuilders[i] = entryCtx.expression().accept(this);
+			List<IdContext> paramIds = entryCtx.assignmentOperator().behaviorParams().id(); 
 			
-			switch(entryCtx.op.getType()) {
+			switch(entryCtx.assignmentOperator().op.getType()) {
 			case DuroLexer.ASSIGN:
-				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_REGULAR, 0, valueAst);
+				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_REGULAR, paramIds.size(), valueAst);
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
-				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_PROTO, 0, valueAst);
+				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_PROTO, paramIds.size(), valueAst);
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
 				OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
-				valueBuilders[i] = methodsVisitor.assignQuotedBuilder(entryCtx.behaviorParams(), entryCtx.expression(), bodyIdToParameterOrdinalMap);
+				valueBuilders[i] = methodsVisitor.assignQuotedBuilder(paramIds, entryCtx.expression(), bodyIdToParameterOrdinalMap);
 				int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_QUOTED, arity, valueAst);
 				break;
