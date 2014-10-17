@@ -1,5 +1,10 @@
 package duro.reflang.ast;
 
-public interface ASTBuilderFromReceiver extends ASTBuilder {
-	ASTBuilder createBuilder(ASTBuilder receiver);
+public abstract class ASTBuilderFromReceiver implements ASTBuilder {
+	@Override
+	public AST build() {
+		return createBuilder(() -> ASTThis.INSTANCE).build();
+	}
+	
+	public abstract ASTBuilder createBuilder(ASTBuilder receiver);
 }
