@@ -115,19 +115,22 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitExpression(ExpressionContext ctx) {
-		ParserRuleContext expr = (ParserRuleContext)ctx.getChild(0);
-		if(ctx.expressionChain().size() > 0) {
-			ASTBuilder receiverBuilder = expr.accept(this);
-			
-			for(int i = 0; i < ctx.expressionChain().size(); i++) {
-				ExpressionChainContext chain = ctx.expressionChain(i);
-				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-			}
+		ParserRuleContext receiver = (ParserRuleContext)ctx.getChild(0);
 
-			return receiverBuilder;
-		} else
-			return expr.accept(this);
+		return appendMessageExchange(receiver, ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
+		
+//		if(ctx.expressionChain().size() > 0) {
+//			ASTBuilder receiverBuilder = receiver.accept(this);
+//			
+//			for(int i = 0; i < ctx.expressionChain().size(); i++) {
+//				ExpressionChainContext chain = ctx.expressionChain(i);
+//				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
+//				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
+//			}
+//
+//			return receiverBuilder;
+//		} else
+//			return receiver.accept(this);
 	}
 	
 	@Override

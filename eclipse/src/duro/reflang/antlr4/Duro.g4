@@ -10,6 +10,7 @@ expression:
         messageExchange
     )
     expressionChain*
+    expressionEnd?
     ;
 assignment: 
     id
@@ -33,15 +34,21 @@ messageEnd:
     indexAssignment | binaryMessage+;
 
 expressionChain: 
-    SEMI_COLON
-    (
+    SEMI_COLON (unaryMessage | indexAccess | slotAccess)
+    /*(
         (unaryMessage | indexAccess | slotAccess) messageChain? |
         multiArgMessageNoPar |
         slotAssignment | 
         indexAssignment |
         binaryMessage+
-    )
+    )*/
     ;
+
+expressionEnd: 
+    SEMI_COLON
+    (
+        multiArgMessageNoPar | slotAssignment | indexAssignment | binaryMessage+
+    );
                 
 receiver: atom;
 selfMultiArgMessageNoPar: multiArgMessageNoPar;
