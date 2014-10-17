@@ -94,12 +94,15 @@ unaryMessage: ID_UNCAP;
 slotAccess: AT selector;
 indexAccess: SQ_OP expression SQ_CL;
 binaryMessage: BIN_OP binaryMessageOperand;
-binaryMessageOperand: receiver (binaryMessageOperandChain)?;
+binaryMessageOperand: 
+    receiver binaryMessageOperandChain* binaryMessageOperandEnd?;
 binaryMessageOperandChain:
-    (slotAccess | indexAccess) binaryMessageOperandChain? |
+    DOT unaryMessage | slotAccess | indexAccess
+    /*(slotAccess | indexAccess) binaryMessageOperandChain? |
     slotAssignment | 
-    indexAssignment
+    indexAssignment*/
     ;
+binaryMessageOperandEnd: slotAssignment | indexAssignment;
 indexAssignment: SQ_OP expression SQ_CL ASSIGN expression;
 slotAssignment: 
     AT selector

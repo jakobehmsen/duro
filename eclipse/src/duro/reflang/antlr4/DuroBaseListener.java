@@ -381,6 +381,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx) { }
 	/**
 	 * {@inheritDoc}

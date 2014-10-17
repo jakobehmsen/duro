@@ -160,6 +160,26 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	}
 	
 	@Override
+	public ASTBuilder visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
+		return appendMessageExchange(ctx.receiver(), ctx.binaryMessageOperandChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.binaryMessageOperandEnd());
+		
+//		if(ctx.binaryMessageOperandChain() != null) {
+//			ASTBuilder receiverBuilder = ctx.receiver().accept(this);
+//			
+//			BinaryMessageOperandChainContext chain = ctx.binaryMessageOperandChain();
+//			
+//			while(chain != null) {
+//				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
+//				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
+//				chain = chain.binaryMessageOperandChain();
+//			}
+//
+//			return receiverBuilder;
+//		} else
+//			return ctx.receiver().accept(this);
+	}
+	
+	@Override
 	public ASTBuilder visitVariableDeclaration(VariableDeclarationContext ctx) {
 		String id = ctx.id().getText();
 		
@@ -187,24 +207,6 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = "[]";
 		
 		return appendMultiArgMessage(id, Arrays.asList(ctx.expression()));
-	}
-	
-	@Override
-	public ASTBuilder visitBinaryMessageOperand(BinaryMessageOperandContext ctx) {
-		if(ctx.binaryMessageOperandChain() != null) {
-			ASTBuilder receiverBuilder = ctx.receiver().accept(this);
-			
-			BinaryMessageOperandChainContext chain = ctx.binaryMessageOperandChain();
-			
-			while(chain != null) {
-				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-				chain = chain.binaryMessageOperandChain();
-			}
-
-			return receiverBuilder;
-		} else
-			return ctx.receiver().accept(this);
 	}
 	
 	@Override

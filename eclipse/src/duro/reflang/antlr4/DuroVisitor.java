@@ -208,6 +208,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSlotAssignment(@NotNull DuroParser.SlotAssignmentContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#binaryMessageOperandEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinaryMessageOperandEnd(@NotNull DuroParser.BinaryMessageOperandEndContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#behaviorParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
