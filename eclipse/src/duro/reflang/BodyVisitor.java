@@ -135,13 +135,13 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 				BodyVisitor messageExchangeVisitor = startInner(true);
 				ctx.receiver().accept(messageExchangeVisitor);
 				
-				MessageChainContext chain = ctx.messageChain();
-				
-				while(chain != null) {
-					messageExchangeVisitor.mustBeExpression = chain.messageChain() != null;
-					chain.accept(messageExchangeVisitor);
-					chain = chain.messageChain();
-				}
+//				MessageChainContext chain = ctx.messageChain();
+//				
+//				while(chain != null) {
+//					messageExchangeVisitor.mustBeExpression = chain.messageChain() != null;
+//					chain.accept(messageExchangeVisitor);
+//					chain = chain.messageChain();
+//				}
 
 			} else {
 				ctx.receiver().accept(startInner(false));

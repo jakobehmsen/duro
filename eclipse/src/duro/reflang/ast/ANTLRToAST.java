@@ -94,21 +94,23 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitMessageExchange(MessageExchangeContext ctx) {
-		if(ctx.messageChain() != null) {
-			ASTBuilder receiverBuilder = ctx.receiver().accept(this);
-			
-			MessageChainContext chain = ctx.messageChain();
-			
-			while(chain != null) {
-				ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chain.accept(this);
-				receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
-				chain = chain.messageChain();
-			}
-
-			return receiverBuilder;
-		} else {
-			return ctx.receiver().accept(this);
+		return appendMessageExchange(ctx.receiver(), ctx.messageChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.messageEnd());
+	}
+	
+	private ASTBuilder appendMessageExchange(ParserRuleContext receiver, List<ParserRuleContext> chain, ParserRuleContext end) {
+		ASTBuilder receiverBuilder = receiver.accept(this);
+		
+		for(ParserRuleContext chainPart: chain) {
+			ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)chainPart.accept(this);
+			receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
 		}
+		
+		if(end != null) {
+			ASTBuilderFromReceiver messageBuilder = (ASTBuilderFromReceiver)end.accept(this);
+			receiverBuilder = messageBuilder.createBuilder(receiverBuilder);
+		}
+		
+		return receiverBuilder;
 	}
 	
 	@Override

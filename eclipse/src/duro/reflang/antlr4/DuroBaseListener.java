@@ -407,6 +407,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMessageEnd(@NotNull DuroParser.MessageEndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMessageEnd(@NotNull DuroParser.MessageEndContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterGrouping(@NotNull DuroParser.GroupingContext ctx) { }
 	/**
 	 * {@inheritDoc}

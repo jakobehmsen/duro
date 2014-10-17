@@ -20,14 +20,17 @@ assignment:
     );
 interfaceId: DOLLAR id() expression;
 
-messageExchange: receiver messageChain?;
-messageChain:
-    (DOT unaryMessage | indexAccess | slotAccess) messageChain? |
+messageExchange: receiver messageChain* messageEnd?;
+messageChain: DOT unaryMessage | indexAccess | slotAccess
+    /*(DOT unaryMessage | indexAccess | slotAccess) messageChain? |
     DOT multiArgMessageNoPar |
     slotAssignment | 
     indexAssignment |
-    binaryMessage+
+    binaryMessage+*/
     ;
+messageEnd: 
+    DOT multiArgMessageNoPar | slotAssignment | 
+    indexAssignment | binaryMessage+;
 
 expressionChain: 
     SEMI_COLON

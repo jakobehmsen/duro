@@ -222,6 +222,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIndexOperator(@NotNull DuroParser.IndexOperatorContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#messageEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMessageEnd(@NotNull DuroParser.MessageEndContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#grouping}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
