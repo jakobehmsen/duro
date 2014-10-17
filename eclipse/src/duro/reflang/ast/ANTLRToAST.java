@@ -15,9 +15,11 @@ import duro.reflang.MessageCollector;
 import duro.reflang.OrdinalAllocator;
 import duro.reflang.antlr4.DuroBaseVisitor;
 import duro.reflang.antlr4.DuroLexer;
+import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
+import duro.reflang.antlr4.DuroParser.AssignmentOperatorContext;
 import duro.reflang.antlr4.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageArgContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageContext;
@@ -41,6 +43,8 @@ import duro.reflang.antlr4.DuroParser.SelectorContext;
 import duro.reflang.antlr4.DuroParser.SelfMultiKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.SelfSingleKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.SingleKeyMessageContext;
+import duro.reflang.antlr4.DuroParser.SlotAccessContext;
+import duro.reflang.antlr4.DuroParser.SlotAssignmentContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
@@ -216,7 +220,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		return new ASTBuilderFromReceiver() {
 			@Override
 			public AST build() {
-				return null;
+				return createBuilder(() -> ASTThis.INSTANCE).build();
 			}
 			
 			@Override
@@ -366,6 +370,53 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = ctx.id().getText();
 		idToParameterOrdinalMap.declare(id);
 		return accessParameterBuilder(id);
+	}
+	
+	@Override
+	public ASTBuilder visitSlotAccess(SlotAccessContext ctx) {
+		return new ASTBuilderFromReceiver() {
+			@Override
+			public AST build() {
+				return createBuilder(() -> ASTThis.INSTANCE).build();
+			}
+			
+			@Override
+			public ASTBuilder createBuilder(ASTBuilder receiver) {
+				String id = getSelectorId(ctx.selector());
+				return () -> new ASTSlotAccess(receiver.build(), id, 0);
+			}
+		};
+	}
+	
+	@Override
+	public ASTBuilder visitSlotAssignment(SlotAssignmentContext ctx) {
+		return new ASTBuilderFromReceiver() {
+			@Override
+			public AST build() {
+				return createBuilder(() -> ASTThis.INSTANCE).build();
+			}
+			
+			@Override
+			public ASTBuilder createBuilder(ASTBuilder receiver) {
+				String id = getSelectorId(ctx.selector());
+				ASTBuilder valueBuilder = ctx.expression().accept(ANTLRToAST.this);
+				int operator = assignmentOperator(ctx.assignmentOperator());
+				return () -> new ASTSlotAssignment(operator, receiver.build(), id, 0, valueBuilder.build());
+			}
+		};
+	}
+	
+	private int assignmentOperator(AssignmentOperatorContext ctx) {
+		switch(ctx.op.getType()) {
+		case DuroParser.ASSIGN:
+			return ASTSlotAssignment.TYPE_REGULAR;
+		case DuroParser.ASSIGN_PROTO:
+			return ASTSlotAssignment.TYPE_PROTO;
+		case DuroParser.ASSIGN_QUOTED:
+			return ASTSlotAssignment.TYPE_QUOTED;
+		}
+		
+		return -1;
 	}
 	
 	@Override
