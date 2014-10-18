@@ -238,10 +238,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		ASTBuilder[] argumentBuilders = new ASTBuilder[parameterCount];
 		for(int i = 0; i < argumentBuilders.length; i++) {
 			// For each argument, a local scope should be allocated
-			idToParameterOrdinalMap = idToParameterOrdinalMap.newInnerStart();
 			idToVariableOrdinalMap = idToVariableOrdinalMap.newInnerStart();
 			argumentBuilders[i] = args.get(i).accept(this);
-			idToParameterOrdinalMap = idToParameterOrdinalMap.getOuter();
 			idToVariableOrdinalMap = idToVariableOrdinalMap.getOuter();
 		}
 		
