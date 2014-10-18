@@ -11,6 +11,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.dfa.DFA;
 
 import duro.debugging.Debug;
+import duro.io.TreeWriter;
 import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
@@ -223,6 +225,11 @@ public class Compiler {
 		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
 		idToVariableOrdinalMap.generate(variableOffset);
 		AST programAst = programAstBuilder.build();
+		
+		StringWriter astStringWriter = new StringWriter();
+		TreeWriter astWriter = new TreeWriter(astStringWriter);
+		programAst.writeTo(astWriter);
+		Debug.println(Debug.LEVEL_HIGH, "Generated ast:\n" + astStringWriter.toString());
 		
 		CodeEmitter instructions = new CodeEmitter();
 		ASTToCode programAstToCode = new ASTToCode(primitiveMap, instructions, false);
