@@ -119,7 +119,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	@Override
 	public ASTBuilder visitExpression(ExpressionContext ctx) {
 		return messageExchangeBuilder(
-			ctx.expressionReceiver(), ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), ctx.expressionEnd());
+			ctx.expressionReceiver(), ctx.expressionChain().stream().map(x -> (ParserRuleContext)x).collect(Collectors.toList()), null);
 	}
 	
 	@Override
@@ -160,6 +160,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	public ASTBuilder visitBinaryMessage(BinaryMessageContext ctx) {
 		String id = ctx.BIN_OP().getText();
 		
+		// How to do left to right evaluation? Have message exchanges in arguments? 
+		// 2 % 2 == 0 should evaluate to true
 		return multiKeyMessageFromReceiverBuilder(id, Arrays.asList(ctx.binaryMessageArg()));
 	}
 	

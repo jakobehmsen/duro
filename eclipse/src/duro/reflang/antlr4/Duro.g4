@@ -1,7 +1,7 @@
 grammar Duro;
 
 program: expression*;
-expression: expressionReceiver expressionChain* expressionEnd?;
+expression: expressionReceiver expressionChain*;
 expressionReceiver:
     assignment | variableDeclaration | selfMultiKeyMessage |
     interfaceId | messageExchange;
@@ -12,10 +12,14 @@ messageExchange: receiver messageChain* messageEnd?;
 messageChain: DOT unaryMessage | indexAccess | slotAccess;
 messageEnd: 
     DOT multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
-expressionChain: SEMI_COLON (unaryMessage | indexAccess | slotAccess);
-expressionEnd: 
-    SEMI_COLON
-    (multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+);            
+expressionChain: 
+    SEMI_COLON 
+    (
+        multiKeyMessage | unaryMessage | 
+        indexAssignment | indexAccess | 
+        slotAssignment | slotAccess |
+        binaryMessage
+    );
 receiver: atom;
 selfMultiKeyMessage: multiKeyMessage;
 variableDeclaration: VAR id (ASSIGN expression)?;

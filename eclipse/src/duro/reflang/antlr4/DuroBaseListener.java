@@ -524,19 +524,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterIndexOperator(@NotNull DuroParser.IndexOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}

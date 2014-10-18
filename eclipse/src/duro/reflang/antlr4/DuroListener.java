@@ -438,17 +438,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#expressionEnd}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#expressionEnd}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#indexOperator}.
 	 * @param ctx the parse tree
 	 */

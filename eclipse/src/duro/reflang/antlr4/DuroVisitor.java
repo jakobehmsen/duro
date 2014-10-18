@@ -285,13 +285,6 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBehaviorParams(@NotNull DuroParser.BehaviorParamsContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link DuroParser#expressionEnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpressionEnd(@NotNull DuroParser.ExpressionEndContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link DuroParser#indexOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
