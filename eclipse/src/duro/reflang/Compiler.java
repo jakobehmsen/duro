@@ -229,7 +229,7 @@ public class Compiler {
 		StringWriter astStringWriter = new StringWriter();
 		TreeWriter astWriter = new TreeWriter(astStringWriter);
 		programAst.writeTo(astWriter);
-		Debug.println(Debug.LEVEL_HIGH, "Generated ast:\n" + astStringWriter.toString());
+		Debug.println(Debug.LEVEL_MEDIUM, "Generated ast:\n" + astStringWriter.toString());
 		
 		CodeEmitter instructions = new CodeEmitter();
 		ASTToCode programAstToCode = new ASTToCode(primitiveMap, instructions, false);
