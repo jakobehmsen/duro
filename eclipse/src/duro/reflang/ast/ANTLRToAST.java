@@ -9,14 +9,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.omg.CORBA.IntHolder;
 
 import duro.reflang.MessageCollector;
 import duro.reflang.OrdinalAllocator;
 import duro.reflang.antlr4.DuroBaseVisitor;
 import duro.reflang.antlr4.DuroLexer;
-import duro.reflang.antlr4.DuroParser;
 import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
@@ -214,18 +212,18 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		
 		for(ParserRuleContext argCtx: ctx.multiKeyMessageHead().multiKeyMessageArgs().multiKeyMessageArg()) {
-			if(ctx.multiKeyMessageHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+			if(ctx.multiKeyMessageHead().multiKeyMessageModifier().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 				// Wrap arg into closure
-				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+				argCtx = wrapIntoClosure(ctx, ctx.invokingState, ctx.multiKeyMessageHead().multiKeyMessageModifier().behaviorParams(), argCtx);
 			}
 			args.add(argCtx);
 		}
 
 		for(MultiKeyMessageTailContext tailCtx: ctx.multiKeyMessageTail()) {
 			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
-				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+				if(tailCtx.multiKeyMessageModifier().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 					// Wrap arg into closure
-					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+					argCtx = wrapIntoClosure(ctx, ctx.invokingState, ctx.multiKeyMessageHead().multiKeyMessageModifier().behaviorParams(), argCtx);
 				}
 				args.add(argCtx);
 			}
@@ -255,9 +253,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		};
 	}
 	
-	private ParserRuleContext wrapIntoClosure(ParserRuleContext parent, int invokingState, ParserRuleContext argCtx) {
+	private ParserRuleContext wrapIntoClosure(ParserRuleContext parent, int invokingState, BehaviorParamsContext paramsCtx, ParserRuleContext argCtx) {
 		ClosureContext argClosureCtx = new ClosureContext(parent, invokingState);
-		argClosureCtx.addChild(new BehaviorParamsContext(argClosureCtx, invokingState));
+		argClosureCtx.addChild(paramsCtx);
 		ExpressionContext body = new ExpressionContext(argClosureCtx, invokingState);
 		ExpressionReceiverContext bodyReceiver = new ExpressionReceiverContext(body, invokingState);
 		bodyReceiver.addChild(argCtx);
@@ -280,9 +278,9 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		ParserRuleContext argCtx = ctx.multiKeyMessageArg();
-		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+		if(ctx.multiKeyMessageModifier().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 			// Wrap arg into closure
-			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+			argCtx = wrapIntoClosure(ctx, ctx.invokingState, ctx.multiKeyMessageModifier().behaviorParams(), argCtx);
 		}
 		args.add(argCtx);
 		

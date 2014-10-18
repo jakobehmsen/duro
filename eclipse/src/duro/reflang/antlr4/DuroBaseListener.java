@@ -82,6 +82,19 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterMultiKeyMessageModifier(@NotNull DuroParser.MultiKeyMessageModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitMultiKeyMessageModifier(@NotNull DuroParser.MultiKeyMessageModifierContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMultiKeyMessageArgChain(@NotNull DuroParser.MultiKeyMessageArgChainContext ctx) { }
 	/**
 	 * {@inheritDoc}

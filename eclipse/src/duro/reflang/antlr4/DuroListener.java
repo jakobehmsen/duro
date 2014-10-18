@@ -64,6 +64,17 @@ public interface DuroListener extends ParseTreeListener {
 	void exitUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiKeyMessageModifier(@NotNull DuroParser.MultiKeyMessageModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#multiKeyMessageModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiKeyMessageModifier(@NotNull DuroParser.MultiKeyMessageModifierContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#multiKeyMessageArgChain}.
 	 * @param ctx the parse tree
 	 */

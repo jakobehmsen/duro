@@ -27,10 +27,9 @@ variableDeclaration: VAR id (ASSIGN expression)?;
 access: id;
 grouping: PAR_OP (expression)+ PAR_CL;
 multiKeyMessage: multiKeyMessageHead multiKeyMessageTail*;
-multiKeyMessageHead: 
-    ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
-multiKeyMessageTail:
-    ID_CAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArgs;
+multiKeyMessageHead: ID_UNCAP multiKeyMessageModifier multiKeyMessageArgs;
+multiKeyMessageTail: ID_CAP multiKeyMessageModifier multiKeyMessageArgs;
+multiKeyMessageModifier: (modifier=COLON|modifier=SINGLE_QUOTE behaviorParams);
 multiKeyMessageArgs: (multiKeyMessageArg (COMMA multiKeyMessageArg)*)?;
 multiKeyMessageArg: 
     selfSingleKeyMessage |
@@ -41,7 +40,7 @@ multiKeyMessageArgEnd:
     DOT singleKeyMessage | slotAssignment | indexAssignment | binaryMessageChain;
 atom: access | grouping | literal | pseudoVar | parArg;
 selfSingleKeyMessage: singleKeyMessage;
-singleKeyMessage: ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArg;
+singleKeyMessage: ID_UNCAP multiKeyMessageModifier multiKeyMessageArg;
 unaryMessage: ID_UNCAP;
 slotAccess: AT selector;
 indexAccess: SQ_OP expression SQ_CL;

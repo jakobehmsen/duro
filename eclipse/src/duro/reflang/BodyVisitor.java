@@ -12,7 +12,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 import duro.reflang.antlr4.DuroBaseVisitor;
-import duro.reflang.antlr4.DuroLexer;
 import duro.reflang.antlr4.DuroParser.AccessContext;
 import duro.reflang.antlr4.DuroParser.ArrayContext;
 import duro.reflang.antlr4.DuroParser.AssignmentContext;
@@ -33,7 +32,6 @@ import duro.reflang.antlr4.DuroParser.InterfaceIdContext;
 import duro.reflang.antlr4.DuroParser.MessageExchangeContext;
 import duro.reflang.antlr4.DuroParser.MultiKeyMessageArgContext;
 import duro.reflang.antlr4.DuroParser.MultiKeyMessageContext;
-import duro.reflang.antlr4.DuroParser.MultiKeyMessageTailContext;
 import duro.reflang.antlr4.DuroParser.ParArgContext;
 import duro.reflang.antlr4.DuroParser.ProgramContext;
 import duro.reflang.antlr4.DuroParser.PseudoVarContext;
@@ -281,23 +279,23 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 			ctx.multiKeyMessageTail().stream().map(x -> x.ID_CAP().getText()).collect(Collectors.joining());
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		
-		for(ParserRuleContext argCtx: ctx.multiKeyMessageHead().multiKeyMessageArgs().multiKeyMessageArg()) {
-			if(ctx.multiKeyMessageHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
-				// Wrap arg into closure
-				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
-			}
-			args.add(argCtx);
-		}
-
-		for(MultiKeyMessageTailContext tailCtx: ctx.multiKeyMessageTail()) {
-			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
-				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
-					// Wrap arg into closure
-					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
-				}
-				args.add(argCtx);
-			}
-		}
+//		for(ParserRuleContext argCtx: ctx.multiKeyMessageHead().multiKeyMessageArgs().multiKeyMessageArg()) {
+//			if(ctx.multiKeyMessageHead().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+//				// Wrap arg into closure
+//				argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+//			}
+//			args.add(argCtx);
+//		}
+//
+//		for(MultiKeyMessageTailContext tailCtx: ctx.multiKeyMessageTail()) {
+//			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
+//				if(tailCtx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+//					// Wrap arg into closure
+//					argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+//				}
+//				args.add(argCtx);
+//			}
+//		}
 		
 		appendMultiArgMessage(id, args, isForSelf);
 	}
@@ -320,15 +318,16 @@ public class BodyVisitor extends DuroBaseVisitor<Object> {
 		String id = ctx.ID_UNCAP().getText();
 		ArrayList<ParserRuleContext> args = new ArrayList<ParserRuleContext>();
 		ParserRuleContext argCtx = ctx.multiKeyMessageArg();
-		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
-			// Wrap arg into closure
-			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
-		}
+//		if(ctx.modifier.getType() == DuroLexer.SINGLE_QUOTE) {
+//			// Wrap arg into closure
+//			argCtx = wrapIntoClosure(ctx, ctx.invokingState, argCtx);
+//		}
 		args.add(argCtx);
 		
 		appendMultiArgMessage(id, args, isForSelf);
 	}
 	
+	@SuppressWarnings("unused")
 	private ParserRuleContext wrapIntoClosure(ParserRuleContext parent, int invokingState, ParserRuleContext argCtx) {
 		ClosureContext argClosureCtx = new ClosureContext(parent, invokingState);
 		argClosureCtx.addChild(new BehaviorParamsContext(argClosureCtx, invokingState));

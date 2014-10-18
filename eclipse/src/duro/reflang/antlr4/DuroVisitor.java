@@ -47,6 +47,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryMessage(@NotNull DuroParser.UnaryMessageContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#multiKeyMessageModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiKeyMessageModifier(@NotNull DuroParser.MultiKeyMessageModifierContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiKeyMessageArgChain}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
