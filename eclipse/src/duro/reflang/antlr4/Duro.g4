@@ -11,14 +11,15 @@ interfaceId: DOLLAR id expression;
 messageExchange: receiver messageChain* messageEnd?;
 messageChain: DOT unaryMessage | indexAccess | slotAccess;
 messageEnd: 
-    DOT multiKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
+    DOT multiKeyMessage | slotAssignment | indexAssignment | binaryMessageChain;
+binaryMessageChain: binaryMessage+;
 expressionChain: 
     SEMI_COLON 
     (
         multiKeyMessage | unaryMessage | 
         indexAssignment | indexAccess | 
         slotAssignment | slotAccess |
-        binaryMessage
+        binaryMessageChain
     );
 receiver: atom;
 selfMultiKeyMessage: multiKeyMessage;
@@ -37,7 +38,7 @@ multiKeyMessageArg:
 multiKeyMessageArgReceiver: atom;
 multiKeyMessageArgChain: DOT unaryMessage | slotAccess | indexAccess;
 multiKeyMessageArgEnd:
-    DOT singleKeyMessage | slotAssignment | indexAssignment | binaryMessage+;
+    DOT singleKeyMessage | slotAssignment | indexAssignment | binaryMessageChain;
 atom: access | grouping | literal | pseudoVar | parArg;
 selfSingleKeyMessage: singleKeyMessage;
 singleKeyMessage: ID_UNCAP modifier=(COLON|SINGLE_QUOTE) multiKeyMessageArg;

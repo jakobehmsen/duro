@@ -9,6 +9,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface DuroListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link DuroParser#binaryMessageChain}.
+	 * @param ctx the parse tree
+	 */
+	void enterBinaryMessageChain(@NotNull DuroParser.BinaryMessageChainContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link DuroParser#binaryMessageChain}.
+	 * @param ctx the parse tree
+	 */
+	void exitBinaryMessageChain(@NotNull DuroParser.BinaryMessageChainContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link DuroParser#assignmentOperator}.
 	 * @param ctx the parse tree
 	 */
