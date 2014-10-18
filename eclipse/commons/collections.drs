@@ -8,17 +8,17 @@ Iterable@each => |block| (
 	while' not: it.atEnd,
 		block.call: it.next
 )
-Iterable@where => |predicate| Generatable.on: {|generator|
-	each: {|next|
-		if' predicate.call: next, generator.put: next
-	}
-}
-Iterable@map => |block| Generatable.on: {|generator|
-	each: {
+Iterable@where => |predicate| Generatable.on' |generator|
+	each' |next| (
+		if' predicate.call: next, 
+			generator.put: next
+	)
+Iterable@map => |block| Generatable.on' |generator|
+	each' (
 		var mapped = block.call: \next
 		generator.put: mapped
-	}
-}
+	)
+
 
 Generator = #[
 	on => |block| (
@@ -74,24 +74,24 @@ Array@prototype ^= Iterable
 Array@[] => arraySet: this, \index, \value
 Array@[] => arrayGet: this, \index
 Array@length => arrayLength: this
-Array@iterator => Generator.on: {|generator|
+Array@iterator => Generator.on' |generator| (
 	var i = 0
 	while' i < length, (
 		var item = this[i]
 		generator.put: item
 		i = i + 1
 	)
-}
+)
 
 
 
-Integer@to => |end| Generatable.on: {|generator|
+Integer@to => |end| Generatable.on' |generator| (
 	var i = this
 	while' i < end, (
 		generator.put: i
 		i = i + 1
 	)
-}
+)
 Integer@through => to: \end + 1
 
 /*
@@ -132,14 +132,14 @@ List = #[
 		items[i] = null
 		size = size - 1
 	)
-	iterator => Generator.on: {|generator|
+	iterator => Generator.on' |generator| (
 		var i = 0
 		while' i < size, (
 			var item = items[i]
 			generator.put: item
 			i = i + 1
 		)
-	}
+	)
 	[] => items[\index] = \value
 	[] => items[\index]
 ]
