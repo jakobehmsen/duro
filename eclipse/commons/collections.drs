@@ -74,11 +74,11 @@ Array@prototype ^= Iterable
 Array@[] => arraySet: this, \index, \value
 Array@[] => arrayGet: this, \index
 Array@length => arrayLength: this
-Array@iterator => Generator.on: {
+Array@iterator => Generator.on: {|generator|
 	var i = 0
 	while' i < length, (
 		var item = this[i]
-		\generator.put: item
+		generator.put: item
 		i = i + 1
 	)
 }
@@ -132,11 +132,11 @@ List = #[
 		items[i] = null
 		size = size - 1
 	)
-	iterator => Generator.on: {
+	iterator => Generator.on: {|generator|
 		var i = 0
 		while' i < size, (
 			var item = items[i]
-			\generator.put: item
+			generator.put: item
 			i = i + 1
 		)
 	}
