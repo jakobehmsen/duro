@@ -311,7 +311,6 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		List<IdContext> paramIds = opCtx.behaviorParams().id(); 
 		switch(opCtx.op.getType()) {
 		case DuroLexer.ASSIGN: {
-			assignFields.add(id);
 			ASTBuilder valueBuilder = valueCtx.accept(this);
 			return new ASTBuilderFromReceiver() {
 				@Override
@@ -320,7 +319,6 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 				}
 			};
 		} case DuroLexer.ASSIGN_PROTO: {
-			assignFields.add(id);
 			ASTBuilder valueBuilder = valueCtx.accept(this);
 			return new ASTBuilderFromReceiver() {
 				@Override
