@@ -20,8 +20,16 @@ public class TreeWriter {
 		return indentionBlock().length();
 	}
 	
-	public void write(String text) throws IOException {
-		String[] lines = text.split("\\r?\\n");
+	public int depth() {
+		return indention.length() / indentionBlockLength();
+	}
+	
+	public void write(Object obj) throws IOException {
+		write(obj.toString());
+	}
+	
+	public void write(String str) throws IOException {
+		String[] lines = str.split("\\r?\\n");
 		if(lines.length > 0) {
 			append(lines[0]);
 			for(int i = 1; i < lines.length; i++) {
@@ -31,9 +39,15 @@ public class TreeWriter {
 		}
 	}
 	
+	public void writeln()  throws IOException {
+		appendln();
+	}
+	
 	private void append(String str) throws IOException {
-		if(printIndention)
+		if(printIndention) {
 			writer.write(indention);
+			printIndention = false;
+		}
 		writer.write(str);
 	}
 	
