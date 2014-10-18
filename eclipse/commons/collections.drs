@@ -3,14 +3,14 @@ Collections library
 */
 
 Iterable = #[]
-Iterable@each => (
+Iterable@each => |block| (
 	var it = iterator
 	while' not: it.atEnd,
-		\block.call: it.next
+		block.call: it.next
 )
 Iterable@where => |predicate| Generatable.on: {|generator|
-	each: {
-		if' predicate.call: \next, generator.put: \next
+	each: {|next|
+		if' predicate.call: next, generator.put: next
 	}
 }
 Iterable@map => |block| Generatable.on: {|generator|
@@ -64,7 +64,7 @@ Generatable = #[
 	on => #[
 		prototype ^= Iterable
 		block = \block
-		iterator => Generator.on: block
+		iterator => (Generator.on: block)
 	]
 ]
 
@@ -85,10 +85,10 @@ Array@iterator => Generator.on: {
 
 
 
-Integer@to => |end| Generatable.on: {
+Integer@to => |end| Generatable.on: {|generator|
 	var i = this
 	while' i < end, (
-		\generator.put: i
+		generator.put: i
 		i = i + 1
 	)
 }
