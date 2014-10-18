@@ -1,5 +1,7 @@
 package duro.io;
 
+import java.io.IOException;
+
 public interface WritableTree {
-	void writeTo(TreeWriter writer);
+	void writeTo(TreeWriter writer) throws IOException;
 }
