@@ -116,11 +116,7 @@ public class ASTToCode implements ASTVisitor {
 	@Override
 	public void visitSlotAssignment(ASTSlotAssignment ast) {
 		visitAsExpression(ast.receiver);
-		visitAsExpression(ast.value);
-		if(mustBeExpression)
-			instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
-
-		appendSlotAssignment(ast.id, ast.type, ast.arity, ast.value);
+		appendSlotAssignment(ast.id, ast.type, ast.arity, ast.value, true);
 	}
 
 	@Override
@@ -155,19 +151,29 @@ public class ASTToCode implements ASTVisitor {
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 			for(ASTDict.Entry entry: ast.entries) {
 				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));
-				appendSlotAssignment(entry.id, entry.type, entry.arity, entry.value);
+				appendSlotAssignment(entry.id, entry.type, entry.arity, entry.value, false);
 			}
 		}
 	}
 	
-	private void appendSlotAssignment(String id, int type, int arity, AST value) {
+	private void appendSlotAssignment(String id, int type, int arity, AST value, boolean valueAsExpression) {
 		switch(type) {
 		case ASTSlotAssignment.TYPE_REGULAR:
-			value.accept(this);
+			if(valueAsExpression) {
+				visitAsExpression(value);
+				if(mustBeExpression)
+					instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
+			} else
+				value.accept(this);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, arity));
 			break;
 		case ASTSlotAssignment.TYPE_PROTO:
-			value.accept(this);
+			if(valueAsExpression) {
+				visitAsExpression(value);
+				if(mustBeExpression)
+					instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
+			} else
+				value.accept(this);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SET_PROTO, id, arity));
 			break;
 		case ASTSlotAssignment.TYPE_QUOTED:
@@ -178,6 +184,8 @@ public class ASTToCode implements ASTVisitor {
 			CodeEmission bodyCode = bodyVisitor.instructions.generate();
 			Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, behavior.localCount, bodyCode.getMaxStackSize(), bodyInstructions));
+			if(valueAsExpression && mustBeExpression)
+				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, arity));
 			break;
 		}
