@@ -23,6 +23,7 @@ import duro.reflang.antlr4.DuroParser.AssignmentContext;
 import duro.reflang.antlr4.DuroParser.AssignmentOperatorContext;
 import duro.reflang.antlr4.DuroParser.BehaviorParamsContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageArgContext;
+import duro.reflang.antlr4.DuroParser.BinaryMessageChainContext;
 import duro.reflang.antlr4.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4.DuroParser.ClosureContext;
 import duro.reflang.antlr4.DuroParser.DictContext;
@@ -157,12 +158,27 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	}
 	
 	@Override
-	public ASTBuilder visitBinaryMessage(BinaryMessageContext ctx) {
-		String id = ctx.BIN_OP().getText();
+	public ASTBuilder visitBinaryMessageChain(BinaryMessageChainContext ctx) {
+		// Generation of left-to-right evaluation logic of binary message chain
+		ArrayList<ASTBuilderFromReceiver> messageBuilders = new ArrayList<ASTBuilderFromReceiver>();
 		
-		// How to do left to right evaluation? Have message exchanges in arguments? 
-		// 2 % 2 == 0 should evaluate to true
-		return multiKeyMessageFromReceiverBuilder(id, Arrays.asList(ctx.binaryMessageArg()));
+		for(BinaryMessageContext binMsgCtx: ctx.binaryMessage()) {
+			String id = binMsgCtx.BIN_OP().getText();
+			ASTBuilderFromReceiver messageBuilder = multiKeyMessageFromReceiverBuilder(id, Arrays.asList(binMsgCtx.binaryMessageArg()));
+			messageBuilders.add(messageBuilder);
+		}
+		
+		return new ASTBuilderFromReceiver() {
+			@Override
+			public ASTBuilder createBuilder(ASTBuilder receiver) {
+				ASTBuilder builder = null;
+				for(ASTBuilderFromReceiver messageBuilder: messageBuilders) {
+					builder = messageBuilder.createBuilder(receiver);
+					receiver = builder;
+				}
+				return builder;
+			}
+		};
 	}
 	
 	@Override
