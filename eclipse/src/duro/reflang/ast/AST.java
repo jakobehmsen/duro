@@ -1,5 +1,7 @@
 package duro.reflang.ast;
 
-public interface AST {
+import duro.io.WritableTree;
+
+public interface AST extends WritableTree {
 	void accept(ASTVisitor visitor);
 }

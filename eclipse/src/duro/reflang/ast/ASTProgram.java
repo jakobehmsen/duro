@@ -1,5 +1,9 @@
 package duro.reflang.ast;
 
+import java.io.IOException;
+
+import duro.io.TreeWriter;
+
 public class ASTProgram implements AST {
 	public final AST body;
 	
@@ -10,5 +14,10 @@ public class ASTProgram implements AST {
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visitProgram(this);
+	}
+	
+	@Override
+	public void writeTo(TreeWriter writer) throws IOException {
+		body.writeTo(writer);
 	}
 }

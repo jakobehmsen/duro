@@ -1,5 +1,9 @@
 package duro.reflang.ast;
 
+import java.io.IOException;
+
+import duro.io.TreeWriter;
+
 public class ASTLocalAssignment implements AST {
 	public final int ordinal;
 	public final AST value;
@@ -12,5 +16,13 @@ public class ASTLocalAssignment implements AST {
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visitLocalAssignment(this);
+	}
+	
+	@Override
+	public void writeTo(TreeWriter writer) throws IOException {
+		writer.write("&");
+		writer.write(ordinal);
+		writer.write(" = ");
+		value.writeTo(writer);
 	}
 }

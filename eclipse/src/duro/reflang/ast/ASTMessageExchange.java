@@ -1,5 +1,9 @@
 package duro.reflang.ast;
 
+import java.io.IOException;
+
+import duro.io.TreeWriter;
+
 public class ASTMessageExchange implements AST {
 	public final AST receiver;
 	public final ASTMessage message;
@@ -12,5 +16,14 @@ public class ASTMessageExchange implements AST {
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visitMessageExchange(this);
+	}
+	
+	@Override
+	public void writeTo(TreeWriter writer) throws IOException {
+		writer.write("(");
+		receiver.writeTo(writer);
+		writer.write(")");
+		writer.write(".");
+		message.writeTo(writer);
 	}
 }

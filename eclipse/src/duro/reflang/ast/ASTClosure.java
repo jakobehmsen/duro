@@ -1,5 +1,9 @@
 package duro.reflang.ast;
 
+import java.io.IOException;
+
+import duro.io.TreeWriter;
+
 public class ASTClosure implements AST {
 	public final int parameterOffset;
 	public final int parameterCount;
@@ -14,5 +18,18 @@ public class ASTClosure implements AST {
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visitClosure(this);
+	}
+
+	@Override
+	public void writeTo(TreeWriter writer) throws IOException {
+		writer.write("{");
+		writer.write(parameterOffset);
+		writer.write(",");
+		writer.write(parameterCount);
+		writer.write("|");
+		writer.indentnl();
+		body.writeTo(writer);
+		writer.dedentnl();
+		writer.write("}");
 	}
 }

@@ -1,5 +1,9 @@
 package duro.reflang.ast;
 
+import java.io.IOException;
+
+import duro.io.TreeWriter;
+
 public class ASTSlotAccess implements AST {
 	public final AST receiver;
 	public final String id;
@@ -14,5 +18,14 @@ public class ASTSlotAccess implements AST {
 	@Override
 	public void accept(ASTVisitor visitor) {
 		visitor.visitSlotAccess(this);
+	}
+	
+	@Override
+	public void writeTo(TreeWriter writer) throws IOException {
+		receiver.writeTo(writer);
+		writer.write("@");
+		writer.write(id);
+		writer.write("/");
+		writer.write(arity);
 	}
 }
