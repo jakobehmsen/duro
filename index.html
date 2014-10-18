@@ -84,10 +84,10 @@
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					For most runtimes, processes are transient which means, when they are restarted, they are conceptually dependent on external persistent computing elements to recap their whereabouts at their last exit. 
+					For many runtimes, processes are transient which means, when they are restarted, they are conceptually dependent on external persistent computing elements to recap their whereabouts at their last exit. 
 				</div>
 				<div>
-					What if this wasn't the default case for processes? What if, instead, processes, after they have been stopped, simply always continue from where they left of?
+					What if this wasn't the default case for processes? What if, instead, processes, after they have been stopped, simply always continue from where they left of upon their next execution?
 				</div>
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 					Many applications have essentiel parts that must persist across process incarnations. The most common contemporary solution is to use external components, such as files (XML, CSV, ...) or databases (SQL, NoSQL, ...). Integrating with these external components can be challenging and very time consuming depending on the degree of impedance mismatch. Further, this may implicate issues with down-scaling, i.e. starting out simple can be difficult.
 				</div>
 				<div>
-					It is the authors intuition that a significant part of these applications could use persistent processes for persisting these essential parts. If so, then probably no (or very little) effort is required to support the persistence of these parts.
+					It is the author's intuition that a significant part of these applications could use persistent processes for persisting these essential parts. If so, then probably no (or very little) effort is required to support the persistence of these parts.
 				</div>
 			</div>
 		</div>
@@ -117,7 +117,7 @@
 					The idea of persistent processes may implicate a naive implementation, where the size of the processes increases very fast. Some sort of maintenance of the persistent processes are likely necessary and challenging to implement.
 				</div>
 				<div>
-					Since it is not just executables which are created but processes, updating application behavior cannot be done by simply replacing an executable since that'll destroy the existing evolution of the previously compiled process. Therefore, a seperation between process program and state could be valuable.
+					Since it is not just executables which are created but processes, updating application behavior cannot be done by simply replacing an executable since that'll destroy the existing evolution of the previously compiled process. Therefore, a seperation between process program and -state could be valuable.
 				</div>
 			</div>
 		</div>
@@ -129,7 +129,7 @@
 			
 			<div style="font-weight: 900; padding: 6px; background-color: #F5F5F5; color: #1C1C1C; border-color: #1C1C1C; border-style: solid; border-radius: 0px 0px 12px 12px;" class="general">
 				<div>
-					The current goal is to implement a frontend, inspired by, among others, ECMAScript and Smalltalk, for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span>. Basically, a process is realized by combining a program with an interaction history. An interaction history represent the state of a process. This way, the program is not entangled with the process - and thus, the program part of a process can be replaced without affecting the state of the process.
+					The current goal is to implement a frontend for the runtime simply named Duro. Duro is to have the same role as Java has for the JVM. With a twist. Where Java is compiled to programs, from which processes are derived from - Duro is compiled directly to processes which are simply resumed each time they are given to the runtime. The initially compiled processes are called <span style="font-style:oblique;">genesis processes</span>. Basically, a process is realized by combining a program with an interaction history. An interaction history represents the state of a process. This way, the program is not entangled with the process - and thus, the program part of a process can be replaced without affecting the state of the process.
 				</div>
 			</div>
 		</div>
