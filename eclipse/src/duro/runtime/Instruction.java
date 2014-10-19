@@ -192,10 +192,17 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_NATIVE_CLASS_FIELD_INT = 137;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_STRING = 138;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_OTHER = 139;
+	@PopCount(source = PopCount.Source.OPERAND_ARRAY_LENGTH, value = 2)
+	@PushCount(1)
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE = 140;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_INT = 141;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_STRING = 142;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_OTHER = 143;
+	@PopCount(source = PopCount.Source.OPERAND_ARRAY_LENGTH, value = 1)
+	@PushCount(1)
+	public static final int OPCODE_NATIVE_NEW_INSTANCE = 144;
+	public static final int OPCODE_NATIVE_NEW_INSTANCE_STRING = 145;
+	public static final int OPCODE_NATIVE_NEW_INSTANCE_OTHER = 146;
 
 	public static final int OPCODE_NONE = 254;
 	public static final int OPCODE_BREAK_POINT = 255;
@@ -328,10 +335,16 @@ public class Instruction implements Serializable {
 		PopCount popCount = opcodeToIdMap.get(instruction.opcode).popCount;
 		
 		if(popCount != null) {
-			if(popCount.source() == PopCount.Source.VALUE)
+			switch(popCount.source()) {
+			case PopCount.Source.VALUE:
 				return popCount.value();
+			case PopCount.Source.OPERAND:
+				return (int)instruction.getOperand(popCount.value());
+			case PopCount.Source.OPERAND_ARRAY_LENGTH:
+				return ((Object[])instruction.getOperand(popCount.value())).length;
+			}
 			
-			return (int)instruction.getOperand(popCount.value());
+			return -1;
 		}
 		
 		return 0;
