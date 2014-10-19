@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -1041,6 +1042,62 @@ public class Processor {
 			DictionaryProcess dict = (DictionaryProcess)currentFrame.peek();
 			DictionaryProcess clone = dict.clone();
 			currentFrame.set0(clone);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_CLASS_FIELD: {
+			String className = (String)instruction.operand1;
+			String fieldName = (String)instruction.operand2;
+			try {
+				Class<?> theClass = Class.forName(className);
+				Field field = theClass.getField(fieldName);
+				if(field.getType().equals(int.class))
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD_INT, field);
+				else if(field.getType().equals(String.class))
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD_STRING, field);
+				else
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD_OTHER, field);
+			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
+				e.printStackTrace();
+			}
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_INT: {
+			Field field = (Field)instruction.operand1;
+			int nativeObject;
+			try {
+				nativeObject = field.getInt(null);
+				currentFrame.push(new IntegerProcess(protoInteger, nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				currentFrame.push(new IntegerProcess(protoInteger, 0));
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_STRING: {
+			Field field = (Field)instruction.operand1;
+			String nativeObject;
+			try {
+				nativeObject = (String)field.get(null);
+				currentFrame.push(new StringProcess(protoString, nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				currentFrame.push(new StringProcess(protoString, ""));
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_OTHER: {
+			Field field = (Field)instruction.operand1;
+			Object nativeObject;
+			try {
+				nativeObject = field.get(null);
+				currentFrame.push(new NativeObjectHolder(nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				currentFrame.push(new NativeObjectHolder(null));
+				e.printStackTrace();
+			}
 			currentFrame.instructionPointer++;
 			
 			break;
