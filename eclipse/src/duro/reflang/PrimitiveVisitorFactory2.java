@@ -1,5 +1,7 @@
 package duro.reflang;
 
+import java.util.ArrayList;
+
 import duro.reflang.ast.AST;
 import duro.reflang.ast.ASTClosure;
 import duro.reflang.ast.ASTString;
@@ -42,6 +44,16 @@ public interface PrimitiveVisitorFactory2 {
 			} else {
 				instructions.addSingle(new Instruction(Instruction.OPCODE_CALL_CLOSURE_0));
 			}
+		}
+		
+		public static String[] split(String str, String regex) {
+			String[] rawSplit = str.split(regex);
+			ArrayList<String> splitBuilder = new ArrayList<String>();
+			for(String rawStr: rawSplit) {
+				if(rawStr.trim().length() != 0)
+					splitBuilder.add(rawStr);
+			}
+			return splitBuilder.toArray(new String[splitBuilder.size()]);
 		}
 	}
 
@@ -178,14 +190,36 @@ public interface PrimitiveVisitorFactory2 {
 					AST receiver = args[0];
 					ASTString className = (ASTString)args[1];
 					ASTString methodName = (ASTString)args[2];
-					ASTString parameters = (ASTString)args[3];
+					String[] parameters = Util.split(((ASTString)args[3]).string, ";");
 					AST[] arguments = new AST[args.length - 4];
 					
 					visitor.visitAsExpression(receiver);
 					for(int i = 0; i < arguments.length; i++)
 						visitor.visitAsExpression(args[4 + i]);
 					
-					instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE, className.string, methodName.string, parameters.string));
+					instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE, className.string, methodName.string, parameters));
+
+					if(!mustBeExpression)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
+				}
+			};
+		}
+	}
+	
+	public static class NewInstance implements PrimitiveVisitorFactory2 {
+		@Override
+		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor2() {
+				@Override
+				public void visitPrimitive(String id, AST[] args) {
+					ASTString className = (ASTString)args[0];
+					String[] parameters = Util.split(((ASTString)args[1]).string, ";");
+					AST[] arguments = new AST[args.length - 1];
+					
+					for(int i = 0; i < arguments.length; i++)
+						visitor.visitAsExpression(args[1 + i]);
+					
+					instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_NEW_INSTANCE, className.string, parameters));
 
 					if(!mustBeExpression)
 						instructions.addSingle(new Instruction(Instruction.OPCODE_POP));

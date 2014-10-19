@@ -185,10 +185,15 @@ public class Compiler {
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
 		primitiveMap.put(Selector.get("classField", 2), new PrimitiveVisitorFactory2.ClassField());
-		primitiveMap.put(Selector.get("onInvokeWith", 4), new PrimitiveVisitorFactory2.InstanceInvoke());
+		primitiveMap.put(Selector.get("onInvoke", 4), new PrimitiveVisitorFactory2.InstanceInvoke());
 		primitiveMap.put(Selector.get("onInvokeWith", 5), new PrimitiveVisitorFactory2.InstanceInvoke());
 		primitiveMap.put(Selector.get("onInvokeWith", 6), new PrimitiveVisitorFactory2.InstanceInvoke());
 		primitiveMap.put(Selector.get("onInvokeWith", 7), new PrimitiveVisitorFactory2.InstanceInvoke());
+		primitiveMap.put(Selector.get("newInstance", 1), new PrimitiveVisitorFactory2.NewInstance());
+		primitiveMap.put(Selector.get("newInstanceWith", 1), new PrimitiveVisitorFactory2.NewInstance());
+		primitiveMap.put(Selector.get("newInstanceWith", 2), new PrimitiveVisitorFactory2.NewInstance());
+		primitiveMap.put(Selector.get("newInstanceWith", 3), new PrimitiveVisitorFactory2.NewInstance());
+		primitiveMap.put(Selector.get("newInstanceWith", 4), new PrimitiveVisitorFactory2.NewInstance());
 
 		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
 		primitiveMap.put(Selector.get("slotsSetProto", 2), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET_PROTO), true));
