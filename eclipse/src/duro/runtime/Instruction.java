@@ -192,6 +192,10 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_NATIVE_CLASS_FIELD_INT = 137;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_STRING = 138;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_OTHER = 139;
+	public static final int OPCODE_NATIVE_INSTANCE_INVOKE = 140;
+	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_INT = 141;
+	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_STRING = 142;
+	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_OTHER = 143;
 
 	public static final int OPCODE_NONE = 254;
 	public static final int OPCODE_BREAK_POINT = 255;
