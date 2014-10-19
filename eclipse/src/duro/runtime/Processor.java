@@ -12,11 +12,6 @@ import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 
 public class Processor {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS = new Instruction[] {
 		new Instruction(Instruction.OPCODE_FORWARD_CALL)/*,
 		new Instruction(Instruction.OPCODE_RET_FORWARD)*/

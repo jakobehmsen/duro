@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
-import duro.runtime.CustomProcess;
 import duro.runtime.FrameInfo;
 
 public class Main {

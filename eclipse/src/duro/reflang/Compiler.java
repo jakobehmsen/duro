@@ -36,8 +36,6 @@ import duro.reflang.ast.ANTLRToAST;
 import duro.reflang.ast.AST;
 import duro.reflang.ast.ASTBuilder;
 import duro.reflang.ast.ASTToCode;
-import duro.runtime.BehaviorProcess;
-import duro.runtime.CustomProcess;
 import duro.runtime.FrameInfo;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
