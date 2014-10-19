@@ -1,6 +1,6 @@
 package duro.runtime;
 
-public class IntegerProcess extends BuiltinProcess {
+public class IntegerProcess extends BuiltinProcess implements NativeInteroperable {
 	/**
 	 * 
 	 */
@@ -20,5 +20,10 @@ public class IntegerProcess extends BuiltinProcess {
 	@Override
 	public String toString() {
 		return "" + intValue;
+	}
+	
+	@Override
+	public Object getNativeObject() {
+		return intValue;
 	}
 }

@@ -1,6 +1,6 @@
 package duro.runtime;
 
-public class StringProcess extends BuiltinProcess {
+public class StringProcess extends BuiltinProcess implements NativeInteroperable {
 	/**
 	 * 
 	 */
@@ -10,6 +10,11 @@ public class StringProcess extends BuiltinProcess {
 	public StringProcess(Process prototype, String str) {
 		super(prototype);
 		this.str = str;
+	}
+
+	@Override
+	public Object getNativeObject() {
+		return str;
 	}
 	
 //	@Override
