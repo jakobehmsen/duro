@@ -5,15 +5,11 @@ public class BehaviorProcess extends BuiltinProcess {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public int localCount; // receiver + arguments + variables
-	public int maxStackSize; // stack
-	public Instruction[] instructions;
+	public FrameInfo frameInfo;
 	
-	public BehaviorProcess(Process prototype, int localCount, int maxStackSize, Instruction[] instructions) {
+	public BehaviorProcess(Process prototype, FrameInfo frameInfo) {
 		super(prototype);
-		this.localCount = localCount;
-		this.maxStackSize = maxStackSize;
-		this.instructions = instructions;
+		this.frameInfo = frameInfo;
 	}
 
 //	@Override

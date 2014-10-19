@@ -395,13 +395,13 @@ public class Processor {
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				
-				Process[] locals = new Process[behavior.localCount];
+				Process[] locals = new Process[behavior.frameInfo.localCount];
 				
 				locals[0] = receiver;
 				currentFrame.copyNInto(1, locals, argumentCount);
 				currentFrame.popN(argumentCount + 1); // Pop arguments and receiver
 				
-				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1 + argumentCount];
@@ -430,10 +430,10 @@ public class Processor {
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[behavior.localCount];
+				Process[] locals = new Process[behavior.frameInfo.localCount];
 				locals[0] = receiver;
 				
-				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1];
@@ -456,12 +456,12 @@ public class Processor {
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[behavior.localCount];
+				Process[] locals = new Process[behavior.frameInfo.localCount];
 				locals[0] = receiver;
 				currentFrame.copy1Into(1, locals);
 				currentFrame.pop2(); // Pop arguments and receiver
 				
-				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
@@ -486,12 +486,12 @@ public class Processor {
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[behavior.localCount];
+				Process[] locals = new Process[behavior.frameInfo.localCount];
 				locals[0] = receiver;
 				currentFrame.copy2Into(1, locals);
 				currentFrame.pop3(); // Pop arguments and receiver
 				
-				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[3];
@@ -517,12 +517,12 @@ public class Processor {
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[behavior.localCount];
+				Process[] locals = new Process[behavior.frameInfo.localCount];
 				locals[0] = receiver;
 				currentFrame.copy3Into(1, locals);
 				currentFrame.pop4(); // Pop arguments and receiver
 				
-				currentFrame = new Frame(currentFrame, locals, behavior.instructions, currentFrame.interfaceId, behavior.maxStackSize);
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[4];
@@ -680,14 +680,14 @@ public class Processor {
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, closure.parameterCount, 1);
 			currentFrame.popN(closure.parameterCount);
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_0: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
 			FrameProcess frame = closure.frame;
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
@@ -696,7 +696,7 @@ public class Processor {
 			FrameProcess frame = closure.frame;
 			frame.frame.locals[closure.argumentOffset] = currentFrame.peek1();
 			currentFrame.pop2();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
@@ -705,7 +705,7 @@ public class Processor {
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 2, 1);
 			currentFrame.pop3();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
@@ -714,7 +714,7 @@ public class Processor {
 			FrameProcess frame = closure.frame;
 			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 3, 1);
 			currentFrame.pop4();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.instructions, frame.frame.interfaceId, behavior.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_EXTEND_INTER_ID: {
@@ -1037,7 +1037,7 @@ public class Processor {
 			int localCount = (int)instruction.operand1;
 			int maxStackSize = (int)instruction.operand2;
 			Instruction[] instructions = (Instruction[])instruction.operand3;
-			BehaviorProcess behavior = new BehaviorProcess(protoBehavior, localCount, maxStackSize, instructions);
+			BehaviorProcess behavior = new BehaviorProcess(protoBehavior, new FrameInfo(localCount, maxStackSize, instructions));
 			currentFrame.push(behavior);
 			currentFrame.instructionPointer++;
 			
