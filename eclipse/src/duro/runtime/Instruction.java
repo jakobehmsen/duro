@@ -187,6 +187,11 @@ public class Instruction implements Serializable {
 	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_SP_CLONE = 135;
+	@PushCount(1)
+	public static final int OPCODE_NATIVE_CLASS_FIELD = 136;
+	public static final int OPCODE_NATIVE_CLASS_FIELD_INT = 137;
+	public static final int OPCODE_NATIVE_CLASS_FIELD_STRING = 138;
+	public static final int OPCODE_NATIVE_CLASS_FIELD_OTHER = 139;
 
 	public static final int OPCODE_NONE = 254;
 	public static final int OPCODE_BREAK_POINT = 255;
