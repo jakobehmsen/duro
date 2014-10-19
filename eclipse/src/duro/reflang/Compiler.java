@@ -184,6 +184,8 @@ public class Compiler {
 		primitiveMap.put(Selector.get("evalWithWithWithWith", 5), new PrimitiveVisitorFactory2.Eval());
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
+		primitiveMap.put(Selector.get("classField", 2), new PrimitiveVisitorFactory2.ClassField());
+
 		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
 		primitiveMap.put(Selector.get("slotsSetProto", 2), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET_PROTO), true));
 		primitiveMap.put(Selector.get("slotsGet", 2), new PrimitiveVisitorFactory2.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_GET), true));

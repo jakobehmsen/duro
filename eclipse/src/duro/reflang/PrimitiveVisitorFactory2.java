@@ -2,6 +2,7 @@ package duro.reflang;
 
 import duro.reflang.ast.AST;
 import duro.reflang.ast.ASTClosure;
+import duro.reflang.ast.ASTString;
 import duro.reflang.ast.ASTToCode;
 import duro.runtime.Instruction;
 
@@ -146,6 +147,23 @@ public interface PrimitiveVisitorFactory2 {
 					
 					if(!mustBeExpression)
 						instructions.addSingle(new Instruction(Instruction.OPCODE_POP, closureArgCount));
+				}
+			};
+		}
+	}
+	
+	public static class ClassField implements PrimitiveVisitorFactory2 {
+		@Override
+		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor2() {
+				@Override
+				public void visitPrimitive(String id, AST[] args) {
+					if(mustBeExpression) {
+						ASTString className = (ASTString)args[0];
+						ASTString fieldName = (ASTString)args[1];
+						
+						instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD, className.string, fieldName.string));
+					}
 				}
 			};
 		}
