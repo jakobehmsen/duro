@@ -146,7 +146,7 @@ public interface PrimitiveVisitorFactory2 {
 					}
 					
 					if(!mustBeExpression)
-						instructions.addSingle(new Instruction(Instruction.OPCODE_POP, closureArgCount));
+						instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 				}
 			};
 		}
@@ -164,6 +164,31 @@ public interface PrimitiveVisitorFactory2 {
 						
 						instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD, className.string, fieldName.string));
 					}
+				}
+			};
+		}
+	}
+	
+	public static class InstanceInvoke implements PrimitiveVisitorFactory2 {
+		@Override
+		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor2() {
+				@Override
+				public void visitPrimitive(String id, AST[] args) {
+					AST receiver = args[0];
+					ASTString className = (ASTString)args[1];
+					ASTString methodName = (ASTString)args[2];
+					ASTString parameters = (ASTString)args[3];
+					AST[] arguments = new AST[args.length - 4];
+					
+					visitor.visitAsExpression(receiver);
+					for(int i = 0; i < arguments.length; i++)
+						visitor.visitAsExpression(args[4 + i]);
+					
+					instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE, className.string, methodName.string, parameters.string));
+
+					if(!mustBeExpression)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 				}
 			};
 		}
