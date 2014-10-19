@@ -1011,7 +1011,7 @@ public class Processor {
 				}
 				
 				Compiler compiler = new Compiler();
-				CustomProcess customProcess = compiler.load(sourcePath, codePath);
+				FrameInfo customProcess = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
 				customProcess.instructions[customProcess.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
 				Process[] locals = new Process[]{protoAny};

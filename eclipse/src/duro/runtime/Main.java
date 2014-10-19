@@ -41,7 +41,7 @@ public class Main {
 			
 			Compiler compiler = new Compiler();
 			
-			CustomProcess mainProcess = compiler.load(mainObjectSourcePath, mainObjectCodePath);
+			FrameInfo mainProcess = compiler.load(mainObjectSourcePath, mainObjectCodePath);
 			
 			if(mainProcess != null) {
 				SymbolTable symbolTable = SymbolTable.ROOT;

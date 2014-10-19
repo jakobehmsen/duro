@@ -38,6 +38,7 @@ import duro.reflang.ast.ASTBuilder;
 import duro.reflang.ast.ASTToCode;
 import duro.runtime.BehaviorProcess;
 import duro.runtime.CustomProcess;
+import duro.runtime.FrameInfo;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
@@ -56,7 +57,7 @@ public class Compiler {
 		errors.printMessages();
 	}
 	
-	public CustomProcess compile(InputStream sourceCode) throws IOException {
+	public FrameInfo compile(InputStream sourceCode) throws IOException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -244,11 +245,11 @@ public class Compiler {
 		
 //		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 		int localCount = 1 + idToParameterOrdinalMap.size() + idToVariableOrdinalMap.size();
-		return new CustomProcess(localCount, code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
+		return new FrameInfo(localCount, code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 	}
 	
-	public CustomProcess load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
-		CustomProcess process = null;
+	public FrameInfo load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
+		FrameInfo process = null;
 		
 		File mainObjectSourceFile = new File(sourcePath);
 		File mainObjectCodeFile = new File(codePath);
@@ -260,7 +261,7 @@ public class Compiler {
 			try (ObjectInput oo = new ObjectInputStream(new FileInputStream(codePath))) {
 				long compilationSourceLastModified = (long) oo.readLong();
 				if(compilationSourceLastModified == mainObjectSourceFileLastModified) {
-					process = (CustomProcess) oo.readObject();
+					process = (FrameInfo) oo.readObject();
 					shouldCompile = false;
 					Debug.println(Debug.LEVEL_MEDIUM, "Loaded object file for '" + sourcePath + "'.");
 				} else {

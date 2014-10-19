@@ -16,14 +16,10 @@ public class CustomProcess extends Process {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public int localCount; // receiver + arguments + variables
-	public int maxStackSize; // stack
-	public Instruction[] instructions;
+	public FrameInfo behavior;
 
-	public CustomProcess(int localCount, int maxStackSize, Instruction[] instructions) {
-		this.localCount = localCount;
-		this.maxStackSize = maxStackSize;
-		this.instructions = instructions;
+	public CustomProcess(FrameInfo behavior) {
+		this.behavior = behavior;
 	}
 	
 //	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS = new Instruction[] {

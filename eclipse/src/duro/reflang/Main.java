@@ -7,6 +7,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
 import duro.runtime.CustomProcess;
+import duro.runtime.FrameInfo;
 
 public class Main {
 	public static void main(String[] args) {
@@ -21,7 +22,7 @@ public class Main {
 		try {
 			inputStream = new FileInputStream(sourceCodePath);
 			duro.reflang.Compiler compiler = new Compiler();
-			CustomProcess process = compiler.compile(inputStream);
+			FrameInfo process = compiler.compile(inputStream);
 			
 			if(compiler.hasErrors())
 				compiler.printErrors();
