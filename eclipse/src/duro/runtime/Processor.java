@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -1059,14 +1061,14 @@ public class Processor {
 					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD_OTHER, field);
 			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
 				e.printStackTrace();
+				currentFrame.instructionPointer++;
 			}
 			
 			break;
 		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_INT: {
 			Field field = (Field)instruction.operand1;
-			int nativeObject;
 			try {
-				nativeObject = field.getInt(null);
+				int nativeObject = field.getInt(null);
 				currentFrame.push(new IntegerProcess(protoInteger, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				currentFrame.push(new IntegerProcess(protoInteger, 0));
@@ -1077,9 +1079,8 @@ public class Processor {
 			break;
 		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_STRING: {
 			Field field = (Field)instruction.operand1;
-			String nativeObject;
 			try {
-				nativeObject = (String)field.get(null);
+				String nativeObject = (String)field.get(null);
 				currentFrame.push(new StringProcess(protoString, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				currentFrame.push(new StringProcess(protoString, ""));
@@ -1090,11 +1091,90 @@ public class Processor {
 			break;
 		} case Instruction.OPCODE_NATIVE_CLASS_FIELD_OTHER: {
 			Field field = (Field)instruction.operand1;
-			Object nativeObject;
 			try {
-				nativeObject = field.get(null);
+				Object nativeObject = field.get(null);
 				currentFrame.push(new NativeObjectHolder(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
+				currentFrame.push(new NativeObjectHolder(null));
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_INSTANCE_INVOKE: {
+			String className = (String)instruction.operand1;
+			String methodName = (String)instruction.operand2;
+			String methodParameters = (String)instruction.operand3;
+			try {
+				Class<?> theClass = Class.forName(className);
+				String[] parametersSplit = methodParameters.split(";");
+				Class<?>[] parameterTypes = new Class<?>[parametersSplit.length];
+				for(int i = 0; i < parametersSplit.length; i++)
+					parameterTypes[i] = Class.forName(parametersSplit[0]);
+				Method method = theClass.getMethod(methodName, parameterTypes);
+				if(method.getReturnType().equals(int.class))
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_INT, method);
+				else if(method.getReturnType().equals(String.class))
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_STRING, method);
+				else
+					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_OTHER, method);
+			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+				currentFrame.instructionPointer++;
+			}
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_INT: {
+			Method method = (Method)instruction.operand1;
+			Object[] arguments = new Object[method.getParameterCount()];
+			for(int i = method.getParameterCount() - 1; i > 0; i--) {
+				NativeInteroperable nativeInteroperable = (NativeInteroperable)currentFrame.pop();
+				arguments[i] = nativeInteroperable.getNativeObject();
+			}
+			NativeInteroperable receiver = (NativeInteroperable)currentFrame.pop();
+			Object nativeReceiver = receiver.getNativeObject();
+			try {
+				int nativeObject = (int)method.invoke(nativeReceiver, arguments);
+				currentFrame.push(new IntegerProcess(protoInteger, nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				currentFrame.push(new IntegerProcess(protoInteger, 0));
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_STRING: {
+			Method method = (Method)instruction.operand1;
+			Object[] arguments = new Object[method.getParameterCount()];
+			for(int i = method.getParameterCount() - 1; i > 0; i--) {
+				NativeInteroperable nativeInteroperable = (NativeInteroperable)currentFrame.pop();
+				arguments[i] = nativeInteroperable.getNativeObject();
+			}
+			NativeInteroperable receiver = (NativeInteroperable)currentFrame.pop();
+			Object nativeReceiver = receiver.getNativeObject();
+			try {
+				String nativeObject = (String)method.invoke(nativeReceiver, arguments);
+				currentFrame.push(new StringProcess(protoString, nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				currentFrame.push(new StringProcess(protoString, ""));
+				e.printStackTrace();
+			}
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_OTHER: {
+			Method method = (Method)instruction.operand1;
+			Object[] arguments = new Object[method.getParameterCount()];
+			for(int i = method.getParameterCount() - 1; i >= 0; i--) {
+				NativeInteroperable nativeInteroperable = (NativeInteroperable)currentFrame.pop();
+				arguments[i] = nativeInteroperable.getNativeObject();
+			}
+			NativeInteroperable receiver = (NativeInteroperable)currentFrame.pop();
+			Object nativeReceiver = receiver.getNativeObject();
+			try {
+				Object nativeObject = method.invoke(nativeReceiver, arguments);
+				currentFrame.push(new NativeObjectHolder(nativeObject));
+			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 				currentFrame.push(new NativeObjectHolder(null));
 				e.printStackTrace();
 			}
