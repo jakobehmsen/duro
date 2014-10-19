@@ -36,6 +36,7 @@ import duro.reflang.ast.ANTLRToAST;
 import duro.reflang.ast.AST;
 import duro.reflang.ast.ASTBuilder;
 import duro.reflang.ast.ASTToCode;
+import duro.runtime.BehaviorProcess;
 import duro.runtime.CustomProcess;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
@@ -241,7 +242,9 @@ public class Compiler {
 		
 		CodeEmission code = instructions.generate();
 		
-		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
+//		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
+		int localCount = 1 + idToParameterOrdinalMap.size() + idToVariableOrdinalMap.size();
+		return new CustomProcess(localCount, code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 	}
 	
 	public CustomProcess load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {

@@ -45,7 +45,8 @@ public class Main {
 			
 			if(mainProcess != null) {
 				SymbolTable symbolTable = SymbolTable.ROOT;
-				mainProcess.setup(symbolTable, commonsPath, new File(mainObjectSourcePath).getParentFile().getCanonicalPath());
+				Processor processor = new Processor(mainProcess.localCount, mainProcess.maxStackSize, mainProcess.instructions);
+				processor.setup(symbolTable, commonsPath, new File(mainObjectSourcePath).getParentFile().getCanonicalPath());
 	
 				long endReadMainProcess = System.currentTimeMillis();
 				Debug.println(Debug.LEVEL_MEDIUM, "Read main process.");
@@ -63,7 +64,7 @@ public class Main {
 	
 				Debug.println(Debug.LEVEL_MEDIUM, "Running...");
 				long startEvaluation = System.currentTimeMillis();
-				mainProcess.replay(interactionHistory);
+				processor.replay(interactionHistory);
 				long endEvaluation = System.currentTimeMillis();
 				Debug.println(Debug.LEVEL_MEDIUM, "Ran.");
 				Debug.println(Debug.LEVEL_MEDIUM, "Ran time: " + (endEvaluation - startEvaluation));
