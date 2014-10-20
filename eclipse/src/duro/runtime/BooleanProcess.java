@@ -16,4 +16,9 @@ public class BooleanProcess extends DictionaryProcess {
 	public String toString() {
 		return Boolean.toString(value);
 	}
+	
+	@Override
+	public Object toSerializable() {
+		return value;
+	}
 }
