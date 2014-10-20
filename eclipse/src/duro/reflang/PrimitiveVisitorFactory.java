@@ -8,10 +8,10 @@ import duro.reflang.ast.ASTString;
 import duro.reflang.ast.ASTToCode;
 import duro.runtime.Instruction;
 
-public interface PrimitiveVisitorFactory2 {
+public interface PrimitiveVisitorFactory {
 	PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression);
 	
-	public static class ConstInstruction implements PrimitiveVisitorFactory2 {
+	public static class ConstInstruction implements PrimitiveVisitorFactory {
 		private Instruction instruction;
 		private boolean doesReturn;
 
@@ -57,7 +57,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 
-	public static class IfElse implements PrimitiveVisitorFactory2 {
+	public static class IfElse implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {
@@ -94,7 +94,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 	
-	public static class While implements PrimitiveVisitorFactory2 {
+	public static class While implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {
@@ -124,7 +124,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 	
-	public static class Eval implements PrimitiveVisitorFactory2 {
+	public static class Eval implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {
@@ -164,7 +164,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 	
-	public static class ClassField implements PrimitiveVisitorFactory2 {
+	public static class ClassField implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {
@@ -181,7 +181,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 	
-	public static class InstanceInvoke implements PrimitiveVisitorFactory2 {
+	public static class InstanceInvoke implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {
@@ -206,7 +206,7 @@ public interface PrimitiveVisitorFactory2 {
 		}
 	}
 	
-	public static class NewInstance implements PrimitiveVisitorFactory2 {
+	public static class NewInstance implements PrimitiveVisitorFactory {
 		@Override
 		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
 			return new PrimitiveVisitor() {

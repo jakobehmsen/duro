@@ -9,16 +9,16 @@ import duro.reflang.CodeEmit;
 import duro.reflang.CodeEmitter;
 import duro.reflang.Label;
 import duro.reflang.PrimitiveVisitor;
-import duro.reflang.PrimitiveVisitorFactory2;
+import duro.reflang.PrimitiveVisitorFactory;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
 
 public class ASTToCode implements ASTVisitor {
-	private Hashtable<Selector, PrimitiveVisitorFactory2> primitiveMap;
+	private Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap;
 	private CodeEmitter instructions;
 	private boolean mustBeExpression;
 
-	public ASTToCode(Hashtable<Selector, PrimitiveVisitorFactory2> primitiveMap, CodeEmitter instructions, boolean mustBeExpression) {
+	public ASTToCode(Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap, CodeEmitter instructions, boolean mustBeExpression) {
 		this.primitiveMap = primitiveMap;
 		this.instructions = instructions;
 		this.mustBeExpression = mustBeExpression;
@@ -35,7 +35,7 @@ public class ASTToCode implements ASTVisitor {
 		String id = ast.message.id;
 		int parameterCount = ast.message.arguments.length;
 		
-		PrimitiveVisitorFactory2 primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
+		PrimitiveVisitorFactory primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
 			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(this, instructions, mustBeExpression);
