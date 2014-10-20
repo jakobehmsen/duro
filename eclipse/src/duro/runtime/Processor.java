@@ -22,43 +22,6 @@ public class Processor {
 	};
 
 	public static class Frame implements Serializable {
-		private static class InterfaceIdPart implements Serializable {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			public final InterfaceIdPart parent;
-			
-			private final String id;
-			private String composedId;
-			
-			public InterfaceIdPart(String id) {
-				this.parent = null;
-				this.id = id;
-			}
-			
-			public InterfaceIdPart(InterfaceIdPart parent, String id) {
-				this.parent = parent;
-				this.id = id;
-			}
-			
-			public InterfaceIdPart extend(String id) {
-				return new InterfaceIdPart(this, id);
-			}
-			
-			public String build() {
-				if(composedId == null) {
-					if(parent != null)
-						composedId = parent.build() + ";" + id;
-					else
-						composedId = id;
-				}
-				
-				return composedId;
-			}
-		}
-		
 		private static class InterfaceId implements Serializable {
 			/**
 			 * 
