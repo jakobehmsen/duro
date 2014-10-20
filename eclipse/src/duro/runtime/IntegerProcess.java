@@ -26,4 +26,9 @@ public class IntegerProcess extends BuiltinProcess implements NativeInteroperabl
 	public Object getNativeObject() {
 		return intValue;
 	}
+	
+	@Override
+	public Object toSerializable() {
+		return intValue;
+	}
 }
