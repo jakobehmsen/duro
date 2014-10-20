@@ -86,6 +86,7 @@ public class Instruction implements Serializable {
 	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_3 = 41;
 	public static final int OPCODE_EXTEND_INTER_ID = 42;
+	@PushCount(1)
 	public static final int OPCODE_SHRINK_INTER_ID = 43;
 	@PushCount(1)
 	public static final int OPCODE_LOAD_THIS = 44;
