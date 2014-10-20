@@ -773,10 +773,11 @@ public class Processor {
 					else
 						throw new RuntimeException("Could not deserialize: " + memorization);
 					
-					// If a memorized value could be found, push it and jump
+					// If a memorized value could be found, push it, jump, and shrink
 					currentFrame.push(memorizationAsProcess);
 					int shrinkPairJump = (int)instruction.operand2;
 					currentFrame.instructionPointer += shrinkPairJump;
+					currentFrame.shrinkInterfaceId();
 				}
 			}
 			currentFrame.instructionPointer++;
