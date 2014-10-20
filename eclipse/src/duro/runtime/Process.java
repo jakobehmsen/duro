@@ -20,4 +20,8 @@ public abstract class Process implements Serializable {
 	public abstract void define(int selectorCode, Process value);
 
 	public abstract void defineProto(int selectorCode, Process value);
+	
+	public Object toSerializable() {
+		throw new RuntimeException("Serialization unsupported.");
+	}
 }
