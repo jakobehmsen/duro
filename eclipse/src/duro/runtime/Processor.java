@@ -230,7 +230,7 @@ public class Processor {
 	
 	private Frame currentFrame;
 	private DictionaryProcess protoAny;
-	private DictionaryProcess singletonNil;
+	private NilProcess singletonNil;
 	private BooleanProcess singletonTrue;
 	private BooleanProcess singletonFalse;
 	private DictionaryProcess protoInteger;
@@ -247,7 +247,8 @@ public class Processor {
 		protoAny = new DictionaryProcess();
 		protoAny.defineShared(SymbolTable.Codes.Any, protoAny);
 		// Add Null singleton
-		singletonNil = protoAny.clone();
+		singletonNil = new NilProcess();
+		singletonNil.defineProto(SymbolTable.Codes.prototype, protoAny);
 		protoAny.defineShared(SymbolTable.Codes.Null, singletonNil);
 		// Add boolean True singleton
 		singletonTrue = new BooleanProcess(true);
@@ -739,8 +740,11 @@ public class Processor {
 						memorizationAsProcess = new IntegerProcess(protoInteger, (int)memorization);
 					else if(memorization instanceof Boolean)
 						memorizationAsProcess = getBoolean((boolean)memorization);
-					else
+					else if(memorization instanceof NilProcess.Serialization) {
+						memorizationAsProcess = singletonNil;
+					} else {
 						throw new RuntimeException("Could not deserialize: " + memorization);
+					}
 					
 					// If a memorized value could be found, push it, jump, and shrink
 					currentFrame.push(memorizationAsProcess);
@@ -1129,9 +1133,9 @@ public class Processor {
 			Field field = (Field)instruction.operand1;
 			try {
 				Object nativeObject = field.get(null);
-				currentFrame.push(new NativeObjectHolder(nativeObject));
+				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				currentFrame.push(new NativeObjectHolder(null));
+				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
 			currentFrame.instructionPointer++;
@@ -1208,9 +1212,9 @@ public class Processor {
 			Object nativeReceiver = receiver.getNativeObject();
 			try {
 				Object nativeObject = method.invoke(nativeReceiver, arguments);
-				currentFrame.push(new NativeObjectHolder(nativeObject));
+				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-				currentFrame.push(new NativeObjectHolder(null));
+				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
 			currentFrame.instructionPointer++;
@@ -1261,9 +1265,9 @@ public class Processor {
 			}
 			try {
 				Object nativeObject = constructor.newInstance(arguments);
-				currentFrame.push(new NativeObjectHolder(nativeObject));
+				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-				currentFrame.push(new NativeObjectHolder(null));
+				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
 			currentFrame.instructionPointer++;
@@ -1277,6 +1281,10 @@ public class Processor {
 			break;
 		}
 		}
+	}
+
+	private Process wrapNativeObject(Object nativeObject) {
+		return nativeObject != null ? new NativeObjectHolder(nativeObject) : singletonNil;
 	}
 
 	public void resume(List<InteractionHistory.Interaction> playedInstructions) {
