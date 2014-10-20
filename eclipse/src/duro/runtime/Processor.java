@@ -59,6 +59,40 @@ public class Processor {
 			}
 		}
 		
+		private static class InterfaceId implements Serializable {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			private int depth;
+			private String id;
+			
+			public InterfaceId() { }
+
+			private InterfaceId(int depth, String id) {
+				this.depth = depth;
+				this.id = id;
+			}
+
+			public InterfaceId extend(String id) {
+				String newId = depth == 0 ? id : this.id;
+				return new InterfaceId(depth + 1, newId);
+			}
+			
+			public InterfaceId shrink() {
+				String newId = depth == 0 ? null : this.id;
+				return new InterfaceId(depth - 1, newId);
+			}
+			
+			public String build() {
+				return id;
+			}
+			
+			public boolean shouldMemorize() {
+				return depth == 1;
+			}
+		}
+		
 		/**
 		 * 
 		 */
@@ -70,11 +104,11 @@ public class Processor {
 		public int instructionPointer;
 		public Object reificationHandle; 
 		
-		public InterfaceIdPart interfaceId;
+		public InterfaceId interfaceId;
 		private Process[] stack;
 		private int stackSize;
 		
-		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceIdPart interfaceId, int maxStackSize) {
+		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize) {
 			this.sender = sender;
 			this.locals = locals;
 			this.instructions = instructions;
@@ -97,11 +131,17 @@ public class Processor {
 		}
 		
 		public final void extendInterfaceId(String id) {
+//			interfaceId = interfaceId.extend(id);
 			interfaceId = interfaceId.extend(id);
 		}
 		
 		public final void shrinkInterfaceId() {
-			interfaceId = interfaceId.parent;
+//			interfaceId = interfaceId.parent;
+			interfaceId = interfaceId.shrink();
+		}
+		
+		public final boolean shouldMemorize() {
+			return interfaceId.shouldMemorize();
 		}
 		
 		public final String getInterfaceId() {
@@ -275,7 +315,7 @@ public class Processor {
 		
 		Process[] locals = new Process[localCount];
 		locals[0] = protoAny;
-		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceIdPart("default"), maxStackSize);
+		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize);
 	}
 	
 	private transient SymbolTable symbolTable;
@@ -719,10 +759,35 @@ public class Processor {
 		} case Instruction.OPCODE_EXTEND_INTER_ID: {
 			String id = (String)instruction.operand1;
 			currentFrame.extendInterfaceId(id);
+			if(currentFrame.shouldMemorize()) {
+				// What if the interface id is not an expression? Just jump?
+				
+				// Try to read memorized value
+				Object memorization = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), -1);
+				if(memorization != null) {
+					Process memorizationAsProcess;
+					if(memorization instanceof String)
+						memorizationAsProcess = new StringProcess(protoString, (String)memorization);
+					else if(memorization instanceof Integer)
+						memorizationAsProcess = new IntegerProcess(protoInteger, (int)memorization);
+					else
+						throw new RuntimeException("Could not deserialize: " + memorization);
+					
+					// If a memorized value could be found, push it and jump
+					currentFrame.push(memorizationAsProcess);
+					int shrinkPairJump = (int)instruction.operand2;
+					currentFrame.instructionPointer += shrinkPairJump;
+				}
+			}
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_SHRINK_INTER_ID: {
+			if(currentFrame.shouldMemorize()) {
+				Process toMemorize = currentFrame.peek();
+				Object toMemorizeSerialized = toMemorize.toSerializable();
+				interactionHistory.append(currentFrame.getInterfaceId(), null, toMemorizeSerialized);
+			}
 			currentFrame.shrinkInterfaceId();
 			currentFrame.instructionPointer++;
 			
