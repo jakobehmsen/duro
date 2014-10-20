@@ -50,7 +50,7 @@ public class InteractionHistory {
 		int trackIndex = tracks.get(interfaceId);
 		for(int i = trackIndex + 1; i < interactions.size(); i++) {
 			Interaction interaction = interactions.get(i);
-			if(interaction.instruction.opcode == opcode && interaction.interfaceId.equals(interfaceId)) {
+			if(/*interaction.instruction.opcode == opcode && */interaction.interfaceId.equals(interfaceId)) {
 				tracks.put(interfaceId, i);
 //				System.out.println("***Found next output for " + interfaceId + " at index " + i + "***");
 				return interaction.output;
