@@ -319,11 +319,15 @@ public class Processor {
 	private final void next(Instruction instruction, InteractionHistory interactionHistory) {
 		switch(instruction.opcode) {
 		case Instruction.OPCODE_PAUSE: {
-			Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_PAUSE);
-			if(output == null) {
-				stopRequested = true;
-				interactionHistory.append(currentFrame.getInterfaceId(), instruction, instruction);
+			if(currentFrame.shouldMemorize()) {
+				Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_PAUSE);
+				if(output == null) {
+					stopRequested = true;
+					interactionHistory.append(currentFrame.getInterfaceId(), instruction, singletonTrue.toSerializable());
+				} else {
+				}
 			} else {
+				throw new RuntimeException("Can only pause in memorize states.");
 			}
 			currentFrame.instructionPointer++;
 			
@@ -733,6 +737,8 @@ public class Processor {
 						memorizationAsProcess = new StringProcess(protoString, (String)memorization);
 					else if(memorization instanceof Integer)
 						memorizationAsProcess = new IntegerProcess(protoInteger, (int)memorization);
+					else if(memorization instanceof Boolean)
+						memorizationAsProcess = getBoolean((boolean)memorization);
 					else
 						throw new RuntimeException("Could not deserialize: " + memorization);
 					
