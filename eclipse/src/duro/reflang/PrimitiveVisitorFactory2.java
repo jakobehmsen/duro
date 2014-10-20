@@ -214,10 +214,10 @@ public interface PrimitiveVisitorFactory2 {
 				public void visitPrimitive(String id, AST[] args) {
 					ASTString className = (ASTString)args[0];
 					String[] parameters = Util.split(((ASTString)args[1]).string, ";");
-					AST[] arguments = new AST[args.length - 1];
+					AST[] arguments = new AST[args.length - 2];
 					
 					for(int i = 0; i < arguments.length; i++)
-						visitor.visitAsExpression(args[1 + i]);
+						visitor.visitAsExpression(args[i + 2]);
 					
 					instructions.addSingle(new Instruction(Instruction.OPCODE_NATIVE_NEW_INSTANCE, className.string, parameters));
 
