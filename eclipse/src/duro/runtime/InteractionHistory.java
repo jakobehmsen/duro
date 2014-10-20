@@ -12,12 +12,10 @@ public class InteractionHistory {
 		 */
 		private static final long serialVersionUID = 1L;
 		public final String interfaceId;
-		public final Instruction instruction;
 		public final Object output;
 		
-		public Interaction(String interfaceId, Instruction instruction, Object output) {
+		public Interaction(String interfaceId, Object output) {
 			this.interfaceId = interfaceId;
-			this.instruction = instruction;
 			this.output = output;
 		}
 	}
@@ -40,7 +38,7 @@ public class InteractionHistory {
 	}
 	
 	public void append(String interfaceId, Instruction instruction, Object output) {
-		interactions.add(new Interaction(interfaceId, instruction, output));
+		interactions.add(new Interaction(interfaceId, output));
 		
 		tracks.put(interfaceId, interactions.size() - 1);
 	}
@@ -50,7 +48,7 @@ public class InteractionHistory {
 		int trackIndex = tracks.get(interfaceId);
 		for(int i = trackIndex + 1; i < interactions.size(); i++) {
 			Interaction interaction = interactions.get(i);
-			if(/*interaction.instruction.opcode == opcode && */interaction.interfaceId.equals(interfaceId)) {
+			if(interaction.interfaceId.equals(interfaceId)) {
 				tracks.put(interfaceId, i);
 //				System.out.println("***Found next output for " + interfaceId + " at index " + i + "***");
 				return interaction.output;
