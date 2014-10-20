@@ -158,9 +158,11 @@ public class ASTToCode implements ASTVisitor {
 				instructions.set(start, new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, ast.id, jumpToShrink));
 			}
 		});
-		ast.body.accept(this);
+		visitAsExpression(ast.body);
 		instructions.label(shrinkLabel);
 		instructions.addSingle(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
+		if(!mustBeExpression)
+			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 	}
 
 	@Override
