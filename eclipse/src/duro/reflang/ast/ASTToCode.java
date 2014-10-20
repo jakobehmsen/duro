@@ -8,7 +8,7 @@ import duro.reflang.CodeEmission;
 import duro.reflang.CodeEmit;
 import duro.reflang.CodeEmitter;
 import duro.reflang.Label;
-import duro.reflang.PrimitiveVisitor2;
+import duro.reflang.PrimitiveVisitor;
 import duro.reflang.PrimitiveVisitorFactory2;
 import duro.runtime.Instruction;
 import duro.runtime.Selector;
@@ -38,7 +38,7 @@ public class ASTToCode implements ASTVisitor {
 		PrimitiveVisitorFactory2 primitiveVisitorFactory = primitiveMap.get(Selector.get(id, parameterCount));
 		
 		if(primitiveVisitorFactory != null) {
-			PrimitiveVisitor2 primitiveInterceptor = primitiveVisitorFactory.create(this, instructions, mustBeExpression);
+			PrimitiveVisitor primitiveInterceptor = primitiveVisitorFactory.create(this, instructions, mustBeExpression);
 			primitiveInterceptor.visitPrimitive(id, ast.message.arguments);
 		} else {
 			visitAsExpression(ast.receiver);

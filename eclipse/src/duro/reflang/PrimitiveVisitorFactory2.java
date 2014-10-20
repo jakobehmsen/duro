@@ -9,7 +9,7 @@ import duro.reflang.ast.ASTToCode;
 import duro.runtime.Instruction;
 
 public interface PrimitiveVisitorFactory2 {
-	PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression);
+	PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression);
 	
 	public static class ConstInstruction implements PrimitiveVisitorFactory2 {
 		private Instruction instruction;
@@ -21,8 +21,8 @@ public interface PrimitiveVisitorFactory2 {
 		}
 		
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					for(AST arg: args)
@@ -59,8 +59,8 @@ public interface PrimitiveVisitorFactory2 {
 
 	public static class IfElse implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					AST condition = args[0];
@@ -96,8 +96,8 @@ public interface PrimitiveVisitorFactory2 {
 	
 	public static class While implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					AST condition = args[0];
@@ -126,8 +126,8 @@ public interface PrimitiveVisitorFactory2 {
 	
 	public static class Eval implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					// Append eval arguments first
@@ -166,8 +166,8 @@ public interface PrimitiveVisitorFactory2 {
 	
 	public static class ClassField implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					if(mustBeExpression) {
@@ -183,8 +183,8 @@ public interface PrimitiveVisitorFactory2 {
 	
 	public static class InstanceInvoke implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					AST receiver = args[0];
@@ -208,8 +208,8 @@ public interface PrimitiveVisitorFactory2 {
 	
 	public static class NewInstance implements PrimitiveVisitorFactory2 {
 		@Override
-		public PrimitiveVisitor2 create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
-			return new PrimitiveVisitor2() {
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
 					ASTString className = (ASTString)args[0];
