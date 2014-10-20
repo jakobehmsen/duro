@@ -108,66 +108,6 @@ public class Compiler {
 		OrdinalAllocator idToParameterOrdinalMap = new OrdinalAllocator();
 		OrdinalAllocator idToVariableOrdinalMap = new OrdinalAllocator();
 		Debug.println(Debug.LEVEL_MEDIUM, "Generating program...");
-
-//		Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap = new Hashtable<Selector, PrimitiveVisitorFactory>();
-//		primitiveMap.put(Selector.get("ifElse", 3), new PrimitiveVisitorFactory.IfElse());
-//		primitiveMap.put(Selector.get("if", 2), new PrimitiveVisitorFactory.IfElse());
-//		primitiveMap.put(Selector.get("while", 2), new PrimitiveVisitorFactory.While());
-//		primitiveMap.put(Selector.get("not", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_BOOLEAN_NOT), true));
-//		primitiveMap.put(Selector.get("write", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
-//		primitiveMap.put(Selector.get("readln", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEXT_LINE), true));
-//		primitiveMap.put(Selector.get("pause", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_PAUSE), true));
-//		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("evalWithWithWith", 4), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("evalWithWithWithWith", 5), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
-//
-//		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
-//		primitiveMap.put(Selector.get("slotsSetProto", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET_PROTO), true));
-//		primitiveMap.put(Selector.get("slotsGet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_GET), true));
-//		primitiveMap.put(Selector.get("slotsIsDefined", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_IS_DEFINED), true));
-//		primitiveMap.put(Selector.get("slotsNames", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_NAMES), true));
-//
-//		primitiveMap.put(Selector.get("arrayGet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_GET), true));
-//		primitiveMap.put(Selector.get("arraySet", 3), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_SET), false));
-//		
-//		primitiveMap.put(Selector.get("stringConcat", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_STRING_CONCAT), true));
-//		primitiveMap.put(Selector.get("stringEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_STRING_EQUAL), true));
-//
-//		primitiveMap.put(Selector.get("intAdd", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_ADD), true));
-//		primitiveMap.put(Selector.get("intSub", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_SUB), true));
-//		primitiveMap.put(Selector.get("intMult", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_MULT), true));
-//		primitiveMap.put(Selector.get("intDiv", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_DIV), true));
-//		primitiveMap.put(Selector.get("intRem", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_REM), true));
-//		primitiveMap.put(Selector.get("intEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_EQUAL), true));
-//		primitiveMap.put(Selector.get("intGreater", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_GREATER), true));
-//		primitiveMap.put(Selector.get("intLess", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_LESS), true));
-//		primitiveMap.put(Selector.get("intToString", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_INT_TO_STRING), true));
-//
-//		primitiveMap.put(Selector.get("frameSender", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SENDER), true));
-//		primitiveMap.put(Selector.get("frameSetSender", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_SET_SENDER), false));
-//		primitiveMap.put(Selector.get("frameResume", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_FRAME_RESUME), true));
-//
-//		primitiveMap.put(Selector.get("refEqual", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_REF_EQUAL), true));
-//		primitiveMap.put(Selector.get("newDict", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_DICT), true));
-//		primitiveMap.put(Selector.get("newArray", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY), true));
-//		primitiveMap.put(Selector.get("arrayLength", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_LENGTH), true));
-//		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), false));
-//		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
-//		
-//		PendingCodeEmitter instructions = new PendingCodeEmitter();
-//
-//		Set<String> fields = new HashSet<String>();
-//		BodyVisitor programVisitor = new BodyVisitor(primitiveMap, errors, instructions, true, idToParameterOrdinalMap, idToVariableOrdinalMap, fields, fields);
-//
-//		programCtx.accept(programVisitor);
-//
-//		int parameterOffset = 1;
-//		idToParameterOrdinalMap.generate(parameterOffset);
-//		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
-//		idToVariableOrdinalMap.generate(variableOffset);
 		
 		Hashtable<Selector, PrimitiveVisitorFactory> primitiveMap = new Hashtable<Selector, PrimitiveVisitorFactory>();
 		primitiveMap.put(Selector.get("ifElse", 3), new PrimitiveVisitorFactory.IfElse());
@@ -252,7 +192,6 @@ public class Compiler {
 		
 		CodeEmission code = instructions.generate();
 		
-//		return new CustomProcess(idToParameterOrdinalMap.size(), idToVariableOrdinalMap.size(), code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 		int localCount = 1 + idToParameterOrdinalMap.size() + idToVariableOrdinalMap.size();
 		return new FrameInfo(localCount, code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 	}
