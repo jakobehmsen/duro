@@ -1,9 +1,13 @@
 package duro.reflang.ast;
 
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import duro.reflang.CodeEmission;
+import duro.reflang.CodeEmit;
 import duro.reflang.CodeEmitter;
+import duro.reflang.Label;
 import duro.reflang.PrimitiveVisitor2;
 import duro.reflang.PrimitiveVisitorFactory2;
 import duro.runtime.Instruction;
@@ -140,8 +144,22 @@ public class ASTToCode implements ASTVisitor {
 
 	@Override
 	public void visitInterfaceId(ASTInterfaceId ast) {
-		instructions.addSingle(new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, ast.id));
+		Label shrinkLabel = new Label();
+		instructions.add(new CodeEmit() {
+			@Override
+			public void allocate(List<Instruction> instructions, Map<Label, Integer> labelToIndex) {
+				instructions.add(null);
+			}
+			
+			@Override
+			public void deploy(List<Instruction> instructions, int start, int end, Map<Label, Integer> labelToIndex) {
+				int shrinkIndex = labelToIndex.get(shrinkLabel);
+				int jumpToShrink = shrinkIndex - start;
+				instructions.set(start, new Instruction(Instruction.OPCODE_EXTEND_INTER_ID, ast.id, jumpToShrink));
+			}
+		});
 		ast.body.accept(this);
+		instructions.label(shrinkLabel);
 		instructions.addSingle(new Instruction(Instruction.OPCODE_SHRINK_INTER_ID));
 	}
 
