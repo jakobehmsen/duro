@@ -94,12 +94,10 @@ public class Processor {
 		}
 		
 		public final void extendInterfaceId(String id) {
-//			interfaceId = interfaceId.extend(id);
 			interfaceId = interfaceId.extend(id);
 		}
 		
 		public final void shrinkInterfaceId() {
-//			interfaceId = interfaceId.parent;
 			interfaceId = interfaceId.shrink();
 		}
 		
