@@ -1,6 +1,6 @@
 package duro.runtime;
 
-public class BooleanProcess extends DictionaryProcess {
+public class BooleanProcess extends DictionaryProcess implements NativeInteroperable {
 	/**
 	 * 
 	 */
@@ -19,6 +19,11 @@ public class BooleanProcess extends DictionaryProcess {
 	
 	@Override
 	public Object toSerializable() {
+		return value;
+	}
+
+	@Override
+	public Object getNativeObject() {
 		return value;
 	}
 }
