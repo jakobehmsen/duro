@@ -19,7 +19,8 @@ public class SymbolTable {
 		public static final int Behavior = 9;
 		public static final int Closure = 10;
 		public static final int Frame = 11;
-		public static final int call = 12;
+		public static final int call0 = 12;
+		public static final int call2 = 13;
 	}
 	
 	public static final SymbolTable ROOT = createRoot();
