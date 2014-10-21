@@ -328,8 +328,11 @@ public class Processor {
 					break;
 				}
 			} catch(Exception e) {
+				DictionaryProcess signal = protoAny.clone();
 				NativeObjectHolder eHolder = new NativeObjectHolder(e);
-				signal(eHolder, currentFrame.getReifiedFrame(protoFrame));
+				signal.define(SymbolTable.Codes.cause, eHolder);
+				signal.define(SymbolTable.Codes.message, new StringProcess(protoString, e.getMessage()));
+				signal(signal, currentFrame.getReifiedFrame(protoFrame));
 			}
 		}
 		
@@ -884,10 +887,12 @@ public class Processor {
 			
 			break;
 		} case Instruction.OPCODE_REPORT_ERROR: {
+			@SuppressWarnings("unused")
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
 			Process signal = (Process)currentFrame.peek1();
+			StringProcess message = (StringProcess)signal.lookup(SymbolTable.Codes.message);
 			// Look up, and print, message slot which must be a string
-			System.err.println("Unhandled signal: " + signal);
+			System.err.println("Error: " + message.str);
 			currentFrame.instructionPointer++;
 			
 			break;
