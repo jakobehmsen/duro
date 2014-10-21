@@ -114,8 +114,6 @@ public class Compiler {
 		primitiveMap.put(Selector.get("if", 2), new PrimitiveVisitorFactory.IfElse());
 		primitiveMap.put(Selector.get("while", 2), new PrimitiveVisitorFactory.While());
 		primitiveMap.put(Selector.get("not", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_BOOLEAN_NOT), true));
-		primitiveMap.put(Selector.get("write", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_WRITE), false));
-		primitiveMap.put(Selector.get("readln", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEXT_LINE), true));
 		primitiveMap.put(Selector.get("pause", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_PAUSE), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
