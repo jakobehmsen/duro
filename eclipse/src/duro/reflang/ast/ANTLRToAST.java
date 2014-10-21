@@ -223,7 +223,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			for(ParserRuleContext argCtx: tailCtx.multiKeyMessageArgs().multiKeyMessageArg()) {
 				if(tailCtx.multiKeyMessageModifier().modifier.getType() == DuroLexer.SINGLE_QUOTE) {
 					// Wrap arg into closure
-					argCtx = wrapIntoClosure(ctx, ctx.invokingState, ctx.multiKeyMessageHead().multiKeyMessageModifier().behaviorParams(), argCtx);
+					argCtx = wrapIntoClosure(ctx, ctx.invokingState, tailCtx.multiKeyMessageModifier().behaviorParams(), argCtx);
 				}
 				args.add(argCtx);
 			}
