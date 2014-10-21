@@ -65,7 +65,7 @@ public class Processor {
 		
 		public final Instruction[] instructions;
 		public int instructionPointer;
-		public Object reificationHandle; 
+		public FrameProcess reification; 
 		
 		public InterfaceId interfaceId;
 		private Process[] stack;
@@ -81,16 +81,10 @@ public class Processor {
 		}
 		
 		public final FrameProcess getReifiedFrame(Process protoFrame) {
-			if(reificationHandle instanceof FrameProcess) {
-				return (FrameProcess)reificationHandle;
-			} else if(reificationHandle == null) {
-				FrameProcess reification = new FrameProcess(protoFrame, this);
-				reificationHandle = reification;
-				
-				return reification;
-			}
+			if(reification == null)
+				reification = new FrameProcess(protoFrame, this);
 			
-			return null;
+			return reification;
 		}
 		
 		public final void extendInterfaceId(String id) {
