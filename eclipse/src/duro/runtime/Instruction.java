@@ -171,10 +171,6 @@ public class Instruction implements Serializable {
 	@PushCount(1)
 	public static final int OPCODE_SP_REF_EQUAL = 84;
 
-	@PopCount(1)
-	public static final int OPCODE_SP_WRITE = 127;
-	@PushCount(1)
-	public static final int OPCODE_SP_NEXT_LINE = 128;
 	@PushCount(1)
 	public static final int OPCODE_SP_NEW_DICT = 129;
 	@PopCount(1)
