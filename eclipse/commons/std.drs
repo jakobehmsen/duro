@@ -2,7 +2,28 @@
 Standard library
 */
 
-writeln => write: \x.toString + "\n"
+Out = class: "java.lang.System" Field: "out"
+puts => (
+	on: Out Invoke: "java.io.PrintStream", "println", "java.lang.String" With: \s.toString
+)
+
+
+In = (
+	// How to support variables here when loading this file?
+	InputStream = class: "java.lang.System" Field: "in"
+	InputStreamStream = newInstance: "java.io.InputStreamReader", "java.io.InputStream" With: InputStream
+	newInstance: "java.io.BufferedReader", "java.io.Reader" With: InputStreamStream
+)
+
+gets => (
+	on: In Invoke: "java.io.BufferedReader", "readLine", ""
+)
+
+gets => (
+	puts: \s
+	gets
+)
+
 
 /*
 // Implicit inheritance based on protocol?
@@ -72,3 +93,5 @@ Closure@call => eval: this With: \arg0 With: \arg1 With: \arg2 With: \arg3
 
 True@toString => "True"
 False@toString => "False"
+
+Null@toString => "Null"
