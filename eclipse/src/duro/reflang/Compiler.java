@@ -182,6 +182,8 @@ public class Compiler {
 		programAst.writeTo(astWriter);
 		Debug.println(Debug.LEVEL_MEDIUM, "Generated ast:\n" + astStringWriter.toString());
 		
+		// Postpone code generation from ast's till runtime?
+		// Instead, a single instruction, GENERATE with the ast as an operand, is generated?
 		CodeEmitter instructions = new CodeEmitter();
 		ASTToCode programAstToCode = new ASTToCode(primitiveMap, instructions, false);
 		programAst.accept(programAstToCode);
