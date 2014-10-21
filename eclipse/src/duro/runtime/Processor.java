@@ -1055,42 +1055,6 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_WRITE: {
-			Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_SP_WRITE);
-			if(output == null) {
-				StringProcess value = (StringProcess)currentFrame.pop();
-				System.out.print(value.str);
-				interactionHistory.append(currentFrame.getInterfaceId(), instruction, instruction);
-			} else {
-				currentFrame.pop1();
-			}
-			currentFrame.instructionPointer++;
-			
-			break;
-		} case Instruction.OPCODE_SP_NEXT_LINE: {
-			String line;
-
-			Object output = interactionHistory.nextOutputFor(currentFrame.getInterfaceId(), Instruction.OPCODE_SP_NEXT_LINE);
-			
-			if(output == null) {
-				try {
-					BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-					line = br.readLine();
-					interactionHistory.append(currentFrame.getInterfaceId(), instruction, line);
-				} catch (IOException e) {
-					e.printStackTrace();
-					line = null;
-				}
-			} else {
-				line = (String)output;
-			}
-
-			StringProcess string = createString(line);
-			
-			currentFrame.push(string);
-			currentFrame.instructionPointer++;
-			
-			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
 			DictionaryProcess newDict = new DictionaryProcess();
 			newDict.defineProto(SymbolTable.Codes.prototype, protoAny);
