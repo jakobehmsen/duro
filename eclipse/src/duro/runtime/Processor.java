@@ -70,7 +70,7 @@ public class Processor {
 		public InterfaceId interfaceId;
 		private Process[] stack;
 		private int stackSize;
-		private SignalHandler handler;
+		private Process handler;
 		
 		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize) {
 			this.sender = sender;
@@ -81,7 +81,7 @@ public class Processor {
 			stack = new Process[maxStackSize];
 		}
 		
-		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize, SignalHandler handler) {
+		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize, Process handler) {
 			this.sender = sender;
 			this.locals = locals;
 			this.instructions = instructions;
@@ -89,6 +89,10 @@ public class Processor {
 			stackSize = 0;
 			stack = new Process[maxStackSize];
 			this.handler = handler;
+		}
+		
+		public final Frame getNearestFrameWithHandler() {
+			return handler != null ? this : sender.getNearestFrameWithHandler();
 		}
 		
 		public final FrameProcess getReifiedFrame(Process protoFrame) {
@@ -279,10 +283,19 @@ public class Processor {
 		// Add Closure prototype
 		closureBehavior = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
+		// Add Error handler
+		DictionaryProcess singletonErrorHandler = protoAny.clone();
+		singletonErrorHandler.define(SymbolTable.Codes.call2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
+			// Report uncaught signal as error
+			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
+			new Instruction(Instruction.OPCODE_LOAD_LOC, 2), // Load frame
+			new Instruction(Instruction.OPCODE_REPORT_ERROR),
+			new Instruction(Instruction.OPCODE_FINISH)
+		})));
 		
 		Process[] locals = new Process[localCount];
 		locals[0] = protoAny;
-		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize);
+		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize, singletonErrorHandler);
 	}
 	
 	private transient SymbolTable symbolTable;
@@ -298,17 +311,25 @@ public class Processor {
 	@SuppressWarnings("unused")
 	public void replay(InteractionHistory interactionHistory) {
 		Debug.println(Debug.LEVEL_HIGH, "replay");
-		
-		if(currentFrame != null) {
-			while(!stopRequested) {
-				Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
-				
-				if(Debug.maxLevel >= Debug.LEVEL_HIGH) {
-					Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stackToString());
-					Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+
+		while(true) {
+			try {
+				if(currentFrame != null) {
+					while(!stopRequested) {
+						Instruction instruction = currentFrame.instructions[currentFrame.instructionPointer];
+						
+						if(Debug.maxLevel >= Debug.LEVEL_HIGH) {
+							Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stackToString());
+							Debug.println(Debug.LEVEL_HIGH, "play: " + instruction);
+						}
+						
+						next(instruction, interactionHistory);
+					}
+					break;
 				}
-				
-				next(instruction, interactionHistory);
+			} catch(Exception e) {
+				NativeObjectHolder eHolder = new NativeObjectHolder(e);
+				signal(eHolder, currentFrame.getReifiedFrame(protoFrame));
 			}
 		}
 		
@@ -316,6 +337,19 @@ public class Processor {
 			Debug.println(Debug.LEVEL_HIGH, "stack: " + currentFrame.stackToString());
 		
 		Debug.println(Debug.LEVEL_HIGH, "/replay");
+	}
+	
+	private final void signal(Process signal, FrameProcess frame) {
+		Frame nearestFrameWithHandler = frame.frame.getNearestFrameWithHandler();
+		Instruction[] signalInstructions = new Instruction[] {
+			new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+			new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+			new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
+			new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call2),
+			new Instruction(Instruction.OPCODE_RET),
+		};
+		currentFrame = 
+			new Frame(nearestFrameWithHandler.sender, new Process[] {nearestFrameWithHandler.handler, signal, frame}, signalInstructions, nearestFrameWithHandler.interfaceId, 3);
 	}
 	
 	private boolean stopRequested;
@@ -820,6 +854,43 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_DO_HANDLE: {
+			Process attempt = currentFrame.peek();
+			Process handler = currentFrame.peek1();
+			currentFrame.pop2();
+			
+			Object callable = attempt.getCallable(SymbolTable.Codes.call0);
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] locals = new Process[behavior.frameInfo.localCount];
+				locals[0] = attempt;
+				
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize, handler);
+			} else if(callable != null) {
+				// Send some kind of generic call message?
+				Process[] locals = new Process[1];
+				
+				Process process = (Process)callable;
+				locals[0] = process;
+				
+				Instruction[] forwardMessageInstructions = new Instruction[] {
+					new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+					new Instruction(Instruction.OPCODE_SEND_CODE_0, SymbolTable.Codes.call0)
+				};
+				currentFrame = new Frame(currentFrame, locals, forwardMessageInstructions, currentFrame.interfaceId, 0);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(SymbolTable.Codes.call0) + "'.");
+			}
+			
+			break;
+		} case Instruction.OPCODE_REPORT_ERROR: {
+			FrameProcess frame = (FrameProcess)currentFrame.peek();
+			Process signal = (Process)currentFrame.peek1();
+			// Look up, and print, message slot which must be a string
+			System.err.println("Unhandled signal: " + signal);
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
@@ -1103,6 +1174,7 @@ public class Processor {
 				else
 					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_CLASS_FIELD_OTHER, field);
 			} catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
+				// Call handler
 				e.printStackTrace();
 				currentFrame.instructionPointer++;
 			}
@@ -1114,6 +1186,7 @@ public class Processor {
 				int nativeObject = field.getInt(null);
 				currentFrame.push(new IntegerProcess(protoInteger, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// Call handler
 				currentFrame.push(new IntegerProcess(protoInteger, 0));
 				e.printStackTrace();
 			}
@@ -1126,6 +1199,7 @@ public class Processor {
 				String nativeObject = (String)field.get(null);
 				currentFrame.push(new StringProcess(protoString, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// Call handler
 				currentFrame.push(new StringProcess(protoString, ""));
 				e.printStackTrace();
 			}
@@ -1138,6 +1212,7 @@ public class Processor {
 				Object nativeObject = field.get(null);
 				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// Call handler
 				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
@@ -1161,6 +1236,7 @@ public class Processor {
 				else
 					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_INSTANCE_INVOKE_OTHER, method);
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+				// Call handler
 				e.printStackTrace();
 				currentFrame.instructionPointer++;
 			}
@@ -1179,6 +1255,7 @@ public class Processor {
 				int nativeObject = (int)method.invoke(nativeReceiver, arguments);
 				currentFrame.push(new IntegerProcess(protoInteger, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				// Call handler
 				currentFrame.push(new IntegerProcess(protoInteger, 0));
 				e.printStackTrace();
 			}
@@ -1198,6 +1275,7 @@ public class Processor {
 				String nativeObject = (String)method.invoke(nativeReceiver, arguments);
 				currentFrame.push(new StringProcess(protoString, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				// Call handler
 				currentFrame.push(new StringProcess(protoString, ""));
 				e.printStackTrace();
 			}
@@ -1217,6 +1295,7 @@ public class Processor {
 				Object nativeObject = method.invoke(nativeReceiver, arguments);
 				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+				// Call handler
 				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
@@ -1237,6 +1316,7 @@ public class Processor {
 				else
 					currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_NATIVE_NEW_INSTANCE_OTHER, constructor);
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+				// Call handler
 				e.printStackTrace();
 				currentFrame.instructionPointer++;
 			}
@@ -1253,6 +1333,7 @@ public class Processor {
 				String nativeObject = (String)constructor.newInstance(arguments);
 				currentFrame.push(new StringProcess(protoString, nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+				// Call handler
 				currentFrame.push(new StringProcess(protoString, ""));
 				e.printStackTrace();
 			}
@@ -1270,6 +1351,7 @@ public class Processor {
 				Object nativeObject = constructor.newInstance(arguments);
 				currentFrame.push(wrapNativeObject(nativeObject));
 			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+				// Call handler
 				currentFrame.push(singletonNil);
 				e.printStackTrace();
 			}
