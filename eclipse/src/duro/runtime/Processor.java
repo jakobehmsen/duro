@@ -70,6 +70,7 @@ public class Processor {
 		public InterfaceId interfaceId;
 		private Process[] stack;
 		private int stackSize;
+		private SignalHandler handler;
 		
 		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize) {
 			this.sender = sender;
@@ -78,6 +79,16 @@ public class Processor {
 			this.interfaceId = interfaceId;
 			stackSize = 0;
 			stack = new Process[maxStackSize];
+		}
+		
+		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize, SignalHandler handler) {
+			this.sender = sender;
+			this.locals = locals;
+			this.instructions = instructions;
+			this.interfaceId = interfaceId;
+			stackSize = 0;
+			stack = new Process[maxStackSize];
+			this.handler = handler;
 		}
 		
 		public final FrameProcess getReifiedFrame(Process protoFrame) {
