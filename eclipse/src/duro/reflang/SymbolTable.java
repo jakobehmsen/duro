@@ -19,8 +19,8 @@ public class SymbolTable {
 		public static final int Behavior = 9;
 		public static final int Closure = 10;
 		public static final int Frame = 11;
-		public static final int call0 = 12;
-		public static final int call2 = 13;
+		public static final int call = 12;
+		public static final int call_2 = 13;
 		public static final int cause = 14;
 		public static final int message = 15;
 	}
@@ -33,10 +33,13 @@ public class SymbolTable {
 
 		try {
 			for(Field codeField: Codes.class.getFields()) {
-				String id = codeField.getName();
+				String selector = codeField.getName();
+				String[] selectorSplit = selector.split("_");
+				String id = selectorSplit[0];
+				int arity = selectorSplit.length == 2 ? Integer.parseInt(selectorSplit[1]) : 0;
 				int symbolCode = codeField.getInt(null);
-				
-				symbolTable.add(Selector.get(id), symbolCode);
+
+				symbolTable.add(Selector.get(id, arity), symbolCode);
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();

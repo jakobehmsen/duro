@@ -285,7 +285,7 @@ public class Processor {
 		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
 		// Add Error handler
 		DictionaryProcess singletonErrorHandler = protoAny.clone();
-		singletonErrorHandler.define(SymbolTable.Codes.call2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
+		singletonErrorHandler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
 			// Report uncaught signal as error
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 2), // Load frame
@@ -348,7 +348,7 @@ public class Processor {
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
-			new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call2),
+			new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2),
 			new Instruction(Instruction.OPCODE_RET),
 		};
 		currentFrame = 
@@ -862,7 +862,7 @@ public class Processor {
 			Process handler = currentFrame.peek1();
 			currentFrame.pop2();
 			
-			Object callable = attempt.getCallable(SymbolTable.Codes.call0);
+			Object callable = attempt.getCallable(SymbolTable.Codes.call);
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
 				Process[] locals = new Process[behavior.frameInfo.localCount];
@@ -878,11 +878,11 @@ public class Processor {
 				
 				Instruction[] forwardMessageInstructions = new Instruction[] {
 					new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
-					new Instruction(Instruction.OPCODE_SEND_CODE_0, SymbolTable.Codes.call0)
+					new Instruction(Instruction.OPCODE_SEND_CODE_0, SymbolTable.Codes.call)
 				};
 				currentFrame = new Frame(currentFrame, locals, forwardMessageInstructions, currentFrame.interfaceId, 0);
 			} else {
-				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(SymbolTable.Codes.call0) + "'.");
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(SymbolTable.Codes.call) + "'.");
 			}
 			
 			break;
