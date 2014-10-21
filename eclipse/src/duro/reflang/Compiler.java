@@ -122,6 +122,7 @@ public class Compiler {
 		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWithWith", 4), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWithWithWith", 5), new PrimitiveVisitorFactory.Eval());
+		primitiveMap.put(Selector.get("doHandle", 5), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_DO_HANDLE), true));
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
 		primitiveMap.put(Selector.get("classField", 2), new PrimitiveVisitorFactory.ClassField());
