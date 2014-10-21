@@ -107,6 +107,11 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_THIS_FRAME = 52;
 	@PushCount(1)
 	public static final int OPCODE_LOAD_BEHAVIOR = 54;
+	@PopCount(2)
+	@PushCount(1)
+	public static final int OPCODE_DO_HANDLE = 55;
+	@PopCount(2)
+	public static final int OPCODE_REPORT_ERROR = 56;
 
 	@PopCount(2)
 	@PushCount(1)
