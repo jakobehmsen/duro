@@ -858,8 +858,8 @@ public class Processor {
 			
 			break;
 		} case Instruction.OPCODE_DO_HANDLE: {
-			Process attempt = currentFrame.peek();
-			Process handler = currentFrame.peek1();
+			Process handler = currentFrame.peek();
+			Process attempt = currentFrame.peek1();
 			currentFrame.pop2();
 			
 			Object callable = attempt.getCallable(SymbolTable.Codes.call);
