@@ -9,10 +9,9 @@ puts => (
 
 
 In = (
-	// How to support variables here when loading this file?
-	InputStream = class: "java.lang.System" Field: "in"
-	InputStreamStream = newInstance: "java.io.InputStreamReader", "java.io.InputStream" With: InputStream
-	newInstance: "java.io.BufferedReader", "java.io.Reader" With: InputStreamStream
+	var inputStream = class: "java.lang.System" Field: "in"
+	var inputStreamStream = newInstance: "java.io.InputStreamReader", "java.io.InputStream" With: inputStream
+	newInstance: "java.io.BufferedReader", "java.io.Reader" With: inputStreamStream
 )
 
 gets => (
