@@ -1092,13 +1092,14 @@ public class Processor {
 				}
 				
 				Compiler compiler = new Compiler();
-				FrameInfo customProcess = compiler.load(sourcePath, codePath);
+				FrameInfo processFrame = compiler.load(sourcePath, codePath);
 				// Assumed to end with finish instruction. Replace finish with pop_frame.
-				customProcess.instructions[customProcess.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
-				Process[] locals = new Process[]{protoAny};
+				processFrame.instructions[processFrame.instructions.length - 1] = new Instruction(Instruction.OPCODE_RET_NONE);
+				Process[] locals = new Process[processFrame.localCount];
+				locals[0] = protoAny;
 //				customProcess.currentFrame.locals = new Process[]{protoAny};
 				currentFrame = new Frame(
-					currentFrame, locals, customProcess.instructions, currentFrame.interfaceId, customProcess.maxStackSize);
+					currentFrame, locals, processFrame.instructions, currentFrame.interfaceId, processFrame.maxStackSize);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
