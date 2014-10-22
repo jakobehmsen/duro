@@ -187,6 +187,15 @@ public class ASTToCode implements ASTVisitor {
 				value.accept(this);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SET, id, arity));
 			break;
+		case ASTSlotAssignment.TYPE_SHARED:
+			if(valueAsExpression) {
+				visitAsExpression(value);
+				if(mustBeExpression)
+					instructions.addSingle(new Instruction(Instruction.OPCODE_DUP1));
+			} else
+				value.accept(this);
+			instructions.addSingle(new Instruction(Instruction.OPCODE_SET_SHARED, id, arity));
+			break;
 		case ASTSlotAssignment.TYPE_PROTO:
 			if(valueAsExpression) {
 				visitAsExpression(value);
