@@ -654,8 +654,8 @@ public class Processor {
 			int code = (int)instruction.operand1;
 			Process value = currentFrame.peek();
 			Process receiver = (Process)currentFrame.peek1();
-			currentFrame.pop2();
 			receiver.define(code, value);
+			currentFrame.pop2();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -670,8 +670,8 @@ public class Processor {
 			int code = (int)instruction.operand1;
 			Process value = currentFrame.peek();
 			Process receiver = (Process)currentFrame.peek1();
-			currentFrame.pop2();
 			receiver.defineShared(code, value);
+			currentFrame.pop2();
 			currentFrame.instructionPointer++;
 			
 			break;
@@ -686,8 +686,8 @@ public class Processor {
 			int code = (int)instruction.operand1;
 			Process value = currentFrame.peek();
 			Process receiver = (Process)currentFrame.peek1();
-			currentFrame.pop2();
 			receiver.defineProto(code, value);
+			currentFrame.pop2();
 			currentFrame.instructionPointer++;
 			
 			break;
