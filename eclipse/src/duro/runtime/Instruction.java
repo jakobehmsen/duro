@@ -62,74 +62,77 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SET = 26;
 	public static final int OPCODE_SET_CODE = 27;
 	@PopCount(2)
-	public static final int OPCODE_SET_PROTO = 28;
-	public static final int OPCODE_SET_PROTO_CODE = 29;
+	public static final int OPCODE_SET_SHARED = 28;
+	public static final int OPCODE_SET_SHARED_CODE = 29;
+	@PopCount(2)
+	public static final int OPCODE_SET_PROTO = 30;
+	public static final int OPCODE_SET_PROTO_CODE = 31;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_GET = 30;
+	public static final int OPCODE_GET = 32;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_GET_CODE = 31;
+	public static final int OPCODE_GET_CODE = 33;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_IS_DEFINED = 32;
+	public static final int OPCODE_IS_DEFINED = 34;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_IS_DEFINED_CODE = 33;
+	public static final int OPCODE_IS_DEFINED_CODE = 35;
 	@PopCount(3)
-	public static final int OPCODE_SLOTS_SET = 34;
+	public static final int OPCODE_SLOTS_SET = 36;
 	@PopCount(3)
-	public static final int OPCODE_SLOTS_SET_PROTO = 35;
+	public static final int OPCODE_SLOTS_SET_PROTO = 37;
 	@PopCount(3)
 	@PushCount(1)
-	public static final int OPCODE_SLOTS_GET = 36;
+	public static final int OPCODE_SLOTS_GET = 38;
 	@PopCount(2)
 	@PushCount(1)
-	public static final int OPCODE_SLOTS_IS_DEFINED = 37;
+	public static final int OPCODE_SLOTS_IS_DEFINED = 39;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_SLOTS_NAMES = 38;
+	public static final int OPCODE_SLOTS_NAMES = 40;
 	@PopCount(source = PopCount.Source.Operand.class, value = 0)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE = 39;
+	public static final int OPCODE_CALL_CLOSURE = 42;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_0 = 40;
+	public static final int OPCODE_CALL_CLOSURE_0 = 43;
 	@PopCount(2)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_1 = 41;
+	public static final int OPCODE_CALL_CLOSURE_1 = 44;
 	@PopCount(3)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_2 = 42;
+	public static final int OPCODE_CALL_CLOSURE_2 = 45;
 	@PopCount(4)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_3 = 43;
-	public static final int OPCODE_EXTEND_INTER_ID = 44;
+	public static final int OPCODE_CALL_CLOSURE_3 = 46;
+	public static final int OPCODE_EXTEND_INTER_ID = 47;
 	@PushCount(1)
-	public static final int OPCODE_SHRINK_INTER_ID = 45;
+	public static final int OPCODE_SHRINK_INTER_ID = 48;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_THIS = 46;
+	public static final int OPCODE_LOAD_THIS = 49;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_NULL = 47;
+	public static final int OPCODE_LOAD_NULL = 50;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_LOC = 48;
+	public static final int OPCODE_LOAD_LOC = 51;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_INT = 49;
+	public static final int OPCODE_LOAD_INT = 52;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_TRUE = 50;
+	public static final int OPCODE_LOAD_TRUE = 53;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_FALSE = 51;
+	public static final int OPCODE_LOAD_FALSE = 54;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_STRING = 52;
+	public static final int OPCODE_LOAD_STRING = 55;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_THIS_FRAME = 53;
+	public static final int OPCODE_LOAD_THIS_FRAME = 56;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_BEHAVIOR = 54;
+	public static final int OPCODE_LOAD_BEHAVIOR = 57;
 	@PopCount(2)
 	@PushCount(1)
-	public static final int OPCODE_DO_HANDLE = 55;
+	public static final int OPCODE_DO_HANDLE = 58;
 	@PopCount(2)
-	public static final int OPCODE_REPORT_ERROR = 56;
+	public static final int OPCODE_REPORT_ERROR = 59;
 
 	@PopCount(2)
 	@PushCount(1)
