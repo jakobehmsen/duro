@@ -327,6 +327,16 @@ public class Processor {
 					break;
 				}
 			} catch(Exception e) {
+				// Do some stack maintenance
+				
+				// If current instruction only pops stack after potential errors may occur
+				Instruction currentInstruction = currentFrame.instructions[currentFrame.instructionPointer];
+				if(Instruction.popsAfterError(currentInstruction)) {
+					// Then the popping should be done now
+					int popCount = Instruction.getPopCount(currentInstruction);
+					currentFrame.popN(popCount);
+				}
+				
 				NativeObjectHolder nativeSignal = new NativeObjectHolder(e);
 				Process handler = protoAny.lookup(SymbolTable.Codes.Handler);
 				Instruction[] handleInstructions = new Instruction[] {
@@ -338,7 +348,7 @@ public class Processor {
 				};
 				FrameProcess frame = currentFrame.getReifiedFrame(protoFrame);
 				currentFrame = 
-					new Frame(frame.frame.sender, new Process[] {handler, nativeSignal, frame}, handleInstructions, frame.frame.interfaceId, 3);
+					new Frame(frame.frame, new Process[] {handler, nativeSignal, frame}, handleInstructions, frame.frame.interfaceId, 3);
 //				DictionaryProcess signal = protoAny.clone();
 //				NativeObjectHolder eHolder = new NativeObjectHolder(e);
 //				signal.define(SymbolTable.Codes.cause, eHolder);
