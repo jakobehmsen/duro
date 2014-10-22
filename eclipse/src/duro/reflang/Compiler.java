@@ -135,6 +135,7 @@ public class Compiler {
 		primitiveMap.put(Selector.get("newInstanceWith", 3), new PrimitiveVisitorFactory.NewInstance());
 		primitiveMap.put(Selector.get("newInstanceWith", 4), new PrimitiveVisitorFactory.NewInstance());
 
+		primitiveMap.put(Selector.get("isSet", 2), new PrimitiveVisitorFactory.IsSet());
 		primitiveMap.put(Selector.get("slotsSet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET), true));
 		primitiveMap.put(Selector.get("slotsSetProto", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_SET_PROTO), true));
 		primitiveMap.put(Selector.get("slotsGet", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SLOTS_GET), true));
