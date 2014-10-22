@@ -93,7 +93,7 @@ public class Processor {
 			return handler != null ? this : sender.getNearestFrameWithHandler();
 		}
 		
-		public final FrameProcess getReifiedFrame(Process protoFrame) {
+		public final FrameProcess getReifiedFrame(LocalizableProcess protoFrame) {
 			if(reification == null)
 				reification = new FrameProcess(protoFrame, this);
 			
@@ -686,9 +686,12 @@ public class Processor {
 			int code = (int)instruction.operand1;
 			Process receiver = (Process)currentFrame.peek();
 			Process value = receiver.lookup(code);
-			currentFrame.set0(value);
-			currentFrame.instructionPointer++;
-			
+			if(value != null) {
+				currentFrame.set0(value);
+				currentFrame.instructionPointer++;
+			} else {
+				throw new RuntimeException("Undefined slot: " + symbolTable.getIdFromSymbolCode(code));
+			}
 			break;
 		} 
 		
