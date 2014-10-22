@@ -1,6 +1,6 @@
 package duro.runtime;
 
-public class FrameProcess extends BuiltinProcess {
+public class FrameProcess extends LazyCloneProcess {
 	/**
 	 * 
 	 */
@@ -8,7 +8,7 @@ public class FrameProcess extends BuiltinProcess {
 
 	public Processor.Frame frame;
 
-	public FrameProcess(Process prototype, Processor.Frame frame) {
+	public FrameProcess(LocalizableProcess prototype, Processor.Frame frame) {
 		super(prototype);
 		this.frame = frame;
 	}
