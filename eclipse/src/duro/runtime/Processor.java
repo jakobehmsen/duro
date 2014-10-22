@@ -690,7 +690,25 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SLOTS_SET: {
+		} 
+		
+		 case Instruction.OPCODE_IS_DEFINED: {
+			String id = (String)instruction.operand1;
+			int parameterCount = (int)instruction.operand2;
+			int code = symbolTable.getSymbolCodeFromId(Selector.get(id, parameterCount));
+			currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_IS_DEFINED_CODE, code);
+			
+			break;
+		} case Instruction.OPCODE_IS_DEFINED_CODE: {
+			int code = (int)instruction.operand1;
+			Process receiver = (Process)currentFrame.peek();
+			currentFrame.set0(getBoolean(receiver.isDefined(code)));
+			currentFrame.instructionPointer++;
+			
+			break;
+		}
+		
+		case Instruction.OPCODE_SLOTS_SET: {
 			Process value = currentFrame.peek();
 			StringProcess key = (StringProcess)currentFrame.peek1();
 			Process receiver = (Process)currentFrame.peek2();
