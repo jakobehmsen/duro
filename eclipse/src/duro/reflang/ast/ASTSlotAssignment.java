@@ -6,8 +6,9 @@ import duro.io.TreeWriter;
 
 public class ASTSlotAssignment implements AST {
 	public static final int TYPE_REGULAR = 0;
-	public static final int TYPE_PROTO = 1;
-	public static final int TYPE_QUOTED = 2;
+	public static final int TYPE_SHARED = 1;
+	public static final int TYPE_PROTO = 2;
+	public static final int TYPE_QUOTED = 3;
 	
 	public final int type;
 	public final AST receiver;
