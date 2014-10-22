@@ -313,7 +313,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			return new ASTBuilderFromReceiver() {
 				@Override
 				public ASTBuilder createBuilder(ASTBuilder receiver) {
-					return () -> new ASTSlotAssignment(ASTSlotAssignment.TYPE_REGULAR, receiver.build(), id, paramIds.size(), valueBuilder.build());
+					int type = isSharedId(id) ? ASTSlotAssignment.TYPE_SHARED : ASTSlotAssignment.TYPE_REGULAR;
+					return () -> new ASTSlotAssignment(type, receiver.build(), id, paramIds.size(), valueBuilder.build());
 				}
 			};
 		} case DuroLexer.ASSIGN_PROTO: {
@@ -446,7 +447,8 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			switch(entryCtx.assignmentOperator().op.getType()) {
 			case DuroLexer.ASSIGN:
 				fields.add(id);
-				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_REGULAR, paramIds.size(), valueAst);
+				int type = isSharedId(id) ? ASTSlotAssignment.TYPE_SHARED : ASTSlotAssignment.TYPE_REGULAR;
+				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, type, paramIds.size(), valueAst);
 				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
@@ -471,6 +473,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		});
 	}
 	
+	private boolean isSharedId(String id) {
+		return Character.isUpperCase(id.charAt(0));
+	}
+
 	@Override
 	public ASTBuilder visitClosure(ClosureContext ctx) {
 		OrdinalAllocator newIdToParameterOrdinalMap = idToParameterOrdinalMap.newInnerEnd();
