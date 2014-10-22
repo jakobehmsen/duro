@@ -46,4 +46,10 @@ public class CustomProcess extends Process {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public boolean isDefined(int code) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

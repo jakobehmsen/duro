@@ -27,6 +27,11 @@ public class NativeObjectHolder extends Process implements NativeInteroperable {
 	public Process lookup(int selectorCode) {
 		return null;
 	}
+	
+	@Override
+	public boolean isDefined(int code) {
+		return false;
+	}
 
 	@Override
 	public String[] getNames() {

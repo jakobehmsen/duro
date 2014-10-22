@@ -15,6 +15,8 @@ public abstract class Process implements Serializable {
 
 	public abstract Process lookup(int selectorCode);
 
+	public abstract boolean isDefined(int code);
+
 	public abstract String[] getNames();
 
 	public abstract void define(int selectorCode, Process value);

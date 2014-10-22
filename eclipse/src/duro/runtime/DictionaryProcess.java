@@ -76,6 +76,11 @@ public class DictionaryProcess extends Process {
 	}
 	
 	@Override
+	public boolean isDefined(int code) {
+		return properties.containsKey(code);
+	}
+	
+	@Override
 	public String[] getNames() {
 		return properties.keySet().toArray(new String[properties.size()]);
 	}

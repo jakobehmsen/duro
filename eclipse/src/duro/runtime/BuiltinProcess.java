@@ -49,4 +49,9 @@ public class BuiltinProcess extends Process {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public boolean isDefined(int code) {
+		return prototype.isDefined(code);
+	}
 }
