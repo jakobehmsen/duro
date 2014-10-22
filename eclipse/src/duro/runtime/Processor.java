@@ -888,6 +888,7 @@ public class Processor {
 			@SuppressWarnings("unused")
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
 			Process signal = (Process)currentFrame.peek1();
+			currentFrame.pop2();
 			StringProcess message = (StringProcess)signal.lookup(SymbolTable.Codes.message);
 			// Look up, and print, message slot which must be a string
 			System.err.println("Error: " + message.str);
