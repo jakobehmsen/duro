@@ -659,6 +659,22 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SET_SHARED: {
+			String id = (String)instruction.operand1;
+			int parameterCount = (int)instruction.operand2;
+			int code = symbolTable.getSymbolCodeFromId(Selector.get(id, parameterCount));
+			currentFrame.instructions[currentFrame.instructionPointer] = new Instruction(Instruction.OPCODE_SET_SHARED_CODE, code);
+			
+			break;
+		} case Instruction.OPCODE_SET_SHARED_CODE: {
+			int code = (int)instruction.operand1;
+			Process value = currentFrame.peek();
+			Process receiver = (Process)currentFrame.peek1();
+			currentFrame.pop2();
+			receiver.defineShared(code, value);
+			currentFrame.instructionPointer++;
+			
+			break;
 		} case Instruction.OPCODE_SET_PROTO: {
 			String id = (String)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
