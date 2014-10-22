@@ -282,18 +282,19 @@ public class Processor {
 		closureBehavior = protoAny.clone();
 		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
 		// Add Error handler
-		DictionaryProcess singletonErrorHandler = protoAny.clone();
-		singletonErrorHandler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
+		DictionaryProcess handler = protoAny.clone();
+		handler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
 			// Report uncaught signal as error
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 2), // Load frame
 			new Instruction(Instruction.OPCODE_REPORT_ERROR),
 			new Instruction(Instruction.OPCODE_FINISH)
 		})));
+		protoAny.defineShared(SymbolTable.Codes.Handler, handler);
 		
 		Process[] locals = new Process[localCount];
 		locals[0] = protoAny;
-		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize, singletonErrorHandler);
+		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize, handler);
 	}
 	
 	private transient SymbolTable symbolTable;
@@ -326,11 +327,23 @@ public class Processor {
 					break;
 				}
 			} catch(Exception e) {
-				DictionaryProcess signal = protoAny.clone();
-				NativeObjectHolder eHolder = new NativeObjectHolder(e);
-				signal.define(SymbolTable.Codes.cause, eHolder);
-				signal.define(SymbolTable.Codes.message, new StringProcess(protoString, e.getMessage()));
-				signal(signal, currentFrame.getReifiedFrame(protoFrame));
+				NativeObjectHolder nativeSignal = new NativeObjectHolder(e);
+				Process handler = protoAny.lookup(SymbolTable.Codes.Handler);
+				Instruction[] handleInstructions = new Instruction[] {
+					new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+					new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+					new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
+					new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2),
+					new Instruction(Instruction.OPCODE_RET),
+				};
+				FrameProcess frame = currentFrame.getReifiedFrame(protoFrame);
+				currentFrame = 
+					new Frame(frame.frame.sender, new Process[] {handler, nativeSignal, frame}, handleInstructions, frame.frame.interfaceId, 3);
+//				DictionaryProcess signal = protoAny.clone();
+//				NativeObjectHolder eHolder = new NativeObjectHolder(e);
+//				signal.define(SymbolTable.Codes.cause, eHolder);
+//				signal.define(SymbolTable.Codes.message, new StringProcess(protoString, e.getMessage()));
+//				signal(signal, currentFrame.getReifiedFrame(protoFrame));
 			}
 		}
 		
@@ -340,18 +353,18 @@ public class Processor {
 		Debug.println(Debug.LEVEL_HIGH, "/replay");
 	}
 	
-	private final void signal(Process signal, FrameProcess frame) {
-		Frame nearestFrameWithHandler = frame.frame.getNearestFrameWithHandler();
-		Instruction[] signalInstructions = new Instruction[] {
-			new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
-			new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
-			new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
-			new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2),
-			new Instruction(Instruction.OPCODE_RET),
-		};
-		currentFrame = 
-			new Frame(nearestFrameWithHandler.sender, new Process[] {nearestFrameWithHandler.handler, signal, frame}, signalInstructions, nearestFrameWithHandler.interfaceId, 3);
-	}
+//	private final void signal(Process signal, FrameProcess frame) {
+//		Frame nearestFrameWithHandler = frame.frame.getNearestFrameWithHandler();
+//		Instruction[] signalInstructions = new Instruction[] {
+//			new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+//			new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+//			new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
+//			new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2),
+//			new Instruction(Instruction.OPCODE_RET),
+//		};
+//		currentFrame = 
+//			new Frame(nearestFrameWithHandler.sender, new Process[] {nearestFrameWithHandler.handler, signal, frame}, signalInstructions, nearestFrameWithHandler.interfaceId, 3);
+//	}
 	
 	private boolean stopRequested;
 	
@@ -887,11 +900,11 @@ public class Processor {
 		} case Instruction.OPCODE_REPORT_ERROR: {
 			@SuppressWarnings("unused")
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
-			Process signal = (Process)currentFrame.peek1();
+			NativeObjectHolder nativeSignalHolder = (NativeObjectHolder)currentFrame.peek1();
+			Exception nativeSignal = (Exception)nativeSignalHolder.getNativeObject();
 			currentFrame.pop2();
-			StringProcess message = (StringProcess)signal.lookup(SymbolTable.Codes.message);
 			// Look up, and print, message slot which must be a string
-			System.err.println("Error: " + message.str);
+			System.err.println("Error: " + nativeSignal.getMessage());
 			currentFrame.instructionPointer++;
 			
 			break;
