@@ -352,6 +352,13 @@ public class Instruction implements Serializable {
 		return 0;
 	}
 
+	public static boolean popsAfterError(Instruction instruction) {
+		ensureMapCreated();
+
+		PopCount popCount = opcodeToIdMap.get(instruction.opcode).popCount;
+		return popCount.timing() == PopCount.Timing.AFTER_ERROR;
+	}
+
 	public static int getPushCount(Instruction instruction) {
 		ensureMapCreated();
 
