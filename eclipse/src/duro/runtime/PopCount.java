@@ -13,6 +13,11 @@ public @interface PopCount {
 		public static final int OPERAND = 1;
 		public static final int OPERAND_ARRAY_LENGTH = 2;
 	}
+	public static class Timing {
+		public static final int BEFORE_ERROR = 0;
+		public static final int AFTER_ERROR = 1;
+	}
+	int timing() default Timing.AFTER_ERROR;
 	int source() default Source.VALUE;
 	int value();
 }
