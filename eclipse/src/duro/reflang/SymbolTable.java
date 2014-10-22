@@ -23,6 +23,7 @@ public class SymbolTable {
 		public static final int call_2 = 13;
 		public static final int cause = 14;
 		public static final int message = 15;
+		public static final int Handler = 16;
 	}
 	
 	public static final SymbolTable ROOT = createRoot();
