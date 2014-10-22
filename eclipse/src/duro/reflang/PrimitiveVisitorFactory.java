@@ -31,6 +31,23 @@ public interface PrimitiveVisitorFactory {
 					instructions.addSingle(instruction);
 					if(mustBeExpression && !doesReturn)
 						instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					// What if !mustBeExpression && doesReturn?
+				}
+			};
+		}
+	}	
+	
+	public static class IsSet implements PrimitiveVisitorFactory {
+		@Override
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
+				@Override
+				public void visitPrimitive(String id, AST[] args) {
+					args[0].accept(visitor);
+					String slotId = ((ASTString)args[1]).string;
+					instructions.addSingle(new Instruction(Instruction.OPCODE_IS_DEFINED, slotId, 0));
+					if(!mustBeExpression)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
 				}
 			};
 		}
