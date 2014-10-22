@@ -40,7 +40,7 @@ public class Instruction implements Serializable {
 	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_0 = 14;
-	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1, timing = PopCount.Timing.BEFORE_ERROR)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_1 = 15;
 	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
