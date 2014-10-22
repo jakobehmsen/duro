@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.function.BiFunction;
 
 import duro.reflang.SymbolTable;
 
@@ -30,13 +31,23 @@ public class Instruction implements Serializable {
 //	public static final int OPCODE_SWAP = 9;
 //	public static final int OPCODE_SWAP1 = 10;
 //	public static final int OPCODE_SWAP_ANY = 11;
-	@PopCount(source = PopCount.Source.OPERAND, value = 1)
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND = 12;
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND_CODE = 13;
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_0 = 14;
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_1 = 15;
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_2 = 16;
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_3 = 17;
 	public static final int OPCODE_CALL = 18;
 	public static final int OPCODE_FORWARD_CALL = 19;
@@ -57,54 +68,57 @@ public class Instruction implements Serializable {
 	@PushCount(1)
 	public static final int OPCODE_GET = 30;
 	public static final int OPCODE_GET_CODE = 31;
-	@PopCount(3)
-	public static final int OPCODE_SLOTS_SET = 32;
-	@PopCount(3)
-	public static final int OPCODE_SLOTS_SET_PROTO = 33;
-	@PopCount(3)
-	@PushCount(1)
-	public static final int OPCODE_SLOTS_GET = 34;
-	@PopCount(2)
-	@PushCount(1)
-	public static final int OPCODE_SLOTS_IS_DEFINED = 35;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_SLOTS_NAMES = 36;
-	@PopCount(source = PopCount.Source.OPERAND, value = 0)
-	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE = 37;
-	@PopCount(1)
-	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_0 = 38;
-	@PopCount(2)
-	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_1 = 39;
+	public static final int OPCODE_IS_DEFINED = 32;
+	public static final int OPCODE_IS_DEFINED_CODE = 33;
+	@PopCount(3)
+	public static final int OPCODE_SLOTS_SET = 34;
+	@PopCount(3)
+	public static final int OPCODE_SLOTS_SET_PROTO = 35;
 	@PopCount(3)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_2 = 40;
+	public static final int OPCODE_SLOTS_GET = 36;
+	@PopCount(2)
+	@PushCount(1)
+	public static final int OPCODE_SLOTS_IS_DEFINED = 37;
+	@PopCount(1)
+	@PushCount(1)
+	public static final int OPCODE_SLOTS_NAMES = 38;
+	@PopCount(source = PopCount.Source.Operand.class, value = 0)
+	@PushCount(1)
+	public static final int OPCODE_CALL_CLOSURE = 39;
+	@PopCount(1)
+	@PushCount(1)
+	public static final int OPCODE_CALL_CLOSURE_0 = 40;
+	@PopCount(2)
+	@PushCount(1)
+	public static final int OPCODE_CALL_CLOSURE_1 = 41;
+	@PopCount(3)
+	@PushCount(1)
+	public static final int OPCODE_CALL_CLOSURE_2 = 42;
 	@PopCount(4)
 	@PushCount(1)
-	public static final int OPCODE_CALL_CLOSURE_3 = 41;
-	public static final int OPCODE_EXTEND_INTER_ID = 42;
+	public static final int OPCODE_CALL_CLOSURE_3 = 43;
+	public static final int OPCODE_EXTEND_INTER_ID = 44;
 	@PushCount(1)
-	public static final int OPCODE_SHRINK_INTER_ID = 43;
+	public static final int OPCODE_SHRINK_INTER_ID = 45;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_THIS = 44;
+	public static final int OPCODE_LOAD_THIS = 46;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_NULL = 45;
+	public static final int OPCODE_LOAD_NULL = 47;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_LOC = 46;
-//	public static final int OPCODE_LOAD_ARG = 47;
+	public static final int OPCODE_LOAD_LOC = 48;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_INT = 48;
+	public static final int OPCODE_LOAD_INT = 49;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_TRUE = 49;
+	public static final int OPCODE_LOAD_TRUE = 50;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_FALSE = 50;
+	public static final int OPCODE_LOAD_FALSE = 51;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_STRING = 51;
+	public static final int OPCODE_LOAD_STRING = 52;
 	@PushCount(1)
-	public static final int OPCODE_LOAD_THIS_FRAME = 52;
+	public static final int OPCODE_LOAD_THIS_FRAME = 53;
 	@PushCount(1)
 	public static final int OPCODE_LOAD_BEHAVIOR = 54;
 	@PopCount(2)
@@ -194,13 +208,13 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_NATIVE_CLASS_FIELD_INT = 137;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_STRING = 138;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_OTHER = 139;
-	@PopCount(source = PopCount.Source.OPERAND_ARRAY_LENGTH, value = 2)
+	@PopCount(source = PopCount.Source.OperandArrayLength.class, value = 2)
 	@PushCount(1)
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE = 140;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_INT = 141;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_STRING = 142;
 	public static final int OPCODE_NATIVE_INSTANCE_INVOKE_OTHER = 143;
-	@PopCount(source = PopCount.Source.OPERAND_ARRAY_LENGTH, value = 1)
+	@PopCount(source = PopCount.Source.OperandArrayLength.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_NATIVE_NEW_INSTANCE = 144;
 	public static final int OPCODE_NATIVE_NEW_INSTANCE_STRING = 145;
@@ -337,14 +351,20 @@ public class Instruction implements Serializable {
 		PopCount popCount = opcodeToIdMap.get(instruction.opcode).popCount;
 		
 		if(popCount != null) {
-			switch(popCount.source()) {
-			case PopCount.Source.VALUE:
-				return popCount.value();
-			case PopCount.Source.OPERAND:
-				return (int)instruction.getOperand(popCount.value());
-			case PopCount.Source.OPERAND_ARRAY_LENGTH:
-				return ((Object[])instruction.getOperand(popCount.value())).length;
+			try {
+				BiFunction<Integer, Instruction, Integer> sourceFunc = popCount.source().newInstance();
+				return sourceFunc.apply(popCount.value(), instruction);
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
 			}
+//			switch(popCount.source()) {
+//			case PopCount.Source.VALUE:
+//				return popCount.value();
+//			case PopCount.Source.OPERAND:
+//				return (int)instruction.getOperand(popCount.value());
+//			case PopCount.Source.OPERAND_ARRAY_LENGTH:
+//				return ((Object[])instruction.getOperand(popCount.value())).length;
+//			}
 			
 			return -1;
 		}
