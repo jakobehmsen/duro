@@ -48,4 +48,10 @@ public class NativeObjectHolder extends Process implements NativeInteroperable {
 	public Object getNativeObject() {
 		return nativeObject;
 	}
+	
+	@Override
+	public void defineShared(int selectorCode, Process value) {
+		// TODO Auto-generated method stub
+		
+	}
 }

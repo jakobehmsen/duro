@@ -90,7 +90,8 @@ public class DictionaryProcess extends LocalizableProcess {
 		properties.put(selectorCode, new Member(selectorCode, true, value));
 		protos.put(selectorCode, value);
 	}
-	
+
+	@Override
 	public void defineShared(int selectorCode, Process value) {
 		properties.put(selectorCode, new Member(selectorCode, true, value));
 		protos.remove(selectorCode);
