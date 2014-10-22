@@ -67,10 +67,14 @@ public class Instruction implements Serializable {
 	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_GET = 30;
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_GET_CODE = 31;
 	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_IS_DEFINED = 32;
+	@PopCount(1)
+	@PushCount(1)
 	public static final int OPCODE_IS_DEFINED_CODE = 33;
 	@PopCount(3)
 	public static final int OPCODE_SLOTS_SET = 34;
@@ -376,7 +380,7 @@ public class Instruction implements Serializable {
 		ensureMapCreated();
 
 		PopCount popCount = opcodeToIdMap.get(instruction.opcode).popCount;
-		return popCount.timing() == PopCount.Timing.AFTER_ERROR;
+		return popCount == null || popCount.timing() == PopCount.Timing.AFTER_ERROR;
 	}
 
 	public static int getPushCount(Instruction instruction) {
