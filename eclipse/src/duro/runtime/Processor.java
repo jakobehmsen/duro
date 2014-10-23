@@ -1085,7 +1085,10 @@ public class Processor {
 			break;
 		} case Instruction.OPCODE_SP_FRAME_SENDER: {
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
-			currentFrame.set0(frame.frame.sender.getReifiedFrame(protoFrame));
+			if(frame.frame.sender != null)
+				currentFrame.set0(frame.frame.sender.getReifiedFrame(protoFrame));
+			else
+				currentFrame.set0(singletonNil);
 			currentFrame.instructionPointer++;
 			
 			break;
