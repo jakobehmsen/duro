@@ -115,3 +115,7 @@ Handler = {|aNativeSignal aFrame|
 	var message = on: aNativeSignal Invoke: "java.lang.Exception", "getMessage", ""
 	aFrame.signal: #[message = message]
 }
+doHandle => |anAttempt aHandler| (
+	frame@handler = \aHandler
+	\anAttempt.call
+)
