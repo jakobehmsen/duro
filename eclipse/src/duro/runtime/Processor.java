@@ -916,35 +916,6 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_DO_HANDLE: {
-			Process handler = currentFrame.peek();
-			Process attempt = currentFrame.peek1();
-			currentFrame.pop2();
-			
-			Object callable = attempt.getCallable(SymbolTable.Codes.call);
-			if(callable instanceof BehaviorProcess) {
-				BehaviorProcess behavior = (BehaviorProcess)callable;
-				Process[] locals = new Process[behavior.frameInfo.localCount];
-				locals[0] = attempt;
-				
-				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize, handler);
-			} else if(callable != null) {
-				// Send some kind of generic call message?
-				Process[] locals = new Process[1];
-				
-				Process process = (Process)callable;
-				locals[0] = process;
-				
-				Instruction[] forwardMessageInstructions = new Instruction[] {
-					new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
-					new Instruction(Instruction.OPCODE_SEND_CODE_0, SymbolTable.Codes.call)
-				};
-				currentFrame = new Frame(currentFrame, locals, forwardMessageInstructions, currentFrame.interfaceId, 0);
-			} else {
-				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(SymbolTable.Codes.call) + "'.");
-			}
-			
-			break;
 		} case Instruction.OPCODE_REPORT_ERROR: {
 			@SuppressWarnings("unused")
 			FrameProcess frame = (FrameProcess)currentFrame.peek();
