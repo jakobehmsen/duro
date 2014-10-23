@@ -94,3 +94,24 @@ True@toString => "True"
 False@toString => "False"
 
 Null@toString => "Null"
+
+/*
+Exception handling
+*/
+
+Frame@nearestWithHandler =>
+	if' (isSet: this, "handler"), this Else' (
+		var theSender = sender
+		if' theSender != null, theSender.nearestWithHandler Else' null
+	)
+Frame@signal => |signal| (
+	var nearest = nearestWithHandler
+	if' nearest != null, (
+		nearest@handler.call: signal, nearest
+	) Else'
+		puts: "Uncaught error: " + signal@message
+)
+Handler = {|aNativeSignal aFrame|
+	var message = on: aNativeSignal Invoke: "java.lang.Exception", "getMessage", ""
+	aFrame.signal: #[message = message]
+}
