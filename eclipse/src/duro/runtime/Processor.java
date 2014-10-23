@@ -68,7 +68,6 @@ public class Processor {
 		public InterfaceId interfaceId;
 		private Process[] stack;
 		private int stackSize;
-		private Process handler;
 		
 		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize) {
 			this.sender = sender;
@@ -77,20 +76,6 @@ public class Processor {
 			this.interfaceId = interfaceId;
 			stackSize = 0;
 			stack = new Process[maxStackSize];
-		}
-		
-		public Frame(Frame sender, Process[] locals, Instruction[] instructions, InterfaceId interfaceId, int maxStackSize, Process handler) {
-			this.sender = sender;
-			this.locals = locals;
-			this.instructions = instructions;
-			this.interfaceId = interfaceId;
-			stackSize = 0;
-			stack = new Process[maxStackSize];
-			this.handler = handler;
-		}
-		
-		public final Frame getNearestFrameWithHandler() {
-			return handler != null ? this : sender.getNearestFrameWithHandler();
 		}
 		
 		public final FrameProcess getReifiedFrame(LocalizableProcess protoFrame) {
@@ -293,7 +278,7 @@ public class Processor {
 		
 		Process[] locals = new Process[localCount];
 		locals[0] = protoAny;
-		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize, handler);
+		currentFrame = new Frame(null, /*protoAny, */locals, instructions, new Frame.InterfaceId(), maxStackSize);
 	}
 	
 	private transient SymbolTable symbolTable;

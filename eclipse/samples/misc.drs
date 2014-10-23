@@ -18,13 +18,331 @@ $p1043 (
 */
 
 
+
+
+
+
 load: "std" // Should load std.drs and check for existing compatible compilations; if exists then load compilation; else compile and then load
-load: "collections"
+/*load: "collections"
 
 load: "/auxi"
+*/
+
+//intDiv: 1, 0
+
+/*
+var r = do: #[
+	call => intDiv: 1, 0
+]
+Handle: #[
+	call => |signal ctx| (
+		puts: signal@message
+		"Invalid integer division operation."
+	)
+]
+puts: r
+*/
+
+/*
+// The current goal; simplification of built-in error handling:
+
+// Handler.call/2 is invoked when a native error occurs
+// The default handler simply prints out the native error message and finishes evaluation
+Handler = {|aNativeSignal aFrame|
+	var aSignal = #[
+		message = on: aNativeSignal Invoke: "java.lang.Exception", "getMessage", ""
+	]
+	aFrame.signal: aSignal
+}
+
+Frame@nearestWithHandler => 
+	if' (isSet: this, "handler"), this Else: (
+		var theSender = sender
+		if: theSender != null, theSender.nearestWithHandler Else: null
+	)
+Frame@signal => |signal| (
+	var nearest = nearestWithHandler
+	if: nearest != null, (
+		do' (nearest@handler.call: signal, nearest) from: nearest.sender
+	) Else: (
+		puts: "Uncaught error: " + signal@message
+		finish
+	)
+)
+doHandle => (
+	frame@handler = \aHandler
+	\anAttempt.call
+)
 
 
 
+// Implement signaling of custom errors next
+var r = do' (
+	signal: #[
+		message = "Øv"
+	], frame
+) Handle' |signal ctx| (
+	puts: signal@message
+	"Invalid integer division operation."
+)
+puts: r
+*/
+
+/*
+Handler = {|aNativeSignal aFrame|
+	// finishes by default
+
+	// If this fails, then an infinite loop starts
+	var message = on: aNativeSignal Invoke: "java.lang.Exception", "getMessage", ""
+	puts: "Native error occurred: " + message
+	//aFrame.resume: "NATIVE ERROR"
+	//finish
+	//"NATIVE ERROR"
+	//"NATIVE ERROR: " + message
+}
+*/
+
+/*
+var r = intDiv: 1, 0
+puts: r
+*/
+
+/*
+var r = intDiv: 1, 0
+puts: r
+*/
+//var p = #[name = "Hugo"]
+//var hasName = isSet: p, "name"
+//puts: hasName
+
+//what: "ah"
+
+/*
+var aFrame = frame
+aFrame@a = "asdf"
+var a = aFrame@a
+
+var ad = isSet: aFrame, "a"
+puts: a
+puts: ad
+puts: aFrame.sender == null
+*/
+
+// if-else primitive seems to not generate non-quoted argument appropriately
+
+frame@handler = {|aSignal aFrame|
+	puts: "Error occurred: " + aSignal@message
+	aFrame.resume: "Buhuuuu..."
+}
+
+var r = intDiv: 1, 0
+puts: r
+var r = intDiv: 1, 0
+puts: r
+
+/*
+ListN = #[
+	items = newArray: 12
+	size = 0
+	add => (
+		size = size + 1
+	)
+]
+ListM = #[
+	items = newArray: 12
+	size = 0
+	add => (
+		size = size + 1
+		writeln: "size=" + size
+	)
+]
+*/
+
+/*
+$dsfsst5d98khsvkjhk997h (
+	//1.to: 10000; each' writeln: "Worked!!!" + \n
+	//writeln: "asf"
+	//1.to: 10000; where' \x.isEven; each' writeln: \x
+	
+	//writeln: 2 % 2 == 0
+	
+	//1.to: 100; where' \x.isEven; each' writeln: \x
+	//1.to: 10000; map' \x * \x; each' writeln: \x
+	//1.to: 100; where' |x| x.isEven; each' |x| writeln: x
+	
+	//#(234 4  44 535 "34").each' writeln: \x
+	
+	var l = List.clone
+	l.add: 23
+	l.add: "sfdAAAAA"
+	l.add: 2332
+	l.add: 7543
+	l.each' writeln: \x
+)
+*/
+
+/*
+// Extension macro:
+extend: #[
+	out = class: "java.lang.System" Field: "out"
+	puts => (
+		on: out Invoke: "java.io.PrintStream", "println", "java.lang.String" With: \s
+	)
+]
+*/
+
+/*
+Out = class: "java.lang.System" Field: "out"
+puts => (
+	on: Out Invoke: "java.io.PrintStream", "println", "java.lang.String" With: \s
+)
+
+In = (
+	var in = class: "java.lang.System" Field: "in"
+	var inReader = newInstance: "java.io.InputStreamReader", "java.io.InputStream" With: in
+	newInstance: "java.io.BufferedReader", "java.io.Reader" With: inReader
+)
+gets => (
+	on: In Invoke: "java.io.BufferedReader", "readLine", ""
+)
+
+gets => (
+	puts: \s
+	gets
+)
+
+10.to: 100; each' puts: \x.toString
+*/
+
+/*
+puts: "Please enter your name:"
+var name = gets
+puts: "Hello " + name
+*/
+
+/*
+var name = $getName gets: "Please enter your name:"
+var age = $getAge gets: "Please enter your age:"
+puts: "Hello " + name + ", aged " + age
+*/
+
+/*
+var person = #[
+	name = $getName gets: "Please enter your name:"
+	age = $getAge gets: "Please enter your age:"
+]
+$greedings puts: "Hello " + person@name + ", aged " + person@age
+
+while' true, (
+	$quit pause
+	$welcome (
+		puts: "Welcome back to you " + person@name + ", aged " + person@age
+		puts: "I hope you're having a great day!!!"
+	)
+)
+*/
+
+// How to indicate persistence of responses?
+//var out = class: "java.lang.System" Field: "out"
+//on: out Invoke: "java.io.PrintStream", "println", "java.lang.String" With: "Please enter your name:"
+
+
+
+/*
+var in = class: "java.lang.System" Field: "in"
+var inReader = newInstance: "java.io.InputStreamReader", "java.io.InputStream" With: in
+var inBufferedReader = newInstance: "java.io.BufferedReader", "java.io.Reader" With: inReader
+var line = on: inBufferedReader Invoke: "java.io.BufferedReader", "readLine", ""
+on: out Invoke: "java.io.PrintStream", "println", "java.lang.String" With: "Hello " + line
+*/
+
+//writeln: 2 % 2 == 1
+
+/*
+Iterable@each => |block| (
+	while' block.call
+)
+*/
+
+//var x = 0
+
+//write: "Hello World!\n"
+
+/*
+var obj = #[
+	hello => write: "Hello!!!\n"
+]
+
+obj.hello
+*/
+
+/*
+write: "Please enter your name:\n"
+var name = readln
+
+while' true, (
+	pause
+	write: "Welcome back "
+	write: name
+	write: "\n"
+)
+*/
+
+/*
+var obj = #[
+	+ => (write: \other)
+	printWith => (write: \first write: \second)
+	x => #[y => "Hi"]
+	i => #[j => "There"]
+]
+$gsfggffdj (
+	//obj.print: obj.x.y With: obj.i.j
+	obj + obj.x.y
+)
+*/
+
+/*
+#[
+	put2 => (
+		\item
+		var x = 0
+	)
+]
+var item = 0
+var x = 5
+*/
+
+/*
+$aasafsdfbgggffdgfdsggf (
+	//1.to: 10000; each' writeln: "Worked!!!" + \n
+	//writeln: "asf"
+	1.to: 1000; where' (writeln: "x.isEven" \x.isEven); each' writeln: \x
+	
+	writeln: 2 % 2 == 0
+)
+*/
+
+/*
+var o = #[
+	// x/2 selector is derived, though x/1 should be derived since \b is part of closure
+	x => (
+		var x = \a
+		{
+			x * \b
+		}
+	)
+]
+o.x: 0
+*/
+
+//Any@clone => clone: this
+
+/*
+Any@x = "5"
+write: Any@x
+*/
+
+/*
 var list = List.clone
 
 list.add: 1
@@ -40,6 +358,81 @@ list.removeAt: 2
 
 list[3] = 46
 
+$p0sd97dgh (
+	list.each' writeln: \n
+	//1.to: 10000; each' writeln: \x
+)
+*/
+
+/*
+enter => (
+	writeln: "Please enter " + \x + ":"
+	this.readln
+)
+
+var name = $enterName enter: "name"
+$printName writeln: "Hello there " + name
+
+while' true, (
+	$pause this.pause
+	$welcomeBack writeln: "Welcome back " + name
+)
+*/
+
+/*
+var obj  = #[
+	x = "Hello!"
+	y => write: x
+	z => y
+]
+
+$p104gd23lk obj.z
+*/
+
+/*
+$p10ekljlk (
+	x = "Hello"
+	var obj = #[
+		x = "!"
+		y = x
+		z => (write: y write: x)
+		i => z
+	]
+	
+	obj.i
+
+
+)
+*/
+
+/*
+var obj = #[
+	hello => write: "Hello"
+]
+obj.hello
+*/
+
+/*
+$p1reek (
+	var o = #[
+		x = #[
+			y => write: "Whoa"
+		]
+		y => x.y
+	]
+	o.y
+)
+*/
+
+//if' true, write: "True" Else' write: "False"
+
+/*
+var i = 0
+while' (intLess: i, 10), (
+	write: intToString: i
+	i = intAdd: i, 1
+)
+*7
 
 /*
 $p104gd23jlk (
@@ -51,18 +444,18 @@ $p104gd23jlk (
 )
 */
 
-
-$p9ge32h (
+/*
+$p9ge432h (
 	//1.to: 10000; map' \x * \x; where' \x.isEven; each' writeln: \x
 	//1.to: 10000; map' \x * \x; where' \x.isEven; each' writeln: \x
-	1.to: 10000; each' writeln: \x
-	//1.through: 10000; where' \x.isEven; each' writeln: \x
+	//1.to: 10000; each' writeln: \x
+	1.through: 10000; where' \x.isEven; each' writeln: \x
 	//writeln: "Hi there"
 )
+*/
 
 //var val = {\x + \y + \z + \i}.call: 1, 2, 8, 3
 //writeln: val
-
 
 /*
 Closure@call => eval: this
