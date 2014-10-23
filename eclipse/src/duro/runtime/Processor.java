@@ -287,8 +287,7 @@ public class Processor {
 			// Report uncaught signal as error
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 2), // Load frame
-			new Instruction(Instruction.OPCODE_REPORT_ERROR),
-			new Instruction(Instruction.OPCODE_FINISH)
+			new Instruction(Instruction.OPCODE_REPORT_ERROR)
 		})));
 		protoAny.defineShared(SymbolTable.Codes.Handler, handler);
 		
