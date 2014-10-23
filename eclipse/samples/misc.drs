@@ -130,6 +130,7 @@ puts: aFrame.sender == null
 
 // if-else primitive seems to not generate non-quoted argument appropriately
 
+/*
 frame@handler = {|aSignal aFrame|
 	puts: "Error occurred: " + aSignal@message
 	aFrame.resume: "Buhuuuu..."
@@ -139,6 +140,48 @@ var r = intDiv: 1, 0
 puts: r
 var r = intDiv: 1, 0
 puts: r
+*/
+
+
+
+
+var r = do' (
+	do' 1 / 0
+	Handle' |aSignal aFrame| (
+		puts: "Error occurred 2: " + aSignal@message
+		//aFrame.resume: "Buhuuuu 2..."
+	)
+) Handle' |aSignal aFrame| (
+	puts: "Error occurred: " + aSignal@message
+	aFrame.resume: "Buhuuuu..."
+)
+puts: r
+
+/*
+var obj = #[
+	msg = #[
+		call => puts: "I got the message"
+	]
+	msg = |x| #[
+		call => |x| puts: "I got the message: " + x
+	]
+	msg = |x y| #[
+		call => |x y| puts: "I got the message: " + x + y
+	]
+	msg = |x y z| #[
+		call => |x y z| puts: "I got the message: " + x + y + z
+	]
+	msg = |x y z i| #[
+		call => |x y z i| puts: "I got the message: " + x + y + z + i
+	]
+]
+
+obj.msg
+obj.msg: "Blabliblum"
+obj.msg: "Blabliblum", "Blaam whaam"
+obj.msg: "Blabliblum", "Blaam whaam", "baaaayuhm"
+obj.msg: "Blabliblum", "Blaam whaam", "baaaayuhm", "ketchupideee!"
+*/
 
 /*
 ListN = #[
