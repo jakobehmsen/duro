@@ -14,9 +14,34 @@ import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 
 public class Processor {
-	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS = new Instruction[] {
-		new Instruction(Instruction.OPCODE_FORWARD_CALL)/*,
-		new Instruction(Instruction.OPCODE_RET_FORWARD)*/
+	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_0 = new Instruction[] {
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+		new Instruction(Instruction.OPCODE_SEND_CODE_0, SymbolTable.Codes.call, 0),
+		new Instruction(Instruction.OPCODE_RET)
+	};
+	
+	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_1 = new Instruction[] {
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+		new Instruction(Instruction.OPCODE_SEND_CODE_1, SymbolTable.Codes.call_1, 1),
+		new Instruction(Instruction.OPCODE_RET)
+	};
+	
+	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_2 = new Instruction[] {
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
+		new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2, 2),
+		new Instruction(Instruction.OPCODE_RET)
+	};
+	
+	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_3 = new Instruction[] {
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 0),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
+		new Instruction(Instruction.OPCODE_LOAD_LOC, 3),
+		new Instruction(Instruction.OPCODE_SEND_CODE_3, SymbolTable.Codes.call_3, 3),
+		new Instruction(Instruction.OPCODE_RET)
 	};
 
 	public static class Frame implements Serializable {
@@ -456,19 +481,22 @@ public class Processor {
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
 			} else if(callable != null) {
-				// Send some kind of generic call message?
 				Process[] locals = new Process[1 + argumentCount];
-
-				// Perhaps arguments should be pushed in reverse order?
-				// This way, System.arraycopy could probably be used when Frame.locals also represents stack
-				for(int i = argumentCount - 1; i > 0; i--)
-					locals[i + 1] = currentFrame.pop();
-				currentFrame.pop(); // Pop receiver
 				
 				Process process = (Process)callable;
 				locals[0] = process;
+				currentFrame.copyNInto(1, locals, argumentCount);
+				currentFrame.popN(argumentCount + 1); // Pop arguments and receiver
 				
-				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				Instruction[] forwardCallInstructions = new Instruction[argumentCount + 3];
+				forwardCallInstructions[0] = new Instruction(Instruction.OPCODE_LOAD_LOC, 0);
+				int callCode = symbolTable.getSymbolCodeFromId(Selector.get("call", argumentCount));
+				for(int i = 0; i < argumentCount; i++)
+					forwardCallInstructions[1 + i] = new Instruction(Instruction.OPCODE_LOAD_LOC, 1 + i);
+				forwardCallInstructions[forwardCallInstructions.length - 2] = new Instruction(Instruction.OPCODE_SEND_CODE, callCode, argumentCount);
+				forwardCallInstructions[forwardCallInstructions.length - 1] = new Instruction(Instruction.OPCODE_RET);
+				
+				currentFrame = new Frame(currentFrame, locals, forwardCallInstructions, currentFrame.interfaceId, 1 + argumentCount);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -494,7 +522,7 @@ public class Processor {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS_0, currentFrame.interfaceId, 1);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -524,7 +552,7 @@ public class Processor {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS_1, currentFrame.interfaceId, 2);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -555,7 +583,7 @@ public class Processor {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS_2, currentFrame.interfaceId, 3);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
@@ -587,7 +615,7 @@ public class Processor {
 				Process process = (Process)callable;
 				locals[0] = process;
 				
-				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS, currentFrame.interfaceId, 0);
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS_3, currentFrame.interfaceId, 4);
 			} else {
 				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
 			}
