@@ -33,8 +33,11 @@ public class Main {
 				System.out.println("Compiled '" + sourceCodePath + "' into '" + objectCodePath + "'.");
 			}
 		} catch (IOException e) {
-			System.out.println("Compilation failed.");
+			System.err.println("Compilation failed.");
 			e.printStackTrace();
+		} catch (CompilationException e) {
+			System.err.println("Compilation failed:");
+			e.getErrors().printMessages();
 		}
 	}
 }

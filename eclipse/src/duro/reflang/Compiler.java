@@ -55,7 +55,7 @@ public class Compiler {
 		errors.printMessages();
 	}
 	
-	public FrameInfo compile(InputStream sourceCode) throws IOException {
+	public FrameInfo compile(InputStream sourceCode) throws IOException, CompilationException {
 		CharStream charStream = new ANTLRInputStream(sourceCode);
 		DuroLexer lexer = new DuroLexer(charStream);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -99,6 +99,10 @@ public class Compiler {
 		    programCtx = parser.program();  // STAGE 2
 		    // if we parse ok, it's LL not SLL
 		}
+		
+		// Syntax errors?
+		if(errors.hasMessages())
+			throw new CompilationException(errors);
 
 		long endParse = System.currentTimeMillis();
 		Debug.println(Debug.LEVEL_MEDIUM, "Parsed program.");
@@ -177,6 +181,10 @@ public class Compiler {
 		int variableOffset = parameterOffset + idToParameterOrdinalMap.size();
 		idToVariableOrdinalMap.generate(variableOffset);
 		AST programAst = programAstBuilder.build();
+
+		// Semantic errors?
+		if(errors.hasMessages())
+			throw new CompilationException(errors);
 		
 		StringWriter astStringWriter = new StringWriter();
 		TreeWriter astWriter = new TreeWriter(astStringWriter);
@@ -199,7 +207,7 @@ public class Compiler {
 		return new FrameInfo(localCount, code.getMaxStackSize(), code.toArray(new Instruction[code.size()]));
 	}
 	
-	public FrameInfo load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException {
+	public FrameInfo load(String sourcePath, String codePath) throws FileNotFoundException, IOException, ClassNotFoundException, CompilationException {
 		FrameInfo process = null;
 		
 		File mainObjectSourceFile = new File(sourcePath);
@@ -260,7 +268,12 @@ public class Compiler {
 		Compiler compiler = new Compiler();
 		try {
 			for(int i = 0; i < 10; i++)
-				compiler.compile(new ByteArrayInputStream(testSource.getBytes("UTF-8")));
+				try {
+					compiler.compile(new ByteArrayInputStream(testSource.getBytes("UTF-8")));
+				} catch (CompilationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

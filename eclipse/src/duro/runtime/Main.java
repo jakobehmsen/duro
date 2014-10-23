@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import duro.debugging.Debug;
+import duro.reflang.CompilationException;
 import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 import duro.transcriber.Journal;
@@ -81,6 +82,9 @@ public class Main {
 			}
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
+		} catch (CompilationException e) {
+			System.err.println("Compilation failed:");
+			e.getErrors().printMessages();
 		}
 	}
 }
