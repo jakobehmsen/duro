@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import duro.debugging.Debug;
+import duro.reflang.CompilationException;
 import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
 
@@ -297,7 +298,9 @@ public class Processor {
 			// Report uncaught signal as error
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 2), // Load frame
-			new Instruction(Instruction.OPCODE_REPORT_ERROR)
+			new Instruction(Instruction.OPCODE_REPORT_ERROR),
+			new Instruction(Instruction.OPCODE_LOAD_NULL),
+			new Instruction(Instruction.OPCODE_RET)
 		})));
 		protoAny.defineShared(SymbolTable.Codes.Handler, handler);
 		
@@ -1143,8 +1146,9 @@ public class Processor {
 //				customProcess.currentFrame.locals = new Process[]{protoAny};
 				currentFrame = new Frame(
 					currentFrame, locals, processFrame.instructions, currentFrame.interfaceId, processFrame.maxStackSize);
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+			} catch (ClassNotFoundException | IOException | CompilationException e) {
+//				e.printStackTrace();
+				throw new RuntimeException("Could not load " + path + ":\n" + e.getMessage(), e);
 			}
 			
 			break;
