@@ -37,10 +37,10 @@ public class Instruction implements Serializable {
 	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE = 13;
-	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1, timing = PopCount.Timing.BEFORE_ERROR)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_0 = 14;
-	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1, timing = PopCount.Timing.BEFORE_ERROR)
+	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_1 = 15;
 	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
@@ -95,7 +95,7 @@ public class Instruction implements Serializable {
 	@PopCount(source = PopCount.Source.Operand.class, value = 0)
 	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE = 42;
-	@PopCount(1)
+	@PopCount(value = 1, timing = PopCount.Timing.BEFORE_ERROR)
 	@PushCount(1)
 	public static final int OPCODE_CALL_CLOSURE_0 = 43;
 	@PopCount(2)
