@@ -197,7 +197,7 @@ public class Instruction implements Serializable {
 	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_SP_ARRAY_LENGTH = 131;
-	@PopCount(1)
+	@PopCount(value = 1, timing = PopCount.Timing.BEFORE_ERROR)
 	public static final int OPCODE_SP_LOAD = 132;
 	@PopCount(1)
 	@PushCount(1)
