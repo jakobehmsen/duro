@@ -1,6 +1,7 @@
 package duro.reflang;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -36,6 +37,10 @@ public class MessageCollector {
 	}
 	
 	public void printMessages() {
-		messages.forEach(x -> System.err.println("@" + x.line + "," + (x.charPositionInLine + 1) + ": " + x.message));
+		printMessages(msg ->  System.err.println(msg));
+	}
+	
+	public void printMessages(Consumer<String> messagePrinter) {
+		messages.forEach(x -> messagePrinter.accept("@" + x.line + "," + (x.charPositionInLine + 1) + ": " + x.message));
 	}
 }
