@@ -546,8 +546,8 @@ public class Processor {
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
-				locals[1] = currentFrame.pop();
-				currentFrame.pop();
+				currentFrame.copy1Into(1, locals);
+				currentFrame.pop2(); // Pop arguments and receiver
 				
 				Process process = (Process)callable;
 				locals[0] = process;
@@ -576,9 +576,8 @@ public class Processor {
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[3];
-				locals[2] = currentFrame.pop();
-				locals[1] = currentFrame.pop();
-				currentFrame.pop(); // Pop receiver
+				currentFrame.copy2Into(1, locals);
+				currentFrame.pop3(); // Pop arguments and receiver
 				
 				Process process = (Process)callable;
 				locals[0] = process;
@@ -607,10 +606,8 @@ public class Processor {
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[4];
-				locals[3] = currentFrame.pop();
-				locals[2] = currentFrame.pop();
-				locals[1] = currentFrame.pop();
-				currentFrame.pop(); // Pop receiver
+				currentFrame.copy3Into(1, locals);
+				currentFrame.pop4(); // Pop arguments and receiver
 				
 				Process process = (Process)callable;
 				locals[0] = process;
