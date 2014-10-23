@@ -344,7 +344,8 @@ public class Processor {
 					new Instruction(Instruction.OPCODE_LOAD_LOC, 1),
 					new Instruction(Instruction.OPCODE_LOAD_LOC, 2),
 					new Instruction(Instruction.OPCODE_SEND_CODE_2, SymbolTable.Codes.call_2),
-					new Instruction(Instruction.OPCODE_RET),
+					new Instruction(Instruction.OPCODE_POP),
+					new Instruction(Instruction.OPCODE_FINISH),
 				};
 				FrameProcess frame = currentFrame.getReifiedFrame(protoFrame);
 				currentFrame = 
