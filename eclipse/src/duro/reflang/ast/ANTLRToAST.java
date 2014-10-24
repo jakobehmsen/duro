@@ -2,13 +2,16 @@ package duro.reflang.ast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import org.omg.CORBA.IntHolder;
 
 import duro.reflang.MessageCollector;
@@ -442,23 +445,27 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		for(int i = 0; i < valueBuilders.length; i++) {
 			DictEntryContext entryCtx = ctx.dictEntry(i);
 			String id = getSelectorId(entryCtx.selector());
-			List<IdContext> paramIds = entryCtx.assignmentOperator().behaviorParams().id(); 
+			List<IdContext> paramIds = entryCtx.assignmentOperator() != null && entryCtx.assignmentOperator().behaviorParams() != null
+				? entryCtx.assignmentOperator().behaviorParams().id() : Collections.emptyList();
 			
-			switch(entryCtx.assignmentOperator().op.getType()) {
+			int opType = entryCtx.assignmentOperator() != null ? entryCtx.assignmentOperator().op.getType() : DuroLexer.ASSIGN;
+			ParserRuleContext valueCtx = entryCtx.expression() != null ? entryCtx.expression() : createANTLRNil(entryCtx, entryCtx.invokingState); 
+			
+			switch(opType) {
 			case DuroLexer.ASSIGN:
 				fields.add(id);
 				int type = isSharedId(id) ? ASTSlotAssignment.TYPE_SHARED : ASTSlotAssignment.TYPE_REGULAR;
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, type, paramIds.size(), valueAst);
-				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
+				valueBuilders[i] = valueCtx.accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_PROTO:
 				fields.add(id);
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_PROTO, paramIds.size(), valueAst);
-				valueBuilders[i] = entryCtx.expression().accept(fieldsVisitor);
+				valueBuilders[i] = valueCtx.accept(fieldsVisitor);
 				break;
 			case DuroLexer.ASSIGN_QUOTED:
 				OrdinalAllocator bodyIdToParameterOrdinalMap = new OrdinalAllocator();
-				valueBuilders[i] = methodsVisitor.assignQuotedBuilder(paramIds, entryCtx.expression(), bodyIdToParameterOrdinalMap);
+				valueBuilders[i] = methodsVisitor.assignQuotedBuilder(paramIds, valueCtx, bodyIdToParameterOrdinalMap);
 				int arity = bodyIdToParameterOrdinalMap.sizeExceptEnd();
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, ASTSlotAssignment.TYPE_QUOTED, arity, valueAst);
 				break;
@@ -471,6 +478,13 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 				entries[i] = entryConstructors[i].apply(valueAsts[i]);
 			return new ASTDict(entries);
 		});
+	}
+	
+	private ParserRuleContext createANTLRNil(ParserRuleContext parent, int invokingState) {
+		PseudoVarContext nilContext = new PseudoVarContext(parent, invokingState);
+		TerminalNodeImpl pseudoVarNode = new TerminalNodeImpl(new CommonToken(DuroLexer.PSEUDO_VAR, "null"));
+		nilContext.addChild(pseudoVarNode);
+		return nilContext;
 	}
 	
 	private boolean isSharedId(String id) {
