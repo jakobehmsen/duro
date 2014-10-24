@@ -20,9 +20,11 @@ public class ASTDict implements AST {
 	}
 	
 	public final Entry[] entries;
+	public final boolean fromContext;
 
-	public ASTDict(Entry[] entries) {
+	public ASTDict(Entry[] entries, boolean fromContext) {
 		this.entries = entries;
+		this.fromContext = fromContext;
 	}
 
 	@Override
