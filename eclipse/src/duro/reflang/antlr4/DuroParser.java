@@ -17,7 +17,7 @@ public class DuroParser extends Parser {
 	public static final int
 		VAR=1, PSEUDO_VAR=2, INT=3, ID_CAP=4, ID_UNCAP=5, PIPE=6, HASH=7, AT=8, 
 		DOT=9, SINGLE_QUOTE=10, COMMA=11, COLON=12, SEMI_COLON=13, BACK_SLASH=14, 
-		DOLLAR=15, PAR_OP=16, PAR_CL=17, SQ_OP=18, SQ_CL=19, BRA_OP=20, BAR_CL=21, 
+		DOLLAR=15, PAR_OP=16, PAR_CL=17, SQ_OP=18, SQ_CL=19, BRA_OP=20, BRA_CL=21, 
 		BIN_OP=22, ASSIGN=23, ASSIGN_PROTO=24, ASSIGN_QUOTED=25, WS=26, SINGLELINE_COMMENT=27, 
 		MULTI_LINE_COMMENT=28, STRING=29;
 	public static final String[] tokenNames = {
@@ -2637,11 +2637,11 @@ public class DuroParser extends Parser {
 		public BehaviorParamsContext behaviorParams() {
 			return getRuleContext(BehaviorParamsContext.class,0);
 		}
-		public TerminalNode BAR_CL() { return getToken(DuroParser.BAR_CL, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public TerminalNode BRA_OP() { return getToken(DuroParser.BRA_OP, 0); }
+		public TerminalNode BRA_CL() { return getToken(DuroParser.BRA_CL, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -2688,7 +2688,7 @@ public class DuroParser extends Parser {
 				_la = _input.LA(1);
 			}
 			}
-			setState(340); match(BAR_CL);
+			setState(340); match(BRA_CL);
 			}
 		}
 		catch (RecognitionException re) {

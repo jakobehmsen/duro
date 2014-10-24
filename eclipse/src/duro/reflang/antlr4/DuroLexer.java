@@ -17,7 +17,7 @@ public class DuroLexer extends Lexer {
 	public static final int
 		VAR=1, PSEUDO_VAR=2, INT=3, ID_CAP=4, ID_UNCAP=5, PIPE=6, HASH=7, AT=8, 
 		DOT=9, SINGLE_QUOTE=10, COMMA=11, COLON=12, SEMI_COLON=13, BACK_SLASH=14, 
-		DOLLAR=15, PAR_OP=16, PAR_CL=17, SQ_OP=18, SQ_CL=19, BRA_OP=20, BAR_CL=21, 
+		DOLLAR=15, PAR_OP=16, PAR_CL=17, SQ_OP=18, SQ_CL=19, BRA_OP=20, BRA_CL=21, 
 		BIN_OP=22, ASSIGN=23, ASSIGN_PROTO=24, ASSIGN_QUOTED=25, WS=26, SINGLELINE_COMMENT=27, 
 		MULTI_LINE_COMMENT=28, STRING=29;
 	public static String[] modeNames = {
@@ -35,7 +35,7 @@ public class DuroLexer extends Lexer {
 		"VAR", "PSEUDO_VAR", "INT", "DIGIT", "LETTER_LOWER", "LETTER_UPPER", "LETTER", 
 		"ID_CAP", "ID_UNCAP", "PIPE", "HASH", "AT", "DOT", "SINGLE_QUOTE", "COMMA", 
 		"COLON", "SEMI_COLON", "BACK_SLASH", "DOLLAR", "PAR_OP", "PAR_CL", "SQ_OP", 
-		"SQ_CL", "BRA_OP", "BAR_CL", "BIN_OP", "ASSIGN", "ASSIGN_PROTO", "ASSIGN_QUOTED", 
+		"SQ_CL", "BRA_OP", "BRA_CL", "BIN_OP", "ASSIGN", "ASSIGN_PROTO", "ASSIGN_QUOTED", 
 		"WS", "SINGLELINE_COMMENT", "MULTI_LINE_COMMENT", "STRING", "HexDigit", 
 		"EscapeSequence", "OctalEscape", "UnicodeEscape"
 	};
