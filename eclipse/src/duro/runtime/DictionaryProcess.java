@@ -108,6 +108,12 @@ public class DictionaryProcess extends LocalizableProcess {
 		return "<dict>";
 	}
 	
+	public DictionaryProcess derive() {
+		DictionaryProcess derivation = newBase();
+		derivation.defineProto(SymbolTable.Codes.parent, this);
+		return derivation;
+	}
+	
 	public DictionaryProcess clone() {
 		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>());
 	}
