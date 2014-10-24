@@ -54,7 +54,7 @@ literal: integer | string | dict | closure | array;
 integer: INT;
 string: STRING;
 dict: HASH SQ_OP (dictEntry)* SQ_CL;
-dictEntry: selector assignmentOperator expression;
+dictEntry: selector (assignmentOperator expression)?;
 closure: BRA_OP behaviorParams (expression*) BAR_CL;
 behaviorParams: (PIPE (id)+ PIPE)?;
 array: HASH PAR_OP expression* PAR_CL;
