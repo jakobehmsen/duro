@@ -29,6 +29,7 @@ import duro.reflang.antlr4.DuroParser.BinaryMessageContext;
 import duro.reflang.antlr4.DuroParser.ClosureContext;
 import duro.reflang.antlr4.DuroParser.DictContext;
 import duro.reflang.antlr4.DuroParser.DictEntryContext;
+import duro.reflang.antlr4.DuroParser.DictFromContextContext;
 import duro.reflang.antlr4.DuroParser.ExpressionContext;
 import duro.reflang.antlr4.DuroParser.ExpressionReceiverContext;
 import duro.reflang.antlr4.DuroParser.GroupingContext;
@@ -435,15 +436,24 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitDict(DictContext ctx) {
+		return dictBuilder(ctx.dictEntry(), false);
+	}
+	
+	@Override
+	public ASTBuilder visitDictFromContext(DictFromContextContext ctx) {
+		return dictBuilder(ctx.dictEntry(), false);
+	}
+	
+	public ASTBuilder dictBuilder(List<DictEntryContext> entryCtxs, boolean fromContext) {
 		HashSet<String> fields = new HashSet<String>();
 		ANTLRToAST fieldsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, accessFields, fields);
 		ANTLRToAST methodsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, fields, fields);
 		@SuppressWarnings("unchecked")
-		Function<AST, ASTDict.Entry>[] entryConstructors = (Function<AST, ASTDict.Entry>[])new Function<?, ?>[ctx.dictEntry().size()]; 
-		ASTBuilder[] valueBuilders = new ASTBuilder[ctx.dictEntry().size()];
+		Function<AST, ASTDict.Entry>[] entryConstructors = (Function<AST, ASTDict.Entry>[])new Function<?, ?>[entryCtxs.size()]; 
+		ASTBuilder[] valueBuilders = new ASTBuilder[entryCtxs.size()];
 		
 		for(int i = 0; i < valueBuilders.length; i++) {
-			DictEntryContext entryCtx = ctx.dictEntry(i);
+			DictEntryContext entryCtx = entryCtxs.get(i);
 			String id = getSelectorId(entryCtx.selector());
 			List<IdContext> paramIds = entryCtx.assignmentOperator() != null && entryCtx.assignmentOperator().behaviorParams() != null
 				? entryCtx.assignmentOperator().behaviorParams().id() : Collections.emptyList();
@@ -476,7 +486,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			ASTDict.Entry[] entries = new ASTDict.Entry[valueBuilders.length];
 			for(int i = 0; i < entries.length; i++)
 				entries[i] = entryConstructors[i].apply(valueAsts[i]);
-			return new ASTDict(entries);
+			return new ASTDict(entries, fromContext);
 		});
 	}
 	
