@@ -939,6 +939,12 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_ENVIRONMENT: {
+			Process process = currentFrame.peek();
+			currentFrame.set0(process.getEnvironment());
+			currentFrame.instructionPointer++;
+			
+			break;
 		}
 		
 		// Special opcodes
