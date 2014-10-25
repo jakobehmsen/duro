@@ -53,7 +53,7 @@ slotAssignment: AT selector assignmentOperator expression;
 literal: integer | string | dict | closure | array;
 integer: INT;
 string: STRING;
-dict: HASH explicitPrototype=expression? SQ_OP (dictEntry)* SQ_CL;
+dict: HASH explicitPrototype=expression? BRA_OP (dictEntry)* BRA_CL;
 dictEntry: selector (assignmentOperator expression)?;
 closure: BRA_OP behaviorParams (expression*) BRA_CL;
 behaviorParams: (PIPE (id)+ PIPE)?;

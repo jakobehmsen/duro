@@ -2514,11 +2514,11 @@ public class DuroParser extends Parser {
 		public DictEntryContext dictEntry(int i) {
 			return getRuleContext(DictEntryContext.class,i);
 		}
-		public TerminalNode SQ_OP() { return getToken(DuroParser.SQ_OP, 0); }
+		public TerminalNode BRA_OP() { return getToken(DuroParser.BRA_OP, 0); }
+		public TerminalNode BRA_CL() { return getToken(DuroParser.BRA_CL, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode SQ_CL() { return getToken(DuroParser.SQ_CL, 0); }
 		public TerminalNode HASH() { return getToken(DuroParser.HASH, 0); }
 		public List<DictEntryContext> dictEntry() {
 			return getRuleContexts(DictEntryContext.class);
@@ -2551,14 +2551,14 @@ public class DuroParser extends Parser {
 			{
 			setState(316); match(HASH);
 			setState(318);
-			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VAR) | (1L << PSEUDO_VAR) | (1L << INT) | (1L << ID_CAP) | (1L << ID_UNCAP) | (1L << HASH) | (1L << BACK_SLASH) | (1L << DOLLAR) | (1L << PAR_OP) | (1L << BRA_OP) | (1L << STRING))) != 0)) {
+			switch ( getInterpreter().adaptivePredict(_input,26,_ctx) ) {
+			case 1:
 				{
 				setState(317); ((DictContext)_localctx).explicitPrototype = expression();
 				}
+				break;
 			}
-
-			setState(320); match(SQ_OP);
+			setState(320); match(BRA_OP);
 			setState(324);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2572,7 +2572,7 @@ public class DuroParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(327); match(SQ_CL);
+			setState(327); match(BRA_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3248,9 +3248,9 @@ public class DuroParser extends Parser {
 		"\u0138\u0135\3\2\2\2\u0138\u0136\3\2\2\2\u0138\u0137\3\2\2\2\u0139M\3"+
 		"\2\2\2\u013a\u013b\7\5\2\2\u013bO\3\2\2\2\u013c\u013d\7\37\2\2\u013dQ"+
 		"\3\2\2\2\u013e\u0140\7\t\2\2\u013f\u0141\5\4\3\2\u0140\u013f\3\2\2\2\u0140"+
-		"\u0141\3\2\2\2\u0141\u0142\3\2\2\2\u0142\u0146\7\24\2\2\u0143\u0145\5"+
+		"\u0141\3\2\2\2\u0141\u0142\3\2\2\2\u0142\u0146\7\26\2\2\u0143\u0145\5"+
 		"T+\2\u0144\u0143\3\2\2\2\u0145\u0148\3\2\2\2\u0146\u0144\3\2\2\2\u0146"+
-		"\u0147\3\2\2\2\u0147\u0149\3\2\2\2\u0148\u0146\3\2\2\2\u0149\u014a\7\25"+
+		"\u0147\3\2\2\2\u0147\u0149\3\2\2\2\u0148\u0146\3\2\2\2\u0149\u014a\7\27"+
 		"\2\2\u014aS\3\2\2\2\u014b\u014f\5b\62\2\u014c\u014d\5\n\6\2\u014d\u014e"+
 		"\5\4\3\2\u014e\u0150\3\2\2\2\u014f\u014c\3\2\2\2\u014f\u0150\3\2\2\2\u0150"+
 		"U\3\2\2\2\u0151\u0152\7\26\2\2\u0152\u0156\5X-\2\u0153\u0155\5\4\3\2\u0154"+
