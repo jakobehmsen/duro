@@ -173,19 +173,6 @@ public class DuroBaseListener implements DuroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterDictFromContext(@NotNull DuroParser.DictFromContextContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitDictFromContext(@NotNull DuroParser.DictFromContextContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterReceiver(@NotNull DuroParser.ReceiverContext ctx) { }
 	/**
 	 * {@inheritDoc}

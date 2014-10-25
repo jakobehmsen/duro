@@ -141,17 +141,6 @@ public interface DuroListener extends ParseTreeListener {
 	void exitClosure(@NotNull DuroParser.ClosureContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link DuroParser#dictFromContext}.
-	 * @param ctx the parse tree
-	 */
-	void enterDictFromContext(@NotNull DuroParser.DictFromContextContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link DuroParser#dictFromContext}.
-	 * @param ctx the parse tree
-	 */
-	void exitDictFromContext(@NotNull DuroParser.DictFromContextContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link DuroParser#receiver}.
 	 * @param ctx the parse tree
 	 */
