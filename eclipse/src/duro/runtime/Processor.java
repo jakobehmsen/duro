@@ -1102,9 +1102,10 @@ public class Processor {
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
+			Process prototype = currentFrame.peek();
 			DictionaryProcess newDict = new DictionaryProcess();
-			newDict.defineProto(SymbolTable.Codes.prototype, protoAny);
-			currentFrame.push(newDict);
+			newDict.defineProto(SymbolTable.Codes.prototype, prototype);
+			currentFrame.set0(newDict);
 			currentFrame.instructionPointer++;
 			
 			break;
