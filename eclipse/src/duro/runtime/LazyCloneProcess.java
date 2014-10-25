@@ -58,4 +58,9 @@ public class LazyCloneProcess extends Process {
 		protoOrInstance = protoOrInstance.getAsLocal();
 		protoOrInstance.defineShared(selectorCode, value);
 	}
+	
+	@Override
+	public Process getEnvironment() {
+		return this;
+	}
 }

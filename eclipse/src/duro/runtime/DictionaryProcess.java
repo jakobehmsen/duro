@@ -167,4 +167,9 @@ public class DictionaryProcess extends LocalizableProcess {
 	public LocalizableProcess getAsLocal() {
 		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>(), new LocalDictionaryProcess());
 	}
+	
+	@Override
+	public Process getEnvironment() {
+		return this;
+	}
 }

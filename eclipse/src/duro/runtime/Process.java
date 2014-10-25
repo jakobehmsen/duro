@@ -25,6 +25,8 @@ public abstract class Process implements Serializable {
 	
 	public abstract void defineShared(int selectorCode, Process value);
 	
+	public abstract Process getEnvironment();
+	
 	public Object toSerializable() {
 		throw new RuntimeException("Serialization unsupported.");
 	}

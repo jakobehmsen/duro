@@ -9,9 +9,11 @@ public class CustomProcess extends Process {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public Process environment;
 	public FrameInfo behavior;
 
-	public CustomProcess(FrameInfo behavior) {
+	public CustomProcess(Process environment, FrameInfo behavior) {
+		this.environment = environment;
 		this.behavior = behavior;
 	}
 	
@@ -57,5 +59,10 @@ public class CustomProcess extends Process {
 	public boolean isDefined(int code) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public Process getEnvironment() {
+		return environment;
 	}
 }

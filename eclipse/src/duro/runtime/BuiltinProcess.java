@@ -60,4 +60,9 @@ public class BuiltinProcess extends Process {
 	public boolean isDefined(int code) {
 		return prototype.isDefined(code);
 	}
+	
+	@Override
+	public Process getEnvironment() {
+		return this;
+	}
 }
