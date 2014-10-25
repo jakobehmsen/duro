@@ -2,7 +2,7 @@
 Collections library
 */
 
-Iterable = #[]
+Iterable = #{}
 Iterable@each => |block| (
 	var it = iterator
 	while' not: it.atEnd,
@@ -20,9 +20,9 @@ Iterable@map => |block| Generatable.on' |generator|
 	)
 
 
-Generator = #[
+Generator = #{
 	on => |block| (
-		var generator = #[
+		var generator = #{
 			current = null
 			producer = null
 			mover = null
@@ -48,7 +48,7 @@ Generator = #[
 				moveNext
 				return: previous
 			)
-		]
+		}
 		
 		generator@mover = frame
 		{
@@ -58,15 +58,14 @@ Generator = #[
 
 		return: generator
 	)
-]
+}
 
-Generatable = #[
-	on => #[
-		prototype ^= Iterable
+Generatable = #Iterable{
+	on => #{
 		block = \block
 		iterator => (Generator.on: block)
-	]
-]
+	}
+}
 
 newArray => newArray: \length
 
@@ -107,11 +106,13 @@ Iterable.where = function(predicate) {
 }
 */
 
-List = #[
-	prototype ^= Iterable
-	items = newArray: 12
-	capacity = 12
-	size = 0
+List = #Iterable{
+	defaultCapacity = 12
+	items size
+	new => #{
+		items = newArray: defaultCapacity
+		size = 0
+	}
 	add => (
 		items[size] = \item
 		size = size + 1
@@ -142,4 +143,4 @@ List = #[
 	)
 	[] => items[\index] = \value
 	[] => items[\index]
-]
+}
