@@ -168,6 +168,7 @@ public class ASTToCode implements ASTVisitor {
 	@Override
 	public void visitDict(ASTDict ast) {
 		if(mustBeExpression) {
+			ast.prototype.accept(this);
 			instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_DICT));
 			for(ASTDict.Entry entry: ast.entries) {
 				instructions.addSingle(new Instruction(Instruction.OPCODE_DUP));

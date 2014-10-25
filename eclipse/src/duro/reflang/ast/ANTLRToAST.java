@@ -435,10 +435,16 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 	
 	@Override
 	public ASTBuilder visitDict(DictContext ctx) {
-		return dictBuilder(ctx.dictEntry());
-	}
-	
-	public ASTBuilder dictBuilder(List<DictEntryContext> entryCtxs) {
+//		return dictBuilder(ctx.dictEntry());
+		
+		ASTBuilder prototypeBuilder;
+		if(ctx.explicitPrototype != null)
+			prototypeBuilder = ctx.explicitPrototype.accept(this);
+		else
+			prototypeBuilder = () -> ASTThis.INSTANCE;
+		
+		List<DictEntryContext> entryCtxs = ctx.dictEntry();
+		
 		HashSet<String> fields = new HashSet<String>();
 		ANTLRToAST fieldsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, accessFields, fields);
 		ANTLRToAST methodsVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, fields, fields);
@@ -477,10 +483,11 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		}
 		
 		return new ASTReducer(valueBuilders, valueAsts -> {
+			AST prototype = prototypeBuilder.build();
 			ASTDict.Entry[] entries = new ASTDict.Entry[valueBuilders.length];
 			for(int i = 0; i < entries.length; i++)
 				entries[i] = entryConstructors[i].apply(valueAsts[i]);
-			return new ASTDict(entries);
+			return new ASTDict(prototype, entries);
 		});
 	}
 	

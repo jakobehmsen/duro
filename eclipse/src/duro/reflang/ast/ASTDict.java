@@ -19,9 +19,11 @@ public class ASTDict implements AST {
 		}
 	}
 	
+	public final AST prototype;
 	public final Entry[] entries;
 
-	public ASTDict(Entry[] entries) {
+	public ASTDict(AST prototype, Entry[] entries) {
+		this.prototype = prototype;
 		this.entries = entries;
 	}
 
