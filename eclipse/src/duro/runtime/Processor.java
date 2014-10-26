@@ -954,7 +954,7 @@ public class Processor {
 			currentFrame.pop1();
 			Process[] locals = new Process[body.frameInfo.localCount];
 			currentFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
-			CustomProcess activeProcess = new CustomProcess(environment, currentFrame);
+			ActiveProcess activeProcess = new ActiveProcess(environment, currentFrame);
 			locals[0] = activeProcess;
 			currentFrame.set1(activeProcess); // Return active process
 			

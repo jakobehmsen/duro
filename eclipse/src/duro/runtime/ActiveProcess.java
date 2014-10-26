@@ -4,7 +4,7 @@ import java.util.List;
 
 import duro.runtime.InteractionHistory.Interaction;
 
-public class CustomProcess extends Process {
+public class ActiveProcess extends Process {
 	/**
 	 * 
 	 */
@@ -12,7 +12,7 @@ public class CustomProcess extends Process {
 	public Process environment;
 	public Processor.Frame frame;
 
-	public CustomProcess(Process environment, Processor.Frame frame) {
+	public ActiveProcess(Process environment, Processor.Frame frame) {
 		this.environment = environment;
 		this.frame = frame;
 	}
