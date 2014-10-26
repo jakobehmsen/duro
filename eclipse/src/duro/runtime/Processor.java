@@ -471,7 +471,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - argumentCount - 1);
 			
-			Object callable = receiver.getCallable(code);
+			Object callable = receiver.getCallable(currentFrame, code, argumentCount);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -510,7 +510,7 @@ public class Processor {
 			
 			Process receiver = currentFrame.pop();
 			
-			Object callable = receiver.getCallable(code);
+			Object callable = receiver.getCallable(currentFrame, code, 0);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -536,7 +536,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 2);
 			
-			Object callable = receiver.getCallable(code);
+			Object callable = receiver.getCallable(currentFrame, code, 1);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -546,6 +546,8 @@ public class Processor {
 				currentFrame.pop2(); // Pop arguments and receiver
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[2];
@@ -566,7 +568,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 3);
 			
-			Object callable = receiver.getCallable(code);
+			Object callable = receiver.getCallable(currentFrame, code, 2);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -596,7 +598,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 4);
 			
-			Object callable = receiver.getCallable(code);
+			Object callable = receiver.getCallable(currentFrame, code, 3);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -1124,6 +1126,19 @@ public class Processor {
 			Process lhs = currentFrame.peek1();
 			currentFrame.set1(getBoolean(lhs == rhs));
 			currentFrame.pop1();
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_MESSAGE_ID: {
+			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+			String idStr = symbolTable.getIdFromSymbolCode(ap.currentMessage.selectorCode).getId();
+			currentFrame.push(new StringProcess(protoString, idStr));
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_MESSAGE_ARITY: {
+			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+			currentFrame.push(new IntegerProcess(protoInteger, ap.currentMessage.arity));
 			currentFrame.instructionPointer++;
 			
 			break;
