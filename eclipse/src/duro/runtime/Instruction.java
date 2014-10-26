@@ -130,8 +130,12 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_LOAD_BEHAVIOR = 57;
 	@PopCount(2)
 	public static final int OPCODE_REPORT_ERROR = 58;
+	@PopCount(1)
 	@PushCount(1)
 	public static final int OPCODE_ENVIRONMENT = 60;
+	@PopCount(2)
+	@PushCount(1)
+	public static final int OPCODE_SPAWN = 61;
 
 	@PopCount(2)
 	@PushCount(1)
