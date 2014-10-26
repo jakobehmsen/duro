@@ -136,6 +136,8 @@ public class Instruction implements Serializable {
 	@PopCount(2)
 	@PushCount(1)
 	public static final int OPCODE_SPAWN = 61;
+	@PushCount(1)
+	public static final int OPCODE_RECEIVE = 62;
 
 	@PopCount(2)
 	@PushCount(1)
