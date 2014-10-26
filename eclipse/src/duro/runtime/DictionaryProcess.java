@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import duro.reflang.SymbolTable;
+import duro.runtime.Processor.Frame;
 
 public class DictionaryProcess extends LocalizableProcess {
 	/**
@@ -43,14 +44,14 @@ public class DictionaryProcess extends LocalizableProcess {
 	private Hashtable<Integer, Member> properties = new Hashtable<Integer, Member>();
 	
 	@Override
-	public Object getCallable(int selectorCode) {
+	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
 		Member callableMember = properties.get(selectorCode);
 		
 		if(callableMember != null)
 			return callableMember.value;
 		
 		for(Process proto: protos.values()) {
-			Object callable = proto.getCallable(selectorCode);
+			Object callable = proto.getCallable(currentFrame, selectorCode, arity);
 			if(callable != null)
 				return callable;
 		}

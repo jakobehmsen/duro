@@ -3,6 +3,7 @@ package duro.runtime;
 import java.util.List;
 
 import duro.runtime.InteractionHistory.Interaction;
+import duro.runtime.Processor.Frame;
 
 public class LazyCloneProcess extends Process {
 	/**
@@ -22,8 +23,8 @@ public class LazyCloneProcess extends Process {
 	}
 
 	@Override
-	public Object getCallable(int selectorCode) {
-		return protoOrInstance.getCallable(selectorCode);
+	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
+		return protoOrInstance.getCallable(currentFrame, selectorCode, arity);
 	}
 
 	@Override
