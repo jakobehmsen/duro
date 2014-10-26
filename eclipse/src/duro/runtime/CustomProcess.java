@@ -10,11 +10,11 @@ public class CustomProcess extends Process {
 	 */
 	private static final long serialVersionUID = 1L;
 	public Process environment;
-	public FrameInfo behavior;
+	public Processor.Frame frame;
 
-	public CustomProcess(Process environment, FrameInfo behavior) {
+	public CustomProcess(Process environment, Processor.Frame frame) {
 		this.environment = environment;
-		this.behavior = behavior;
+		this.frame = frame;
 	}
 	
 	@Override
