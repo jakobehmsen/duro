@@ -795,44 +795,44 @@ public class Processor {
 		} case Instruction.OPCODE_CALL_CLOSURE: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
-			FrameProcess frame = closure.frame;
-			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, closure.parameterCount, 1);
+			Frame frame = closure.frame;
+			currentFrame.copyNInto(closure.argumentOffset, frame.locals, closure.parameterCount, 1);
 			currentFrame.popN(closure.parameterCount);
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.locals, behavior.frameInfo.instructions, frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_0: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.pop();
 			BehaviorProcess behavior = closure.behavior;
-			FrameProcess frame = closure.frame;
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
+			Frame frame = closure.frame;
+			currentFrame = new Frame(currentFrame, frame.locals, behavior.frameInfo.instructions, frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_1: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
-			FrameProcess frame = closure.frame;
-			frame.frame.locals[closure.argumentOffset] = currentFrame.peek1();
+			Frame frame = closure.frame;
+			frame.locals[closure.argumentOffset] = currentFrame.peek1();
 			currentFrame.pop2();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.locals, behavior.frameInfo.instructions, frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_2: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
-			FrameProcess frame = closure.frame;
-			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 2, 1);
+			Frame frame = closure.frame;
+			currentFrame.copyNInto(closure.argumentOffset, frame.locals, 2, 1);
 			currentFrame.pop3();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.locals, behavior.frameInfo.instructions, frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_CALL_CLOSURE_3: {
 			ClosureProcess closure = (ClosureProcess)currentFrame.peek();
 			BehaviorProcess behavior = closure.behavior;
-			FrameProcess frame = closure.frame;
-			currentFrame.copyNInto(closure.argumentOffset, frame.frame.locals, 3, 1);
+			Frame frame = closure.frame;
+			currentFrame.copyNInto(closure.argumentOffset, frame.locals, 3, 1);
 			currentFrame.pop4();
-			currentFrame = new Frame(currentFrame, frame.frame.locals, behavior.frameInfo.instructions, frame.frame.interfaceId, behavior.frameInfo.maxStackSize);
+			currentFrame = new Frame(currentFrame, frame.locals, behavior.frameInfo.instructions, frame.interfaceId, behavior.frameInfo.maxStackSize);
 			
 			break;
 		} case Instruction.OPCODE_EXTEND_INTER_ID: {
@@ -1178,7 +1178,7 @@ public class Processor {
 			int parameterCount = (int)instruction.operand2;
 			
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.peek();
-			ClosureProcess closure = new ClosureProcess(closureBehavior, currentFrame.getReifiedFrame(protoFrame), behavior, argumentOffset, parameterCount);
+			ClosureProcess closure = new ClosureProcess(closureBehavior, currentFrame, behavior, argumentOffset, parameterCount);
 			currentFrame.set0(closure);
 			currentFrame.instructionPointer++;
 			
