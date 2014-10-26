@@ -2,7 +2,9 @@ package duro.runtime;
 
 import java.util.List;
 
+import duro.reflang.SymbolTable;
 import duro.runtime.InteractionHistory.Interaction;
+import duro.runtime.Processor.Frame;
 
 public class ActiveProcess extends Process {
 	/**
@@ -11,15 +13,25 @@ public class ActiveProcess extends Process {
 	private static final long serialVersionUID = 1L;
 	public Process environment;
 	public Processor.Frame frame;
+	
+	public MessageInfo currentMessage;
 
 	public ActiveProcess(Process environment, Processor.Frame frame) {
 		this.environment = environment;
 		this.frame = frame;
+		currentMessage = new MessageInfo(null, SymbolTable.Codes.call, 0);
 	}
 	
 	@Override
-	public Object getCallable(int selectorCode) {
-		return null;
+	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
+		currentMessage.frame = currentFrame;
+		currentMessage.selectorCode = selectorCode;
+		currentMessage.arity = arity;
+		frame.instructionPointer++;
+		// Active processes changes behavior it now has dependents; thus, it should stall all outer activity
+		// Infinite loop? Finish?
+		frame.instructions[frame.instructions.length - 1] = new Instruction(Instruction.OPCODE_FINISH);
+		return frame;
 	}
 	
 	@Override
