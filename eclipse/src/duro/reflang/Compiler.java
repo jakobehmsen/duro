@@ -120,7 +120,9 @@ public class Compiler {
 		primitiveMap.put(Selector.get("not", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_BOOLEAN_NOT), true));
 		primitiveMap.put(Selector.get("pause", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_PAUSE), true));
 		primitiveMap.put(Selector.get("finish", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_FINISH), true));
-		primitiveMap.put(Selector.get("receive", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RECEIVE), true));
+		primitiveMap.put(Selector.get("receive", 0), new PrimitiveVisitorFactory.Receive());
+		primitiveMap.put(Selector.get("messageId", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ID), true));
+		primitiveMap.put(Selector.get("messageArity", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ARITY), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
