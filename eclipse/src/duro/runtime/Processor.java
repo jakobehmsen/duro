@@ -945,6 +945,20 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
+		} case Instruction.OPCODE_SPAWN: {
+			BehaviorProcess body = (BehaviorProcess)currentFrame.peek();
+			Process environment = currentFrame.peek1();
+			CustomProcess activeProcess = new CustomProcess(environment, body.frameInfo);
+			// If the end is reached, then whatever processes dependent on the active process, will stall forever and in principle the program as a whole should wait forever? or just finish? or error?
+			// Or reply null?
+			// Wait forever seems most appropriate when there processes dependent; otherwise just do return none because active process has already been returned
+			currentFrame.set1(activeProcess); // Return active process
+			currentFrame.pop1();
+			Process[] locals = new Process[body.frameInfo.localCount];
+			locals[0] = activeProcess;
+			currentFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
+			
+			break;
 		}
 		
 		// Special opcodes
@@ -1383,7 +1397,7 @@ public class Processor {
 			
 			break;
 		} case Instruction.OPCODE_NONE: {
-			currentFrame.instructionPointer++;
+			// Loop forever
 			break;
 		} case Instruction.OPCODE_BREAK_POINT: {
 			currentFrame.instructionPointer++;
