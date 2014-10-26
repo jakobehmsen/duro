@@ -240,7 +240,7 @@ public class ASTToCode implements ASTVisitor {
 	@Override
 	public void visitSpawn(ASTSpawn ast) {
 		visitAsExpression(ast.environment);
-		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), true);
+		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), false);
 		ast.behavior.body.accept(bodyVisitor);
 		bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET_NONE));
 		CodeEmission bodyCode = bodyVisitor.instructions.generate();
