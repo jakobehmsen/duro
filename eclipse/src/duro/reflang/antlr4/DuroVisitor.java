@@ -327,6 +327,13 @@ public interface DuroVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBinaryMessage(@NotNull DuroParser.BinaryMessageContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link DuroParser#spawn}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpawn(@NotNull DuroParser.SpawnContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link DuroParser#multiKeyMessageArgReceiver}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
