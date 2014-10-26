@@ -951,12 +951,18 @@ public class Processor {
 			// If the end is reached, then whatever processes dependent on the active process, will stall forever and in principle the program as a whole should wait forever? or just finish? or error?
 			// Or reply null?
 			// Wait forever seems most appropriate when there processes dependent; otherwise just do return none because active process has already been returned
-			currentFrame.pop1();
 			Process[] locals = new Process[body.frameInfo.localCount];
-			currentFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
-			ActiveProcess activeProcess = new ActiveProcess(environment, currentFrame);
+			Frame activeProcessFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
+			ActiveProcess activeProcess = new ActiveProcess(environment, activeProcessFrame);
 			locals[0] = activeProcess;
 			currentFrame.set1(activeProcess); // Return active process
+			currentFrame.pop1();
+			currentFrame = activeProcessFrame;
+			
+			break;
+		} case Instruction.OPCODE_RECEIVE: {
+			currentFrame = currentFrame.sender;
+			currentFrame.instructionPointer++;
 			
 			break;
 		}
