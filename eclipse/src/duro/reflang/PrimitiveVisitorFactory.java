@@ -31,6 +31,8 @@ public interface PrimitiveVisitorFactory {
 					instructions.addSingle(instruction);
 					if(mustBeExpression && !doesReturn)
 						instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
+					else if(!mustBeExpression && doesReturn)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
 					// What if !mustBeExpression && doesReturn?
 				}
 			};
@@ -244,4 +246,19 @@ public interface PrimitiveVisitorFactory {
 			};
 		}
 	}
+	
+	public static class Receive implements PrimitiveVisitorFactory {
+		@Override
+		public PrimitiveVisitor create(ASTToCode visitor, CodeEmitter instructions, boolean mustBeExpression) {
+			return new PrimitiveVisitor() {
+				@Override
+				public void visitPrimitive(String id, AST[] args) {
+					instructions.addSingle(new Instruction(Instruction.OPCODE_RECEIVE));
+
+					if(mustBeExpression)
+						instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
+				}
+			};
+		}
+	}	
 }
