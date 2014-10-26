@@ -2787,14 +2787,14 @@ public class DuroParser extends Parser {
 	}
 
 	public static class ArrayContext extends ParserRuleContext {
-		public TerminalNode PAR_OP() { return getToken(DuroParser.PAR_OP, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode SQ_OP() { return getToken(DuroParser.SQ_OP, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode PAR_CL() { return getToken(DuroParser.PAR_CL, 0); }
+		public TerminalNode SQ_CL() { return getToken(DuroParser.SQ_CL, 0); }
 		public TerminalNode HASH() { return getToken(DuroParser.HASH, 0); }
 		public ArrayContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -2823,7 +2823,7 @@ public class DuroParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(355); match(HASH);
-			setState(356); match(PAR_OP);
+			setState(356); match(SQ_OP);
 			setState(360);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -2837,7 +2837,7 @@ public class DuroParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(363); match(PAR_CL);
+			setState(363); match(SQ_CL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3259,10 +3259,10 @@ public class DuroParser extends Parser {
 		"W\3\2\2\2\u015b\u015d\7\b\2\2\u015c\u015e\5`\61\2\u015d\u015c\3\2\2\2"+
 		"\u015e\u015f\3\2\2\2\u015f\u015d\3\2\2\2\u015f\u0160\3\2\2\2\u0160\u0161"+
 		"\3\2\2\2\u0161\u0162\7\b\2\2\u0162\u0164\3\2\2\2\u0163\u015b\3\2\2\2\u0163"+
-		"\u0164\3\2\2\2\u0164Y\3\2\2\2\u0165\u0166\7\t\2\2\u0166\u016a\7\22\2\2"+
+		"\u0164\3\2\2\2\u0164Y\3\2\2\2\u0165\u0166\7\t\2\2\u0166\u016a\7\24\2\2"+
 		"\u0167\u0169\5\4\3\2\u0168\u0167\3\2\2\2\u0169\u016c\3\2\2\2\u016a\u0168"+
 		"\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016d\3\2\2\2\u016c\u016a\3\2\2\2\u016d"+
-		"\u016e\7\23\2\2\u016e[\3\2\2\2\u016f\u0170\7\4\2\2\u0170]\3\2\2\2\u0171"+
+		"\u016e\7\25\2\2\u016e[\3\2\2\2\u016f\u0170\7\4\2\2\u0170]\3\2\2\2\u0171"+
 		"\u0172\7\20\2\2\u0172\u0173\5`\61\2\u0173_\3\2\2\2\u0174\u0175\t\3\2\2"+
 		"\u0175a\3\2\2\2\u0176\u017a\5`\61\2\u0177\u017a\5d\63\2\u0178\u017a\5"+
 		"f\64\2\u0179\u0176\3\2\2\2\u0179\u0177\3\2\2\2\u0179\u0178\3\2\2\2\u017a"+

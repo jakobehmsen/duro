@@ -57,7 +57,7 @@ dict: HASH explicitPrototype=expression? BRA_OP (dictEntry)* BRA_CL;
 dictEntry: selector (assignmentOperator expression)?;
 closure: BRA_OP behaviorParams (expression*) BRA_CL;
 behaviorParams: (PIPE (id)+ PIPE)?;
-array: HASH PAR_OP expression* PAR_CL;
+array: HASH SQ_OP expression* SQ_CL;
 pseudoVar: PSEUDO_VAR;
 parArg: BACK_SLASH id;
 id: ID_CAP | ID_UNCAP;
