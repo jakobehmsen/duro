@@ -238,6 +238,20 @@ public class ASTToCode implements ASTVisitor {
 	}
 	
 	@Override
+	public void visitSpawn(ASTSpawn ast) {
+		visitAsExpression(ast.environment);
+		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), true);
+		ast.behavior.body.accept(bodyVisitor);
+		bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET_NONE));
+		CodeEmission bodyCode = bodyVisitor.instructions.generate();
+		Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, ast.behavior.localCount, bodyCode.getMaxStackSize(), bodyInstructions));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_SPAWN));
+		if(!mustBeExpression)
+			instructions.addSingle(new Instruction(Instruction.OPCODE_POP));
+	}
+	
+	@Override
 	public void visitBehavior(ASTBehavior ast) { }
 	
 	public void visitAsExpression(AST ast) {
@@ -252,5 +266,14 @@ public class ASTToCode implements ASTVisitor {
 			mustBeExpression = mustExpressionTmp;
 		} else
 			ast.accept(this);
+	}
+
+	@Override
+	public void visitImplicitReceiver(ASTImplicitReceiver ast) {
+		// The expansion of this code could be postponed till runtime for specializing against the current receiver
+		// If passive process, then only LOAD_THIS
+		// If active process, then both instructions
+		instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_THIS));
+		instructions.addSingle(new Instruction(Instruction.OPCODE_ENVIRONMENT));
 	}
 }

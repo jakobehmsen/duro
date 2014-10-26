@@ -50,6 +50,7 @@ import duro.reflang.antlr4.DuroParser.SelfSingleKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.SingleKeyMessageContext;
 import duro.reflang.antlr4.DuroParser.SlotAccessContext;
 import duro.reflang.antlr4.DuroParser.SlotAssignmentContext;
+import duro.reflang.antlr4.DuroParser.SpawnContext;
 import duro.reflang.antlr4.DuroParser.StringContext;
 import duro.reflang.antlr4.DuroParser.UnaryMessageContext;
 import duro.reflang.antlr4.DuroParser.VariableDeclarationContext;
@@ -355,10 +356,10 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		
 		return () -> {
 			if(Character.isUpperCase(id.charAt(0)) || accessFields.contains(id))
-				return new ASTSlotAccess(ASTThis.INSTANCE, id, 0);
+				return new ASTSlotAccess(ASTImplicitReceiver.INSTANCE, id, 0);
 			else {
 				// Message to self
-				return new ASTMessageExchange(ASTThis.INSTANCE, new ASTMessage(id, new AST[0]));
+				return new ASTMessageExchange(ASTImplicitReceiver.INSTANCE, new ASTMessage(id, new AST[0]));
 			}
 		};
 	}
@@ -558,6 +559,28 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		for(int i = 0; i < itemBuilders.length; i++)
 			itemBuilders[i] = ctx.expression(i).accept(this);
 		return new ASTReducer(itemBuilders, asts -> new ASTArray(asts));
+	}
+	
+	@Override
+	public ASTBuilder visitSpawn(SpawnContext ctx) {
+		ANTLRToAST forkBodyInterceptor = new ANTLRToAST(new OrdinalAllocator(), new OrdinalAllocator(), errors, accessFields, assignFields);
+		
+		ASTBuilder environmentBuilder;
+		if(ctx.explicitPrototype != null)
+			environmentBuilder = ctx.explicitPrototype.accept(this);
+		else
+			environmentBuilder = () -> ASTThis.INSTANCE;
+			
+		ASTBuilder bodyBuilder = forkBodyInterceptor.groupingBuilder(ctx.expression());
+		
+		/*Start from 1 since zero is used for self*/
+		int parameterOffset = 1;
+		forkBodyInterceptor.idToParameterOrdinalMap.generate(parameterOffset);
+		int variableOffset = parameterOffset + forkBodyInterceptor.idToParameterOrdinalMap.size();
+		forkBodyInterceptor.idToVariableOrdinalMap.generate(variableOffset);
+		int localCount = 1 + forkBodyInterceptor.idToParameterOrdinalMap.size() + forkBodyInterceptor.idToVariableOrdinalMap.size();
+		
+		return () -> new ASTSpawn(environmentBuilder.build(), new ASTBehavior(localCount, bodyBuilder.build()));
 	}
 	
 	private void appendError(ParserRuleContext ctx, String message) {
