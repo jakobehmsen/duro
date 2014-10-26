@@ -42,14 +42,14 @@ Any@equalsAny => refEqual: \lhs, this
 Any@equalsInt => |other| false
 Any@equalsString => |other| false
 Any@!= => not: this == \other
-Any@slots => #[
+Any@slots => #{
 	target = this
 	set => slotsSet: target, \name, \value
 	setProto => slotsSetProto: target, \name, \value
 	get => slotsGet: target, \name
 	isDefined => slotsIsDefined: target, \name
 	names => slotsNames: target
-]
+}
 
 String@+ => stringConcat: this, \other.toString
 String@toString => this
@@ -113,7 +113,7 @@ Frame@signal => |signal| (
 )
 Handler = {|aNativeSignal aFrame|
 	var message = on: aNativeSignal Invoke: "java.lang.Exception", "getMessage", ""
-	aFrame.signal: #[message = message]
+	aFrame.signal: #{message = message}
 }
 doHandle => |anAttempt aHandler| (
 	frame@handler = \aHandler
