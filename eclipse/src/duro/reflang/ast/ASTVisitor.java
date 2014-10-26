@@ -21,4 +21,6 @@ public interface ASTVisitor {
 	void visitArray(ASTArray ast);
 	void visitBehavior(ASTBehavior ast);
 	void visitProgram(ASTProgram ast);
+	void visitImplicitReceiver(ASTImplicitReceiver ast);
+	void visitSpawn(ASTSpawn ast);
 }
