@@ -166,7 +166,9 @@ public class DictionaryProcess extends LocalizableProcess {
 	
 	@Override
 	public LocalizableProcess getAsLocal() {
-		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>(), new LocalDictionaryProcess());
+		LocalDictionaryProcess local = new LocalDictionaryProcess();
+		local.defineProto(SymbolTable.Codes.parent, this);
+		return local;
 	}
 	
 	@Override
