@@ -235,6 +235,14 @@ public class Processor {
 			return stack[stackSize - 3];
 		}
 
+		public Process peek3() {
+			return stack[stackSize - 4];
+		}
+
+		public Process peekn(int ordinal) {
+			return stack[stackSize - ordinal];
+		}
+
 		public final Process stackGet(int i) {
 			return stack[i];
 		}
@@ -1148,6 +1156,24 @@ public class Processor {
 			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
 			currentFrame.push(new IntegerProcess(protoInteger, ap.getMessageArity()));
 			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_MESSAGE_ARG: {
+			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+			Process ordinal = currentFrame.peek();
+			if(ordinal instanceof IntegerProcess) {
+				int ordinalValue = ((IntegerProcess)ordinal).intValue;
+				int arity = ap.getMessageArity();
+				if(ordinalValue < arity) {
+					Process arg = ap.getMessageArg(ordinalValue);
+					currentFrame.set0(arg);
+					currentFrame.instructionPointer++;
+				} else {
+					throw new RuntimeException("Ordinal " + ordinalValue + " for message arg is greater than or equal to message arity " + arity + ".");
+				}
+			} else {
+				throw new RuntimeException("Ordinal for message arg must be integer.");
+			}
 			
 			break;
 		} case Instruction.OPCODE_SP_NEW_DICT: {
