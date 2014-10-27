@@ -3,7 +3,6 @@ package duro.runtime;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 import duro.reflang.SymbolTable;
 import duro.runtime.Processor.Frame;
@@ -25,12 +24,10 @@ public class DictionaryProcess extends LocalizableProcess {
 		 */
 		private static final long serialVersionUID = 1L;
 		public final int code;
-		public final boolean isShared;
 		public final Process value;
 		
-		public Member(int code, boolean isShared, Process value) {
+		public Member(int code, Process value) {
 			this.code = code;
-			this.isShared = isShared;
 			this.value = value;
 		}
 		
@@ -88,19 +85,19 @@ public class DictionaryProcess extends LocalizableProcess {
 
 	@Override
 	public void defineProto(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(selectorCode, true, value));
+		properties.put(selectorCode, new Member(selectorCode, value));
 		protos.put(selectorCode, value);
 	}
 
 	@Override
 	public void defineShared(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(selectorCode, true, value));
+		properties.put(selectorCode, new Member(selectorCode, value));
 		protos.remove(selectorCode);
 	}
 	
 	@Override
 	public void define(int selectorCode, Process value) {
-		properties.put(selectorCode, new Member(selectorCode, false, value));
+		properties.put(selectorCode, new Member(selectorCode, value));
 		protos.remove(selectorCode);
 	}
 	
