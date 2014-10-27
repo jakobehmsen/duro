@@ -269,37 +269,37 @@ public class Processor {
 		// Should CustomProcess not be a process at all? Should CustomProcess hold any and push it instead this?  - Also at other locations, e.g. when loading.
 		// Add Any prototype
 		protoAny = new DictionaryProcess();
-		protoAny.defineShared(SymbolTable.Codes.Any, protoAny);
+		protoAny.define(SymbolTable.Codes.Any, protoAny);
 		// Add Null singleton
 		singletonNil = new NilProcess();
 		singletonNil.defineProto(SymbolTable.Codes.prototype, protoAny);
-		protoAny.defineShared(SymbolTable.Codes.Null, singletonNil);
+		protoAny.define(SymbolTable.Codes.Null, singletonNil);
 		// Add boolean True singleton
 		singletonTrue = new BooleanProcess(true);
 		singletonTrue.defineProto(SymbolTable.Codes.prototype, protoAny);
-		protoAny.defineShared(SymbolTable.Codes.True, singletonTrue);
+		protoAny.define(SymbolTable.Codes.True, singletonTrue);
 		// Add boolean False singleton
 		singletonFalse = new BooleanProcess(false);
 		singletonFalse.defineProto(SymbolTable.Codes.prototype, protoAny);
-		protoAny.defineShared(SymbolTable.Codes.False, singletonFalse);
+		protoAny.define(SymbolTable.Codes.False, singletonFalse);
 		// Add Array prototype
 		protoArray = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.Array, protoArray);
+		protoAny.define(SymbolTable.Codes.Array, protoArray);
 		// Add String prototype
 		protoString = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.String, protoString);
+		protoAny.define(SymbolTable.Codes.String, protoString);
 		// Add Integer prototype
 		protoInteger = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.Integer, protoInteger);
+		protoAny.define(SymbolTable.Codes.Integer, protoInteger);
 		// Add Frame prototype
 		protoFrame = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.Frame, protoFrame);
+		protoAny.define(SymbolTable.Codes.Frame, protoFrame);
 		// Add Behavior prototype
 		protoBehavior = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.Behavior, protoBehavior);
+		protoAny.define(SymbolTable.Codes.Behavior, protoBehavior);
 		// Add Closure prototype
 		closureBehavior = protoAny.derive();
-		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
+		protoAny.define(SymbolTable.Codes.Closure, closureBehavior);
 		// Add Error handler
 		DictionaryProcess handler = protoAny.derive();
 		handler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
@@ -310,7 +310,7 @@ public class Processor {
 			new Instruction(Instruction.OPCODE_LOAD_NULL),
 			new Instruction(Instruction.OPCODE_RET)
 		})));
-		protoAny.defineShared(SymbolTable.Codes.Handler, handler);
+		protoAny.define(SymbolTable.Codes.Handler, handler);
 		
 		Process[] locals = new Process[localCount];
 		locals[0] = protoAny;
@@ -690,7 +690,7 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SET_SHARED: {
+		}/* case Instruction.OPCODE_SET_SHARED: {
 			String id = (String)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(id, parameterCount));
@@ -706,7 +706,7 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SET_PROTO: {
+		}*/ case Instruction.OPCODE_SET_PROTO: {
 			String id = (String)instruction.operand1;
 			int parameterCount = (int)instruction.operand2;
 			int code = symbolTable.getSymbolCodeFromId(Selector.get(id, parameterCount));
