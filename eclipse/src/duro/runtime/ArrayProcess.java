@@ -22,6 +22,7 @@ public class ArrayProcess extends DictionaryProcess {
 		return items.length;
 	}
 	
+	/*
 	@Override
 	public DictionaryProcess newBase() {
 		Process[] clonedItems = new Process[items.length];
@@ -33,6 +34,7 @@ public class ArrayProcess extends DictionaryProcess {
 		}
 		return new ArrayProcess(clonedItems);
 	}
+	*/
 
 	public Process get(int index) {
 		return items[index];
