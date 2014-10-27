@@ -242,7 +242,7 @@ public class ASTToCode implements ASTVisitor {
 		visitAsExpression(ast.environment);
 		ASTToCode bodyVisitor = new ASTToCode(primitiveMap, new CodeEmitter(), false);
 		ast.behavior.body.accept(bodyVisitor);
-		bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_RET_NONE));
+		bodyVisitor.instructions.addSingle(new Instruction(Instruction.OPCODE_HALT));
 		CodeEmission bodyCode = bodyVisitor.instructions.generate();
 		Instruction[] bodyInstructions = bodyCode.toArray(new Instruction[bodyCode.size()]);
 		instructions.addSingle(new Instruction(Instruction.OPCODE_SP_NEW_BEHAVIOR, ast.behavior.localCount, bodyCode.getMaxStackSize(), bodyInstructions));
