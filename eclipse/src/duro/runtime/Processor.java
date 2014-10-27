@@ -1261,14 +1261,14 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_SP_CLONE: {
+		}/* case Instruction.OPCODE_SP_CLONE: {
 			DictionaryProcess dict = (DictionaryProcess)currentFrame.peek();
 			DictionaryProcess clone = dict.clone();
 			currentFrame.set0(clone);
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_NATIVE_CLASS_FIELD: {
+		}*/ case Instruction.OPCODE_NATIVE_CLASS_FIELD: {
 			String className = (String)instruction.operand1;
 			String fieldName = (String)instruction.operand2;
 			try {
