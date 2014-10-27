@@ -123,12 +123,12 @@ public class Compiler {
 		primitiveMap.put(Selector.get("receive", 0), new PrimitiveVisitorFactory.Receive());
 		primitiveMap.put(Selector.get("messageId", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ID), true));
 		primitiveMap.put(Selector.get("messageArity", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ARITY), true));
+		primitiveMap.put(Selector.get("messageArg", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ARG), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWithWith", 4), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWithWithWith", 5), new PrimitiveVisitorFactory.Eval());
-//		primitiveMap.put(Selector.get("doHandle", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_DO_HANDLE), true));
 		primitiveMap.put(Selector.get("return", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_RET), true));
 
 		primitiveMap.put(Selector.get("classField", 2), new PrimitiveVisitorFactory.ClassField());
