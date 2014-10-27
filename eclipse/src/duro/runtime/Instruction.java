@@ -223,9 +223,9 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_SP_NEW_CLOSURE = 133;
 	@PushCount(1)
 	public static final int OPCODE_SP_NEW_BEHAVIOR = 134;
-	@PopCount(1)
-	@PushCount(1)
-	public static final int OPCODE_SP_CLONE = 135;
+//	@PopCount(1)
+//	@PushCount(1)
+//	public static final int OPCODE_SP_CLONE = 135;
 	@PushCount(1)
 	public static final int OPCODE_NATIVE_CLASS_FIELD = 136;
 	public static final int OPCODE_NATIVE_CLASS_FIELD_INT = 137;
