@@ -115,51 +115,6 @@ public class DictionaryProcess extends LocalizableProcess {
 		return derivation;
 	}
 	
-	public DictionaryProcess clone() {
-		return clone(new Hashtable<DictionaryProcess, DictionaryProcess>());
-	}
-	
-	private DictionaryProcess clone(Hashtable<DictionaryProcess, DictionaryProcess> cachedClones) {
-		DictionaryProcess cachedClone = cachedClones.get(this);
-		if(cachedClone != null)
-			return cachedClone;
-		
-		DictionaryProcess clone = newBase();
-		cachedClones.put(this, clone);
-//		
-//		for(Map.Entry<Integer, Member> entry: this.properties.entrySet()) {
-//			if(!entry.getValue().isShared) {
-//				Process clonedValue = entry.getValue().value;
-//				if(clonedValue instanceof DictionaryProcess)
-//					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
-//				clone.properties.put(entry.getKey(), new Member(entry.getValue().code, false, clonedValue));
-//			}
-//		}
-//		
-//		clone.defineProto(SymbolTable.Codes.parent, this);
-//		
-//		return clone;
-		
-		return this.clone(cachedClones, clone);
-	}
-	
-	private DictionaryProcess clone(Hashtable<DictionaryProcess, DictionaryProcess> cachedClones, DictionaryProcess clone) {
-		cachedClones.put(this, clone);
-		
-		for(Map.Entry<Integer, Member> entry: this.properties.entrySet()) {
-			if(!entry.getValue().isShared) {
-				Process clonedValue = entry.getValue().value;
-				if(clonedValue instanceof DictionaryProcess)
-					clonedValue = ((DictionaryProcess)entry.getValue().value).clone(cachedClones);
-				clone.properties.put(entry.getKey(), new Member(entry.getValue().code, false, clonedValue));
-			}
-		}
-		
-		clone.defineProto(SymbolTable.Codes.parent, this);
-		
-		return clone;
-	}
-	
 	public DictionaryProcess newBase() {
 		return new DictionaryProcess();
 	}
