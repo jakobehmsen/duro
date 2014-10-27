@@ -200,6 +200,9 @@ public class Instruction implements Serializable {
 	public static final int OPCODE_MESSAGE_ID = 85;
 	@PushCount(1)
 	public static final int OPCODE_MESSAGE_ARITY = 86;
+	@PopCount(1)
+	@PushCount(1)
+	public static final int OPCODE_MESSAGE_ARG = 87;
 
 	@PushCount(1)
 	public static final int OPCODE_SP_NEW_DICT = 129;
