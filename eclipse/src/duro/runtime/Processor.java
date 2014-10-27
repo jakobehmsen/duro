@@ -483,6 +483,8 @@ public class Processor {
 				currentFrame.popN(argumentCount + 1); // Pop arguments and receiver
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
 			} else if(callable != null) {
 				Process[] locals = new Process[1 + argumentCount];
 				
@@ -518,6 +520,8 @@ public class Processor {
 				locals[0] = receiver;
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[1];
@@ -578,6 +582,8 @@ public class Processor {
 				currentFrame.pop3(); // Pop arguments and receiver
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[3];
@@ -608,6 +614,8 @@ public class Processor {
 				currentFrame.pop4(); // Pop arguments and receiver
 				
 				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
 			} else if(callable != null) {
 				// Send some kind of generic call message?
 				Process[] locals = new Process[4];
