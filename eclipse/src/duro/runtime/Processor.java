@@ -1131,14 +1131,14 @@ public class Processor {
 			break;
 		} case Instruction.OPCODE_MESSAGE_ID: {
 			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
-			String idStr = symbolTable.getIdFromSymbolCode(ap.currentMessage.selectorCode).getId();
+			String idStr = ap.getMessageId(symbolTable);
 			currentFrame.push(new StringProcess(protoString, idStr));
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_MESSAGE_ARITY: {
 			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
-			currentFrame.push(new IntegerProcess(protoInteger, ap.currentMessage.arity));
+			currentFrame.push(new IntegerProcess(protoInteger, ap.getMessageArity()));
 			currentFrame.instructionPointer++;
 			
 			break;

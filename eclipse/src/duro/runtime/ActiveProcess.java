@@ -11,10 +11,10 @@ public class ActiveProcess extends Process {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public Process environment;
-	public Processor.Frame frame;
+	private Process environment;
+	private Processor.Frame frame;
 	
-	public MessageInfo currentMessage;
+	private MessageInfo currentMessage;
 
 	public ActiveProcess(Process environment, Processor.Frame frame) {
 		this.environment = environment;
@@ -25,6 +25,7 @@ public class ActiveProcess extends Process {
 	@Override
 	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
 		currentMessage.frame = currentFrame;
+		// Could messageId, messageArity, and messageArgs be derived from the currentFrame itself? Its current instructions?
 		currentMessage.selectorCode = selectorCode;
 		currentMessage.arity = arity;
 		frame.instructionPointer++;
@@ -32,6 +33,14 @@ public class ActiveProcess extends Process {
 		// Infinite loop? Finish?
 		frame.instructions[frame.instructions.length - 1] = new Instruction(Instruction.OPCODE_FINISH);
 		return frame;
+	}
+	
+	public final String getMessageId(SymbolTable symbolTable) {
+		return symbolTable.getIdFromSymbolCode(currentMessage.selectorCode).getId();
+	}
+	
+	public final int getMessageArity() {
+		return currentMessage.arity;
 	}
 	
 	@Override
