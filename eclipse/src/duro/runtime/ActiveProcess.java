@@ -62,7 +62,7 @@ public class ActiveProcess extends Process {
 	}
 
 	public final Process getMessageArg(int ordinal) {
-		int peek = getMessageArity() - ordinal;
+		int peek = (getMessageArity() - 1) - ordinal;
 		switch(peek) {
 		case 0:
 			return messageFrame.peek();
@@ -74,6 +74,46 @@ public class ActiveProcess extends Process {
 			return messageFrame.peek3();
 		default:
 			return messageFrame.peekn(peek);
+		}
+	}
+	
+	private Process pendingReply;
+
+	public final void messageReply(Process answer) {
+		pendingReply = answer;
+		frame.instructions[frame.instructions.length - 1] = new Instruction(Instruction.OPCODE_HALT);
+	}
+	
+	public final void halt() {
+		if(pendingReply != null) {
+			int arity = getMessageArity(); 
+			switch(arity) {
+			case 0:
+				messageFrame.set0(pendingReply);
+				break;
+			case 1:
+				messageFrame.pop1();
+				messageFrame.set0(pendingReply);
+				break;
+			case 2:
+				messageFrame.pop2();
+				messageFrame.set0(pendingReply);
+				break;
+			case 3:
+				messageFrame.pop3();
+				messageFrame.set0(pendingReply);
+				break;
+			case 4:
+				messageFrame.pop4();
+				messageFrame.set0(pendingReply);
+				break;
+			default:
+				messageFrame.popN(arity);
+				messageFrame.set0(pendingReply);
+				break;
+			}
+			pendingReply = null;
+			messageFrame = null;
 		}
 	}
 	
