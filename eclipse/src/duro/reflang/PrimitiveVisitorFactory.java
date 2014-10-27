@@ -253,7 +253,8 @@ public interface PrimitiveVisitorFactory {
 			return new PrimitiveVisitor() {
 				@Override
 				public void visitPrimitive(String id, AST[] args) {
-					instructions.addSingle(new Instruction(Instruction.OPCODE_RECEIVE));
+//					instructions.addSingle(new Instruction(Instruction.OPCODE_RECEIVE));
+					instructions.addSingle(new Instruction(Instruction.OPCODE_HALT));
 
 					if(mustBeExpression)
 						instructions.addSingle(new Instruction(Instruction.OPCODE_LOAD_NULL));
