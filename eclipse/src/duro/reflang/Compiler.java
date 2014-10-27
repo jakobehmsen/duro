@@ -175,7 +175,7 @@ public class Compiler {
 		primitiveMap.put(Selector.get("newArray", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_NEW_ARRAY), true));
 		primitiveMap.put(Selector.get("arrayLength", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_ARRAY_LENGTH), true));
 		primitiveMap.put(Selector.get("load", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_LOAD), false));
-		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
+//		primitiveMap.put(Selector.get("clone", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_SP_CLONE), true));
 
 		Set<String> fields = new HashSet<String>();
 		ANTLRToAST antlrProgramVisitor = new ANTLRToAST(idToParameterOrdinalMap, idToVariableOrdinalMap, errors, fields, fields);
