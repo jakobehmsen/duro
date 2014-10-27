@@ -1176,7 +1176,21 @@ public class Processor {
 			}
 			
 			break;
-		} case Instruction.OPCODE_SP_NEW_DICT: {
+		} case Instruction.OPCODE_MESSAGE_REPLY: {
+			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+			Process reply = currentFrame.peek();
+			ap.messageReply(reply);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_HALT: {
+			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+			ap.halt();
+			currentFrame = currentFrame.sender;
+			currentFrame.instructionPointer++;
+			
+			break;
+		}case Instruction.OPCODE_SP_NEW_DICT: {
 			Process prototype = currentFrame.peek();
 			DictionaryProcess newDict = new DictionaryProcess();
 			newDict.defineProto(SymbolTable.Codes.prototype, prototype);
