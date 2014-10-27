@@ -51,12 +51,6 @@ public class NativeObjectHolder extends Process implements NativeInteroperable {
 	}
 	
 	@Override
-	public void defineShared(int selectorCode, Process value) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
 	public Process getEnvironment() {
 		return this;
 	}

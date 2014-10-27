@@ -50,12 +50,6 @@ public class BuiltinProcess extends Process {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	@Override
-	public void defineShared(int selectorCode, Process value) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public boolean isDefined(int code) {

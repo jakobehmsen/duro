@@ -126,12 +126,6 @@ public class ActiveProcess extends Process {
 	public void defineProto(int selectorCode, Process value) {
 
 	}
-	
-	@Override
-	public void defineShared(int selectorCode, Process value) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public Process lookup(int selectorCode) {
