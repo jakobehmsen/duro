@@ -283,25 +283,25 @@ public class Processor {
 		singletonFalse.defineProto(SymbolTable.Codes.prototype, protoAny);
 		protoAny.defineShared(SymbolTable.Codes.False, singletonFalse);
 		// Add Array prototype
-		protoArray = protoAny.clone();
+		protoArray = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.Array, protoArray);
 		// Add String prototype
-		protoString = protoAny.clone();
+		protoString = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.String, protoString);
 		// Add Integer prototype
-		protoInteger = protoAny.clone();
+		protoInteger = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.Integer, protoInteger);
 		// Add Frame prototype
-		protoFrame = protoAny.clone();
+		protoFrame = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.Frame, protoFrame);
 		// Add Behavior prototype
-		protoBehavior = protoAny.clone();
+		protoBehavior = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.Behavior, protoBehavior);
 		// Add Closure prototype
-		closureBehavior = protoAny.clone();
+		closureBehavior = protoAny.derive();
 		protoAny.defineShared(SymbolTable.Codes.Closure, closureBehavior);
 		// Add Error handler
-		DictionaryProcess handler = protoAny.clone();
+		DictionaryProcess handler = protoAny.derive();
 		handler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
 			// Report uncaught signal as error
 			new Instruction(Instruction.OPCODE_LOAD_LOC, 1), // Load signal
