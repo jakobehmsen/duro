@@ -60,6 +60,22 @@ public class ActiveProcess extends Process {
 			return 0;
 		}
 	}
+
+	public final Process getMessageArg(int ordinal) {
+		int peek = getMessageArity() - ordinal;
+		switch(peek) {
+		case 0:
+			return messageFrame.peek();
+		case 1:
+			return messageFrame.peek1();
+		case 2:
+			return messageFrame.peek2();
+		case 3:
+			return messageFrame.peek3();
+		default:
+			return messageFrame.peekn(peek);
+		}
+	}
 	
 	@Override
 	public void define(int selectorCode, Process value) {
