@@ -955,7 +955,7 @@ public class Processor {
 			// Wait forever seems most appropriate when there processes dependent; otherwise just do return none because active process has already been returned
 			Process[] locals = new Process[body.frameInfo.localCount];
 			Frame activeProcessFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
-			ActiveProcess activeProcess = new ActiveProcess(environment, activeProcessFrame);
+			ActiveProcess activeProcess = new ActiveProcess(environment, activeProcessFrame, currentFrame);
 			locals[0] = activeProcess;
 			currentFrame.set1(activeProcess); // Return active process
 			currentFrame.pop1();

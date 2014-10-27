@@ -13,34 +13,52 @@ public class ActiveProcess extends Process {
 	private static final long serialVersionUID = 1L;
 	private Process environment;
 	private Processor.Frame frame;
-	
-	private MessageInfo currentMessage;
+	private Frame messageFrame;
 
-	public ActiveProcess(Process environment, Processor.Frame frame) {
+	public ActiveProcess(Process environment, Processor.Frame frame, Frame messageFrame) {
 		this.environment = environment;
 		this.frame = frame;
-		currentMessage = new MessageInfo(null, SymbolTable.Codes.call, 0);
+		this.messageFrame = messageFrame;
 	}
 	
 	@Override
 	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
-		currentMessage.frame = currentFrame;
-		// Could messageId, messageArity, and messageArgs be derived from the currentFrame itself? Its current instructions?
-		currentMessage.selectorCode = selectorCode;
-		currentMessage.arity = arity;
+		messageFrame = currentFrame;
 		frame.instructionPointer++;
-		// Active processes changes behavior it now has dependents; thus, it should stall all outer activity
-		// Infinite loop? Finish?
 		frame.instructions[frame.instructions.length - 1] = new Instruction(Instruction.OPCODE_FINISH);
 		return frame;
 	}
 	
 	public final String getMessageId(SymbolTable symbolTable) {
-		return symbolTable.getIdFromSymbolCode(currentMessage.selectorCode).getId();
+		return symbolTable.getIdFromSymbolCode(getMessageSelector()).getId();
+	}
+	
+	private final int getMessageSelector() {
+		Instruction instruction = messageFrame.instructions[messageFrame.instructionPointer];
+		switch(instruction.opcode) {
+		case Instruction.OPCODE_SEND_CODE:
+		case Instruction.OPCODE_SEND_CODE_0:
+		case Instruction.OPCODE_SEND_CODE_1:
+		case Instruction.OPCODE_SEND_CODE_2:
+		case Instruction.OPCODE_SEND_CODE_3:
+			return (int)instruction.operand1;
+		default:
+			return SymbolTable.Codes.call;
+		}
 	}
 	
 	public final int getMessageArity() {
-		return currentMessage.arity;
+		Instruction instruction = messageFrame.instructions[messageFrame.instructionPointer];
+		switch(instruction.opcode) {
+		case Instruction.OPCODE_SEND_CODE:
+		case Instruction.OPCODE_SEND_CODE_0:
+		case Instruction.OPCODE_SEND_CODE_1:
+		case Instruction.OPCODE_SEND_CODE_2:
+		case Instruction.OPCODE_SEND_CODE_3:
+			return (int)instruction.operand2;
+		default:
+			return 0;
+		}
 	}
 	
 	@Override
