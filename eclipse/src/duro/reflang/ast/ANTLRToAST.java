@@ -317,7 +317,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			return new ASTBuilderFromReceiver() {
 				@Override
 				public ASTBuilder createBuilder(ASTBuilder receiver) {
-					int type = isSharedId(id) ? ASTSlotAssignment.TYPE_SHARED : ASTSlotAssignment.TYPE_REGULAR;
+					int type = ASTSlotAssignment.TYPE_REGULAR;
 					return () -> new ASTSlotAssignment(type, receiver.build(), id, paramIds.size(), valueBuilder.build());
 				}
 			};
@@ -465,7 +465,7 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 			switch(opType) {
 			case DuroLexer.ASSIGN:
 				fields.add(id);
-				int type = isSharedId(id) ? ASTSlotAssignment.TYPE_SHARED : ASTSlotAssignment.TYPE_REGULAR;
+				int type = ASTSlotAssignment.TYPE_REGULAR;
 				entryConstructors[i] = valueAst -> new ASTDict.Entry(id, type, paramIds.size(), valueAst);
 				valueBuilders[i] = valueCtx.accept(fieldsVisitor);
 				break;
@@ -497,10 +497,6 @@ public class ANTLRToAST extends DuroBaseVisitor<ASTBuilder> {
 		TerminalNodeImpl pseudoVarNode = new TerminalNodeImpl(new CommonToken(DuroLexer.PSEUDO_VAR, "null"));
 		nilContext.addChild(pseudoVarNode);
 		return nilContext;
-	}
-	
-	private boolean isSharedId(String id) {
-		return Character.isUpperCase(id.charAt(0));
 	}
 
 	@Override
