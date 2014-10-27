@@ -61,9 +61,9 @@ public class Instruction implements Serializable {
 	@PopCount(2)
 	public static final int OPCODE_SET = 26;
 	public static final int OPCODE_SET_CODE = 27;
-	@PopCount(2)
+	/*@PopCount(2)
 	public static final int OPCODE_SET_SHARED = 28;
-	public static final int OPCODE_SET_SHARED_CODE = 29;
+	public static final int OPCODE_SET_SHARED_CODE = 29;*/
 	@PopCount(2)
 	public static final int OPCODE_SET_PROTO = 30;
 	public static final int OPCODE_SET_PROTO_CODE = 31;
