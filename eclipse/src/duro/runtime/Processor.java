@@ -843,8 +843,7 @@ public class Processor {
 			Process[] names = new Process[rawNames.length];
 			for(int i = 0; i < names.length; i++)
 				names[i] = createString(rawNames[i]);
-			ArrayProcess namesArray = new ArrayProcess(names);
-			namesArray.defineProto(SymbolTable.Codes.prototype, protoArray);
+			ArrayProcess namesArray = new ArrayProcess(protoArray, names);
 			currentFrame.set0(namesArray);
 			currentFrame.instructionPointer++;
 			
@@ -1259,8 +1258,7 @@ public class Processor {
 			break;
 		} case Instruction.OPCODE_SP_NEW_ARRAY: {
 			IntegerProcess length = (IntegerProcess)currentFrame.peek();
-			ArrayProcess newArray = new ArrayProcess(length.intValue, singletonNil);
-			newArray.defineProto(SymbolTable.Codes.prototype, protoArray);
+			ArrayProcess newArray = new ArrayProcess(protoArray, length.intValue, singletonNil);
 			currentFrame.set0(newArray);
 			currentFrame.instructionPointer++;
 			
@@ -1577,8 +1575,7 @@ public class Processor {
 		Process[] argumentsArray = new Process[arity];
 		sender.copyNInto(0, argumentsArray, arity);
 		sender.popN(1 + arity);
-		ArrayProcess arguments = new ArrayProcess(argumentsArray);
-		arguments.defineProto(SymbolTable.Codes.prototype, protoArray);
+		ArrayProcess arguments = new ArrayProcess(protoArray, argumentsArray);
 		message.define(SymbolTable.Codes.arguments, arguments);
 
 		return new EnvelopeProcess(protoEnvelope, receiver, sender, message);

@@ -2,19 +2,21 @@ package duro.runtime;
 
 import java.util.Arrays;
 
-public class ArrayProcess extends DictionaryProcess {
+public class ArrayProcess extends LazyCloneProcess {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Process[] items;
 
-	public ArrayProcess(int length, Process exemplar) {
+	public ArrayProcess(LocalizableProcess prototype, int length, Process exemplar) {
+		super(prototype);
 		this.items = new Process[length];
 		Arrays.fill(items, exemplar);
 	}
 
-	public ArrayProcess(Process[] items) {
+	public ArrayProcess(LocalizableProcess prototype, Process[] items) {
+		super(prototype);
 		this.items = items;
 	}
 	
