@@ -3,7 +3,6 @@ package duro.runtime;
 import java.util.List;
 
 import duro.runtime.InteractionHistory.Interaction;
-import duro.runtime.Processor.Frame;
 
 public class NativeObjectHolder extends Process implements NativeInteroperable {
 	/**
@@ -20,7 +19,7 @@ public class NativeObjectHolder extends Process implements NativeInteroperable {
 	public void resume(List<Interaction> playedInstructions) { }
 
 	@Override
-	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
+	public Object getCallable(Processor processor, int selectorCode, int arity) {
 		return null;
 	}
 

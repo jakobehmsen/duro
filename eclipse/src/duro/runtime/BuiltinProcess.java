@@ -3,7 +3,6 @@ package duro.runtime;
 import java.util.List;
 
 import duro.runtime.InteractionHistory.Interaction;
-import duro.runtime.Processor.Frame;
 
 public class BuiltinProcess extends Process {
 	/**
@@ -24,8 +23,8 @@ public class BuiltinProcess extends Process {
 	}
 
 	@Override
-	public Object getCallable(Frame currentFrame, int selectorCode, int arity) {
-		return prototype.getCallable(currentFrame, selectorCode, arity);
+	public Object getCallable(Processor processor, int selectorCode, int arity) {
+		return prototype.getCallable(processor, selectorCode, arity);
 	}
 
 	@Override

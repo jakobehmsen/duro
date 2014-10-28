@@ -3,8 +3,6 @@ package duro.runtime;
 import java.io.Serializable;
 import java.util.List;
 
-import duro.runtime.Processor.Frame;
-
 public abstract class Process implements Serializable {
 	/**
 	 * 
@@ -13,7 +11,7 @@ public abstract class Process implements Serializable {
 
 	public abstract void resume(List<InteractionHistory.Interaction> playedInstructions);
 
-	public abstract Object getCallable(Frame currentFrame, int selectorCode, int arity);
+	public abstract Object getCallable(Processor processor, int selectorCode, int arity);
 
 	public abstract Process lookup(int selectorCode);
 
@@ -30,4 +28,6 @@ public abstract class Process implements Serializable {
 	public Object toSerializable() {
 		throw new RuntimeException("Serialization unsupported.");
 	}
+
+	public void sentReply() { }
 }
