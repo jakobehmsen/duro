@@ -125,9 +125,9 @@ public class Compiler {
 //		primitiveMap.put(Selector.get("messageArity", 0), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ARITY), true));
 //		primitiveMap.put(Selector.get("messageArg", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_MESSAGE_ARG), true));
 		primitiveMap.put(Selector.get("envelopeReply", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_REPLY), false));
-		primitiveMap.put(Selector.get("envelopeReceiver", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_RECEIVER), true));
-		primitiveMap.put(Selector.get("envelopeSender", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_SENDER), true));
-		primitiveMap.put(Selector.get("envelopeMessage", 2), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_MESSAGE), true));
+		primitiveMap.put(Selector.get("envelopeReceiver", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_RECEIVER), true));
+		primitiveMap.put(Selector.get("envelopeSender", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_SENDER), true));
+		primitiveMap.put(Selector.get("envelopeMessage", 1), new PrimitiveVisitorFactory.ConstInstruction(new Instruction(Instruction.OPCODE_ENVELOPE_MESSAGE), true));
 		primitiveMap.put(Selector.get("eval", 1), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWith", 2), new PrimitiveVisitorFactory.Eval());
 		primitiveMap.put(Selector.get("evalWithWith", 3), new PrimitiveVisitorFactory.Eval());
