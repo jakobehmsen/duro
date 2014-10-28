@@ -262,7 +262,7 @@ public class Processor {
 	private DictionaryProcess protoString;
 	private DictionaryProcess protoFrame;
 	private DictionaryProcess protoBehavior;
-	private DictionaryProcess closureBehavior;
+	private DictionaryProcess protoClosure;
 	private DictionaryProcess protoEnvelope;
 
 	public Processor(int localCount, int maxStackSize, Instruction[] instructions) {
@@ -299,8 +299,8 @@ public class Processor {
 		protoBehavior = protoAny.derive();
 		protoAny.define(SymbolTable.Codes.Behavior, protoBehavior);
 		// Add Closure prototype
-		closureBehavior = protoAny.derive();
-		protoAny.define(SymbolTable.Codes.Closure, closureBehavior);
+		protoClosure = protoAny.derive();
+		protoAny.define(SymbolTable.Codes.Closure, protoClosure);
 		// Add Envelope prototype
 		protoEnvelope = protoAny.derive();
 		protoAny.define(SymbolTable.Codes.Envelope, protoEnvelope);
@@ -1306,7 +1306,7 @@ public class Processor {
 			int parameterCount = (int)instruction.operand2;
 			
 			BehaviorProcess behavior = (BehaviorProcess)currentFrame.peek();
-			ClosureProcess closure = new ClosureProcess(closureBehavior, currentFrame, behavior, argumentOffset, parameterCount);
+			ClosureProcess closure = new ClosureProcess(protoClosure, currentFrame, behavior, argumentOffset, parameterCount);
 			currentFrame.set0(closure);
 			currentFrame.instructionPointer++;
 			
