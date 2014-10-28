@@ -13,6 +13,7 @@ import duro.debugging.Debug;
 import duro.reflang.CompilationException;
 import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
+import duro.runtime.Processor.Frame;
 
 public class Processor {
 	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_0 = new Instruction[] {
@@ -263,6 +264,7 @@ public class Processor {
 	private DictionaryProcess protoFrame;
 	private DictionaryProcess protoBehavior;
 	private DictionaryProcess closureBehavior;
+	private DictionaryProcess protoEnvelope;
 
 	public Processor(int localCount, int maxStackSize, Instruction[] instructions) {
 		// TODO: Consider: Should the Any prototype be this? Should CustomProcess be a DictionaryProcess?
@@ -300,6 +302,9 @@ public class Processor {
 		// Add Closure prototype
 		closureBehavior = protoAny.derive();
 		protoAny.define(SymbolTable.Codes.Closure, closureBehavior);
+		// Add Envelope prototype
+		protoEnvelope = protoAny.derive();
+		protoAny.define(SymbolTable.Codes.Envelope, protoEnvelope);
 		// Add Error handler
 		DictionaryProcess handler = protoAny.derive();
 		handler.define(SymbolTable.Codes.call_2, new BehaviorProcess(protoBehavior, new FrameInfo(3, 2, new Instruction[] {
@@ -479,7 +484,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - argumentCount - 1);
 			
-			Object callable = receiver.getCallable(currentFrame, code, argumentCount);
+			Object callable = receiver.getCallable(this, code, argumentCount);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -520,7 +525,7 @@ public class Processor {
 			
 			Process receiver = currentFrame.pop();
 			
-			Object callable = receiver.getCallable(currentFrame, code, 0);
+			Object callable = receiver.getCallable(this, code, 0);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -548,7 +553,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 2);
 			
-			Object callable = receiver.getCallable(currentFrame, code, 1);
+			Object callable = receiver.getCallable(this, code, 1);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -580,7 +585,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 3);
 			
-			Object callable = receiver.getCallable(currentFrame, code, 2);
+			Object callable = receiver.getCallable(this, code, 2);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -612,7 +617,7 @@ public class Processor {
 			
 			Process receiver = (Process)currentFrame.stackGet(currentFrame.stackSize() - 4);
 			
-			Object callable = receiver.getCallable(currentFrame, code, 3);
+			Object callable = receiver.getCallable(this, code, 3);
 
 			if(callable instanceof BehaviorProcess) {
 				BehaviorProcess behavior = (BehaviorProcess)callable;
@@ -639,7 +644,42 @@ public class Processor {
 			}
 			
 			break;
-		} case Instruction.OPCODE_RET: {
+		}/* case Instruction.OPCODE_DISPATCH: {
+			// MESSAGE
+			// SENDER
+			// RECEIVER
+			Process message = currentFrame.peek();
+			Process sender = currentFrame.peek1();
+			Process receiver = currentFrame.peek2();
+			
+			Object callable = receiver.getCallable(message, sender);
+
+			if(callable instanceof BehaviorProcess) {
+				BehaviorProcess behavior = (BehaviorProcess)callable;
+				Process[] locals = new Process[behavior.frameInfo.localCount];
+				locals[0] = receiver;
+				currentFrame.copy3Into(1, locals);
+				currentFrame.pop4(); // Pop arguments and receiver
+				
+				currentFrame = new Frame(currentFrame, locals, behavior.frameInfo.instructions, currentFrame.interfaceId, behavior.frameInfo.maxStackSize);
+			} else if(callable instanceof Frame) {
+				currentFrame = (Frame)callable;
+			} else if(callable != null) {
+				// Send some kind of generic call message?
+				Process[] locals = new Process[4];
+				currentFrame.copy3Into(1, locals);
+				currentFrame.pop4(); // Pop arguments and receiver
+				
+				Process process = (Process)callable;
+				locals[0] = process;
+				
+				currentFrame = new Frame(currentFrame, locals, FORWARD_CALL_INSTRUCTIONS_3, currentFrame.interfaceId, 4);
+			} else {
+				throw new RuntimeException("Cache-miss and absent callable for '" + symbolTable.getIdFromSymbolCode(code) + "'.");
+			}
+			
+			break;
+		} */case Instruction.OPCODE_RET: {
 			Frame returnFrame = currentFrame.sender;
 			returnFrame.push(currentFrame.peek());
 			currentFrame = returnFrame;
@@ -971,7 +1011,7 @@ public class Processor {
 			// Wait forever seems most appropriate when there processes dependent; otherwise just do return none because active process has already been returned
 			Process[] locals = new Process[body.frameInfo.localCount];
 			Frame activeProcessFrame = new Frame(currentFrame, locals, body.frameInfo.instructions, currentFrame.interfaceId, body.frameInfo.maxStackSize);
-			ActiveProcess activeProcess = new ActiveProcess(environment, activeProcessFrame, currentFrame);
+			ActiveProcess activeProcess = new ActiveProcess(environment, activeProcessFrame);
 			locals[0] = activeProcess;
 			currentFrame.set1(activeProcess); // Return active process
 			currentFrame.pop1();
@@ -1145,7 +1185,7 @@ public class Processor {
 			currentFrame.instructionPointer++;
 			
 			break;
-		} case Instruction.OPCODE_MESSAGE_ID: {
+		}/* case Instruction.OPCODE_MESSAGE_ID: {
 			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
 			String idStr = ap.getMessageId(symbolTable);
 			currentFrame.push(new StringProcess(protoString, idStr));
@@ -1176,21 +1216,41 @@ public class Processor {
 			}
 			
 			break;
-		} case Instruction.OPCODE_MESSAGE_REPLY: {
-			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+		}*/ case Instruction.OPCODE_ENVELOPE_REPLY: {
 			Process reply = currentFrame.peek();
-			ap.messageReply(reply);
+			EnvelopeProcess envelope = (EnvelopeProcess)currentFrame.peek1();
+			envelope.sender.push(reply);
+			envelope.receiver.sentReply();
+			currentFrame.pop2();
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_ENVELOPE_RECEIVER: {
+			EnvelopeProcess envelope = (EnvelopeProcess)currentFrame.peek();
+			currentFrame.set0(envelope.receiver);
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_ENVELOPE_SENDER: {
+			EnvelopeProcess envelope = (EnvelopeProcess)currentFrame.peek();
+			currentFrame.set0(envelope.sender.getReifiedFrame(protoFrame));
+			currentFrame.instructionPointer++;
+			
+			break;
+		} case Instruction.OPCODE_ENVELOPE_MESSAGE: {
+			EnvelopeProcess envelope = (EnvelopeProcess)currentFrame.peek();
+			currentFrame.set0(envelope.message);
 			currentFrame.instructionPointer++;
 			
 			break;
 		} case Instruction.OPCODE_HALT: {
-			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
-			ap.halt();
+//			ActiveProcess ap = (ActiveProcess)currentFrame.locals[0];
+//			ap.halt();
 			currentFrame = currentFrame.sender;
 			currentFrame.instructionPointer++;
 			
 			break;
-		}case Instruction.OPCODE_SP_NEW_DICT: {
+		} case Instruction.OPCODE_SP_NEW_DICT: {
 			Process prototype = currentFrame.peek();
 			DictionaryProcess newDict = new DictionaryProcess();
 			newDict.defineProto(SymbolTable.Codes.prototype, prototype);
@@ -1509,5 +1569,19 @@ public class Processor {
 
 	public final StringProcess createString(String str) {
 		return new StringProcess(protoString, str);
+	}
+
+	public final Process getEnvelopeFromHere(Process receiver, int selectorCode, int arity) {
+		Frame sender = currentFrame;
+		DictionaryProcess message = protoAny.derive();
+		message.define(SymbolTable.Codes.id, new StringProcess(protoString, symbolTable.getIdFromSymbolCode(selectorCode).getId()));
+		Process[] argumentsArray = new Process[arity];
+		sender.copyNInto(0, argumentsArray, arity);
+		sender.popN(1 + arity);
+		ArrayProcess arguments = new ArrayProcess(argumentsArray);
+		arguments.defineProto(SymbolTable.Codes.prototype, protoArray);
+		message.define(SymbolTable.Codes.arguments, arguments);
+
+		return new EnvelopeProcess(protoEnvelope, receiver, sender, message);
 	}
 }
