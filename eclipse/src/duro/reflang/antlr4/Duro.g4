@@ -67,7 +67,7 @@ binaryOperator: BIN_OP;
 indexOperator: SQ_OP SQ_CL;
 
 VAR: 'var';
-PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame';
+PSEUDO_VAR: 'this' | 'null' | 'true' | 'false' | 'frame' /*"here", instead of "frame"?*/;
 INT: DIGIT+;
 fragment DIGIT: ('0'..'9');
 fragment LETTER_LOWER: [a-z];
