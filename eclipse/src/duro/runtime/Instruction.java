@@ -49,11 +49,12 @@ public class Instruction implements Serializable {
 	@PopCount(source = PopCount.Source.ReceiverPlusOperand.class, value = 1)
 	@PushCount(1)
 	public static final int OPCODE_SEND_CODE_3 = 17;
-	public static final int OPCODE_CALL = 18;
-	public static final int OPCODE_FORWARD_CALL = 19;
+	public static final int OPCODE_DISPATCH = 18; // Sending messages based on first class values; receiver, sender/return point, message
+	public static final int OPCODE_CALL = 19;
+	public static final int OPCODE_FORWARD_CALL = 20;
 	@PopCount(1)
-	public static final int OPCODE_RET = 20;
-	public static final int OPCODE_RET_NONE = 21;
+	public static final int OPCODE_RET = 21;
+	public static final int OPCODE_RET_NONE = 22;
 //	public static final int OPCODE_RET_FORWARD = 22;
 	public static final int OPCODE_IF_TRUE = 23;
 	public static final int OPCODE_IF_FALSE = 24;
@@ -196,17 +197,25 @@ public class Instruction implements Serializable {
 	@PopCount(2)
 	@PushCount(1)
 	public static final int OPCODE_SP_REF_EQUAL = 84;
-	@PushCount(1)
-	public static final int OPCODE_MESSAGE_ID = 85;
-	@PushCount(1)
-	public static final int OPCODE_MESSAGE_ARITY = 86;
+//	@PushCount(1)
+//	public static final int OPCODE_MESSAGE_ID = 85;
+//	@PushCount(1)
+//	public static final int OPCODE_MESSAGE_ARITY = 86;
+//	@PopCount(1)
+//	@PushCount(1)
+//	public static final int OPCODE_MESSAGE_ARG = 87;
+	@PopCount(2)
+	public static final int OPCODE_ENVELOPE_REPLY = 88;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_MESSAGE_ARG = 87;
+	public static final int OPCODE_ENVELOPE_RECEIVER = 89;
 	@PopCount(1)
 	@PushCount(1)
-	public static final int OPCODE_MESSAGE_REPLY = 88;
-	public static final int OPCODE_HALT = 89;
+	public static final int OPCODE_ENVELOPE_SENDER = 90;
+	@PopCount(1)
+	@PushCount(1)
+	public static final int OPCODE_ENVELOPE_MESSAGE = 91;
+	public static final int OPCODE_HALT = 92;
 
 	@PushCount(1)
 	public static final int OPCODE_SP_NEW_DICT = 129;
