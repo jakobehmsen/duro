@@ -123,3 +123,11 @@ doHandle => |anAttempt aHandler| (
 	frame@handler = \aHandler
 	\anAttempt.call
 )
+
+/*
+Envelope behavior
+*/
+Envelope@reply => envelopeReply: this, \reply
+Envelope@receiver => envelopeReceiver: this
+Envelope@sender => envelopeSender: this
+Envelope@message => envelopeMessage: this
