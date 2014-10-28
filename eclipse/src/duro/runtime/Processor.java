@@ -13,7 +13,6 @@ import duro.debugging.Debug;
 import duro.reflang.CompilationException;
 import duro.reflang.Compiler;
 import duro.reflang.SymbolTable;
-import duro.runtime.Processor.Frame;
 
 public class Processor {
 	private static final Instruction[] FORWARD_CALL_INSTRUCTIONS_0 = new Instruction[] {
