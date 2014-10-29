@@ -7,4 +7,5 @@ public interface ASTVisitor2 {
 	void visitDict(AST2Dict ast);
 	void visitFalse(AST2False ast);
 	void visitFrame(AST2Frame ast);
+	void visitGrouping(AST2Grouping ast);
 }
