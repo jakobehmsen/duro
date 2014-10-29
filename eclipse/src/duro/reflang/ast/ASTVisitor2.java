@@ -9,4 +9,5 @@ public interface ASTVisitor2 {
 	void visitFrame(AST2Frame ast);
 	void visitGrouping(AST2Grouping ast);
 	void visitImplicitReceiver(AST2ImplicitReceiver ast);
+	void visitInteger(AST2Integer ast);
 }
