@@ -7,9 +7,9 @@ import duro.io.TreeWriter;
 public class AST2Closure implements AST2 {
 	public final int parameterOffset;
 	public final int parameterCount;
-	public final AST body;
+	public final AST2 body;
 	
-	public AST2Closure(int parameterOffset, int parameterCount, AST body) {
+	public AST2Closure(int parameterOffset, int parameterCount, AST2 body) {
 		this.parameterOffset = parameterOffset;
 		this.parameterCount = parameterCount;
 		this.body = body;
