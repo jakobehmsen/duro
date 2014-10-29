@@ -8,4 +8,5 @@ public interface ASTVisitor2 {
 	void visitFalse(AST2False ast);
 	void visitFrame(AST2Frame ast);
 	void visitGrouping(AST2Grouping ast);
+	void visitImplicitReceiver(AST2ImplicitReceiver ast);
 }
