@@ -6,4 +6,5 @@ public interface ASTVisitor2 {
 	void visitClosure(AST2Closure ast);
 	void visitDict(AST2Dict ast);
 	void visitFalse(AST2False ast);
+	void visitFrame(AST2Frame ast);
 }
