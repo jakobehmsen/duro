@@ -5,4 +5,5 @@ public interface ASTVisitor2 {
 	void visitBehavior(AST2Behavior ast);
 	void visitClosure(AST2Closure ast);
 	void visitDict(AST2Dict ast);
+	void visitFalse(AST2False ast);
 }
