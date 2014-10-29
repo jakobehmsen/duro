@@ -11,4 +11,5 @@ public interface ASTVisitor2 {
 	void visitImplicitReceiver(AST2ImplicitReceiver ast);
 	void visitInteger(AST2Integer ast);
 	void visitInterfaceId(AST2InterfaceId ast);
+	void visitLocalAccess(AST2VariableAccess ast);
 }
