@@ -22,4 +22,5 @@ public interface ASTVisitor2 {
 	void visitSlotAssignment(AST2SlotAssignment ast);
 	void visitSpawn(AST2Spawn ast);
 	void visitString(AST2String ast);
+	void visitThis(AST2This ast);
 }
