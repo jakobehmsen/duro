@@ -23,4 +23,5 @@ public interface ASTVisitor2 {
 	void visitSpawn(AST2Spawn ast);
 	void visitString(AST2String ast);
 	void visitThis(AST2This ast);
+	void visitTrue(AST2True ast2True);
 }
