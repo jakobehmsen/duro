@@ -19,4 +19,5 @@ public interface ASTVisitor2 {
 	void visitNull(AST2Null ast);
 	void visitProgram(AST2Program ast);
 	void visitSlotAccess(AST2SlotAccess ast);
+	void visitSlotAssignment(AST2SlotAssignment ast);
 }
