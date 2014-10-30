@@ -12,5 +12,6 @@ public interface ASTVisitor2 {
 	void visitInteger(AST2Integer ast);
 	void visitInterfaceId(AST2InterfaceId ast);
 	void visitVariableAccess(AST2VariableAccess ast);
-	void visitParameterAccess(AST2ParameterAccess ast2ParameterAccess);
+	void visitParameterAccess(AST2ParameterAccess ast);
+	void visitVariableAssignment(AST2VariableAssignment ast);
 }
