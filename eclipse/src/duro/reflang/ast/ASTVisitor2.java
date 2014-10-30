@@ -17,4 +17,5 @@ public interface ASTVisitor2 {
 	void visitMessage(AST2Message ast);
 	void visitMessageExchange(AST2MessageExchange ast);
 	void visitNull(AST2Null ast);
+	void visitProgram(AST2Program ast);
 }
