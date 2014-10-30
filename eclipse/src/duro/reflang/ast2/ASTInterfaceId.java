@@ -4,17 +4,17 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2InterfaceId implements AST2 {
+public class ASTInterfaceId implements AST {
 	public final String id;
-	public final AST2 body;
+	public final AST body;
 	
-	public AST2InterfaceId(String id, AST2 body) {
+	public ASTInterfaceId(String id, AST body) {
 		this.id = id;
 		this.body = body;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitInterfaceId(this);
 	}
 	

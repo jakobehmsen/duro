@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2ImplicitReceiver implements AST2 {
-	public static final AST2ImplicitReceiver INSTANCE = new AST2ImplicitReceiver();
+public class ASTImplicitReceiver implements AST {
+	public static final ASTImplicitReceiver INSTANCE = new ASTImplicitReceiver();
 	
-	private AST2ImplicitReceiver() { }
+	private ASTImplicitReceiver() { }
 
 	@Override
 	public void writeTo(TreeWriter writer) throws IOException { }
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitImplicitReceiver(this);
 	}
 }

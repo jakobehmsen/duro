@@ -4,18 +4,18 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2SlotAssignment implements AST2 {
+public class ASTSlotAssignment implements AST {
 	public static final int TYPE_REGULAR = 0;
 	public static final int TYPE_PROTO = 1;
 	public static final int TYPE_QUOTED = 2;
 	
 	public final int type;
-	public final AST2 receiver;
+	public final AST receiver;
 	public final String id;
 	public final int arity;
-	public final AST2 value;
+	public final AST value;
 
-	public AST2SlotAssignment(int type, AST2 receiver, String id, int arity, AST2 value) {
+	public ASTSlotAssignment(int type, AST receiver, String id, int arity, AST value) {
 		this.type = type;
 		this.receiver = receiver;
 		this.id = id;
@@ -24,7 +24,7 @@ public class AST2SlotAssignment implements AST2 {
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitSlotAssignment(this);
 	}
 	
@@ -36,13 +36,13 @@ public class AST2SlotAssignment implements AST2 {
 		writer.write("/");
 		writer.write(arity);
 		switch(type) {
-		case AST2SlotAssignment.TYPE_REGULAR:
+		case ASTSlotAssignment.TYPE_REGULAR:
 			writer.write(" = ");
 			break;
-		case AST2SlotAssignment.TYPE_PROTO:
+		case ASTSlotAssignment.TYPE_PROTO:
 			writer.write(" ^= ");
 			break;
-		case AST2SlotAssignment.TYPE_QUOTED:
+		case ASTSlotAssignment.TYPE_QUOTED:
 			writer.write(" => ");
 			break;
 		}

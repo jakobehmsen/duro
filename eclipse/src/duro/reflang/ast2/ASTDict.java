@@ -5,14 +5,14 @@ import java.io.IOException;
 import duro.io.TreeWriter;
 import duro.reflang.ast.ASTSlotAssignment;
 
-public class AST2Dict implements AST2 {
+public class ASTDict implements AST {
 	public static class Entry {
 		public final String id;
 		public final int type;
 		public final int arity;
-		public final AST2 value;
+		public final AST value;
 		
-		public Entry(String id, int type, int arity, AST2 value) {
+		public Entry(String id, int type, int arity, AST value) {
 			this.id = id;
 			this.type = type;
 			this.arity = arity;
@@ -20,16 +20,16 @@ public class AST2Dict implements AST2 {
 		}
 	}
 	
-	public final AST2 prototype;
+	public final AST prototype;
 	public final Entry[] entries;
 
-	public AST2Dict(AST2 prototype, Entry[] entries) {
+	public ASTDict(AST prototype, Entry[] entries) {
 		this.prototype = prototype;
 		this.entries = entries;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitDict(this);
 	}
 	

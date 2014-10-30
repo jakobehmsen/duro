@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2ParameterAccess implements AST2 {
+public class ASTVariableAccess implements AST {
 	public final String id;
 	
-	public AST2ParameterAccess(String id) {
+	public ASTVariableAccess(String id) {
 		this.id = id;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
-		visitor.visitParameterAccess(this);
+	public void accept(ASTVisitor visitor) {
+		visitor.visitVariableAccess(this);
 	}
 	
 	@Override

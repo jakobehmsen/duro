@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2Spawn implements AST2 {
-	public final AST2 environment;
-	public final AST2Behavior behavior;
+public class ASTSpawn implements AST {
+	public final AST environment;
+	public final ASTBehavior behavior;
 	
-	public AST2Spawn(AST2 environment, AST2Behavior behavior) {
+	public ASTSpawn(AST environment, ASTBehavior behavior) {
 		this.environment = environment;
 		this.behavior = behavior;
 	}
@@ -21,7 +21,7 @@ public class AST2Spawn implements AST2 {
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitSpawn(this);
 	}
 }

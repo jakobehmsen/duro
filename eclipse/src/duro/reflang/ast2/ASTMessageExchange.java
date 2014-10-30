@@ -4,17 +4,17 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2MessageExchange implements AST2 {
-	public final AST2 receiver;
-	public final AST2Message message;
+public class ASTMessageExchange implements AST {
+	public final AST receiver;
+	public final ASTMessage message;
 	
-	public AST2MessageExchange(AST2 receiver, AST2Message message) {
+	public ASTMessageExchange(AST receiver, ASTMessage message) {
 		this.receiver = receiver;
 		this.message = message;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitMessageExchange(this);
 	}
 	

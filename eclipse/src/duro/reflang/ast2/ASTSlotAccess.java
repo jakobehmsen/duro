@@ -4,19 +4,19 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2SlotAccess implements AST2 {
-	public final AST2 receiver;
+public class ASTSlotAccess implements AST {
+	public final AST receiver;
 	public final String id;
 	public final int arity;
 
-	public AST2SlotAccess(AST2 receiver, String id, int arity) {
+	public ASTSlotAccess(AST receiver, String id, int arity) {
 		this.receiver = receiver;
 		this.id = id;
 		this.arity = arity;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitSlotAccess(this);
 	}
 	

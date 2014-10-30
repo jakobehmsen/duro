@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2Integer implements AST2 {
+public class ASTInteger implements AST {
 	public final int integer;
 	
-	public AST2Integer(int integer) {
+	public ASTInteger(int integer) {
 		this.integer = integer;
 	}
 
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitInteger(this);
 	}
 	

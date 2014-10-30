@@ -4,15 +4,15 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2Grouping implements AST2 {
-	public final AST2[] items;
+public class ASTGrouping implements AST {
+	public final AST[] items;
 	
-	public AST2Grouping(AST2[] items) {
+	public ASTGrouping(AST[] items) {
 		this.items = items;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitGrouping(this);
 	}
 

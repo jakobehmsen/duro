@@ -4,17 +4,17 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2VariableAssignment implements AST2 {
+public class ASTVariableAssignment implements AST {
 	public final int ordinal;
-	public final AST2 value;
+	public final AST value;
 	
-	public AST2VariableAssignment(int ordinal, AST2 value) {
+	public ASTVariableAssignment(int ordinal, AST value) {
 		this.ordinal = ordinal;
 		this.value = value;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitVariableAssignment(this);
 	}
 	

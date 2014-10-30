@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2False implements AST2 {
-	public static final AST2False INSTANCE = new AST2False();
+public class ASTFalse implements AST {
+	public static final ASTFalse INSTANCE = new ASTFalse();
 	
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitFalse(this);
 	}
 

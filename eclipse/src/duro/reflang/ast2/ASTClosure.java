@@ -4,19 +4,19 @@ import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2Closure implements AST2 {
+public class ASTClosure implements AST {
 	public final int parameterOffset;
 	public final int parameterCount;
-	public final AST2 body;
+	public final AST body;
 	
-	public AST2Closure(int parameterOffset, int parameterCount, AST2 body) {
+	public ASTClosure(int parameterOffset, int parameterCount, AST body) {
 		this.parameterOffset = parameterOffset;
 		this.parameterCount = parameterCount;
 		this.body = body;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitClosure(this);
 	}
 

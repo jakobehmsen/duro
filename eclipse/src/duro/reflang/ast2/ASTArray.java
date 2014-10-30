@@ -3,17 +3,16 @@ package duro.reflang.ast2;
 import java.io.IOException;
 
 import duro.io.TreeWriter;
-import duro.reflang.ast.AST;
 
-public class AST2Array implements AST2 {
+public class ASTArray implements AST {
 	public final AST[] items;
 	
-	public AST2Array(AST[] items) {
+	public ASTArray(AST[] items) {
 		this.items = items;
 	}
 
 	@Override
-	public void accept(ASTVisitor2 visitor) {
+	public void accept(ASTVisitor visitor) {
 		visitor.visitArray(this);
 	}
 	
