@@ -1,8 +1,9 @@
-package duro.reflang.ast;
+package duro.reflang.ast2;
 
 import java.io.IOException;
 
 import duro.io.TreeWriter;
+import duro.reflang.ast.AST;
 
 public class AST2Behavior implements AST2 {
 	public final int localCount;

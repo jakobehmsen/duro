@@ -1,4 +1,5 @@
-package duro.reflang.ast;
+package duro.reflang.ast2;
+
 
 public interface ASTVisitor2 {
 	void visitArray(AST2Array ast);

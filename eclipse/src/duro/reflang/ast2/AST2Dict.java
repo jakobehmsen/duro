@@ -1,8 +1,9 @@
-package duro.reflang.ast;
+package duro.reflang.ast2;
 
 import java.io.IOException;
 
 import duro.io.TreeWriter;
+import duro.reflang.ast.ASTSlotAssignment;
 
 public class AST2Dict implements AST2 {
 	public static class Entry {

@@ -1,19 +1,19 @@
-package duro.reflang.ast;
+package duro.reflang.ast2;
 
 import java.io.IOException;
 
 import duro.io.TreeWriter;
 
-public class AST2Null implements AST2 {
-	public static final AST2Null INSTANCE = new AST2Null();
+public class AST2This implements AST2 {
+	public static final AST2This INSTANCE = new AST2This();
 	
 	@Override
 	public void accept(ASTVisitor2 visitor) {
-		visitor.visitNull(this);
+		visitor.visitThis(this);
 	}
 	
 	@Override
 	public void writeTo(TreeWriter writer) throws IOException {
-		writer.write("null");
+		writer.write("this");
 	}
 }

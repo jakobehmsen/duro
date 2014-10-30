@@ -1,4 +1,4 @@
-package duro.reflang.ast;
+package duro.reflang.ast2;
 
 import duro.io.WritableTree;
 

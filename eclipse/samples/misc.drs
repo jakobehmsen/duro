@@ -23,8 +23,10 @@ $p1043 (
 
 
 load: "std" // Should load std.drs and check for existing compatible compilations; if exists then load compilation; else compile and then load
-/*load: "collections"
 
+load: "collections"
+
+/*
 load: "/auxi"
 */
 
@@ -102,31 +104,10 @@ Handler = {|aNativeSignal aFrame|
 }
 */
 
-/*
-var r = intDiv: 1, 0
-puts: r
-*/
 
-/*
-var r = intDiv: 1, 0
-puts: r
-*/
 //var p = #[name = "Hugo"]
 //var hasName = isSet: p, "name"
 //puts: hasName
-
-//what: "ah"
-
-/*
-var aFrame = frame
-aFrame@a = "asdf"
-var a = aFrame@a
-
-var ad = isSet: aFrame, "a"
-puts: a
-puts: ad
-puts: aFrame.sender == null
-*/
 
 // if-else primitive seems to not generate non-quoted argument appropriately
 
@@ -144,7 +125,7 @@ puts: r
 
 
 
-
+/*
 var r = do' (
 	do' 1 / 0
 	Handle' |aSignal aFrame| (
@@ -156,6 +137,134 @@ var r = do' (
 	aFrame.resume: "Buhuuuu..."
 )
 puts: r
+*/
+
+/*
+Person = #{
+	name age
+	namedAged => #{
+		name = \aName
+		age = \anAge
+	}
+	toString => name + ", " + age
+}
+
+//var p = Person.named: "Hugo" Aged: 35
+var p = #Person{name = "Hugo" age = 35}
+puts: p
+*/
+
+/*
+var l = List.new
+
+l.add: 5
+l.add: "saf"
+
+1.through: 100000; each' puts: \n
+*/
+
+/*
+var ap = #(
+	puts: "Hi there!!!"
+)
+puts: "Back here"
+*/
+
+/*
+var array = #[1 3 4]
+array.each' puts: \x
+*/
+
+/*
+Missing primitives:
+*receive/0
+*messageId/1
+*messageArity/1
+*messageArg/1
+*messageReply/1 - Something different than reply such that multiple requests can be handled at once?
+*/
+
+var ap = #Any(
+	// Message as first class entity? Forwardable? Replyable? 
+	/*while' true, (
+		receive
+		var id = messageId
+		var arity = messageArity
+		puts: "Received message with selector '" + id + "/" + arity + "'."
+		if' (id == "do") && (arity == 1), ( 
+			var aText = messageArg: 0
+			puts: aText
+			messageReply: "DONE" // Push reply to msg.frame.stack
+		) Else' (
+			messageReply: "DO NOT UNDERSTAND: " + id + "/" + arity // Push reply to msg.frame.stack
+		)
+	)*/
+	
+	/*
+	var env = receive
+	puts: "Received message with selector '" + env.message@id + "/" + env.message@arguments.length + "'."
+	env.reply: "Yay"
+	*/
+	
+	while' true, (
+		var env = receive
+		var id = env.message@id
+		var arity = env.message@arguments.length
+		puts: "Received message with selector '" + id + "/" + arity + "'."
+		if' (id == "do") && (arity == 1), ( 
+			var aText = env.message@arguments[0]
+			puts: aText
+			env.reply: "DONE" // Push reply to msg.frame.stack
+		) Else' (
+			env.reply: "DO NOT UNDERSTAND: " + id + "/" + arity // Push reply to msg.frame.stack
+		)
+	)
+	
+	//envelopeReply: env, "Yay"
+)
+
+var response = ap.do: "Stuff1"
+puts: "Response = " + response
+var response2 = ap.do1: "Stuff1"
+puts: "Response = " + response2
+
+
+/*
+if' true && true, puts: "Yes" Else' puts: "No"
+if' true && false, puts: "Yes" Else' puts: "No"
+if' false && true, puts: "Yes" Else' puts: "No"
+if' false && false, puts: "Yes" Else' puts: "No"
+if' true || true, puts: "Yes" Else' puts: "No"
+if' true || false, puts: "Yes" Else' puts: "No"
+if' false || true, puts: "Yes" Else' puts: "No"
+if' false || false, puts: "Yes" Else' puts: "No"
+*/
+
+/*
+var ap = fork: Any, {|activeProcess|
+}
+
+var ap = #Any(
+	
+)
+
+var ap = #Any(
+	
+)
+
+*/
+
+/*
+// Uncapitalized slot assignments?
+X = 5
+puts: X
+*/
+
+/*
+var obj = #[name="Stuff" age person]
+var name = obj@name
+puts: name
+*/
 
 /*
 var obj = #[
