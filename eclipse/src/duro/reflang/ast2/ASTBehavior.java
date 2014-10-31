@@ -5,11 +5,9 @@ import java.io.IOException;
 import duro.io.TreeWriter;
 
 public class ASTBehavior implements AST {
-	public final int localCount;
 	public final AST body;
 	
-	public ASTBehavior(int localCount, AST body) {
-		this.localCount = localCount;
+	public ASTBehavior(AST body) {
 		this.body = body;
 	}
 
@@ -21,8 +19,6 @@ public class ASTBehavior implements AST {
 	@Override
 	public void writeTo(TreeWriter writer) throws IOException {
 		writer.write("(");
-		writer.write(localCount);
-		writer.write("|");
 		writer.indentnl();
 		body.writeTo(writer);
 		writer.dedentnl();
