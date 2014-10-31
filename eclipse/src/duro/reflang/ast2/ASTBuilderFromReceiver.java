@@ -1,10 +1,11 @@
 package duro.reflang.ast2;
 
+import java.util.List;
+
 public abstract class ASTBuilderFromReceiver implements ASTBuilder {
 	@Override
-	public AST build() {
-//		return createBuilder(() -> AST2This.INSTANCE).build();
-		return createBuilder(() -> ASTImplicitReceiver.INSTANCE).build();
+	public void build(List<AST> sequence) {
+		createBuilder(sequenceReceiver -> sequenceReceiver.add(ASTImplicitReceiver.INSTANCE)).build(sequence);
 	}
 	
 	public abstract ASTBuilder createBuilder(ASTBuilder receiver);

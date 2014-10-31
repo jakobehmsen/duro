@@ -1,5 +1,6 @@
 package duro.reflang.ast2;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class ASTReducer implements ASTBuilder {
@@ -12,10 +13,10 @@ public class ASTReducer implements ASTBuilder {
 	}
 
 	@Override
-	public AST build() {
+	public void build(List<AST> sequence) {
 		AST[] asts = new AST[builders.length];
 		for(int i = 0; i < asts.length; i++)
-			asts[i] = builders[i].build();
-		return reducer.apply(asts);
+			asts[i] = builders[i].buildAsGrouping();
+		sequence.add(reducer.apply(asts));
 	}
 }
