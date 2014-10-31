@@ -12,14 +12,12 @@ public class ASTSlotAssignment implements AST {
 	public final int type;
 	public final AST receiver;
 	public final String id;
-	public final int arity;
 	public final AST value;
 
-	public ASTSlotAssignment(int type, AST receiver, String id, int arity, AST value) {
+	public ASTSlotAssignment(int type, AST receiver, String id, AST value) {
 		this.type = type;
 		this.receiver = receiver;
 		this.id = id;
-		this.arity = arity;
 		this.value = value;
 	}
 
@@ -33,8 +31,6 @@ public class ASTSlotAssignment implements AST {
 		receiver.writeTo(writer);
 		writer.write("@");
 		writer.write(id);
-		writer.write("/");
-		writer.write(arity);
 		switch(type) {
 		case ASTSlotAssignment.TYPE_REGULAR:
 			writer.write(" = ");
