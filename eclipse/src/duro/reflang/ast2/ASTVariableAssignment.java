@@ -5,11 +5,11 @@ import java.io.IOException;
 import duro.io.TreeWriter;
 
 public class ASTVariableAssignment implements AST {
-	public final int ordinal;
+	public final String id;
 	public final AST value;
 	
-	public ASTVariableAssignment(int ordinal, AST value) {
-		this.ordinal = ordinal;
+	public ASTVariableAssignment(String id, AST value) {
+		this.id = id;
 		this.value = value;
 	}
 
@@ -21,7 +21,7 @@ public class ASTVariableAssignment implements AST {
 	@Override
 	public void writeTo(TreeWriter writer) throws IOException {
 		writer.write("&");
-		writer.write(ordinal);
+		writer.write(id);
 		writer.write(" = ");
 		value.writeTo(writer);
 	}
