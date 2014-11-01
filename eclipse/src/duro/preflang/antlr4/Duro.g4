@@ -1,3 +1,36 @@
+/*
+Initial "pDuro":
+
+No closures due to a focus on strict non-sharing processes; may be added later, though likely not runtime-wise.
+No dicts due to a focus on strict non-sharing processes; can potentially be implemented.
+Argument modifier ' indicates something else than closures but something similar to closure; what exactly? (or at least more specifically)
+
+Special forms for mutable built-in types can only be applied when receiver is of this type, i.e. such usage most be associated to the respective prototypical process for such types.
+E.g. array, proto array process, and special array forms arrayLength, arrayGet, and arraySet:
+
+// The below is okay:
+Array = #(
+	// Within this scope, the receiver is always an array
+	var env = receive
+	
+	if' env.message.id == "[]" && env.message.argumentCount == 1, (
+		var index = env.message.getArgument: 0
+		var item = arrayGet: this, index
+		env.reply: item
+	)
+	
+	if' env.message.id == "[]" && env.message.argumentCount == 2, (
+		var index = env.message.getArgument: 0
+		var item = env.message.getArgument: 1
+		arraySet: this, index, item
+		env.reply: null
+	)
+)
+
+var array = #[1 2 3 4 5]
+arrayGet: array, 1 // This results in an error because the current receiver isn't an array
+*/
+
 grammar Duro;
 
 program: expression*;
