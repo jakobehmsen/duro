@@ -29,6 +29,8 @@ Array = #(
 
 var array = #[1 2 3 4 5]
 arrayGet: array, 1 // This results in an error because the current receiver isn't an array
+
+Tuples instead of arrays
 */
 
 grammar Duro;
